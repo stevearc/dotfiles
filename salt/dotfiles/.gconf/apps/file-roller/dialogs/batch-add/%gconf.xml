@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="default_extension" mtime="1370932707" type="string">
+		<stringvalue>.zip</stringvalue>
+	</entry>
+</gconf>

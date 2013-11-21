@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="sort_inverse" mtime="1383544613" type="bool" value="false"/>
+	<entry name="sort_type" mtime="1383544613" type="string">
+		<stringvalue>file::mtime</stringvalue>
+	</entry>
+	<entry name="show_thumbnails" mtime="1383544603" type="bool" value="true"/>
+</gconf>

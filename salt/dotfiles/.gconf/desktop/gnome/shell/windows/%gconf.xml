@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="theme" mtime="1345828304" type="string">
+		<stringvalue>Adwaita</stringvalue>
+	</entry>
+</gconf>

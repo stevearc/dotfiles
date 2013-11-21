@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="auto_save_interval" mtime="1367044760" type="int" value="0"/>
+</gconf>

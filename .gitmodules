@@ -1,0 +1,15 @@
+[submodule "salt/dotfiles/.vim/bundle/command-t"]
+	path = salt/dotfiles/.vim/bundle/command-t
+	url = https://github.com/wincent/Command-T.git
+[submodule "salt/dotfiles/.vim/bundle/python-mode"]
+	path = salt/dotfiles/.vim/bundle/python-mode
+	url = https://github.com/klen/python-mode.git
+[submodule "salt/dotfiles/.vim/bundle/syntastic"]
+	path = salt/dotfiles/.vim/bundle/syntastic
+	url = https://github.com/scrooloose/syntastic.git
+[submodule "salt/dotfiles/.vim/bundle/vim-colors-solarized"]
+	path = salt/dotfiles/.vim/bundle/vim-colors-solarized
+	url = https://github.com/altercation/vim-colors-solarized.git
+[submodule "salt/dotfiles/.vim/bundle/vim-fugitive"]
+	path = salt/dotfiles/.vim/bundle/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive.git

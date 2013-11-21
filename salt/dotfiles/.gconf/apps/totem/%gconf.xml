@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="subtitle_encoding" mtime="1384202933" type="string">
+		<stringvalue>UTF-8</stringvalue>
+	</entry>
+	<entry name="hue" mtime="1367565526" type="int" value="32767"/>
+	<entry name="brightness" mtime="1367565526" type="int" value="32767"/>
+	<entry name="saturation" mtime="1367565526" type="int" value="32767"/>
+	<entry name="contrast" mtime="1367565526" type="int" value="32767"/>
+	<entry name="show_vfx" mtime="1384202933" type="bool" value="true"/>
+</gconf>

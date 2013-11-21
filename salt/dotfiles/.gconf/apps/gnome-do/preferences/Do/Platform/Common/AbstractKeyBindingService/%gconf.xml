@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="Select_Multiple_Items" mtime="1384976382" type="string">
+		<stringvalue>comma</stringvalue>
+	</entry>
+	<entry name="Step_Into_Item" mtime="1384976382" type="string">
+		<stringvalue>Right</stringvalue>
+	</entry>
+	<entry name="Step_Out_of_Item" mtime="1384976382" type="string">
+		<stringvalue>Left</stringvalue>
+	</entry>
+	<entry name="Next_5_Results" mtime="1384976382" type="string">
+		<stringvalue>Page_Down</stringvalue>
+	</entry>
+	<entry name="Previous_5_Results" mtime="1384976382" type="string">
+		<stringvalue>Page_Up</stringvalue>
+	</entry>
+	<entry name="Last_Item" mtime="1384976382" type="string">
+		<stringvalue>End</stringvalue>
+	</entry>
+	<entry name="First_Item" mtime="1384976382" type="string">
+		<stringvalue>Home</stringvalue>
+	</entry>
+	<entry name="Next_Item" mtime="1384976382" type="string">
+		<stringvalue>Down</stringvalue>
+	</entry>
+	<entry name="Previous_Item" mtime="1384976382" type="string">
+		<stringvalue>Up</stringvalue>
+	</entry>
+	<entry name="Next_Pane" mtime="1384976382" type="string">
+		<stringvalue>Tab</stringvalue>
+	</entry>
+	<entry name="Previous_Pane" mtime="1384976382" type="string">
+		<stringvalue>&lt;Shift&gt;Tab</stringvalue>
+	</entry>
+	<entry name="Paste_from_Clipboard" mtime="1384976382" type="string">
+		<stringvalue>&lt;Control&gt;v</stringvalue>
+	</entry>
+	<entry name="Copy_to_Clipboard" mtime="1384976382" type="string">
+		<stringvalue>&lt;Control&gt;c</stringvalue>
+	</entry>
+	<entry name="Clear" mtime="1384976382" type="string">
+		<stringvalue>Escape</stringvalue>
+	</entry>
+	<entry name="Enter_Text_Mode" mtime="1384976382" type="string">
+		<stringvalue>period</stringvalue>
+	</entry>
+	<entry name="Summon_in_Text_Mode" mtime="1384976382" type="string">
+		<stringvalue></stringvalue>
+	</entry>
+	<entry name="Summon_Do" mtime="1384976382" type="string">
+		<stringvalue>&lt;Super&gt;space</stringvalue>
+	</entry>
+</gconf>

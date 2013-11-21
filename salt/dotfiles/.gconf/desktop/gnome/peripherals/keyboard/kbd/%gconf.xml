@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="options" mtime="1345827865" type="list" ltype="string">
+		<li type="string">
+			<stringvalue>ctrl	ctrl:nocaps</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>altwin	altwin:swap_lalt_lwin</stringvalue>
+		</li>
+	</entry>
+</gconf>

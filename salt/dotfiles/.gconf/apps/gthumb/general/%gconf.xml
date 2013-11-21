@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="active_extensions" mtime="1347062997" type="list" ltype="string">
+		<li type="string">
+			<stringvalue>webalbums</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>slideshow</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>search</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>resize_images</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>rename_series</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>red_eye_removal</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>raw_files</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>pixbuf_savers</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>picasaweb</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>photobucket</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>photo_importer</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>oauth</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>list_tools</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>jpeg_utils</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>importer</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>image_viewer</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>image_rotation</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>image_print</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>gstreamer_utils</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>gstreamer_tools</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>flicker</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>find_duplicates</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>file_tools</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>file_manager</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>facebook</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>exiv2_tools</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>edit_metadata</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>desktop_background</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>convert_format</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>contact_sheet</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>comments</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>change_date</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>catalogs</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>burn_disc</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>bookmarks</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>23hq</stringvalue>
+		</li>
+	</entry>
+	<entry name="startup_current_file" mtime="1383544613" type="string">
+		<stringvalue>file://~/Dropbox/placeholder_circle.png</stringvalue>
+	</entry>
+	<entry name="startup_location" mtime="1383544613" type="string">
+		<stringvalue>file://~/Dropbox</stringvalue>
+	</entry>
+</gconf>

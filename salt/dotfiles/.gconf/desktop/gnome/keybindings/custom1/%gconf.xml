@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="action" mtime="1345827970" type="string">
+		<stringvalue>terminator</stringvalue>
+	</entry>
+	<entry name="name" mtime="1345827970" type="string">
+		<stringvalue>Terminator</stringvalue>
+	</entry>
+	<entry name="binding" mtime="1360404162" type="string">
+		<stringvalue></stringvalue>
+	</entry>
+</gconf>

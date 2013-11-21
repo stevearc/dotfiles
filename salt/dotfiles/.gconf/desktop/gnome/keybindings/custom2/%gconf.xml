@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="action" mtime="1368788246" type="string">
+		<stringvalue>gnome-terminal --maximize -x tmux -2</stringvalue>
+	</entry>
+	<entry name="name" mtime="1368788246" type="string">
+		<stringvalue>Tmux</stringvalue>
+	</entry>
+	<entry name="binding" mtime="1360406884" type="string">
+		<stringvalue>&lt;Shift&gt;&lt;Alt&gt;Return</stringvalue>
+	</entry>
+</gconf>

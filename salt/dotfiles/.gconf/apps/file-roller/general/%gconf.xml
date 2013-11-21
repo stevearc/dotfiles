@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="encrypt_header" mtime="1370932707" type="bool" value="false"/>
+</gconf>

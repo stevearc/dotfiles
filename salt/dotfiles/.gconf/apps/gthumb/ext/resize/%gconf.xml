@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="high_quality" mtime="1383544611" type="bool" value="true"/>
+	<entry name="aspect_ratio_invert" mtime="1383544611" type="bool" value="true"/>
+	<entry name="aspect_ratio" mtime="1383544611" type="string">
+		<stringvalue>image</stringvalue>
+	</entry>
+	<entry name="aspect_ratio_height" mtime="1383544611" type="int" value="640"/>
+	<entry name="aspect_ratio_width" mtime="1383544611" type="int" value="640"/>
+	<entry name="height" mtime="1383544611" type="float" value="320"/>
+	<entry name="width" mtime="1383544611" type="float" value="320"/>
+	<entry name="unit" mtime="1383544611" type="string">
+		<stringvalue>pixels</stringvalue>
+	</entry>
+</gconf>

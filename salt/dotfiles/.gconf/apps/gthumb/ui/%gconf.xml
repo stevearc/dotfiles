@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="properties_height" mtime="1383544613" type="int" value="652"/>
+	<entry name="viewer_sidebar_width" mtime="1383544613" type="int" value="285"/>
+	<entry name="browser_sidebar_width" mtime="1383544613" type="int" value="255"/>
+	<entry name="window_height" mtime="1383544613" type="int" value="600"/>
+	<entry name="window_width" mtime="1383544613" type="int" value="977"/>
+	<entry name="filterbar_visible" mtime="1383544603" type="bool" value="true"/>
+</gconf>

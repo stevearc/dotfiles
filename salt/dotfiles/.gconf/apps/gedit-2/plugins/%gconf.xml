@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="active-plugins" mtime="1383780947" type="list" ltype="string">
+		<li type="string">
+			<stringvalue>modelines</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>docinfo</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>time</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>zeitgeistplugin</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>filebrowser</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>spell</stringvalue>
+		</li>
+	</entry>
+</gconf>

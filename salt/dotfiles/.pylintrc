@@ -1,0 +1,22 @@
+[MASTER]
+
+[MESSAGES CONTROL]
+
+# Enable the message, report, category or checker with the given id(s). You can
+# either give multiple identifier separated by comma (,) or put this option
+# multiple time.
+#enable=
+
+# Disable the message, report, category or checker with the given id(s). You
+# can either give multiple identifier separated by comma (,) or put this option
+# multiple time (only on the command line, not in the configuration file where
+# it should appear only once).
+disable=E1103,W0142,W0622,W1401,R0912,R0904,W0221,R0913,R0902,R0915,R0911,R0914,R0903,I0011,W0141,W0110
+
+[BASIC]
+argument-rgx=[a-z_][a-z0-9_]{0,30}$
+attr-rgx=[a-z_][a-z0-9_]{0,30}$
+variable-rgx=[a-z_][a-z0-9_]{0,30}$
+function-rgx=[a-z_][a-z0-9_]{0,30}$
+method-rgx=([a-z_][a-z0-9_]{0,50}|setUp|tearDown|setUpClass|tearDownClass|setOutputStream|startContext|prepareTestCase|addError|addFailure|addSkip|afterTest|stopContext)$
+no-docstring-rgx=((__.*__)|setUp|tearDown)$

@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="chat_window_paned_pos" mtime="1375205627" type="int" value="626"/>
+	<entry name="show_offline" mtime="1375205608" type="bool" value="true"/>
+</gconf>
