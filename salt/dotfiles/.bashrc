@@ -79,3 +79,5 @@ export SVN_EDITOR=vim
 if [ -f ~/.bash_env ]; then
     . ~/.bash_env
 fi
+# Autoenv
+. activate.sh
