@@ -15,6 +15,10 @@ main() {
         sudo apt-get update -qq
         sudo apt-get upgrade -y -qq
     fi
+    if [ ! `which pip` ]; then
+        sudo easy_install pip
+    fi
+    sudo pip install msgpack-python jinja2 pyyaml
     sudo python salt-call --local -l warning -c "$here/config" state.highstate $test_arg
     sed -i -e "s|$here/salt|<<file_root>>|" -e "s|$HOME|<<home>>|" -e "s|$USER|<<user>>|" config/minion
     git clean -fxd > /dev/null
