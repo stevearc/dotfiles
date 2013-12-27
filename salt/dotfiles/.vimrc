@@ -21,6 +21,7 @@ set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb
 " Make tab completion for files/buffers act like bash
 set wildmenu
 set wildmode=full
+set wildignore+=*.png,*.jpg,*.jpeg,*.gif
 
 " Make searches case-sensitive only if they contain upper-case characters
 set ignorecase
