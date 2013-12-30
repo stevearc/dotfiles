@@ -7,7 +7,7 @@ snippet close "Close button" !b
 endsnippet
 
 snippet alert "Alert" !b
-<alert type="${1:error}" close="$2">{{ $3 }}</alert>
+<alert type="${1:'danger'}"${2: close="$3"}>{{ $4 }}</alert>
 endsnippet
 
 snippet collapse "Collapsed content" !b
