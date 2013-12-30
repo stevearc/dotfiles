@@ -1,0 +1,49 @@
+extends html
+
+snippet '\{' "variable" r
+{{ $1 }}
+endsnippet
+
+snippet for "for" b!
+{% for ${1:item} in ${2:sequence} %}
+    $3
+{% endfor %}
+endsnippet
+
+snippet fore "for/else" b!
+{% for ${1:item} in ${2:sequence} %}
+    $3
+{% else %}
+    $4
+{% endfor %}
+endsnippet
+
+snippet if "if" b!
+{% if ${1:expr} %}
+    $2
+{% endif %}
+endsnippet
+
+
+snippet ife "if/else" b!
+{% if ${1:expr} %}
+    $2
+{% else %}
+    $3
+{% endif %}
+endsnippet
+
+
+snippet ifee "if/elif/else" b!
+{% if ${1:expr} %}
+    $2
+{% elif %}
+    $3
+{% else %}
+    $4
+{% endif %}
+endsnippet
+
+snippet json "Dump json data" !b
+{{ $1 | json | safe }}
+endsnippet
