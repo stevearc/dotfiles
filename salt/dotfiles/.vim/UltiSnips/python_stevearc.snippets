@@ -197,14 +197,14 @@ endsnippet
 #############
 #  Pyramid  #
 #############
-snippet @vc "View controller" !b
-@view_controller(route_name='$1'${2:, renderer='${3:json}'}$4)
+snippet @vc "View config" !b
+@view_config(route_name='$1'${2:, renderer='${3:json}'}$4)
 def ${5:$1}(request):
     $0
 endsnippet
 
-snippet @vcc "View controller w/context" !b
-@view_controller(context=$1${2:, name='$3'}${4:, renderer='${5:json}'}$6)
+snippet @vcc "View config w/context" !b
+@view_config(context=$1${2:, name='$3'}${4:, renderer='${5:json}'}$6)
 def ${7:$3}(context, request):
     $0
 endsnippet
