@@ -43,7 +43,7 @@ let g:pymode_run = 0
 let ropevim_extended_complete=1
 
 " python-mode shortcuts
-map <leader>r :call RopeRename()<CR>
+map <leader>R :call RopeRename()<CR>
 map <leader>o :call RopeOrganizeImports()<CR>
 map <leader>g :call RopeFindOccurrences()<CR>
 map <leader>d :call RopeShowDoc()<CR>

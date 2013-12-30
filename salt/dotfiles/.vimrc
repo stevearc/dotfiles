@@ -16,7 +16,7 @@ set history=1000
 set path=**
 
 " When :find-ing, search for files with this suffix
-set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb
+set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb,.html,.jinja2,.js
 
 " Make tab completion for files/buffers act like bash
 set wildmenu
@@ -45,10 +45,12 @@ set laststatus=2
 au BufRead,BufNewFile *.sls set ft=yaml
 au BufRead,BufNewFile *.jinja2 set ft=jinja2
 au BufRead,BufNewFile *.snippets set ft=snippets
+au BufRead,BufNewFile *.js set ft=javascript
 au FileType jinja2 setlocal shiftwidth=2 tabstop=2 softtabstop=2
 au FileType yaml setlocal shiftwidth=2 tabstop=2 softtabstop=2
 au FileType html setlocal shiftwidth=2 tabstop=2 softtabstop=2
 au FileType json setlocal shiftwidth=2 tabstop=2 softtabstop=2
+au FileType javascript setlocal shiftwidth=2 tabstop=2 softtabstop=2
 
 " When a bracket is inserted, briefly jump to the matching one
 set showmatch
