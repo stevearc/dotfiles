@@ -19,8 +19,8 @@ snippet h1 "<h1>" !b
 <h1>$1</h1>
 endsnippet
 
-snippet '^\s*h(2|3|4|5|6)' "<h23456>" !r
-<h`!p snip.rv = match.group(1)`>$1</h`!p snip.rv = match.group(1)`>
+snippet '^(\s*)h(2|3|4|5|6)' "<h23456>" !r
+`!p snip.rv = match.group(1)`<h`!p snip.rv = match.group(2)`>$1</h`!p snip.rv = match.group(2)`>
 endsnippet
 
 snippet strong "<strong>" !
