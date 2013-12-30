@@ -13,3 +13,12 @@
 [submodule "salt/dotfiles/.vim/bundle/vim-fugitive"]
 	path = salt/dotfiles/.vim/bundle/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive.git
+[submodule "salt/dotfiles/.vim/bundle/ultisnips"]
+	path = salt/dotfiles/.vim/bundle/ultisnips
+	url = git@github.com:SirVer/ultisnips.git
+[submodule "salt/dotfiles/.vim/bundle/vim-commentary"]
+	path = salt/dotfiles/.vim/bundle/vim-commentary
+	url = git@github.com:tpope/vim-commentary.git
+[submodule "salt/dotfiles/.vim/bundle/vim-repeat"]
+	path = salt/dotfiles/.vim/bundle/vim-repeat
+	url = git@github.com:tpope/vim-repeat.git

@@ -1,0 +1,241 @@
+global !p
+from py_util import *
+endglobal
+
+snippet main "ifmain" b
+if __name__ == '__main__':
+	${1:main()}
+endsnippet
+
+snippet argparse "Argument parser" b
+def ${1:main}():
+	""" ${2:Main method} """
+	parser = argparse.ArgumentParser(description=$1.__doc__)
+    ${3:parser.add_argument('${4:-f}', help="$5")}
+    args = parser.parse_args()
+    $0
+
+endsnippet
+
+snippet try "Try / Except / Else / Finally" b!
+try:
+	${1:pass}
+${2:except${3: ${4:Exception} as ${5:e}}:
+	${6:raise}}
+${7:else:
+	${8:pass}}
+${9:finally:
+	${10:pass}}
+endsnippet
+
+snippet @p "Read only property" b!
+@property
+def $1(self):
+	""" ${2:Getter for $1} """
+	${3:return self._$1}
+endsnippet
+
+snippet @pp "Read/Write property" b!
+@property
+def $1(self):
+	""" ${2:Getter for $1} """
+	${3:return self._$1}
+
+@$1.setter
+def $1(self, $1):
+	""" ${4:Setter for $1} """
+	${5:self._$1 = $1}
+endsnippet
+
+snippet @c "Classmethod" !b
+@classmethod
+def $1(cls$2):
+	""" $3 """
+	$0
+endsnippet
+
+snippet @s "Staticmethod" !b
+@staticmethod
+def $1($2):
+	""" $3 """
+	$0
+endsnippet
+
+snippet cl "Class" !b
+class ${1:MyClass}(${2:object}):
+
+	""" ${3} """
+
+	def __init__(self$4):`!p
+snip.rv = ""
+snip >> 2
+
+args = get_args(t[4])
+
+write_init_body(t[1], args, t[2], snip)`
+		$0
+
+endsnippet
+
+snippet p- "Parameter docs" !b
+Parameters
+----------
+${1:var} : ${2:str}
+    $0
+endsnippet
+
+snippet a- "Attribute docs" !b
+Attributes
+----------
+${1:var} : ${2:str}
+    $0
+endsnippet
+
+snippet r- "Return docs" !b
+Returns
+-------
+${1:retval} : ${2:str}
+    $0
+endsnippet
+
+snippet ra- "Raises docs" !b
+Raises
+------
+${1:exc} : ${2:Exception}
+    $0
+endsnippet
+
+snippet " "Inline docstring" !b
+""" $0 """
+endsnippet
+
+snippet "" "Multiline docstring" !b
+"""
+$0
+
+"""
+endsnippet
+
+snippet def "Function definition" !b
+def $1($2):
+    $0
+endsnippet
+
+snippet mdef "Method definition" !b
+def $1(self$2):
+    $0
+endsnippet
+
+
+##############
+#  Unittest  #
+##############
+
+snippet unittest2 "Import unittest2" !b
+try:
+    import unittest2 as unittest  # pylint: disable=F0401
+except ImportError:
+    import unittest
+$0
+endsnippet
+
+snippet ae "Assert equal" b!
+self.assertEqual($1, $2)
+$0
+endsnippet
+
+snippet aae "Assert almost equal" b!
+self.assertAlmostEqual($1, $2)
+$0
+endsnippet
+
+snippet ar "Assert raises" b!
+with self.assertRaises(${1:Exception}):
+    $0
+endsnippet
+
+snippet T_ "Unittest class" b!
+class Test${1:Class}(${2:unittest.TestCase}):
+
+	""" $3 """
+
+    $0
+endsnippet
+
+snippet t_ "Test case" !b
+def test_$1(self):
+	""" $2 """
+    $0
+endsnippet
+
+snippet su "SetUp" !b
+def setUp(self):
+    super($1, self).setUp()
+    $0
+endsnippet
+
+snippet td "TearDown" !b
+def tearDown(self):
+    super($1, self).tearDown()
+    $0
+endsnippet
+
+snippet suc "SetUp Class" !b
+@classmethod
+def setUpClass(cls):
+    super($1, cls).setUpClass()
+    $0
+endsnippet
+
+snippet tdc "TearDown Class" !b
+@classmethod
+def tearDownClass(cls):
+    super($1, cls).tearDownClass()
+    $0
+endsnippet
+
+#############
+#  Pyramid  #
+#############
+snippet @vc "View controller" !b
+@view_controller(route_name='$1'${2:, renderer='${3:json}'}$4)
+def ${5:$1}(request):
+    $0
+endsnippet
+
+snippet @vcc "View controller w/context" !b
+@view_controller(context=$1${2:, name='$3'}${4:, renderer='${5:json}'}$6)
+def ${7:$3}(context, request):
+    $0
+endsnippet
+
+snippet r. "Request shortcut" !
+request.$0
+endsnippet
+
+################
+#  Docstrings  #
+################
+snippet cb "Code block" !b
+.. code-block:: python
+
+    $0
+endsnippet
+
+snippet :cl "Class reference" !
+:class:\`~$1\`
+endsnippet
+
+snippet :meth "Method reference" !
+:meth:\`~$1\`
+endsnippet
+
+snippet :mod "Module reference" !
+:mod:\`~$1\`
+endsnippet
+
+snippet :at "Attribute reference" !
+:attr:\`~$1\`
+endsnippet
+
+# vim:ft=snippets:

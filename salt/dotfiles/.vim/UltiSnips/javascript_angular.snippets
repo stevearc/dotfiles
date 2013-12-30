@@ -1,0 +1,50 @@
+global !p
+from js_util import *
+endglobal
+
+# We use this form of controller declaration because it's minification-safe
+snippet ctrl "Controller" !b
+${1:app}.controller('${2:MyCtrl}', [`!p snip.rv = format_deps(t[3])`function($3) {
+	$0
+}]);
+endsnippet
+
+# doesn't expand when there is a word in front
+snippet /(^|(?<=\W))\./ "$scope." r
+\$scope.
+endsnippet
+
+snippet $get "$http.get" !b
+$http.get($1)
+endsnippet
+
+snippet $head "$http.head" !b
+$http.head($1)
+endsnippet
+
+snippet $post "$http.post" !b
+$http.post($1, $2)
+endsnippet
+
+snippet $put "$http.put" !b
+$http.get($1, $2)
+endsnippet
+
+# Use the verbose version to avoid problems with minification
+snippet $del "$http.delete" !b
+$http({method: 'delete', url: $1})
+endsnippet
+
+snippet '\.suc' ".success()" r
+.success(function(data, status, headers, config) {
+	$1
+})
+endsnippet
+
+snippet '\.err' ".error()" r
+.error(function(data, status, headers, config) {
+	$1
+})
+endsnippet
+
+# vim:ft=snippets:

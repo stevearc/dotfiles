@@ -51,13 +51,5 @@ map <leader>a :PyLintAuto<CR>
 map gd :call RopeGotoDefinition()<CR>
 
 " Abbreviations
-iabbrev p- Parameters<CR>----------
-iabbrev r- Returns<CR>-------
-iabbrev """ """ """<Left><Left><Left><Left>
-iabbr ss self.<C-R>=Eatchar('\s')<CR>
-iabbr cl class(object):<Left><Left><Left><Left><Left><Left><Left><Left><Left>
-iabbr def def():<Left><Left><Left>
 iabbr inn is not None
-iabbr @p @property
-iabbr @c @classmethod
-iabbr @s @staticmethod
+iabbr ipmort import

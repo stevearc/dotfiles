@@ -211,19 +211,24 @@ aug QFClose
   au WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&buftype") == "quickfix"|q|endif
 aug END
 
-" Tab completion
+" Attempt to expand a snippet. If no snippet exists, either autocomplete or
+" insert a tab
+let g:ulti_expand_or_jump_res = 0 "default value, just set once
 function! CleverTab()
-    if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
-        return "\<Tab>"
+    call UltiSnips_ExpandSnippetOrJump()
+    if g:ulti_expand_or_jump_res == 0
+      if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
+          return "\<Tab>"
+      else
+          return "\<C-P>"
+      endif
     else
-        if match(expand("%"), '.py$') != -1
-            return "\<C-x>\<C-o>"
-        else
-            return "\<C-P>"
-        endif
+      return ''
     endif
 endfunction
-imap <Tab> <C-R>=CleverTab()<CR>
+inoremap <Tab> <C-R>=CleverTab()<CR>
+snoremap <Tab> <Esc>:call UltiSnips_ExpandSnippetOrJump()<cr>
+
 
 " Do syntax checking on file open
 let g:syntastic_check_on_open=1
@@ -239,6 +244,14 @@ endfunc
 
 " Movement in insert mode
 inoremap <C-o> <C-O>o
-inoremap <C-l> <C-O>l
 inoremap <C-a> <C-O>0
 inoremap <C-e> <C-O>$
+
+" Rebind ultisnips to something never used. We use CleverTab :)
+let g:UltiSnipsExpandTrigger="<f12>"
+let g:UltiSnipsJumpForwardTrigger="<f12>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+
+" Put all my useful ultisnips globals in here
+py import sys, os; sys.path.append(os.environ['HOME'] + '/.vim/UltiSnips/mods')

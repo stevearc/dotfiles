@@ -1,0 +1,37 @@
+snippet cb "Code block" !b
+.. code-block:: python
+
+    $0
+endsnippet
+
+snippet :cl "Class reference" !
+:class:\`~$1\`
+endsnippet
+
+snippet :meth "Method reference" !
+:meth:\`~$1\`
+endsnippet
+
+snippet :mod "Module reference" !
+:mod:\`~$1\`
+endsnippet
+
+snippet :at "Attribute reference" !
+:attr:\`~$1\`
+endsnippet
+
+snippet link "Internal link" !
+:ref:\`${1:display text} <${2:mytag}>`
+endsnippet
+
+snippet elink "External link" !
+\`${1:display text} <${2:http://example.com}>`_
+endsnippet
+
+snippet tag "Tag reference" !
+.. _$1:
+
+$0
+endsnippet
+
+# vim:ft=snippets:

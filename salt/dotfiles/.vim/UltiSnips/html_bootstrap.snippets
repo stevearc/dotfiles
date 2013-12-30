@@ -1,0 +1,104 @@
+global !p
+from html_util import *
+endglobal
+
+snippet row "Row" !b
+<div class="row">
+	$1
+</div>
+endsnippet
+
+
+snippet 'col (((xs|sm|md|lg)\d+(,\d+)?\s*){1,4})' "Column" !r
+<div class="`!p snip.rv = gen_column_class(match.group(1))`">
+	$1
+</div>
+endsnippet
+
+snippet abtn "Button" !
+<a ${1:href="${2:#}"} class="btn${3: btn-default}">$5</a>
+endsnippet
+
+snippet ico "Icon" !
+<i class="fa fa-$1"></i>
+endsnippet
+
+snippet form "Form" !b
+<form role="form">
+	$1
+</form>
+
+endsnippet
+
+snippet iform "Inline form" !b
+<form class="form-inline" role="form">
+	$1
+</form>
+
+endsnippet
+
+snippet formg "Form group" !b
+<div class="form-group">
+  <label${1: class="sr-only"}>${2:Email}</label>
+  <input type="${3:email}" class="form-control" placeholder="${4:$2}">
+</div>
+
+endsnippet
+
+snippet hform "Horizontal form" !b
+<form class="form-horizontal" role="form">
+	$1
+</form>
+
+endsnippet
+
+snippet hformg "Horizontal Form group" !b
+<div class="form-group">
+  <label class="${1:col-sm-2} control-label">${2:Email}</label>
+  <div class="${3:col-sm-10}">
+    <input type="${4:email}" class="form-control" placeholder="${5:Email}">
+  </div>
+</div>
+
+endsnippet
+
+snippet well "well" !b
+<div class="well">
+	$1
+</div>
+
+endsnippet
+
+snippet wells "well-small" !b
+<div class="well well-small">
+	$1
+</div>
+
+endsnippet
+
+snippet welll "well-large" !b
+<div class="well well-large">
+	$1
+</div>
+
+endsnippet
+
+snippet table "<table>" !b
+<table class="table ${1:table-striped}${2: table-bordered}${3: table-hover}">
+	<thead>
+		<tr>
+			$4
+		</tr>
+	</thead>
+	<tbody>
+		$5
+	</tbody>
+</table>
+
+endsnippet
+
+snippet img "<img>" !b
+<img class="img-responsive${1: img-rounded}" alt="$2" src="$3">
+endsnippet
+
+# vim:ft=snippets:
