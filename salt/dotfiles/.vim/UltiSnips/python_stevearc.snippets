@@ -106,14 +106,16 @@ ${1:exc} : ${2:Exception}
 endsnippet
 
 snippet " "Inline docstring" !b
-""" $0 """
+""" $1 """
+
 endsnippet
 
 snippet "" "Multiline docstring" !b
 """
-$0
+$1
 
 """
+
 endsnippet
 
 snippet def "Function definition" !b
@@ -141,12 +143,10 @@ endsnippet
 
 snippet ae "Assert equal" b!
 self.assertEqual($1, $2)
-$0
 endsnippet
 
 snippet aae "Assert almost equal" b!
 self.assertAlmostEqual($1, $2)
-$0
 endsnippet
 
 snippet ar "Assert raises" b!
