@@ -1,5 +1,11 @@
-snippet cb "Code block" !b
+snippet cb "Code block - python" !b
 .. code-block:: python
+
+    $0
+endsnippet
+
+snippet 'cb-(\w+)' "Code block" !br
+.. code-block:: `!p snip.rv = match.group(1) `
 
     $0
 endsnippet
