@@ -87,4 +87,16 @@ snippet navbar "Navbar" !b
 </div>
 endsnippet
 
+snippet spinload "Spinner while loading" !b
+<div ng-switch on="!!$1">
+	<div ng-switch-when="false" class="text-center">
+		<i class="fa fa-spinner fa-spin fa-4x"></i>
+	</div>
+	<div ng-switch-default>
+		$2
+	</div>
+</div>
+endsnippet
+
+
 # vim:ft=snippets:

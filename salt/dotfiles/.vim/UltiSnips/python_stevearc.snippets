@@ -154,6 +154,10 @@ with self.assertRaises(${1:Exception}):
     $0
 endsnippet
 
+snippet aie "Assert items equal" !b
+self.assertItemsEqual($1, $2)
+endsnippet
+
 snippet T_ "Unittest class" b!
 class Test${1:Class}(${2:unittest.TestCase}):
 
