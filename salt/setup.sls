@@ -74,7 +74,7 @@
       - libatlas-base-dev
       # Misc
       - desktopnova
-      - flashplugin-nonfree
+      - flashplugin-installer
       - google-chrome-stable
       - gparted
       - mplayer
@@ -120,6 +120,7 @@
     - dir_mode: {{ data.get('dir_mode', '0755') }}
     - user: {{ grains.user }}
     - group: {{ grains.user }}
+    - exclude_pat: "*.git"
 {% endfor %}
 {% for filename in ('run-command-on-git-revisions',) %}
 .dotfile-{{ filename }}:
