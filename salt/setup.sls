@@ -1,6 +1,14 @@
 #!stateconf
+{% set dotfiles = ('.bashrc', '.gitconfig', '.githelpers', '.pylintrc', '.tmux.conf', '.vimrc') %}
+{% set dotdirs = {
+  '.vim': {},
+  '.gconf': {'file_mode': '0600', 'dir_mode': '0700'},
+} %}
+{% set scripts = ('run-command-on-git-revisions',) %}
+{% set boxed_repos = ('stevearc/pyramid_duh', 'mathcamp/devbox', 'mathcamp/dql', 'mathcamp/flywheel', 'mathcamp/pypicloud') %}
+{% set repos = ('mathcamp/aws-formula', 'stevearc/ozzy') %}
 
-# Repos
+# Ubuntu repos
 .core-pkgs:
   pkg.installed:
     - pkgs:
@@ -97,7 +105,7 @@
       - liboverlay-scrollbar3-0.2-0
 
 # Install dotfiles
-{% for filename in ('.bashrc', '.gitconfig', '.githelpers', '.pylintrc', '.tmux.conf', '.vimrc') %}
+{% for filename in dotfiles %}
 .dotfile-{{ filename }}:
   file.managed:
     - name: {{ grains.home }}/{{ filename }}
@@ -106,11 +114,7 @@
     - user: {{ grains.user }}
     - group: {{ grains.user }}
 {% endfor %}
-{%- set dirs = {'.vim': {},
-                '.gconf': {'file_mode': '0600', 'dir_mode': '0700'},
-               }
--%}
-{% for filename, data in dirs.iteritems() %}
+{% for filename, data in dotdirs.iteritems() %}
 .dotfile-{{ filename }}:
   file.recurse:
     - name: {{ grains.home }}/{{ filename }}
@@ -122,11 +126,11 @@
     - group: {{ grains.user }}
     - exclude_pat: "*.git"
 {% endfor %}
-{% for filename in ('run-command-on-git-revisions',) %}
-.dotfile-{{ filename }}:
+{% for filename in scripts %}
+.script-{{ filename }}:
   file.managed:
     - name: /usr/bin/{{ filename }}
-    - source: salt://dotfiles/{{ filename }}
+    - source: salt://scripts/{{ filename }}
     - mode: '0755'
 {% endfor %}
 
@@ -137,3 +141,38 @@
     - cwd: {{ grains.home }}/.vim/bundle/command-t/ruby/command-t
     - watch:
       - file: .dotfile-.vim
+
+# Clone git repos into workspace
+.workspace:
+  file.directory:
+    - name: {{ grains.home }}/ws
+    - user: {{ grains.user }}
+    - group: {{ grains.user }}
+    - recurse:
+      - user
+      - group
+
+.unbox-download:
+  cmd.run:
+    - name: 'wget https://raw.github.com/mathcamp/devbox/master/devbox/unbox.py'
+    - unless: test -e unbox.py
+    - cwd: {{ grains.home }}/ws
+    - user: {{ grains.user }}
+
+{% for repo in boxed_repos %}
+.unbox-{{ repo }}:
+  cmd.run:
+    - name: python unbox.py git@github.com:{{ repo }}
+    - unless: test -e {{ repo.split('/')[-1] }}
+    - cwd: {{ grains.home }}/ws
+    - user: {{ grains.user }}
+{% endfor %}
+
+{% for repo in repos %}
+.clone-{{ repo }}:
+  cmd.run:
+    - name: git clone git@github.com:{{ repo }}
+    - unless: test -e {{ repo.split('/')[-1] }}
+    - cwd: {{ grains.home }}/ws
+    - user: {{ grains.user }}
+{% endfor %}
