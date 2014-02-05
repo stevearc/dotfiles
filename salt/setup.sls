@@ -18,13 +18,23 @@
 .chrome-ppa:
   cmd.run:
     - name: wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-    - unless: test -f /etc/apt/sources.list.d/google.list
+    - unless: test -f /etc/apt/sources.list.d/google-chrome.list
   file.append:
-    - name: /etc/apt/sources.list.d/google.list
+    - name: /etc/apt/sources.list.d/google-chrome.list
     - text: deb http://dl.google.com/linux/chrome/deb/ stable main
     - makedirs: True
     - require:
       - cmd: .chrome-ppa
+
+.talkplugin-ppa:
+  file.append:
+    - name: /etc/apt/sources.list.d/google-talkplugin.list
+    - text: deb http://dl.google.com/linux/talkplugin/deb/ stable main
+
+.musicmanager-ppa:
+  file.append:
+    - name: /etc/apt/sources.list.d/google-musicmanager.list
+    - text: deb http://dl.google.com/linux/musicmanager/deb/ stable main
 
 .dropbox-ppa:
   cmd.run:
@@ -36,6 +46,17 @@
     - makedirs: True
     - require:
       - cmd: .dropbox-ppa
+
+.docker-ppa:
+  cmd.run:
+    - name: apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9
+    - unless: test -f /etc/apt/sources.list.d/docker.list
+  file.append:
+    - name: /etc/apt/sources.list.d/docker.list
+    - text: deb http://get.docker.io/ubuntu docker main
+    - makedirs: True
+    - require:
+      - cmd: .docker-ppa
 
 .pithos-ppa:
   cmd.run:
@@ -84,10 +105,13 @@
       - desktopnova
       - flashplugin-installer
       - google-chrome-stable
+      - google-talkplugin
+      - google-musicmanager-beta
       - gparted
       - mplayer
       - pithos
       - vlc
+      - lxc-docker
   pip.installed:
     - names:
       - virtualenv
