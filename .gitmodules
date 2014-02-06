@@ -1,24 +1,24 @@
-[submodule "salt/dotfiles/.vim/bundle/command-t"]
-	path = salt/dotfiles/.vim/bundle/command-t
+[submodule "roles/common/files/.vim/bundle/command-t"]
+	path = roles/common/files/.vim/bundle/command-t
 	url = https://github.com/wincent/Command-T.git
-[submodule "salt/dotfiles/.vim/bundle/python-mode"]
-	path = salt/dotfiles/.vim/bundle/python-mode
+[submodule "roles/common/files/.vim/bundle/python-mode"]
+	path = roles/common/files/.vim/bundle/python-mode
 	url = https://github.com/klen/python-mode.git
-[submodule "salt/dotfiles/.vim/bundle/syntastic"]
-	path = salt/dotfiles/.vim/bundle/syntastic
+[submodule "roles/common/files/.vim/bundle/syntastic"]
+	path = roles/common/files/.vim/bundle/syntastic
 	url = https://github.com/scrooloose/syntastic.git
-[submodule "salt/dotfiles/.vim/bundle/vim-colors-solarized"]
-	path = salt/dotfiles/.vim/bundle/vim-colors-solarized
+[submodule "roles/common/files/.vim/bundle/vim-colors-solarized"]
+	path = roles/common/files/.vim/bundle/vim-colors-solarized
 	url = https://github.com/altercation/vim-colors-solarized.git
-[submodule "salt/dotfiles/.vim/bundle/vim-fugitive"]
-	path = salt/dotfiles/.vim/bundle/vim-fugitive
+[submodule "roles/common/files/.vim/bundle/vim-fugitive"]
+	path = roles/common/files/.vim/bundle/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive.git
-[submodule "salt/dotfiles/.vim/bundle/ultisnips"]
-	path = salt/dotfiles/.vim/bundle/ultisnips
-	url = git@github.com:SirVer/ultisnips.git
-[submodule "salt/dotfiles/.vim/bundle/vim-commentary"]
-	path = salt/dotfiles/.vim/bundle/vim-commentary
-	url = git@github.com:tpope/vim-commentary.git
-[submodule "salt/dotfiles/.vim/bundle/vim-repeat"]
-	path = salt/dotfiles/.vim/bundle/vim-repeat
-	url = git@github.com:tpope/vim-repeat.git
+[submodule "roles/common/files/.vim/bundle/ultisnips"]
+	path = roles/common/files/.vim/bundle/ultisnips
+	url = https://github.com/SirVer/ultisnips.git
+[submodule "roles/common/files/.vim/bundle/vim-commentary"]
+	path = roles/common/files/.vim/bundle/vim-commentary
+	url = https://github.com/tpope/vim-commentary.git
+[submodule "roles/common/files/.vim/bundle/vim-repeat"]
+	path = roles/common/files/.vim/bundle/vim-repeat
+	url = https://github.com/tpope/vim-repeat.git

@@ -1,0 +1,12 @@
+---
+boxed_repos:
+  - stevearc/pyramid_duh
+  - mathcamp/devbox
+  - mathcamp/dql
+  - mathcamp/flywheel
+  - mathcamp/pypicloud
+repos:
+  - mathcamp/aws-formula
+  - stevearc/ozzy
+dotfiles:
+  - .gconf

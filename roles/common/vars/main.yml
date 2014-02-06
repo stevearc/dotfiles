@@ -1,0 +1,12 @@
+---
+dotfiles:
+  - .bashrc
+  - .gitconfig
+  - .githelpers
+  - .pylintrc
+  - .tmux.conf
+  - .vimrc
+dotdirs:
+  - .vim
+scripts:
+  - run-command-on-git-revisions

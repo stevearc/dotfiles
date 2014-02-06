@@ -1,0 +1,90 @@
+---
+
+- name: Install common packages
+  apt: name={{ item }} state=present
+  sudo: true
+  with_items:
+    - wget
+    - python-software-properties
+
+- name: Download Google PPA key
+  sudo: true
+  apt_key: url=https://dl-ssl.google.com/linux/linux_signing_key.pub
+
+- name: Add Google Chrome PPA
+  sudo: true
+  apt_repository: repo='deb http://dl.google.com/linux/chrome/deb/ stable main' update_cache=no
+
+- name: Add Google Talk plugin PPA
+  sudo: true
+  apt_repository: repo='deb http://dl.google.com/linux/talkplugin/deb/ stable main' update_cache=no
+
+- name: Add Google Music Manager PPA
+  sudo: true
+  apt_repository: repo='deb http://dl.google.com/linux/musicmanager/deb/ stable main' update_cache=no
+
+- name: Add Pithos PPA
+  sudo: true
+  command: add-apt-repository -y ppa:kevin-mehall/pithos-daily
+            creates=/etc/apt/sources.list.d/kevin-mehall-pithos-daily-precise.list
+  sudo: yes
+
+- name: Download Dropbox PPA key
+  sudo: true
+  apt_key: url=http://pgp.mit.edu id=5044912E
+
+- name: Add Dropbox PPA
+  sudo: true
+  apt_repository: repo='deb http://linux.dropbox.com/ubuntu/ raring main' update_cache=yes
+
+- name: Install common packages
+  apt: name={{ item }} state=present
+  sudo: true
+  with_items:
+    # Dev tools
+    - ffmpeg
+    - vim-gnome
+    # Desktop
+    - gnome
+    - gnome-do
+    - gthumb
+    # Misc
+    - desktopnova
+    - flashplugin-installer
+    - google-chrome-stable
+    - google-talkplugin
+    - google-musicmanager-beta
+    - gparted
+    - pithos
+    - vlc
+
+- name: Get rid of the shitty scrollbars
+  apt: name={{ item }} state=absent
+  sudo: true
+  with_items:
+    - overlay-scrollbar
+    - liboverlay-scrollbar-0.2-0
+    - liboverlay-scrollbar3-0.2-0
+
+- name: Copy over dotfiles
+  copy: src={{ item }} dest={{ ansible_env.HOME }}/{{ item }}
+  with_items: dotfiles
+
+- name: Create workspace
+  file: state=directory path={{ ansible_env.HOME }}/ws
+
+- name: download unbox.py
+  command: wget https://raw.github.com/mathcamp/devbox/master/devbox/unbox.py
+    creates=unbox.py chdir={{ ansible_env.HOME }}/ws
+
+- name: Unbox repos
+  command: python unbox.py git@github.com:{{ item }}
+    creates={{ item.split('/')[-1] }}
+    chdir={{ ansible_env.HOME }}/ws
+  with_items: boxed_repos
+
+- name: Clone repos
+  command: git clone git@github.com:{{ item }}
+    creates={{ item.split('/')[-1] }}
+    chdir={{ ansible_env.HOME }}/ws
+  with_items: repos

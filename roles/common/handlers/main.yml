@@ -1,0 +1,4 @@
+---
+- name: compile command-t
+  shell: ruby extconf.rb && make
+    chdir={{ ansible_env.HOME }}/.vim/bundle/command-t/ruby/command-t
