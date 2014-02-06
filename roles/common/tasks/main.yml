@@ -17,16 +17,17 @@
   apt: name={{ item }} state=present
   sudo: true
   with_items:
-    - curl
     - ack-grep
+    - coffeescript
+    - curl
     - git-all
-    - python-pip
     - htop
     - ipython
     - openjdk-7-jre-headless
     - openssh-client
     - openssh-server
     - python-dev
+    - python-pip
     - ruby
     - rubygems
     - tmux
@@ -64,8 +65,10 @@
     dest={{ ansible_env.HOME }}
     delete=yes
   with_items: dotdirs
-  notify: compile command-t
 
+- name: compile command-t
+  shell: ruby extconf.rb && make
+    chdir={{ ansible_env.HOME }}/.vim/bundle/command-t/ruby/command-t
 
 - name: Copy over scripts
   copy: src={{ item }} dest=/usr/local/bin/{{ item }}
