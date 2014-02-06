@@ -1,7 +1,3 @@
-" FIXME: This was causing errors somehow
-" Run the code checker when entering a new buffer
-"au BufReadPost *.py :silent PyLint
-
 function! RunTests(filename)
     " Write the file and run tests for the given filename
     :w
@@ -35,20 +31,18 @@ endfunction
 map <leader>dt :call RunTestFile()<CR>
 
 " python-mode options
-let g:pymode_lint_checker = "pylint"
+let g:pymode_lint_checkers = ['pylint', 'pep8']
 " FIXME: This was causing errors because pylint checks aren't threadsafe
-" let g:pymode_lint_onfly = 1
+" let g:pymode_lint_on_fly = 1
 let g:pymode_lint_cwindow = 0
 let g:pymode_run = 0
+let g:pymode_lint_sort = ['E', 'W', 'C', 'I', 'R']
+let g:pymode_rope_organize_imports_bind = '<leader>o'
+let g:pymode_rope_goto_definition_bind = 'gd'
+let g:pymode_rope_goto_definition_cmd = 'e'
 let ropevim_extended_complete=1
 
-" python-mode shortcuts
-map <leader>R :call RopeRename()<CR>
-map <leader>o :call RopeOrganizeImports()<CR>
-map <leader>g :call RopeFindOccurrences()<CR>
-map <leader>d :call RopeShowDoc()<CR>
-map <leader>a :PyLintAuto<CR>
-map gd :call RopeGotoDefinition()<CR>
+map <leader>a :PymodeLintAuto<CR> zz
 
 " Abbreviations
 iabbr inn is not None
