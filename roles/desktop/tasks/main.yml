@@ -27,7 +27,6 @@
   sudo: true
   command: add-apt-repository -y ppa:kevin-mehall/pithos-daily
             creates=/etc/apt/sources.list.d/kevin-mehall-pithos-daily-precise.list
-  sudo: yes
 
 - name: Download Dropbox PPA key
   sudo: true

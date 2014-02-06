@@ -5,6 +5,11 @@
   with_items:
     - python-pycurl
 
+- name: Add Node PPA
+  command: add-apt-repository -y ppa:chris-lea/node.js
+            creates=/etc/apt/sources.list.d/chris-lea-node_js-precise.list
+  sudo: yes
+
 - name: Download Docker PPA key
   apt_key: url=https://get.docker.io/gpg
   sudo: true
@@ -18,11 +23,11 @@
   sudo: true
   with_items:
     - ack-grep
-    - coffeescript
     - curl
     - git-all
     - htop
     - ipython
+    - nodejs
     - openjdk-7-jre-headless
     - openssh-client
     - openssh-server
@@ -49,6 +54,12 @@
   with_items:
     - virtualenv
     - autoenv
+
+- name: Install node packages
+  npm: name={{ item }} global=yes
+  sudo: true
+  with_items:
+    - coffee-script
 
 - name: Install ruby packages
   gem: name={{ item }} state=present
