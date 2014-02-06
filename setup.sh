@@ -2,7 +2,9 @@
 
 main() {
     git submodule update --init --recursive > /dev/null
-    sudo apt-get install -y sshpass
+    if [ ! `which sshpass` ]; then
+        sudo apt-get install -y sshpass
+    fi
     if [ ! `which pip` ]; then
         sudo easy_install pip
     fi
