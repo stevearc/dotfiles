@@ -111,6 +111,7 @@
       - mplayer
       - pithos
       - vlc
+      - tree
       - lxc-docker
   pip.installed:
     - names:
