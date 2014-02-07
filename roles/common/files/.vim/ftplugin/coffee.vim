@@ -1,5 +1,5 @@
-autocmd BufWritePost * silent make!
-autocmd QuickFixCmdPost * nested cwindow | redraw!
+autocmd BufWritePost *.coffee silent make!
+autocmd QuickFixCmdPost *.coffee nested cwindow | redraw!
 setl foldmethod=indent
 setl nofoldenable
 

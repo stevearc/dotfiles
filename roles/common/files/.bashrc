@@ -57,6 +57,7 @@ alias pc='ps wwaux | grep'
 alias ack='ack-grep'
 alias ivm='vim'
 alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf'
+alias tmux='tmux -2'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
