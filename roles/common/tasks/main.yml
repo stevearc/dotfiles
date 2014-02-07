@@ -4,6 +4,8 @@
   sudo: true
   with_items:
     - python-pycurl
+    - python-software-properties
+    - wget
 
 - name: Add Node PPA
   command: add-apt-repository -y ppa:chris-lea/node.js

@@ -1,12 +1,5 @@
 ---
 
-- name: Install common packages
-  apt: name={{ item }} state=present
-  sudo: true
-  with_items:
-    - wget
-    - python-software-properties
-
 - name: Download Google PPA key
   sudo: true
   apt_key: url=https://dl-ssl.google.com/linux/linux_signing_key.pub
