@@ -1,3 +1,6 @@
+" Run the code checker when entering a new buffer
+au BufReadPost *.py :silent PymodeLint
+
 function! RunTests(filename)
     " Write the file and run tests for the given filename
     :w
@@ -31,17 +34,17 @@ endfunction
 map <leader>dt :call RunTestFile()<CR>
 
 " python-mode options
-let g:pymode_lint_checkers = ['pylint', 'pep8']
-" FIXME: This was causing errors because pylint checks aren't threadsafe
-" let g:pymode_lint_on_fly = 1
+let g:pymode_lint_checkers = ['pylint', 'pep8', 'pep257']
+let g:pymode_lint_on_fly = 0
 let g:pymode_lint_cwindow = 0
 let g:pymode_run = 0
 let g:pymode_lint_sort = ['E', 'W', 'C', 'I', 'R']
 let g:pymode_rope_organize_imports_bind = '<leader>o'
 let g:pymode_rope_goto_definition_bind = 'gd'
 let g:pymode_rope_goto_definition_cmd = 'e'
-let ropevim_extended_complete=1
+let g:pymode_rope_complete_on_dot = 0
 
+" python-mode shortcuts
 map <leader>a :PymodeLintAuto<CR> zz
 
 " Abbreviations
