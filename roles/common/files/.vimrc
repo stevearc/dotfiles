@@ -45,6 +45,7 @@ au BufRead,BufNewFile *.sls set ft=yaml
 au BufRead,BufNewFile *.jinja2 set ft=jinja2
 au BufRead,BufNewFile *.snippets set ft=snippets
 au BufRead,BufNewFile *.js set ft=javascript
+au BufRead,BufNewFile *.md set ft=markdown
 " Use 2-space tabs for certain file types
 au FileType jinja2 setlocal shiftwidth=2 tabstop=2 softtabstop=2
 au FileType yaml setlocal shiftwidth=2 tabstop=2 softtabstop=2
