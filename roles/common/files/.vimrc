@@ -53,6 +53,7 @@ au FileType html setlocal shiftwidth=2 tabstop=2 softtabstop=2
 au FileType json setlocal shiftwidth=2 tabstop=2 softtabstop=2
 au FileType javascript setlocal shiftwidth=2 tabstop=2 softtabstop=2
 au FileType coffee setlocal shiftwidth=2 tabstop=2 softtabstop=2
+au FileType css setlocal shiftwidth=2 tabstop=2 softtabstop=2
 
 autocmd BufWritePost *.coffee silent make!
 
