@@ -1,5 +1,5 @@
 " Run the code checker when entering a new buffer
-au BufReadPost *.py :silent PymodeLint
+au BufReadPost <buffer> :silent PymodeLint
 
 function! RunTests(filename)
     " Write the file and run tests for the given filename
@@ -31,7 +31,7 @@ function! RunTestFile(...)
 endfunction
 
 " Run test file
-map <leader>dt :call RunTestFile()<CR>
+map <buffer> <leader>dt :call RunTestFile()<CR>
 
 " python-mode options
 let g:pymode_lint_checkers = ['pylint', 'pep8', 'pep257']
@@ -45,8 +45,8 @@ let g:pymode_rope_goto_definition_cmd = 'e'
 let g:pymode_rope_complete_on_dot = 0
 
 " python-mode shortcuts
-map <leader>a :PymodeLintAuto<CR> zz
+map <buffer> <leader>a :PymodeLintAuto<CR> zz
 
 " Abbreviations
-iabbr inn is not None
-iabbr ipmort import
+iabbr <buffer> inn is not None
+iabbr <buffer> ipmort import
