@@ -34,7 +34,7 @@ endfunction
 map <buffer> <leader>dt :call RunTestFile()<CR>
 
 " python-mode options
-let g:pymode_lint_checkers = ['pylint', 'pep8', 'pep257']
+let g:pymode_lint_checkers = ['pylint', 'pep8']
 let g:pymode_lint_on_fly = 0
 let g:pymode_lint_cwindow = 0
 let g:pymode_run = 0
@@ -50,3 +50,4 @@ map <buffer> <leader>a :PymodeLintAuto<CR> zz
 " Abbreviations
 iabbr <buffer> inn is not None
 iabbr <buffer> ipmort import
+iabbr <buffer> improt import
