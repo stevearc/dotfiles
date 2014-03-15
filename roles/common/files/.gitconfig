@@ -35,7 +35,8 @@
 	su = submodule update --init --recursive
 	rp = rev-parse --verify
 	am = commit --amend
-    delmerged = !git branch --merged | grep -v master | xargs git branch -d
+    delmerged = !git branch --merged | grep -v master | grep -v develop | xargs git branch -d
+    ss = show --stat
 
 [merge]
     tool = vimdiff
