@@ -10,7 +10,7 @@ ${1:app}.controller('${2:MyCtrl}', [`!p snip.rv = format_deps(t[3])`($3) ->
 endsnippet
 
 # doesn't expand when there is a word in front
-snippet /(^|(?<=\W))\./ "$scope." r
+snippet s. "$scope." !
 \$scope.
 endsnippet
 
@@ -45,6 +45,16 @@ snippet '\.err' ".error()" r
 .error((data, status, headers, config) ->
 	$1
 )
+endsnippet
+
+snippet # "Doc" !b
+### $1 ###
+endsnippet
+
+snippet ## "Doc" !b
+###
+$1
+###
 endsnippet
 
 # vim:ft=snippets:
