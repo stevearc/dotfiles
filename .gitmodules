@@ -25,3 +25,6 @@
 [submodule "roles/common/files/.vim/bundle/vim-coffee-script"]
 	path = roles/common/files/.vim/bundle/vim-coffee-script
 	url = https://github.com/kchmck/vim-coffee-script.git
+[submodule "roles/common/files.vim/bundle/vim-less"]
+	path = roles/common/files.vim/bundle/vim-less
+	url = https://github.com/groenewege/vim-less.git
