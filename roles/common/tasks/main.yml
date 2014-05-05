@@ -25,6 +25,7 @@
   sudo: true
   with_items:
     - ack-grep
+    - autossh
     - curl
     - git-all
     - htop
