@@ -54,6 +54,7 @@ au FileType json setlocal shiftwidth=2 tabstop=2 softtabstop=2
 au FileType javascript setlocal shiftwidth=2 tabstop=2 softtabstop=2
 au FileType coffee setlocal shiftwidth=2 tabstop=2 softtabstop=2
 au FileType css setlocal shiftwidth=2 tabstop=2 softtabstop=2
+au FileType less setlocal shiftwidth=2 tabstop=2 softtabstop=2
 
 " When a bracket is inserted, briefly jump to the matching one
 set showmatch

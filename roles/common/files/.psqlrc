@@ -1,0 +1,45 @@
+\set ON_ERROR_ROLLBACK interactive
+
+-- set all null fields to NULL
+\pset null 'NULL'
+\encoding unicode
+
+\set PROMPT1 '(%n@%M:%>) [%/] > '
+\set PROMPT2 ''
+
+-- \x auto
+
+-- always show how long a query takes
+\timing
+
+\echo 'Administrative queries:\n'
+\echo '\t:show_slow_queries\t-- Show performance of queries'
+\echo '\t:show_cache_hits\t-- Show cache hit percentage'
+\echo '\t:show_index_use\t\t-- Show index use percentage'
+\echo '\t:show_index_cache_hits\t-- Show % time index queries hit cache'
+\echo '\t:conninfo\t\t-- Server connections'
+\echo '\t:activity\t\t-- Server activity'
+\echo '\t:locks\t\t\t-- Lock info'
+\echo '\t:waits\t\t\t-- Waiting queries'
+\echo '\t:dbsize\t\t\t-- Database Size'
+\echo '\t:tablesize\t\t-- Tables Size'
+
+\set show_slow_queries 'SELECT (total_time / 1000 / 60) as total_minutes, (total_time/calls) as average_time, query FROM pg_stat_statements ORDER BY 1 DESC LIMIT 100;'
+
+\set show_cache_hits 'SELECT sum(heap_blks_read) as heap_read, sum(heap_blks_hit)  as heap_hit, sum(heap_blks_hit) / (sum(heap_blks_hit) + sum(heap_blks_read)) as ratio FROM pg_statio_user_tables;' 
+
+\set show_index_use 'SELECT relname, 100 * idx_scan / (seq_scan + idx_scan) percent_of_times_index_used, n_live_tup rows_in_table FROM pg_stat_user_tables WHERE seq_scan + idx_scan > 0 ORDER BY n_live_tup DESC;'
+
+\set show_index_cache_hits 'SELECT sum(idx_blks_read) as idx_read, sum(idx_blks_hit)  as idx_hit, (sum(idx_blks_hit) - sum(idx_blks_read)) / sum(idx_blks_hit) as ratio FROM pg_statio_user_indexes;'
+
+\set locks  'SELECT bl.pid AS blocked_pid, a.usename AS blocked_user, kl.pid AS blocking_pid, ka.usename AS blocking_user, a.query AS blocked_statement FROM pg_catalog.pg_locks bl JOIN pg_catalog.pg_stat_activity a ON bl.pid = a.pid JOIN pg_catalog.pg_locks kl JOIN pg_catalog.pg_stat_activity ka ON kl.pid = ka.pid ON bl.transactionid = kl.transactionid AND bl.pid != kl.pid WHERE NOT bl.granted;'
+
+\set conninfo 'select usename, count(*) from pg_stat_activity group by usename;'
+
+\set activity 'select datname, pid, usename, application_name,client_addr, client_hostname, client_port, query, state from pg_stat_activity;'
+
+\set waits 'SELECT pg_stat_activity.pid, pg_stat_activity.query, pg_stat_activity.waiting, now() - pg_stat_activity.query_start AS \"totaltime\", pg_stat_activity.backend_start FROM pg_stat_activity WHERE pg_stat_activity.query !~ \'%IDLE%\'::text AND pg_stat_activity.waiting = true;'
+
+\set dbsize 'SELECT datname, pg_size_pretty(pg_database_size(datname)) db_size FROM pg_database ORDER BY db_size;'
+
+\set tablesize 'SELECT nspname || \'.\' || relname AS \"relation\", pg_size_pretty(pg_relation_size(C.oid)) AS "size" FROM pg_class C LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace) WHERE nspname NOT IN (\'pg_catalog\', \'information_schema\') ORDER BY pg_relation_size(C.oid) DESC LIMIT 40;'
