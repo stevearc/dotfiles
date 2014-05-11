@@ -59,9 +59,13 @@ alias ivm='vim'
 alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf'
 alias tm='tmux -2'
 ash() {
-    autossh -t "$@" 'tmux attach || tmux new'
+    autossh -t "$@" 'tmux -2 attach || tmux -2 new'
 }
 export ash
+sash() {
+    autossh -t "$@" 'sudo tmux -2 attach || sudo tmux -2 new'
+}
+export sash
 
 
 # Alias definitions.
