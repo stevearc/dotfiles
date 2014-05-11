@@ -63,6 +63,9 @@
   sudo: true
   with_items:
     - coffee-script
+    - uglify-js
+    - less
+    - clean-css
 
 - name: Install ruby packages
   gem: name={{ item }} state=present
