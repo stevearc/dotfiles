@@ -83,6 +83,8 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 fi
 
 # Environment variables
+export GOROOT=/usr/local/go
+export GOPATH=~/.go
 export GIT_EDITOR=vim
 export SVN_EDITOR=vim
 

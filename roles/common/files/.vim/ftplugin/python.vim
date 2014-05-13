@@ -31,7 +31,7 @@ function! RunTestFile(...)
 endfunction
 
 " Run test file
-map <buffer> <leader>dt :call RunTestFile()<CR>
+map <buffer> <leader>t :call RunTestFile()<CR>
 
 " python-mode options
 let g:pymode_lint_checkers = ['pylint', 'pep8']

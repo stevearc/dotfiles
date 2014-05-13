@@ -28,3 +28,6 @@
 [submodule "roles/common/files.vim/bundle/vim-less"]
 	path = roles/common/files.vim/bundle/vim-less
 	url = https://github.com/groenewege/vim-less.git
+[submodule "roles/common/files/.vim/bundle/vim-go"]
+	path = roles/common/files/.vim/bundle/vim-go
+	url = https://github.com/fatih/vim-go.git
