@@ -25,6 +25,7 @@ install-common-packages() {
         autossh \
         curl \
         git \
+        mercurial \
         htop \
         ipython \
         nodejs \
