@@ -1,33 +1,33 @@
-[submodule "roles/common/files/.vim/bundle/command-t"]
-	path = roles/common/files/.vim/bundle/command-t
+[submodule ".vim/bundle/command-t"]
+	path = .vim/bundle/command-t
 	url = https://github.com/wincent/Command-T.git
-[submodule "roles/common/files/.vim/bundle/python-mode"]
-	path = roles/common/files/.vim/bundle/python-mode
+[submodule ".vim/bundle/python-mode"]
+	path = .vim/bundle/python-mode
 	url = https://github.com/klen/python-mode.git
-[submodule "roles/common/files/.vim/bundle/syntastic"]
-	path = roles/common/files/.vim/bundle/syntastic
+[submodule ".vim/bundle/syntastic"]
+	path = .vim/bundle/syntastic
 	url = https://github.com/scrooloose/syntastic.git
-[submodule "roles/common/files/.vim/bundle/vim-colors-solarized"]
-	path = roles/common/files/.vim/bundle/vim-colors-solarized
+[submodule ".vim/bundle/vim-colors-solarized"]
+	path = .vim/bundle/vim-colors-solarized
 	url = https://github.com/altercation/vim-colors-solarized.git
-[submodule "roles/common/files/.vim/bundle/vim-fugitive"]
-	path = roles/common/files/.vim/bundle/vim-fugitive
+[submodule ".vim/bundle/vim-fugitive"]
+	path = .vim/bundle/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive.git
-[submodule "roles/common/files/.vim/bundle/ultisnips"]
-	path = roles/common/files/.vim/bundle/ultisnips
+[submodule ".vim/bundle/ultisnips"]
+	path = .vim/bundle/ultisnips
 	url = https://github.com/SirVer/ultisnips.git
-[submodule "roles/common/files/.vim/bundle/vim-commentary"]
-	path = roles/common/files/.vim/bundle/vim-commentary
+[submodule ".vim/bundle/vim-commentary"]
+	path = .vim/bundle/vim-commentary
 	url = https://github.com/tpope/vim-commentary.git
-[submodule "roles/common/files/.vim/bundle/vim-repeat"]
-	path = roles/common/files/.vim/bundle/vim-repeat
+[submodule ".vim/bundle/vim-repeat"]
+	path = .vim/bundle/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
-[submodule "roles/common/files/.vim/bundle/vim-coffee-script"]
-	path = roles/common/files/.vim/bundle/vim-coffee-script
+[submodule ".vim/bundle/vim-coffee-script"]
+	path = .vim/bundle/vim-coffee-script
 	url = https://github.com/kchmck/vim-coffee-script.git
-[submodule "roles/common/files.vim/bundle/vim-less"]
-	path = roles/common/files.vim/bundle/vim-less
+[submodule ".vim/bundle/vim-less"]
+	path = .vim/bundle/vim-less
 	url = https://github.com/groenewege/vim-less.git
-[submodule "roles/common/files/.vim/bundle/vim-go"]
-	path = roles/common/files/.vim/bundle/vim-go
+[submodule ".vim/bundle/vim-go"]
+	path = .vim/bundle/vim-go
 	url = https://github.com/fatih/vim-go.git
