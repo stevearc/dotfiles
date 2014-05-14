@@ -46,6 +46,7 @@ au BufRead,BufNewFile *.jinja2 set ft=jinja2
 au BufRead,BufNewFile *.snippets set ft=snippets
 au BufRead,BufNewFile *.js set ft=javascript
 au BufRead,BufNewFile *.md set ft=markdown
+au BufRead,BufNewFile *.go set ft=go
 " Use 2-space tabs for certain file types
 au FileType jinja2 setlocal shiftwidth=2 tabstop=2 softtabstop=2
 au FileType yaml setlocal shiftwidth=2 tabstop=2 softtabstop=2
@@ -138,6 +139,8 @@ function! SmartRun()
         exec ":!bash " . @%
     elseif match(expand("%"), '.rb$') != -1
         exec ":!ruby " . @%
+    elseif match(expand("%"), '.go$') != -1
+        GoRun
     end
 endfunction
 map <leader>e :call SmartRun()<cr>
@@ -221,13 +224,14 @@ aug END
 " Attempt to expand a snippet. If no snippet exists, either autocomplete or
 " insert a tab
 let g:ulti_expand_or_jump_res = 0 "default value, just set once
+let g:autocomplete_cmd = "\<C-P>"
 function! CleverTab()
-    call UltiSnips_ExpandSnippetOrJump()
+    call UltiSnips#ExpandSnippetOrJump()
     if g:ulti_expand_or_jump_res == 0
       if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
           return "\<Tab>"
       else
-          return "\<C-P>"
+          return g:autocomplete_cmd
       endif
     else
       return ''
