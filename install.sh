@@ -11,10 +11,13 @@ setup-install-progs() {
 }
 
 setup-repos() {
-    sudo add-apt-repository -y ppa:chris-lea/node.js
+    local list=$(ls /etc/apt/sources.list.d/chris-lea*)
+    if [ ! "$list" ]; then
+        sudo add-apt-repository -y ppa:chris-lea/node.js
+    fi
 
     # docker
-    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9
+    #sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9
 }
 
 install-common-packages() {
@@ -40,18 +43,22 @@ install-common-packages() {
         tree
         # lxc-docker
 
-    # TODO: install go
+    if [ ! -e /usr/local/go ]; then
+        pushd /tmp
+        local pkg="go1.2.2.linux-amd64.tar.gz"
+        if [ ! -e "$pkg" ]; then
+            wget https://storage.googleapis.com/golang/$pkg
+        fi
+        sudo tar -C /usr/local -xzf $pkg
+        rm -f $pkg
+        popd
+    fi
 
     sudo pip install -q virtualenv autoenv
 
     sudo npm install -g coffee-script uglify-js less clean-css
 
     sudo gem install -q mkrf
-}
-
-copy-dotfiles() {
-    local files="$1"
-    cp -r $files $HOME
 }
 
 setup-desktop-repos() {
@@ -124,8 +131,8 @@ main() {
         setup-repos
         sudo apt-get update -qq
         install-common-packages
-        copy-dotfiles "$DOTFILES"
-        # TODO: copy bin/
+        cp -r $DOTFILES $HOME
+        sudo cp bin/* /usr/local/bin/
 
         # Compile command-t
         pushd $HOME/.vim/bundle/command-t/ruby/command-t
@@ -141,7 +148,7 @@ main() {
     if [[ "$mode" == "desktop" ]] || [[ "$mode" == "full" ]]; then
         setup-desktop-repos
         install-desktop-packages
-        copy-dotfiles "$DESKTOP_DOTFILES"
+        cp -r $DESKTOP_DOTFILES $HOME
         un-unity
     fi
 }
