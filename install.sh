@@ -69,6 +69,7 @@ setup-desktop-repos() {
     sudo sh -c 'echo "deb http://dl.google.com/linux/musicmanager/deb/ stable main" >> /etc/apt/sources.list.d/google-music.list'
 
     sudo add-apt-repository -y ppa:kevin-mehall/pithos-daily
+    sudo add-apt-repository -y ppa:ubuntu-wine/ppa
 
     # dropbox
     sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5044912E
@@ -94,7 +95,8 @@ install-desktop-packages() {
     google-musicmanager-beta \
     gparted \
     pithos \
-    vlc
+    vlc \
+    wine1.6
 }
 
 un-unity() {
