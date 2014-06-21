@@ -23,6 +23,9 @@ set wildmenu
 set wildmode=full
 set wildignore+=*.png,*.jpg,*.jpeg,*.gif
 
+" Keep cursor in the vertical center of the editor
+set scrolloff=1000
+
 " Make searches case-sensitive only if they contain upper-case characters
 set ignorecase
 set smartcase
@@ -117,6 +120,19 @@ set whichwrap=h,l
 filetype plugin on
 filetype plugin indent on
 
+" Add bash shortcuts for command line
+:cnoremap <C-a>  <Home>
+:cnoremap <C-b>  <Left>
+:cnoremap <C-f>  <Right>
+:cnoremap <C-d>  <Delete>
+:cnoremap <M-b>  <S-Left>
+:cnoremap <M-f>  <S-Right>
+:cnoremap <M-d>  <S-right><Delete>
+:cnoremap <Esc>b <S-Left>
+:cnoremap <Esc>f <S-Right>
+:cnoremap <Esc>d <S-right><Delete>
+:cnoremap <C-g>  <C-c>
+
 " Function to rename the current file
 function! RenameFile()
     let old_name = expand('%')
@@ -169,9 +185,9 @@ map <leader>9 9gt
 nmap <silent> <C-N> :cn<CR>zv
 nmap <silent> <C-P> :cp<CR>zv
 
-" Scroll while keeping the cursor in place with <Ctrl> + j/k
-map <C-j> j<C-e>
-map <C-k> k<C-y>
+" j and k navigate line-wraps in a sane way
+nnoremap j gj
+nnoremap k gk
 
 " Remap q: to just go to commandline.  To open the commandline window, 
 " do <C-f> from the commandline
@@ -179,6 +195,9 @@ nnoremap q: :
 
 " Navigate tabs with <S-Tab>
 map <S-Tab> gt
+
+" Toggle paste mode with leader-o
+nmap <leader>o :set paste!<CR>:se paste?<CR>
 
 " Smart folding
 au BufEnter * if !exists('b:all_folded') | let b:all_folded = 1 | endif
@@ -266,3 +285,10 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 " Put all my useful ultisnips globals in here
 py import sys, os; sys.path.append(os.environ['HOME'] + '/.vim/UltiSnips/mods')
+
+" NERDTree
+" Auto-open nerdtree if vim opens up blank
+autocmd vimenter * if !argc() | NERDTree | endif
+
+" Toggle nerdtree
+:nmap <leader>w :NERDTreeToggle<CR>
