@@ -35,7 +35,7 @@ install-common-packages() {
         python-dev \
         python-pip \
         ruby \
-        rubygems \
+        ruby-dev \
         tmux \
         unzip \
         vim-nox \
@@ -55,6 +55,8 @@ install-common-packages() {
         popd
     fi
 
+    \curl -sSL https://get.rvm.io | bash -s stable --ruby
+
     sudo pip install -q virtualenv autoenv
 
     sudo npm install -g coffee-script uglify-js less clean-css
@@ -68,7 +70,7 @@ setup-desktop-repos() {
     sudo sh -c 'echo "deb http://dl.google.com/linux/talkplugin/deb/ stable main" >> /etc/apt/sources.list.d/google-talk.list'
     sudo sh -c 'echo "deb http://dl.google.com/linux/musicmanager/deb/ stable main" >> /etc/apt/sources.list.d/google-music.list'
 
-    sudo add-apt-repository -y ppa:kevin-mehall/pithos-daily
+    #sudo add-apt-repository -y ppa:kevin-mehall/pithos-daily
     sudo add-apt-repository -y ppa:ubuntu-wine/ppa
 
     # dropbox
@@ -80,23 +82,21 @@ setup-desktop-repos() {
 
 install-desktop-packages() {
   sudo apt-get install -q -y \
-    # Dev tools
-    ffmpeg \
     vim-gnome \
-    # Desktop
     gnome \
     gnome-do \
     gthumb \
-    # Misc
     desktopnova \
+    dropbox \
     flashplugin-installer \
     google-chrome-stable \
     google-talkplugin \
     google-musicmanager-beta \
     gparted \
-    pithos \
     vlc \
-    wine1.6
+    wine1.6 \
+    xbindkeys
+    # pithos
 }
 
 un-unity() {
