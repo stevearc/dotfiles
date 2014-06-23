@@ -16,7 +16,7 @@ set history=1000
 set path=**
 
 " When :find-ing, search for files with this suffix
-set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb,.html,.jinja2,.js
+set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb,.html,.jinja2,.js,.less,.css
 
 " Make tab completion for files/buffers act like bash
 set wildmenu
@@ -36,30 +36,6 @@ set ruler
 " Display incomplete commands
 set showcmd
 
-" Size of tabs
-set expandtab
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
-set autoindent
-set laststatus=2
-
-au BufRead,BufNewFile *.sls set ft=yaml
-au BufRead,BufNewFile *.jinja2 set ft=jinja2
-au BufRead,BufNewFile *.snippets set ft=snippets
-au BufRead,BufNewFile *.js set ft=javascript
-au BufRead,BufNewFile *.md set ft=markdown
-au BufRead,BufNewFile *.go set ft=go
-" Use 2-space tabs for certain file types
-au FileType jinja2 setlocal shiftwidth=2 tabstop=2 softtabstop=2
-au FileType yaml setlocal shiftwidth=2 tabstop=2 softtabstop=2
-au FileType html setlocal shiftwidth=2 tabstop=2 softtabstop=2
-au FileType json setlocal shiftwidth=2 tabstop=2 softtabstop=2
-au FileType javascript setlocal shiftwidth=2 tabstop=2 softtabstop=2
-au FileType coffee setlocal shiftwidth=2 tabstop=2 softtabstop=2
-au FileType css setlocal shiftwidth=2 tabstop=2 softtabstop=2
-au FileType less setlocal shiftwidth=2 tabstop=2 softtabstop=2
-
 " When a bracket is inserted, briefly jump to the matching one
 set showmatch
 
@@ -69,14 +45,45 @@ set incsearch
 " Highlight search matches
 set hls
 
-" Highlight the screen line of the cursor
-set cursorline
+" Auto-indent on line wrap
+set showbreak=--->
+
+" Highlight the cursor line only in the active window
+augroup CursorLine
+  au!
+  au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+  au WinLeave * setlocal nocursorline
+augroup END
 
 " Don't reopen buffers
 set switchbuf=useopen
 
 " Always show tab line
 set showtabline=2
+
+" Size of tabs
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set autoindent
+set laststatus=2
+
+" Detect filetypes
+au BufRead,BufNewFile *.sls set ft=yaml
+au BufRead,BufNewFile *.jinja2 set ft=jinja2
+au BufRead,BufNewFile *.snippets set ft=snippets
+au BufRead,BufNewFile *.js set ft=javascript
+au BufRead,BufNewFile *.md set ft=markdown
+au BufRead,BufNewFile *.go set ft=go
+
+" Use 2-space tabs for certain file types
+au FileType jinja2,yaml,html,json,javascript,coffee,css,less setlocal shiftwidth=2 tabstop=2 softtabstop=2
+" Trim trailing whitespace
+autocmd BufWrite *.js,*.coffee,*.css,*.less,*.py,*.rb,*.go if ! &bin | silent! %s/\s\+$//ge | endif
+
+" use the :help command for 'K' in .vim files
+autocmd FileType vim set keywordprg=":help"
 
 " SOLARIZED
 syntax enable
@@ -181,6 +188,29 @@ map <leader>7 7gt
 map <leader>8 8gt
 map <leader>9 9gt
 
+" Window size settings
+set winwidth=88 " minimum width of current window (includes gutter)
+set winheight=20 " minimal height of current window
+let g:wequality = 1
+function! ResizeWindows()
+    if( g:wequality == 1 )
+        exe ":normal \<C-w>="
+    endif
+endfunction
+function! ToggleWinEqual()
+    if( g:wequality == 0 )
+        let g:wequality = 1
+    else
+        let g:wequality = 0
+    endif
+endfunction
+augroup WinWidth
+  au!
+  " Keep window sizes roughly equal
+  au VimEnter,WinEnter,BufWinEnter * :call ResizeWindows()
+augroup END
+nmap <C-w>+ :call ToggleWinEqual()<CR>
+
 " Go to next/prev result with <Ctrl> + n/p
 nmap <silent> <C-N> :cn<CR>zv
 nmap <silent> <C-P> :cp<CR>zv
@@ -189,15 +219,20 @@ nmap <silent> <C-P> :cp<CR>zv
 nnoremap j gj
 nnoremap k gk
 
-" Remap q: to just go to commandline.  To open the commandline window, 
-" do <C-f> from the commandline
+" Remap q: to just go to commandline.  To open the commandline window,
+" do <C-r> from the commandline
+:set cedit=<C-r>
 nnoremap q: :
 
 " Navigate tabs with <S-Tab>
 map <S-Tab> gt
 
-" Toggle paste mode with leader-o
-nmap <leader>o :set paste!<CR>:se paste?<CR>
+" Enter paste mode with <leader>p
+nmap <leader>p :set paste<CR>a
+nmap <leader>P :set paste<CR>i
+vmap <leader>p s<C-o>:set paste<CR>
+" Exit paste mode when leaving insert mode
+au InsertLeave * set nopaste
 
 " Smart folding
 au BufEnter * if !exists('b:all_folded') | let b:all_folded = 1 | endif
@@ -210,11 +245,10 @@ function! ToggleFold()
         let b:all_folded = 0
     endif
 endfunction
-map f za
-map <C-f> zA
-map F :call ToggleFold()<CR>
+nmap <Space> za
+nmap <leader><Space> :call ToggleFold()<CR>
 
-" Not-perfect method for toggling the quickfix window
+" Quickly toggle the quickfix window
 au BufEnter * if !exists('b:showing_quickfix') | let b:showing_quickfix = 0 | endif
 function! ToggleQuickfix()
     if( b:showing_quickfix == 0 )
@@ -227,12 +261,13 @@ function! ToggleQuickfix()
 endfunction
 map <leader>q :call ToggleQuickfix()<CR>
 
-" Auto-indent on line wrap
-set showbreak=--->
+function! UpdateQuickfixStatus()
+    let b:showing_quickfix = len(getqflist())
+endfunction
+au QuickfixCmdPost * call UpdateQuickfixStatus()
 
 " Close the scratch preview automatically
-autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
-autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+autocmd CursorMovedI,InsertLeave * if pumvisible() == 0|pclose|endif
 
 " Close quickfix if it's the only visible buffer
 aug QFClose
@@ -257,7 +292,7 @@ function! CleverTab()
     endif
 endfunction
 inoremap <Tab> <C-R>=CleverTab()<CR>
-snoremap <Tab> <Esc>:call UltiSnips_ExpandSnippetOrJump()<cr>
+snoremap <Tab> <Esc>:call UltiSnips#ExpandSnippetOrJump()<cr>
 
 
 " Do syntax checking on file open
@@ -272,10 +307,9 @@ function! Eatchar(pat)
   return (c =~ a:pat) ? '' : c
 endfunc
 
-" Movement in insert mode
-inoremap <C-o> <C-O>o
-inoremap <C-a> <C-O>0
-inoremap <C-e> <C-O>$
+" BASH-style movement in insert mode
+inoremap <C-a> <C-o>0
+inoremap <C-e> <C-o>$
 
 " Rebind ultisnips to something never used. We use CleverTab :)
 let g:UltiSnipsExpandTrigger="<f12>"
@@ -286,9 +320,16 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " Put all my useful ultisnips globals in here
 py import sys, os; sys.path.append(os.environ['HOME'] + '/.vim/UltiSnips/mods')
 
-" NERDTree
-" Auto-open nerdtree if vim opens up blank
-autocmd vimenter * if !argc() | NERDTree | endif
-
 " Toggle nerdtree
 :nmap <leader>w :NERDTreeToggle<CR>
+
+" EasyMotion
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
+
+let g:EasyMotion_smartcase = 1
+
+" JK motions: Line motions
+map <C-j> <Plug>(easymotion-j)
+map <C-k> <Plug>(easymotion-k)
+
+map f <Plug>(easymotion-s)
