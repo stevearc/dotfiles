@@ -27,6 +27,7 @@ install-common-packages() {
         git \
         mercurial \
         htop \
+        iotop \
         ipython \
         nodejs \
         openjdk-7-jre-headless \
@@ -88,6 +89,7 @@ install-desktop-packages() {
     gthumb \
     desktopnova \
     dropbox \
+    encfs \
     flashplugin-installer \
     google-chrome-stable \
     google-talkplugin \
