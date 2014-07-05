@@ -45,6 +45,8 @@
   alt+shift+return
 "gnome-terminal -x ipython --no-confirm-exit --pprint --autocall=1"
   alt+shift+i
+"gnome-do"
+  super+space
 
 # set directly keycode (here control + f with my keyboard)
 #"xterm"
