@@ -140,9 +140,9 @@ main() {
         sudo cp bin/* /usr/local/bin/
 
         # Compile command-t
-        pushd $HOME/.vim/bundle/command-t/ruby/command-t
-        ruby extconf.rb
-        make
+        pushd $HOME/.vim/bundle/command-t
+        rvm use 1.9.3 || rvm install 1.9.3 && rvm use 1.9.3
+        rake make
         popd
     fi
 
