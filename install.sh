@@ -1,6 +1,6 @@
 #!/bin/bash -e
 declare -r DOTFILES=".bashrc .vimrc .vim .psqlrc .gitconfig .githelpers .pylintrc .tmux.conf"
-declare -r DESKTOP_DOTFILES=".gconf"
+declare -r DESKTOP_DOTFILES=".gconf .xbindkeysrc"
 declare -a BOX_REPOS=(stevearc/pyramid_duh stevearc/dynamo3 mathcamp/dql mathcamp/flywheel mathcamp/pypicloud)
 
 setup-install-progs() {
@@ -56,7 +56,10 @@ install-common-packages() {
         popd
     fi
 
-    \curl -sSL https://get.rvm.io | bash -s stable --ruby
+    if [ ! `which rvm` ]; then
+        \curl -sSL https://get.rvm.io | bash -s stable --ruby
+        source ~/.rvm/scripts/rvm
+    fi
 
     sudo pip install -q virtualenv autoenv
 
@@ -155,6 +158,8 @@ main() {
         install-desktop-packages
         cp -r $DESKTOP_DOTFILES $HOME
         un-unity
+        echo "Now use gnome-tweak-tool to bind capslock to ctrl"
+        echo "And use dconf editor org>gnome>desktop>wm to add keyboard shortcuts"
     fi
 }
 

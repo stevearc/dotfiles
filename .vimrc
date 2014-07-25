@@ -16,15 +16,12 @@ set history=1000
 set path=**
 
 " When :find-ing, search for files with this suffix
-set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb,.html,.jinja2,.js,.less,.css
+set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb,.html,.jinja2,.js,.less,.css,.styl
 
 " Make tab completion for files/buffers act like bash
 set wildmenu
 set wildmode=full
 set wildignore+=*.png,*.jpg,*.jpeg,*.gif
-
-" Keep cursor in the vertical center of the editor
-set scrolloff=1000
 
 " Make searches case-sensitive only if they contain upper-case characters
 set ignorecase
@@ -78,9 +75,9 @@ au BufRead,BufNewFile *.md set ft=markdown
 au BufRead,BufNewFile *.go set ft=go
 
 " Use 2-space tabs for certain file types
-au FileType jinja2,yaml,html,json,javascript,coffee,css,less setlocal shiftwidth=2 tabstop=2 softtabstop=2
+au FileType jinja2,yaml,html,json,javascript,coffee,css,less,stylus setlocal shiftwidth=2 tabstop=2 softtabstop=2
 " Trim trailing whitespace
-autocmd BufWrite *.js,*.coffee,*.css,*.less,*.py,*.rb,*.go if ! &bin | silent! %s/\s\+$//ge | endif
+autocmd BufWrite *.js,*.coffee,*.css,*.less,*.styl,*.py,*.rb,*.go if ! &bin | silent! %s/\s\+$//ge | endif
 
 " use the :help command for 'K' in .vim files
 autocmd FileType vim set keywordprg=":help"
@@ -164,6 +161,8 @@ function! SmartRun()
         exec ":!ruby " . @%
     elseif match(expand("%"), '.go$') != -1
         GoRun
+    elseif match(expand("%"), '.coffee$') != -1
+        exec ":!coffee " . @%
     end
 endfunction
 map <leader>e :call SmartRun()<cr>
@@ -215,9 +214,14 @@ nmap <C-w>+ :call ToggleWinEqual()<CR>
 nmap <silent> <C-N> :cn<CR>zv
 nmap <silent> <C-P> :cp<CR>zv
 
-" j and k navigate line-wraps in a sane way
-nnoremap j gj
-nnoremap k gk
+" Keep cursor in the vertical center of the editor
+noremap <C-d> <C-d>zz
+noremap <C-u> <C-u>zz
+noremap G Gzz
+
+" j and k navigate line-wraps in a sane way (also vertical center)
+noremap j gjzz
+noremap k gkzz
 
 " Remap q: to just go to commandline.  To open the commandline window,
 " do <C-r> from the commandline

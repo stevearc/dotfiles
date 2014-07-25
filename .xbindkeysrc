@@ -42,11 +42,11 @@
 # "xbindkeys_show" 
 #   control+shift + q
 "gnome-terminal --maximize -x tmux -2"
-  alt+shift+return
+  Alt+Shift+Return
 "gnome-terminal -x ipython --no-confirm-exit --pprint --autocall=1"
-  alt+shift+i
-"gnome-do"
-  super+space
+  Alt+Shift+i
+# "gnome-do"
+#   Super+Space
 
 # set directly keycode (here control + f with my keyboard)
 #"xterm"

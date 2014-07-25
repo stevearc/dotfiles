@@ -33,4 +33,30 @@ pretty_git_log() {
         less -FXRS
 }
 
+update_master() {
+    local changes=$(git status --porcelain 2>/dev/null| egrep "^(M| M)" | wc -l)
+    if [ "$changes" != "0" ]; then
+        git stash
+    fi
+
+    local branch=$(git branch | cut -d ' ' -f 2)
+    git checkout master
+    git fetch -p
+    git rebase origin/master
+    git checkout $branch
+
+    if [ "$changes" != "0" ]; then
+        git stash pop
+    fi
+}
+
+push_current_branch() {
+    local branch=$(git branch | cut -d ' ' -f 2)
+    if [ "$branch" == "master" ]; then
+        echo "DON'T FORCE PUSH MASTER"
+        exit 1
+    fi
+    git push -u --force origin $branch
+}
+
 $*
