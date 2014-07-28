@@ -45,6 +45,7 @@
     uu = !bash ~/.githelpers update_master
     rom = !git fetch && git rebase origin/master
     ss = show --stat
+    dopr = !bash ~/.githelpers create_pull_request
 
 [merge]
     tool = vimdiff

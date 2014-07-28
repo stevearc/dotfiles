@@ -59,4 +59,16 @@ push_current_branch() {
     git push -u --force origin $branch
 }
 
+create_pull_request() {
+    local browser=
+    if [ $BROWSER ]; then
+        browser=$BROWSER
+    else
+        browser=google-chrome
+    fi
+    local repo=$(git remote -v | grep push | cut -f 2 | cut -f 2 -d : | cut -f 1 -d ' ')
+    local branch=$(git branch | cut -d ' ' -f 2 | tr -d '\n')
+    $browser https://github.com/$repo/compare/$branch?expand=1
+}
+
 $*
