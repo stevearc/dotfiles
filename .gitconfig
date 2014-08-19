@@ -8,6 +8,7 @@
     ci = commit
     co = checkout
     cob = checkout -b
+    com = checkout master
     des = describe --tags
     di = diff
     dc = diff --cached
@@ -46,6 +47,7 @@
     rom = !git fetch && git rebase origin/master
     ss = show --stat
     dopr = !bash ~/.githelpers create_pull_request
+    fix = !bash ~/.githelpers commit_fix
 
 [merge]
     tool = vimdiff

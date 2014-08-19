@@ -39,11 +39,15 @@ update_master() {
         git stash
     fi
 
-    local branch=$(git branch | cut -d ' ' -f 2)
-    git checkout master
+    local branch=$(_get_branch)
+    if [ "$branch" != "master" ]; then
+        git checkout master
+    fi
     git fetch -p
     git rebase origin/master
-    git checkout $branch
+    if [ "$branch" != "master" ]; then
+        git checkout $branch
+    fi
 
     if [ "$changes" != "0" ]; then
         git stash pop
@@ -51,7 +55,7 @@ update_master() {
 }
 
 push_current_branch() {
-    local branch=$(git branch | cut -d ' ' -f 2)
+    local branch=$(_get_branch)
     if [ "$branch" == "master" ]; then
         echo "DON'T FORCE PUSH MASTER"
         exit 1
@@ -59,16 +63,72 @@ push_current_branch() {
     git push -u --force origin $branch
 }
 
+_github() {
+    echo "running github" >&2
+    local uri=$1
+    if [ ! $GITHUB_TOKEN ]; then
+        echo "WARNING: No GITHUB_TOKEN specified" >&2
+    fi
+    curl -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/$uri" 2> /dev/null
+}
+
+_get_repo() {
+    git remote -v | grep push | cut -f 2 | cut -f 2 -d : | cut -f 1 -d ' '
+}
+
+_get_branch() {
+    git branch | cut -d ' ' -f 2 | tr -d '\n'
+}
+
 create_pull_request() {
+    local usage="$0 [-f ####]"
+    local fix=
+    while getopts "f:" opt; do
+        case $opt in
+            f)
+                fix=$OPTARG
+                ;;
+            \?)
+                echo "$usage"
+                exit 1
+                ;;
+        esac
+    done
+    shift $(($OPTIND-1))
+
+    local repo=$(_get_repo)
+    local branch=$(_get_branch)
+    # If no -f specified, try to pull issue number off end of local branch
+    if [[ ! $fix ]] && [[ $branch =~ ([^\-]+-)*[0-9]+ ]]; then
+        local fix="${branch##*-}"
+    fi
+
     local browser=
     if [ $BROWSER ]; then
         browser=$BROWSER
     else
         browser=google-chrome
     fi
-    local repo=$(git remote -v | grep push | cut -f 2 | cut -f 2 -d : | cut -f 1 -d ' ')
-    local branch=$(git branch | cut -d ' ' -f 2 | tr -d '\n')
-    $browser https://github.com/$repo/compare/$branch?expand=1
+    local url="https://github.com/$repo/compare/$branch?expand=1"
+    if [ $fix ]; then
+        local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \")
+        local body="Fix #$fix: $issue_title"
+        body="$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$body")"
+        url="$url&body=$body"
+    fi
+    $browser $url
+}
+
+commit_fix() {
+    local fix="$1"
+    if [ ! $fix ]; then
+        echo "Usage: git fix ISSUE" >&2
+        exit 1
+    fi
+    local repo=$(_get_repo)
+    local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \")
+    git commit -m "Fix #$fix: $issue_title"
+    git show
 }
 
 $*
