@@ -120,6 +120,11 @@ create_pull_request() {
 
 commit_fix() {
     local fix="$1"
+    local branch=$(_get_branch)
+    # If no issue specified, try to pull issue number off end of local branch
+    if [[ ! $fix ]] && [[ $branch =~ ([^\-]+-)*[0-9]+ ]]; then
+        local fix="${branch##*-}"
+    fi
     if [ ! $fix ]; then
         echo "Usage: git fix ISSUE" >&2
         exit 1
