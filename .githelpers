@@ -64,7 +64,6 @@ push_current_branch() {
 }
 
 _github() {
-    echo "running github" >&2
     local uri=$1
     if [ ! $GITHUB_TOKEN ]; then
         echo "WARNING: No GITHUB_TOKEN specified" >&2
