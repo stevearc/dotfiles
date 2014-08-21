@@ -34,6 +34,7 @@
     f = fetch -p
     fa = fetch --all
     po = !bash ~/.githelpers push_current_branch
+    pof = !bash ~/.githelpers push_current_branch --force
     pom = push origin master
     b = branch
     ba = branch -a

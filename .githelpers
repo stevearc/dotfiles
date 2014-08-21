@@ -60,7 +60,7 @@ push_current_branch() {
         echo "DON'T FORCE PUSH MASTER"
         exit 1
     fi
-    git push -u --force origin $branch
+    git push -u origin $branch $@
 }
 
 _github() {
