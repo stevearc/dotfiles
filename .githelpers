@@ -132,7 +132,7 @@ commit_fix() {
     local repo=$(_get_repo)
     local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \")
     git commit -m "Fix #$fix: $issue_title"
-    git show
+    git log -n 1
 }
 
 $*
