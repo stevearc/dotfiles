@@ -9,11 +9,13 @@
     co = checkout
     cob = checkout -b
     com = checkout master
+    cp = cherry-pick
     des = describe --tags
     di = diff
     dc = diff --cached
     ab = rebase --abort
     abort = rebase --abort
+    ri = !git rebase -i `git merge-base HEAD origin/master`
     amend = commit --amend
     am = commit --amend
     ama = commit --amend -a
