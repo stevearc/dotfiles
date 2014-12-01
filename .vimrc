@@ -66,25 +66,8 @@ set softtabstop=4
 set autoindent
 set laststatus=2
 
-" Detect filetypes
-au BufRead,BufNewFile *.sls set ft=yaml
-au BufRead,BufNewFile *.jinja2 set ft=jinja2
-au BufRead,BufNewFile *.snippets set ft=snippets
-au BufRead,BufNewFile *.js set ft=javascript
-au BufRead,BufNewFile *.md set ft=markdown
-au BufRead,BufNewFile *.go set ft=go
-
-" Broken Arrow
-aug BufRead,BufNewFile *.scene,*.prefab,*.particle,*.emitter
-  if getline(1) =~ '^#!.*\<cson\>'
-    setfiletype coffee
-  else
-    setfiletype javascript
-  endif
-aug END
-
 " Use 2-space tabs for certain file types
-au FileType jinja2,yaml,html,json,javascript,coffee,css,less,stylus setlocal shiftwidth=2 tabstop=2 softtabstop=2
+au FileType jinja2,yaml,html,json,javascript,coffee,css,less,stylus,vim setlocal shiftwidth=2 tabstop=2 softtabstop=2
 " Trim trailing whitespace
 autocmd BufWrite *.json,*.js,*.coffee,*.css,*.less,*.styl,*.py,*.rb,*.go if ! &bin | silent! %s/\s\+$//ge | endif
 
