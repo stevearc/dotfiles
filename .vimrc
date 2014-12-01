@@ -74,10 +74,19 @@ au BufRead,BufNewFile *.js set ft=javascript
 au BufRead,BufNewFile *.md set ft=markdown
 au BufRead,BufNewFile *.go set ft=go
 
+" Broken Arrow
+aug BufRead,BufNewFile *.scene,*.prefab,*.particle,*.emitter
+  if getline(1) =~ '^#!.*\<cson\>'
+    setfiletype coffee
+  else
+    setfiletype javascript
+  endif
+aug END
+
 " Use 2-space tabs for certain file types
 au FileType jinja2,yaml,html,json,javascript,coffee,css,less,stylus setlocal shiftwidth=2 tabstop=2 softtabstop=2
 " Trim trailing whitespace
-autocmd BufWrite *.js,*.coffee,*.css,*.less,*.styl,*.py,*.rb,*.go if ! &bin | silent! %s/\s\+$//ge | endif
+autocmd BufWrite *.json,*.js,*.coffee,*.css,*.less,*.styl,*.py,*.rb,*.go if ! &bin | silent! %s/\s\+$//ge | endif
 
 " use the :help command for 'K' in .vim files
 autocmd FileType vim set keywordprg=":help"
@@ -166,9 +175,6 @@ function! SmartRun()
     end
 endfunction
 map <leader>e :call SmartRun()<cr>
-
-" remap leader-leader to go back one file
-nnoremap <leader><leader> <c-^>
 
 " Map leader-r to do a global replace of a word
 map <leader>r :%s/<C-R>=expand("<cword>")<CR>/<C-R>=expand("<cword>")<CR>
