@@ -110,7 +110,7 @@ create_pull_request() {
     fi
     local url="https://github.com/$repo/compare/$branch?expand=1"
     if [ $fix ]; then
-        local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \")
+        local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \" | head -n 1)
         local body="Fix #$fix: $issue_title"
         body="$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$body")"
         url="$url&body=$body"
@@ -130,7 +130,7 @@ commit_fix() {
         exit 1
     fi
     local repo=$(_get_repo)
-    local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \")
+    local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \" | head -n 1)
     git commit -m "Fix #$fix: $issue_title"
     git log -n 1
 }
