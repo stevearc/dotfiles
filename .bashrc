@@ -58,6 +58,7 @@ alias ack='ack-grep'
 alias ivm='vim'
 alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf'
 alias tm='tmux -2'
+alias ackc='ack --coffeescript'
 ash() {
     autossh -t "$@" 'tmux -2 attach || tmux -2 new'
 }
