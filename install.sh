@@ -58,8 +58,8 @@ install-common-packages() {
 
     if [ ! `which rvm` ]; then
         \curl -sSL https://get.rvm.io | bash -s stable --ruby
-        source ~/.rvm/scripts/rvm
     fi
+    source ~/.rvm/scripts/rvm
 
     sudo pip install -q virtualenv autoenv
 
@@ -144,7 +144,7 @@ main() {
 
         # Compile command-t
         pushd $HOME/.vim/bundle/command-t
-        rvm use 1.9.3 || rvm install 1.9.3 && rvm use 1.9.3
+        rvm use 1.9.3 || (rvm install 1.9.3 && rvm use 1.9.3)
         rake make
         popd
     fi
