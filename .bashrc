@@ -59,6 +59,7 @@ alias ivm='vim'
 alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf'
 alias tm='tmux -2'
 alias ackc='ack --coffeescript'
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 ash() {
     autossh -t "$@" 'tmux -2 attach || tmux -2 new'
 }
