@@ -60,6 +60,7 @@ alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOut
 alias tm='tmux -2'
 alias ackc='ack --coffeescript'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias vp='xargs vim -p; reset'
 ash() {
     autossh -t "$@" 'tmux -2 attach || tmux -2 new'
 }
