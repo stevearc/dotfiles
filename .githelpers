@@ -79,6 +79,14 @@ _get_branch() {
     git branch | cut -d ' ' -f 2 | tr -d '\n'
 }
 
+_get_browser() {
+    if [ $BROWSER ]; then
+        echo "$BROWSER"
+    else
+        echo "google-chrome"
+    fi
+}
+
 create_pull_request() {
     local usage="$0 [-f ####]"
     local fix=
@@ -102,12 +110,7 @@ create_pull_request() {
         local fix="${branch##*-}"
     fi
 
-    local browser=
-    if [ $BROWSER ]; then
-        browser=$BROWSER
-    else
-        browser=google-chrome
-    fi
+    local browser=$(_get_browser)
     local url="https://github.com/$repo/compare/$branch?expand=1"
     if [ $fix ]; then
         local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \" | head -n 1)
@@ -133,6 +136,14 @@ commit_fix() {
     local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \" | head -n 1)
     git commit -m "Fix #$fix: $issue_title"
     git log -n 1
+}
+
+find_pull_request() {
+    local commit="$1"
+    local repo=$(_get_repo)
+    local url="https://github.com/$repo/search?q=$commit&type=Issues"
+    local browser=$(_get_browser)
+    $browser $url
 }
 
 $*

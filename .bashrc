@@ -51,6 +51,7 @@ fi
 alias ll='ls -lh'
 alias la='ls -A'
 alias lla='ls -Alh'
+alias wat='which'
 alias inetstat='sudo netstat -pna|grep LISTEN|grep tcp'
 alias grep='grep --color=auto'
 alias pc='ps wwaux | grep'
