@@ -2,6 +2,12 @@
 declare -r DOTFILES=".bashrc .vimrc .vim .psqlrc .gitconfig .githelpers .pylintrc .tmux.conf"
 declare -r DESKTOP_DOTFILES=".gconf .xbindkeysrc"
 declare -a BOX_REPOS=(stevearc/pyramid_duh stevearc/dynamo3 mathcamp/dql mathcamp/flywheel mathcamp/pypicloud)
+declare -r DESCRIPTION="bare-desktop: Set up gnome and typical utilities
+dev:          Set up common dev tools
+desktop:      Set up my custom desktop programs
+repos:        Clone my open source repos for development
+full:         Full custom desktop setup
+"
 
 setup-install-progs() {
     sudo apt-get install -y -q \
@@ -15,9 +21,6 @@ setup-repos() {
     if [ ! "$list" ]; then
         sudo add-apt-repository -y ppa:chris-lea/node.js
     fi
-
-    # docker
-    #sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9
 }
 
 install-common-packages() {
@@ -43,7 +46,6 @@ install-common-packages() {
         xsel \
         mplayer \
         tree
-        # lxc-docker
 
     if [ ! -e /usr/local/go ]; then
         pushd /tmp
@@ -73,7 +75,10 @@ setup-desktop-repos() {
     sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
     sudo sh -c 'echo "deb http://dl.google.com/linux/talkplugin/deb/ stable main" >> /etc/apt/sources.list.d/google-talk.list'
     sudo sh -c 'echo "deb http://dl.google.com/linux/musicmanager/deb/ stable main" >> /etc/apt/sources.list.d/google-music.list'
+    sudo apt-get update -qq
+}
 
+setup-custom-desktop-repos() {
     #sudo add-apt-repository -y ppa:kevin-mehall/pithos-daily
     sudo add-apt-repository -y ppa:ubuntu-wine/ppa
 
@@ -86,21 +91,25 @@ setup-desktop-repos() {
 
 install-desktop-packages() {
   sudo apt-get install -q -y \
-    vim-gnome \
     gnome \
-    gnome-do \
+    "gnome-do" \
+    flashplugin-installer \
+    google-chrome-stable \
+    gparted \
+    xbindkeys
+}
+
+install-custom-desktop-packages() {
+  sudo apt-get install -q -y \
+    vim-gnome \
     gthumb \
     desktopnova \
     dropbox \
     encfs \
-    flashplugin-installer \
-    google-chrome-stable \
     google-talkplugin \
     google-musicmanager-beta \
-    gparted \
     vlc \
-    wine1.6 \
-    xbindkeys
+    wine1.6
     # pithos
 }
 
@@ -127,15 +136,18 @@ clone-repos() {
 
 main() {
     local mode=$1
-    if [[ ! "$mode" ]] || [[ "$mode" == "-h" ]]; then
-        echo "Usage $0 [base|desktop|repos|full]"
+    if [[ ! "$mode" ]] || [[ "$mode" == "-h" ]] || [[ "$mode" == "help" ]]; then
+        echo "Usage $0 [help|bare-desktop|dev|desktop|repos|full]"
+        if [[ "$mode" == "-h" ]] || [[ "$mode" == "help" ]]; then
+            echo -e "$DESCRIPTION"
+        fi
         exit 0
     fi
 
     setup-install-progs
     git submodule update --init --recursive
 
-    if [[ "$mode" == "base" ]] || [[ "$mode" == "full" ]]; then
+    if [[ "$mode" == "dev" ]] || [[ "$mode" == "full" ]]; then
         setup-repos
         sudo apt-get update -qq
         install-common-packages
@@ -153,13 +165,21 @@ main() {
         clone-repos
     fi
 
-    if [[ "$mode" == "desktop" ]] || [[ "$mode" == "full" ]]; then
+    if [[ "$mode" == "bare-desktop" ]] ||
+       [[ "$mode" == "desktop" ]] ||
+       [[ "$mode" == "full" ]]; then
         setup-desktop-repos
         install-desktop-packages
         cp -r $DESKTOP_DOTFILES $HOME
         un-unity
+    fi
+
+    if [[ "$mode" == "desktop" ]] || [[ "$mode" == "full" ]]; then
+        setup-custom-desktop-repos
+        install-custom-desktop-packages
         echo "Now use gnome-tweak-tool to bind capslock to ctrl"
         echo "And use dconf editor org>gnome>desktop>wm to add keyboard shortcuts"
+        echo "Maybe install some proprietary graphics drivers? (e.g. nvidia-331)"
     fi
 }
 
