@@ -24,7 +24,7 @@ setup-repos() {
 }
 
 install-common-packages() {
-    sudo apt-get install -y -q ack-grep \
+    sudo apt-get install -y -q silversearcher-ag \
         autossh \
         curl \
         git \
@@ -33,13 +33,10 @@ install-common-packages() {
         iotop \
         ipython \
         nodejs \
-        openjdk-7-jre-headless \
         openssh-client \
         openssh-server \
         python-dev \
         python-pip \
-        ruby \
-        ruby-dev \
         tmux \
         unzip \
         vim-nox \
@@ -57,11 +54,6 @@ install-common-packages() {
         rm -f $pkg
         popd
     fi
-
-    if [ ! `which rvm` ]; then
-        \curl -sSL https://get.rvm.io | bash -s stable --ruby
-    fi
-    source ~/.rvm/scripts/rvm
 
     sudo pip install -q virtualenv autoenv
 
@@ -153,12 +145,6 @@ main() {
         install-common-packages
         cp -r $DOTFILES $HOME
         sudo cp bin/* /usr/local/bin/
-
-        # Compile command-t
-        pushd $HOME/.vim/bundle/command-t
-        rvm use 1.9.3 || (rvm install 1.9.3 && rvm use 1.9.3)
-        rake make
-        popd
     fi
 
     if [[ "$mode" == "repos" ]] || [[ "$mode" == "full" ]]; then

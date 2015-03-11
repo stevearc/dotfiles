@@ -314,7 +314,7 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 py import sys, os; sys.path.append(os.environ['HOME'] + '/.vim/UltiSnips/mods')
 
 " Toggle nerdtree
-:nmap <leader>w :NERDTreeToggle<CR>
+nmap <leader>w :NERDTreeToggle<CR>
 
 " EasyMotion
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
@@ -326,3 +326,18 @@ map <C-j> <Plug>(easymotion-j)
 map <C-k> <Plug>(easymotion-k)
 
 map f <Plug>(easymotion-s)
+
+
+nmap <C-w><C-b> :tabedit %<CR>
+
+" CTRLP
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_cmd = 'CtrlPMixed'
+let g:ctrlp_by_filename = 1
+if executable('ag')
+  " Use Ag over Grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+endif
