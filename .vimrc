@@ -67,7 +67,7 @@ set autoindent
 set laststatus=2
 
 " Use 2-space tabs for certain file types
-au FileType jinja2,yaml,html,json,javascript,coffee,css,less,stylus,vim setlocal shiftwidth=2 tabstop=2 softtabstop=2
+au FileType jinja2,yaml,html,json,javascript,coffee,css,less,stylus,vim,cpp setlocal shiftwidth=2 tabstop=2 softtabstop=2
 " Trim trailing whitespace
 autocmd BufWrite *.json,*.js,*.coffee,*.css,*.less,*.styl,*.py,*.rb,*.go if ! &bin | silent! %s/\s\+$//ge | endif
 
