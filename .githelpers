@@ -72,7 +72,9 @@ _github() {
 }
 
 _get_repo() {
-    git remote -v | grep push | cut -f 2 | cut -f 2 -d : | cut -f 1 -d ' '
+    local repo=`git remote -v | grep push | cut -f 2 | cut -f 2 -d : | cut -f 1 -d ' '`
+    # Strip the .git off the end, if present.
+    echo "${repo%.git}"
 }
 
 _get_branch() {
