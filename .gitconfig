@@ -16,14 +16,16 @@
     dm = !git diff `git merge-base HEAD origin/master` HEAD
     ab = rebase --abort
     abort = rebase --abort
+    rco = rebase --continue
     mb = merge-base
     ri = !git rebase -i `git merge-base HEAD origin/master`
     amend = commit --amend
     am = commit --amend
-    ama = commit --amend -a
+    ama = commit --amend -a --reuse-message=HEAD
     aa = add --all
     head = !git l -1
     h = !git head
+    hist = log --
     r = !git l -20
     ra = !git r --all
     ff = merge --ff-only
@@ -33,8 +35,6 @@
     l = !bash ~/.githelpers pretty_git_log
     la = !git l --all
     div = divergence
-    gn = goodness
-    gnc = goodness --cached
     f = fetch -p
     fa = fetch --all
     po = !bash ~/.githelpers push_current_branch
@@ -55,6 +55,8 @@
     findpr = !bash ~/.githelpers find_pull_request
     fix = !bash ~/.githelpers commit_fix
     res = !git status --porcelain | grep "^UU " | cut -d ' ' -f 2 | xargs vim -p && reset
+    wip = commit --no-verify -m WIP
+    undo = reset HEAD^
 
 [merge]
     tool = vimdiff

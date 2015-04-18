@@ -162,9 +162,6 @@ map <leader>e :call SmartRun()<cr>
 " Map leader-r to do a global replace of a word
 map <leader>r :%s/<C-R>=expand("<cword>")<CR>/<C-R>=expand("<cword>")<CR>
 
-" Map leader-g to grep the hovered word in the current workspace
-map <leader>g :grep -IR <cword> * <CR><CR> :copen <CR> <C-w><C-k>
-
 " Fast tab navigation
 map <leader>1 1gt
 map <leader>2 2gt
@@ -333,6 +330,7 @@ nmap <C-w><C-b> :tabedit %<CR>
 " CTRLP
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_cmd = 'CtrlPMixed'
+let g:ctrlp_map = '<leader>t'
 let g:ctrlp_by_filename = 1
 if executable('ag')
   " Use Ag over Grep
@@ -340,4 +338,13 @@ if executable('ag')
 
   " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+
+  " Map leader-g to grep the hovered word in the current workspace
+  map <leader>g :grep <cword> <CR><CR> :copen <CR> <C-w><C-k>
+else
+  " Map leader-g to grep the hovered word in the current workspace
+  map <leader>g :grep -IR <cword> * <CR><CR> :copen <CR> <C-w><C-k>
 endif
+
+nmap gs :Gstatus<CR>
+nmap gh :Git! log -- %<CR>
