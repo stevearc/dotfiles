@@ -204,6 +204,8 @@ nmap <silent> <C-P> :cp<CR>zv
 noremap <C-d> <C-d>zz
 noremap <C-u> <C-u>zz
 noremap G Gzz
+noremap <C-o> <C-o>zz
+noremap <C-i> <C-i>zz
 
 " j and k navigate line-wraps in a sane way (also vertical center)
 noremap j gjzz

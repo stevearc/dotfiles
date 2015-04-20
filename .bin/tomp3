@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+main() {
+    local ffmpeg="ffmpeg"
+    local input="$1"
+    local output="$2"
+    if [ ! -e $1 ]; then
+        echo "Usage: $0 input [output]"
+        exit 1
+    fi
+    if [ ! `which ffmpeg` ]; then
+        ffmpeg="avconv"
+    fi
+    if [ ! $output ]; then
+        output="${input%.*}.mp3"
+    fi
+    $ffmpeg -i "$input" -vn -f mp3 "$output"
+}
+
+main "$@"

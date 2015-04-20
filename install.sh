@@ -1,5 +1,5 @@
 #!/bin/bash -e
-declare -r DOTFILES=".bashrc .vimrc .vim .psqlrc .gitconfig .githelpers .pylintrc .tmux.conf"
+declare -r DOTFILES=".bashrc .vimrc .vim .psqlrc .gitconfig .githelpers .pylintrc .tmux.conf .bin"
 declare -r DESKTOP_DOTFILES=".gconf .xbindkeysrc"
 declare -a BOX_REPOS=(stevearc/pyramid_duh stevearc/dynamo3 mathcamp/dql mathcamp/flywheel mathcamp/pypicloud)
 declare -r DESCRIPTION="bare-desktop: Set up gnome and typical utilities
@@ -144,7 +144,6 @@ main() {
         sudo apt-get update -qq
         install-common-packages
         cp -r $DOTFILES $HOME
-        sudo cp bin/* /usr/local/bin/
     fi
 
     if [[ "$mode" == "repos" ]] || [[ "$mode" == "full" ]]; then
