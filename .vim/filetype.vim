@@ -4,6 +4,7 @@ au BufRead,BufNewFile *.snippets setlocal ft=snippets
 au BufRead,BufNewFile *.js setlocal ft=javascript
 au BufRead,BufNewFile *.md setlocal ft=markdown
 au BufRead,BufNewFile *.go setlocal ft=go
+au BufRead,BufNewFile *.ino,*.pde setlocal ft=arduino
 
 " Broken Arrow
 aug BAFileType
