@@ -1,0 +1,11 @@
+[Desktop Entry]
+Categories=;
+Comment=Edit file in Vim
+Exec=vim %f
+GenericName=Process Viewer
+Hidden=false
+Icon=vim
+Name=Vim
+Terminal=true
+Type=Application
+Version=1.0

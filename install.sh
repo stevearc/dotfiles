@@ -101,8 +101,8 @@ install-custom-desktop-packages() {
     google-talkplugin \
     google-musicmanager-beta \
     vlc \
+    youtube-dl \
     wine1.6
-    # pithos
 }
 
 un-unity() {
@@ -156,6 +156,8 @@ main() {
         setup-desktop-repos
         install-desktop-packages
         cp -r $DESKTOP_DOTFILES $HOME
+        sudo cp vim.desktop /usr/share/applications
+        sudo cp defaults.list /etc/gnome
         un-unity
     fi
 

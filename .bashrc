@@ -90,8 +90,12 @@ fi
 export GOROOT=/usr/local/go
 export GOPATH=~/go
 export PATH=$HOME/.bin:$GOROOT/bin:$GOPATH/bin:$PATH
+
+# Default applications
 export GIT_EDITOR=vim
 export SVN_EDITOR=vim
+export EDITOR=vim
+export BROWSER=google-chrome
 
 if [ -f ~/.bash_env ]; then
     . ~/.bash_env
