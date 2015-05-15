@@ -71,7 +71,7 @@ set tw=80
 au FileType coffee setlocal tw=100
 
 " Use 2-space tabs for certain file types
-au FileType jinja2,yaml,html,json,javascript,coffee,css,less,stylus,vim,cpp setlocal shiftwidth=2 tabstop=2 softtabstop=2
+au FileType jinja2,yaml,html,json,javascript,coffee,css,less,stylus,sh,vim,cpp setlocal shiftwidth=2 tabstop=2 softtabstop=2
 " Trim trailing whitespace on save
 autocmd BufWrite *.json,*.js,*.coffee,*.css,*.less,*.styl,*.py,*.rb,*.go if ! &bin | silent! %s/\s\+$//ge | endif
 
@@ -122,8 +122,6 @@ filetype plugin indent on
 
 " Set auto line wrapping options (overwrites plugins)
 au FileType * setlocal formatoptions=crqnlj
-" Set different auto line wrapping options for text files
-au FileType text,markdown setlocal formatoptions+=t formatoptions+=a formatoptions-=l
 
 " Add bash shortcuts for command line
 :cnoremap <C-a>  <Home>
