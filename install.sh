@@ -1,5 +1,5 @@
 #!/bin/bash -e
-declare -r DOTFILES=".bashrc .vimrc .vim .psqlrc .gitconfig .githelpers .pylintrc .tmux.conf .bin .agignore"
+declare -r DOTFILES=".bashrc .vimrc .vim .psqlrc .gitconfig .githelpers .pylintrc .tmux.conf .bin .agignore .tmuxinator"
 declare -r DESKTOP_DOTFILES=".gconf .xbindkeysrc"
 declare -a BOX_REPOS=(stevearc/pyramid_duh stevearc/dynamo3 mathcamp/dql mathcamp/flywheel mathcamp/pypicloud)
 declare -r DESCRIPTION="bare-desktop: Set up gnome and typical utilities
@@ -59,7 +59,7 @@ install-common-packages() {
 
     sudo npm install -g coffee-script uglify-js less clean-css
 
-    sudo gem install -q mkrf
+    sudo gem install -q tmuxinator
 }
 
 setup-desktop-repos() {
