@@ -18,7 +18,7 @@
     abort = rebase --abort
     rco = rebase --continue
     mb = merge-base
-    ri = !git rebase -i `git merge-base HEAD origin/master`
+    ri = !git rebase -Xpatience -i `git merge-base HEAD origin/master`
     amend = commit --amend
     am = commit --amend
     ama = commit --amend -a --reuse-message=HEAD
@@ -26,19 +26,13 @@
     head = !git l -1
     h = !git head
     hist = log --
-    r = !git l -20
-    ra = !git r --all
     ff = merge --ff-only
     pullff = pull --ff-only
     pr = pull --rebase
     noff = merge --no-ff
-    l = !bash ~/.githelpers pretty_git_log
-    la = !git l --all
     div = divergence
     f = fetch -p
     fa = fetch --all
-    po = !bash ~/.githelpers push_current_branch
-    pof = !bash ~/.githelpers push_current_branch --force
     pom = push origin master
     b = branch
     ba = branch -a
@@ -46,17 +40,25 @@
     dh1 = diff HEAD~1
     s = submodule
     su = submodule update --init --recursive
+    sclean = !git submodule update --init --recursive && git submodule foreach --recursive 'git reset --hard' && git submodule foreach --recursive 'git clean -fd'
     rp = rev-parse --verify
     delmerged = !git branch --merged | grep -v master | grep -v develop | xargs git branch -d
-    uu = !bash ~/.githelpers update_master
-    rom = !git fetch && git rebase origin/master
+    rom = rebase -Xpatience origin/master
     ss = show --stat
-    dopr = !bash ~/.githelpers create_pull_request
-    findpr = !bash ~/.githelpers find_pull_request
-    fix = !bash ~/.githelpers commit_fix
     res = !git status --porcelain | grep "^UU " | cut -d ' ' -f 2 | xargs vim -p && reset
     wip = commit --no-verify -m WIP
     undo = reset HEAD^
+    po = !bash ~/.githelpers push_current_branch
+    pof = !bash ~/.githelpers push_current_branch --force
+    dopr = !bash ~/.githelpers create_pull_request
+    findpr = !bash ~/.githelpers find_pull_request
+    fix = !bash ~/.githelpers commit_fix
+    uu = !bash ~/.githelpers update_master
+    l = !bash ~/.githelpers pretty_git_log
+    r = !git l -20
+    ra = !git r --all
+    la = !git l --all
+    patch = format-patch --stdout
 
 [merge]
     tool = vimdiff

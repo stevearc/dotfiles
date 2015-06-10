@@ -1,5 +1,7 @@
 build/
 ThirdParty/
+third-party/
+third_party/
 build-emscripten/
 node_modules/
 gen/
