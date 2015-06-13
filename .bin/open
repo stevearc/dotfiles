@@ -1,2 +1,2 @@
 #!/bin/bash
-xdg-open "$@" &
+xdg-open "$@" > /dev/null 2> /dev/null &

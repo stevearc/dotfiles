@@ -157,7 +157,7 @@ main() {
         install-desktop-packages
         cp -r $DESKTOP_DOTFILES $HOME
         sudo cp vim.desktop /usr/share/applications
-        sudo cp defaults.list /etc/gnome
+        cp mimeapps.list ~/.local/share/applications
         un-unity
     fi
 

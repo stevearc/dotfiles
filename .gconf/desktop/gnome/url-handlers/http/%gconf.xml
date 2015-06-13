@@ -3,6 +3,6 @@
 	<entry name="enabled" mtime="1345826524" type="bool" value="true"/>
 	<entry name="needs_terminal" mtime="1345826524" type="bool" value="false"/>
 	<entry name="command" mtime="1345826524" type="string">
-		<stringvalue>/opt/google/chrome/google-chrome %s</stringvalue>
+        <stringvalue>/usr/bin/google-chrome %s</stringvalue>
 	</entry>
 </gconf>
