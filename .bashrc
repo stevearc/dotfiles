@@ -62,6 +62,8 @@ alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOut
 alias tm='tmux -2'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 alias vp='xargs vim -p; reset'
+alias fbm='CACA_DRIVER=ncurses mplayer -vo caca -really-quiet'
+alias youtube-dl-mp3='youtube-dl -f bestaudio -x --audio-format mp3 --audio-quality 3'
 ash() {
     autossh -t "$@" 'tmux -2 attach || tmux -2 new'
 }
