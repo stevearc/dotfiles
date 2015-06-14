@@ -101,8 +101,13 @@ install-custom-desktop-packages() {
     google-talkplugin \
     google-musicmanager-beta \
     vlc \
-    youtube-dl \
     wine1.6
+  if [ -e ~/.bin ]; then
+      pushd ~/.bin
+      wget https://yt-dl.org/latest/youtube-dl
+      chmod +x youtube-dl
+      popd
+  fi
 }
 
 un-unity() {
