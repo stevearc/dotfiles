@@ -75,6 +75,11 @@ au FileType jinja2,yaml,html,json,javascript,coffee,css,less,stylus,sh,vim,cpp s
 " Trim trailing whitespace on save
 autocmd BufWrite *.json,*.js,*.coffee,*.css,*.less,*.styl,*.py,*.rb,*.go if ! &bin | silent! %s/\s\+$//ge | endif
 
+" Make cjsx files hijack the vim-coffee-script compile tools
+autocmd BufReadPost *.cjsx let coffee_compiler = 'cjsx'
+" Make syntastic work with cjsx files
+autocmd BufReadPost *.cjsx let g:syntastic_coffee_coffee_exe = 'cjsx'
+
 " use the :help command for 'K' in .vim files
 autocmd FileType vim set keywordprg=":help"
 
