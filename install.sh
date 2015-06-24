@@ -2,6 +2,8 @@
 declare -r DOTFILES=".bashrc .vimrc .vim .psqlrc .gitconfig .githelpers .pylintrc .tmux.conf .bin .agignore .tmuxinator"
 declare -r DESKTOP_DOTFILES=".gconf .xbindkeysrc"
 declare -a BOX_REPOS=(stevearc/pyramid_duh stevearc/dynamo3 mathcamp/dql mathcamp/flywheel mathcamp/pypicloud)
+declare -r NODE_VERSION="0.8.28"
+declare -r NVM_DIR="/usr/local/nvm"
 declare -r DESCRIPTION="bare-desktop: Set up gnome and typical utilities
 dev:          Set up common dev tools
 desktop:      Set up my custom desktop programs
@@ -13,26 +15,19 @@ setup-install-progs() {
     sudo apt-get install -y -q \
         python-pycurl \
         python-software-properties \
-        wget
-}
-
-setup-repos() {
-    local list=$(ls /etc/apt/sources.list.d/chris-lea*)
-    if [ ! "$list" ]; then
-        sudo add-apt-repository -y ppa:chris-lea/node.js
-    fi
+        wget \
+        curl
 }
 
 install-common-packages() {
+    install-nvm
     sudo apt-get install -y -q silversearcher-ag \
         autossh \
-        curl \
         git \
         mercurial \
         htop \
         iotop \
         ipython \
-        nodejs \
         openssh-client \
         openssh-server \
         python-dev \
@@ -57,9 +52,21 @@ install-common-packages() {
 
     sudo pip install -q virtualenv autoenv
 
-    sudo npm install -g coffee-script uglify-js less clean-css
+    sudo npm install -g coffee-script uglify-js less clean-css coffee-react
 
     sudo gem install -q tmuxinator
+}
+
+install-nvm() {
+  pushd /tmp
+  rm -f install.sh
+  wget https://raw.githubusercontent.com/creationix/nvm/v0.25.1/install.sh
+  sudo bash -c "NVM_DIR=$NVM_DIR install.sh"
+  source $NVM_DIR/nvm.sh
+  nvm install $NODE_VERSION
+  nvm alias default $NODE_VERSION
+  nvm use default
+  popd
 }
 
 setup-desktop-repos() {
@@ -95,7 +102,6 @@ install-custom-desktop-packages() {
   sudo apt-get install -q -y \
     vim-gnome \
     gthumb \
-    desktopnova \
     dropbox \
     encfs \
     google-talkplugin \
@@ -145,7 +151,6 @@ main() {
     git submodule update --init --recursive
 
     if [[ "$mode" == "dev" ]] || [[ "$mode" == "full" ]]; then
-        setup-repos
         sudo apt-get update -qq
         install-common-packages
         cp -r $DOTFILES $HOME
