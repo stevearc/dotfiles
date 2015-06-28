@@ -257,6 +257,7 @@ install-nvm() {
     wget -O install.sh https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh
     chmod +x install.sh
     sudo bash -c "NVM_DIR=$nvm_dir ./install.sh"
+    sudo chown -R $USER:$USER $nvm_dir
     popd > /dev/null
   fi
   source $nvm_dir/nvm.sh
