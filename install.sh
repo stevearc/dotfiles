@@ -1,183 +1,406 @@
 #!/bin/bash -e
-declare -r DOTFILES=".bashrc .vimrc .vim .psqlrc .gitconfig .githelpers .pylintrc .tmux.conf .bin .agignore .tmuxinator"
-declare -r DESKTOP_DOTFILES=".gconf .xbindkeysrc"
-declare -a BOX_REPOS=(stevearc/pyramid_duh stevearc/dynamo3 mathcamp/dql mathcamp/flywheel mathcamp/pypicloud)
-declare -r NODE_VERSION="0.8.28"
-declare -r NVM_DIR="/usr/local/nvm"
-declare -r DESCRIPTION="bare-desktop: Set up gnome and typical utilities
-dev:          Set up common dev tools
-desktop:      Set up my custom desktop programs
-repos:        Clone my open source repos for development
-full:         Full custom desktop setup
+set -e
+declare -r CLI_DOTFILES=".bashrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .bin .agignore .tmuxinator"
+declare -r DEFAULT_VIM_BUNDLES="ctrlp nerdtree syntastic ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-json"
+declare -r CHECKPOINT_DIR="/tmp/checkpoints"
+declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
+declare -r ALL_LANGUAGES="go python js arduino"
+declare -r USAGE=\
+"$0 [OPTIONS]
+-h            Print this help menu
+-l            Install language support (may be specified multiple times)
+              Use 'all' to install all support for all languages.
+-g            Set up a typical gnome environment
+-c            Install some of my custom decktop packages
+-f            Force reinstallation of all programs
+--languages   List all languages that are supported and exit
 "
 
-setup-install-progs() {
-    sudo apt-get install -y -q \
-        python-pycurl \
-        python-software-properties \
-        wget \
-        curl
-}
-
-install-common-packages() {
-    install-nvm
-    sudo apt-get install -y -q silversearcher-ag \
-        autossh \
-        git \
-        mercurial \
-        htop \
-        iotop \
-        ipython \
-        openssh-client \
-        openssh-server \
-        python-dev \
-        python-pip \
-        tmux \
-        unzip \
-        vim-nox \
-        xsel \
-        mplayer \
-        tree
-
-    if [ ! -e /usr/local/go ]; then
-        pushd /tmp
-        local pkg="go1.2.2.linux-amd64.tar.gz"
-        if [ ! -e "$pkg" ]; then
-            wget https://storage.googleapis.com/golang/$pkg
-        fi
-        sudo tar -C /usr/local -xzf $pkg
-        rm -f $pkg
-        popd
+prompt() {
+  # $1 [str] - Prompt string
+  # $2 (optional) [str] - The default return value if user just hits enter
+  local text="$1 "
+  local default="$2"
+  if [ -n "$default" ]; then
+    text="${text}[$default] "
+  fi
+  while [ 1 ]; do
+    read -r -p "$text" response
+    if [ -n "$response" ]; then
+      echo "$response"
+      return 0
+    elif [ -n "$default" ]; then
+      echo "$default"
+      return 0
     fi
-
-    sudo pip install -q virtualenv autoenv
-
-    sudo npm install -g coffee-script uglify-js less clean-css coffee-react
-
-    sudo gem install -q tmuxinator
+  done
 }
 
-install-nvm() {
-  pushd /tmp
-  rm -f install.sh
-  wget https://raw.githubusercontent.com/creationix/nvm/v0.25.1/install.sh
-  sudo bash -c "NVM_DIR=$NVM_DIR install.sh"
-  source $NVM_DIR/nvm.sh
-  nvm install $NODE_VERSION
-  nvm alias default $NODE_VERSION
-  nvm use default
-  popd
+confirm() {
+  # $1 (optional) [str] - Prompt string
+  # $2 (optional) [y|n] - The default return value if user just hits enter
+  local prompt="${1-Are you sure?}"
+  local default="$2"
+  case $default in
+    [yY])
+      prompt="$prompt [Y/n] "
+      ;;
+    [nN])
+      prompt="$prompt [y/N] "
+      ;;
+    *)
+      prompt="$prompt [y/n] "
+      ;;
+  esac
+  while [ 1 ]; do
+    read -r -p "$prompt" response
+    case $response in
+      [yY][eE][sS]|[yY]) 
+        return 0
+        ;;
+      [nN][oO]|[nN]) 
+        return 1
+        ;;
+      *)
+        if [ -z "$response" ]; then
+          case $default in
+            [yY])
+              return 0
+              ;;
+            [nN])
+              return 1
+              ;;
+          esac
+        fi
+        ;;
+    esac
+  done
 }
 
-setup-desktop-repos() {
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
-    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-    sudo sh -c 'echo "deb http://dl.google.com/linux/talkplugin/deb/ stable main" >> /etc/apt/sources.list.d/google-talk.list'
-    sudo sh -c 'echo "deb http://dl.google.com/linux/musicmanager/deb/ stable main" >> /etc/apt/sources.list.d/google-music.list'
-    sudo apt-get update -qq
+checkpoint() {
+  # Create a checkpoint
+  # $1 [str] - Unique key for the checkpoint
+  mkdir -p "$CHECKPOINT_DIR"
+  touch "$CHECKPOINT_DIR/${1?checkpoint must have an argument}"
 }
 
-setup-custom-desktop-repos() {
-    #sudo add-apt-repository -y ppa:kevin-mehall/pithos-daily
-    sudo add-apt-repository -y ppa:ubuntu-wine/ppa
-
-    # dropbox
-    sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5044912E
-    sudo sh -c 'echo "deb http://linux.dropbox.com/ubuntu/ precise main" >> /etc/apt/sources.list.d/dropbox.list' 
-
-    sudo apt-get update -qq
+has-checkpoint() {
+  # Check if a checkpoint has been reached
+  # $1 [str] - Unique key for the checkpoint
+  test -e "$CHECKPOINT_DIR/${1?has-checkpoint must have an argument}"
 }
 
-install-desktop-packages() {
-  sudo apt-get install -q -y \
-    gnome \
-    "gnome-do" \
-    flashplugin-installer \
-    google-chrome-stable \
-    gparted \
-    xbindkeys
+clear-checkpoints() {
+  # Remove all checkpoints
+  rm -rf "$CHECKPOINT_DIR"
 }
 
-install-custom-desktop-packages() {
-  sudo apt-get install -q -y \
-    vim-gnome \
-    gthumb \
-    dropbox \
-    encfs \
-    google-talkplugin \
-    google-musicmanager-beta \
-    vlc \
-    wine1.6
-  if [ -e ~/.bin ]; then
-      pushd ~/.bin
-      wget https://yt-dl.org/latest/youtube-dl
-      chmod +x youtube-dl
-      popd
+installed() {
+  dpkg --get-selections | grep install | grep $1 >/dev/null
+}
+
+cp-vim-bundle() {
+  local bundle=${1?Must specify a vim bundle}
+  if [ ! -e ~/.vim/bundle/$bundle ]; then
+    cp -r .vim/bundle/$bundle ~/.vim/bundle/$bundle
   fi
 }
 
-un-unity() {
-    sudo apt-get purge -y \
-        overlay-scrollbar \
-        liboverlay-scrollbar-0.2-0 \
-        liboverlay-scrollbar3-0.2-0
+setup-install-progs() {
+  has-checkpoint setup-progs && return
+  sudo apt-get update -qq
+  sudo apt-get install -y -q \
+    python-pycurl \
+    python-software-properties \
+    wget \
+    git \
+    curl
+  checkpoint setup-progs
 }
 
-clone-repos() {
-    pushd $HOME
-    mkdir -p ws
-    cd ws
-    wget https://raw.github.com/mathcamp/devbox/master/devbox/unbox.py
+install-cli() {
+  has-checkpoint cli && return
+  sudo apt-get install -y -q \
+    silversearcher-ag \
+    autossh \
+    mercurial \
+    htop \
+    iotop \
+    openssh-client \
+    tmux \
+    unzip \
+    vim-nox \
+    xsel \
+    ufw \
+    tree
 
-    for repo in ${BOX_REPOS[@]}; do
-        python unbox.py git@github.com:$repo
-    done
+  which tmuxinator || sudo gem install -q tmuxinator
 
-    rm unbox.py
+  sudo ufw default deny incoming
+  sudo ufw default allow outgoing
+  if confirm "Allow ssh connections?" y; then
+    sudo ufw allow 22/tcp
+    sudo apt-get install -y -q openssh-server
+  fi
+
+  mkdir -p ~/.bash.d
+  cp -r $CLI_DOTFILES $HOME
+  rsync -lrp --exclude bundle .vim $HOME
+  mkdir -p ~/.vim/bundle
+  for bundle in $DEFAULT_VIM_BUNDLES; do
+    cp-vim-bundle $bundle
+  done
+  checkpoint cli
+}
+
+install-languages() {
+  local languages="$1"
+  if [ -z "$languages" ]; then
+    return
+  fi
+  if [ "$languages" == "all" ]; then
+    languages="$ALL_LANGUAGES"
+  fi
+  for language in $languages; do
+    install-language-$language
+  done
+}
+
+install-language-python() {
+  has-checkpoint python && return
+  sudo apt-get install -y -q \
+    python-dev \
+    python-pip \
+    ipython
+
+  sudo pip install -q virtualenv autoenv
+  cp .pylintrc $HOME
+  cp-vim-bundle python-mode
+  checkpoint python
+}
+
+install-language-go() {
+  has-checkpoint go && return
+  if [ ! -e /usr/local/go ]; then
+    pushd /tmp
+    local pkg="go1.2.2.linux-amd64.tar.gz"
+    if [ ! -e "$pkg" ]; then
+      wget -O $pkg https://storage.googleapis.com/golang/$pkg
+    fi
+    sudo tar -C /usr/local -xzf $pkg
+    rm -f $pkg
     popd
+  fi
+
+  cp-vim-bundle vim-go
+  checkpoint go
+}
+
+install-language-arduino() {
+  has-checkpoint arduino && return
+
+  if ! which arduino; then
+    local default_version=$(curl https://github.com/arduino/Arduino/releases/latest | sed 's|^.*tag/\([^"]*\).*$|\1|')
+    local version=$(prompt "Arduino IDE version?" $default_version)
+    local install_dir=$(prompt "Arduino IDE install dir?" /usr/local/share)
+    local zipfile="arduino-${version}-linux64.tar.xz"
+    pushd /tmp > /dev/null
+    wget -O $zipfile http://downloads.arduino.cc/$zipfile
+    tar -Jxf $zipfile
+    sudo mv arduino-${version} $install_dir
+    sudo ln -s arduino-${version} $install_dir/arduino
+    sudo ln -s $install_dir/arduino/arduino /usr/local/bin
+    popd > /dev/null
+  fi
+
+  if [ ! - e /etc/udev/rules.d/adafruit-trinket.rules ]; then
+    wget -O adafruit-trinket.rules https://github.com/adafruit/Trinket_Arduino_Linux/raw/master/adafruit-trinket.rules
+    rm -f adafruit-trinket.rules
+    sudo mv adafruit-trinket.rules /etc/udev/rules.d/
+    sudo reload udev
+  fi
+
+  local arduino_dir=$(dirname $(readlink -f $(which arduino)))
+  if [ ! -e $arduino_dir/hardware/adafruit ]; then
+    pushd /tmp > /dev/null
+    wget -O master.zip https://github.com/adafruit/Adafruit_Arduino_Boards/archive/master.zip
+    unzip master.zip
+    cp -r Adafruit_Arduino_Boards-master/hardware/adafruit $arduino_dir/hardware
+    cp Adafruit_Arduino_Boards-master/hardware/tools/avr/etc/avrdude.conf $arduino_dir/hardware/tools/avr/etc
+    popd
+  fi
+
+  installed python-pip || sudo apt-get install -y -q python-pip
+  sudo pip install -q ino
+  cp-vim-bundle vim-arduino-ino
+  checkpoint arduino
+}
+
+install-language-js() {
+  has-checkpoint javascript && return
+  install-nvm
+  npm install -g coffee-script uglify-js less clean-css coffee-react
+  cp-vim-bundle vim-cjsx
+  cp-vim-bundle vim-coffee-script
+  cp-vim-bundle vim-css-color
+  cp-vim-bundle vim-glsl
+  cp-vim-bundle vim-less
+  cp-vim-bundle vim-stylus
+  checkpoint javascript
+}
+
+install-nvm() {
+  nvm current && return
+  local nvm_dir=$(prompt "NVM install dir:" /usr/local/nvm)
+  if [ ! -d $nvm_dir ]; then
+    pushd /tmp > /dev/null
+    wget -O install.sh https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh
+    chmod +x install.sh
+    sudo bash -c "NVM_DIR=$nvm_dir ./install.sh"
+    popd > /dev/null
+  fi
+  source $nvm_dir/nvm.sh
+  echo "source $nvm_dir/nvm.sh" > ~/.bash.d/nvm.sh
+  local node_version=$(prompt "Install node version:" iojs-v2.3.1)
+  nvm ls $node_version || nvm install $node_version
+  nvm ls default || nvm alias default $node_version
+  nvm use $node_version
+}
+
+add-apt-key-google() {
+  apt-key list | grep linux-packages-keymaster@google.com > /dev/null || \
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
+}
+
+setup-gnome() {
+  has-checkpoint gnome && return
+  # Get rid of horrible unity scrollbars
+  sudo apt-get purge -y -q \
+    overlay-scrollbar \
+    liboverlay-scrollbar-0.2-0 \
+    liboverlay-scrollbar3-0.2-0
+
+  add-apt-key-google
+  sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
+  # Enable multiverse
+  sudo sed -i -e 's/# \(.* multiverse$\)/\1/' /etc/apt/sources.list
+  sudo apt-get update -qq
+  sudo apt-get install -q -y \
+    gnome \
+    "gnome-do" \
+    vim-gnome \
+    flashplugin-installer \
+    google-chrome-stable \
+    gparted \
+    libav-tools \
+    mplayer \
+    vlc \
+    xbindkeys
+  cp -r $GNOME_DOTFILES $HOME
+  sudo cp vim.desktop /usr/share/applications
+  cp mimeapps.list ~/.local/share/applications
+  checkpoint gnome
+}
+
+setup-custom-packages() {
+  if ! installed google-talkplugin && confirm "Install Google talk plugin?" n; then
+    add-apt-key-google
+    sudo sh -c 'echo "deb http://dl.google.com/linux/talkplugin/deb/ stable main" > /etc/apt/sources.list.d/google-talk.list'
+    sudo apt-get update -qq
+    sudo apt-get install -y -q google-talkplugin
+  fi
+  if ! installed google-musicmanager-beta && confirm "Install Google music manager?" n; then
+    add-apt-key-google
+    sudo sh -c 'echo "deb http://dl.google.com/linux/musicmanager/deb/ stable main" > /etc/apt/sources.list.d/google-music.list'
+    sudo apt-get update -qq
+    sudo apt-get install -y -q google-musicmanager-beta
+  fi
+  if ! installed dropbox && confirm "Install Dropbox?" n; then
+    sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5044912E
+    sudo sh -c 'echo "deb http://linux.dropbox.com/ubuntu/ precise main" > /etc/apt/sources.list.d/dropbox.list' 
+    sudo apt-get update -qq
+    sudo apt-get install -y -q dropbox
+  fi
+  if ! installed wine1.6 && confirm "Install wine?" n; then
+    sudo add-apt-repository -y ppa:ubuntu-wine/ppa
+    sudo apt-get install -y -q wine1.6
+  fi
+  if ! which docker && confirm "Install docker?" n; then
+    wget -qO- https://get.docker.com/ | sh
+    confirm "Allow $USER to use docker without sudo?" y && sudo adduser $USER docker
+  fi
+  sudo apt-get install -y -q \
+    gthumb \
+    encfs
+  if [[ -e ~/.bin ]] && [[ ! -e ~/.bin/youtube-dl ]]; then
+    pushd ~/.bin > /dev/null
+    wget -O youtube-dl https://yt-dl.org/latest/youtube-dl
+    chmod +x youtube-dl
+    popd > /dev/null
+  fi
 }
 
 main() {
-    local mode=$1
-    if [[ ! "$mode" ]] || [[ "$mode" == "-h" ]] || [[ "$mode" == "help" ]]; then
-        echo "Usage $0 [help|bare-desktop|dev|desktop|repos|full]"
-        if [[ "$mode" == "-h" ]] || [[ "$mode" == "help" ]]; then
-            echo -e "$DESCRIPTION"
-        fi
-        exit 0
-    fi
+  if [ -n "$SUDO_USER" ]; then
+    echo "Do not run this script with sudo!"
+    exit 1
+  fi
 
-    setup-install-progs
-    git submodule update --init --recursive
+  local languages=""
+  local gnome=
+  local custom_packages=
+  while getopts "hfgcl:-:" opt; do
+    case $opt in
+      -)
+        case $OPTARG in
+          languages)
+            echo "$ALL_LANGUAGES"
+            exit 0
+            ;;
+          *)
+            echo "$USAGE"
+            exit 1
+            ;;
+        esac
+        ;;
+      c)
+        custom_packages=1
+        ;;
+      g)
+        gnome=1
+        ;;
+      h)
+        echo "$USAGE"
+        exit
+        ;;
+      l)
+        languages="$languages $OPTARG"
+        ;;
+      f)
+        clear-checkpoints
+        ;;
+      \?)
+        echo "$USAGE"
+        exit 1
+        ;;
+    esac
+  done
+  shift $((OPTIND-1))
+  languages=${languages# } # trim leading whitespace
 
-    if [[ "$mode" == "dev" ]] || [[ "$mode" == "full" ]]; then
-        sudo apt-get update -qq
-        install-common-packages
-        cp -r $DOTFILES $HOME
-    fi
-
-    if [[ "$mode" == "repos" ]] || [[ "$mode" == "full" ]]; then
-        clone-repos
-    fi
-
-    if [[ "$mode" == "bare-desktop" ]] ||
-       [[ "$mode" == "desktop" ]] ||
-       [[ "$mode" == "full" ]]; then
-        setup-desktop-repos
-        install-desktop-packages
-        cp -r $DESKTOP_DOTFILES $HOME
-        sudo cp vim.desktop /usr/share/applications
-        cp mimeapps.list ~/.local/share/applications
-        un-unity
-    fi
-
-    if [[ "$mode" == "desktop" ]] || [[ "$mode" == "full" ]]; then
-        setup-custom-desktop-repos
-        install-custom-desktop-packages
-        echo "Now use gnome-tweak-tool to bind capslock to ctrl"
-        echo "And use dconf editor org>gnome>desktop>wm to add keyboard shortcuts"
-        echo "Maybe install some proprietary graphics drivers? (e.g. nvidia-331)"
-    fi
+  setup-install-progs
+  git submodule update --init --recursive
+  install-cli
+  install-languages "$languages"
+  if [ $gnome ]; then
+    setup-gnome
+  fi
+  if [ $custom_packages ]; then
+    setup-custom-packages
+    echo "Now use gnome-tweak-tool to bind capslock to ctrl"
+    echo "And use dconf editor org>gnome>desktop>wm to add keyboard shortcuts"
+    echo "Maybe install some proprietary graphics drivers? (e.g. nvidia-331)"
+  fi
 }
 
 main "$@"

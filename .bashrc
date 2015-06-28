@@ -102,5 +102,10 @@ export BROWSER=google-chrome
 if [ -f ~/.bash_env ]; then
     . ~/.bash_env
 fi
+if [ -d ~/.bash.d ]; then
+  for filename in $(ls ~/.bash.d);do
+    source ~/.bash.d/$filename
+  done
+fi
 # Autoenv
 . activate.sh
