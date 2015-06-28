@@ -362,3 +362,5 @@ endif
 
 nmap gs :Gstatus<CR>
 nmap gh :Git! log -- %<CR>
+
+let g:vim_arduino_ino_cmd = 'ano'

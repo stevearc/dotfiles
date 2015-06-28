@@ -227,11 +227,17 @@ install-language-arduino() {
     unzip master.zip
     cp -r Adafruit_Arduino_Boards-master/hardware/adafruit $arduino_dir/hardware
     cp Adafruit_Arduino_Boards-master/hardware/tools/avr/etc/avrdude.conf $arduino_dir/hardware/tools/avr/etc
-    popd
+    popd > /dev/null
   fi
 
-  installed python-pip || sudo apt-get install -y -q python-pip
-  sudo pip install -q ino
+  if ! which ano; then
+    pushd /tmp > /dev/null
+    wget -O master.zip https://github.com/scottdarch/Arturo/archive/master.zip
+    unzip master.zip
+    cd Arturo-master
+    sudo make install
+    popd > /dev/null
+  fi
   cp-vim-bundle vim-arduino-ino
   checkpoint arduino
 }

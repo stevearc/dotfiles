@@ -52,9 +52,9 @@
 [submodule ".vim/bundle/vim-glsl"]
 	path = .vim/bundle/vim-glsl
 	url = https://github.com/tikhomirov/vim-glsl
-[submodule ".vim/bundle/vim-arduino-ino"]
-	path = .vim/bundle/vim-arduino-ino
-	url = https://github.com/jplaut/vim-arduino-ino.git
 [submodule ".vim/bundle/vim-cjsx"]
 	path = .vim/bundle/vim-cjsx
 	url = https://github.com/mtscout6/vim-cjsx.git
+[submodule ".vim/bundle/vim-arduino-ino"]
+	path = .vim/bundle/vim-arduino-ino
+	url = https://github.com/stevearc/vim-arduino-ino.git
