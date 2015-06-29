@@ -238,7 +238,7 @@ install-language-arduino() {
     sudo make install
     popd > /dev/null
   fi
-  cp-vim-bundle vim-arduino-ino
+  sudo apt-get install -q -y picocom
   checkpoint arduino
 }
 
