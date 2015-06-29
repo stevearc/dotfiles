@@ -60,9 +60,9 @@ set showtabline=2
 
 " Size of tabs
 set expandtab
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
 set autoindent
 set laststatus=2
 
@@ -70,10 +70,10 @@ set tw=80
 " Use longer lines in coffeescript because that's how we do at Artillery
 au FileType coffee setlocal tw=100
 
-" Use 2-space tabs for certain file types
-au FileType jinja2,yaml,html,json,javascript,coffee,css,less,stylus,sh,vim,cpp setlocal shiftwidth=2 tabstop=2 softtabstop=2
+" Use 4-space tabs for certain file types
+au FileType python setlocal shiftwidth=4 tabstop=4 softtabstop=4
 " Trim trailing whitespace on save
-autocmd BufWrite *.json,*.js,*.coffee,*.css,*.less,*.styl,*.py,*.rb,*.go if ! &bin | silent! %s/\s\+$//ge | endif
+autocmd BufWrite *.json,*.js,*.coffee,*.cjsx,*.jsx,*.html,*.jinja2,*.j2,*.css,*.less,*.styl,*.py,*.rb,*.go,*.ino,*.c,*.cpp,*.h,*.sh if ! &bin | silent! %s/\s\+$//ge | endif
 
 " Make cjsx files hijack the vim-coffee-script compile tools
 autocmd BufReadPost *.cjsx let coffee_compiler = 'cjsx'
