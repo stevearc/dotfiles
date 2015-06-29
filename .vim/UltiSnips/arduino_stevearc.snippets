@@ -1,0 +1,21 @@
+extends c
+
+snippet pl "Serial.println" !b
+Serial.println("$1");
+endsnippet
+
+snippet pm "pinMode" !b
+pinMode($1, $2);
+endsnippet
+
+snippet adafruit "Adafruit neopixels" !b
+#include <Adafruit_NeoPixel.h>
+
+#define LED_COUNT $1
+#define PIN $2
+
+Adafruit_NeoPixel leds = Adafruit_NeoPixel(LED_COUNT, PIN, NEO_GRB + NEO_KHZ800);
+$0
+endsnippet
+
+# vim:ft=snippets:
