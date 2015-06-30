@@ -79,11 +79,6 @@ au FileType python setlocal shiftwidth=4 tabstop=4 softtabstop=4
 " Trim trailing whitespace on save
 autocmd BufWrite *.json,*.js,*.coffee,*.cjsx,*.jsx,*.html,*.jinja2,*.j2,*.css,*.less,*.styl,*.py,*.rb,*.go,*.ino,*.c,*.cpp,*.h,*.sh if ! &bin | silent! %s/\s\+$//ge | endif
 
-" Make cjsx files hijack the vim-coffee-script compile tools
-autocmd BufReadPost *.cjsx let coffee_compiler = 'cjsx'
-" Make syntastic work with cjsx files
-autocmd BufReadPost *.cjsx let g:syntastic_coffee_coffee_exe = 'cjsx'
-
 " use the :help command for 'K' in .vim files
 autocmd FileType vim set keywordprg=":help"
 
@@ -370,3 +365,8 @@ nmap gh :Git! log -- %<CR>
 " Quicksave and quickload for sessions
 nmap gq :wa<CR>:mksession! ~/.quicksave.vim<CR>:qa<CR>
 nmap gl :source ~/.quicksave.vim<CR>
+
+" Use cjsx to build because it's a superset of coffeescript
+let coffee_compiler = '/usr/local/nvm/versions/io.js/v2.3.1/bin/cjsx'
+" Make syntastic work with cjsx files
+let g:syntastic_coffee_coffee_exe = '/usr/local/nvm/versions/io.js/v2.3.1/bin/cjsx'
