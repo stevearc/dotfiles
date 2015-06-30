@@ -55,10 +55,10 @@ confirm() {
   while [ 1 ]; do
     read -r -p "$prompt" response
     case $response in
-      [yY][eE][sS]|[yY]) 
+      [yY][eE][sS]|[yY])
         return 0
         ;;
-      [nN][oO]|[nN]) 
+      [nN][oO]|[nN])
         return 1
         ;;
       *)
@@ -230,15 +230,9 @@ install-language-arduino() {
     popd > /dev/null
   fi
 
-  if ! which ano; then
-    pushd /tmp > /dev/null
-    wget -O master.zip https://github.com/scottdarch/Arturo/archive/master.zip
-    unzip master.zip
-    cd Arturo-master
-    sudo make install
-    popd > /dev/null
-  fi
   sudo apt-get install -q -y picocom
+  sudo adduser $USER dialout
+  cp-vim-bundle vim-arduino
   checkpoint arduino
 }
 
@@ -276,7 +270,7 @@ install-nvm() {
 
 add-apt-key-google() {
   apt-key list | grep linux-packages-keymaster@google.com > /dev/null || \
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 }
 
 setup-gnome() {
@@ -324,7 +318,7 @@ setup-custom-packages() {
   fi
   if ! installed dropbox && confirm "Install Dropbox?" n; then
     sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5044912E
-    sudo sh -c 'echo "deb http://linux.dropbox.com/ubuntu/ precise main" > /etc/apt/sources.list.d/dropbox.list' 
+    sudo sh -c 'echo "deb http://linux.dropbox.com/ubuntu/ precise main" > /etc/apt/sources.list.d/dropbox.list'
     sudo apt-get update -qq
     sudo apt-get install -y -q dropbox
   fi

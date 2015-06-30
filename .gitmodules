@@ -55,3 +55,6 @@
 [submodule ".vim/bundle/vim-cjsx"]
 	path = .vim/bundle/vim-cjsx
 	url = https://github.com/mtscout6/vim-cjsx.git
+[submodule ".vim/bundle/vim-arduino"]
+	path = .vim/bundle/vim-arduino
+	url = https://github.com/stevearc/vim-arduino.git

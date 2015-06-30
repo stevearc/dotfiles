@@ -27,6 +27,10 @@ set wildignore+=*.png,*.jpg,*.jpeg,*.gif
 set ignorecase
 set smartcase
 
+" Autocompletion should only insert text up to the longest common substring of
+" all matches.
+set completeopt+=longest
+
 " Show the row, column of the cursor
 set ruler
 
@@ -363,4 +367,6 @@ endif
 nmap gs :Gstatus<CR>
 nmap gh :Git! log -- %<CR>
 
-let g:vim_arduino_ino_cmd = 'ano'
+" Quicksave and quickload for sessions
+nmap gq :wa<CR>:mksession! ~/.quicksave.vim<CR>:qa<CR>
+nmap gl :source ~/.quicksave.vim<CR>
