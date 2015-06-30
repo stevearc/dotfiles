@@ -1,13 +1,13 @@
-nmap <Leader>i <Plug>(go-info)
-nmap <Leader>gd <Plug>(go-doc)
-nmap <Leader>gv <Plug>(go-doc-vertical)
+nnoremap <buffer> <Leader>i <Plug>(go-info)
+nnoremap <buffer> <Leader>gd <Plug>(go-doc)
+nnoremap <buffer> <Leader>gv <Plug>(go-doc-vertical)
 
-nmap <leader>b <Plug>(go-build)
-nmap <leader>dt <Plug>(go-test)
+nnoremap <buffer> <leader>b <Plug>(go-build)
+nnoremap <buffer> <leader>dt <Plug>(go-test)
 
-nmap gd <Plug>(go-def)
-nmap <Leader>ds <Plug>(go-def-split)
-nmap <Leader>dv <Plug>(go-def-vertical)
+nnoremap <buffer> gd <Plug>(go-def)
+nnoremap <buffer> <Leader>ds <Plug>(go-def-split)
+nnoremap <buffer> <Leader>dv <Plug>(go-def-vertical)
 
 " Use go's autocomplete instead of C-P
 let g:autocomplete_cmd = "\<C-X>\<C-O>"

@@ -5,7 +5,7 @@ function! b:MyStatusLine()
 endfunction
 setl statusline=%!b:MyStatusLine()
 
-nmap <leader>m :make!<CR>
-nmap <leader>u :call ArduinoUpload()<CR>
-nmap <leader>d :call ArduinoUploadAndSerial()<CR>
-nmap <leader>b :call ArduinoChooseBoard()<CR>
+nnoremap <buffer> <leader>m :ArduinoVerify<CR>
+nnoremap <buffer> <leader>u :ArduinoUpload<CR>
+nnoremap <buffer> <leader>d :ArduinoUploadAndSerial<CR>
+nnoremap <buffer> <leader>b :ArduinoChooseBoard<CR>
