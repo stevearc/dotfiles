@@ -362,41 +362,40 @@ endif
 nmap gs :Gstatus<CR>
 nmap gh :Git! log -- %<CR>
 
-" Quicksave and quickload for sessions
-let g:quicksave_dir = (exists('$XDG_CACHE_HOME') ? $XDG_CACHE_HOME : $HOME . '/.cache') . '/vim-quicksave'
-function! s:SessionPath(session_name)
-  return g:quicksave_dir . '/' . a:session_name . '.vim'
-endfunction
-function! s:QuickSave(...)
-  if empty(glob(g:quicksave_dir))
-    call mkdir(g:quicksave_dir, 'p')
-  endif
-  if !a:0
-    let session_name = input("Session name? ", 'default')
-  else
-    let session_name = a:1
-  endif
-  if strlen(session_name)
-    exe 'mksession! ' . s:SessionPath(session_name)
-    echo " | Session saved"
+
+function s:OverwriteQuickSave()
+  let name = xolox#session#find_current_session()
+  if !empty(name)
+    " If we have a current session name, disable the save callback and remap
+    " <leader>ss to save with no prompt.
+    aug SessionSaveTrigger
+      au!
+    aug END
+    nnoremap <leader>ss :wa<CR>:SaveSession<CR>
   endif
 endfunction
-function! s:QuickLoad(...)
-  if !a:0
-    let session_name = 'default'
-  else
-    let session_name = a:1
-  endif
-  let path = s:SessionPath(session_name)
-  if !empty(glob(path))
-    exe "source " . path
-  else
-    echoerr "No session named " . session_name
-  endif
-endfunction
-nnoremap ` :wa<CR>:QSave<CR>
-command! -nargs=? QLoad call s:QuickLoad(<f-args>)
-command! -nargs=? QSave call s:QuickSave(<f-args>)
+augroup SessionSaveTrigger
+  au!
+  au BufWrite,BufRead * :call s:OverwriteQuickSave()
+augroup END
+
+nmap <leader>ss :wa<CR>:SaveSession 
+nnoremap <leader>so :OpenSession<CR>
+nnoremap <leader>sd :DeleteSession<CR>
+
+" Configure vim-session
+" Don't save help buffers
+set sessionoptions-=help
+" Don't save quickfix buffers
+set sessionoptions-=qf
+" Don't autoload sessions on startup
+let g:session_autoload = 'no'
+" Don't prompt to save on exit
+let g:session_autosave = 'no'
+let g:session_autosave_periodic = 1
+let g:session_verbose_messages = 0
+let g:session_command_aliases = 1
+let g:session_menu = 0
 
 " Use cjsx to build because it's a superset of coffeescript
 let coffee_compiler = '/usr/local/nvm/versions/io.js/v2.3.1/bin/cjsx'
