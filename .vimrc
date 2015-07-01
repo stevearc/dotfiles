@@ -363,7 +363,7 @@ nmap gs :Gstatus<CR>
 nmap gh :Git! log -- %<CR>
 
 
-function s:OverwriteQuickSave()
+function! s:OverwriteQuickSave()
   let name = xolox#session#find_current_session()
   if !empty(name)
     " If we have a current session name, disable the save callback and remap
