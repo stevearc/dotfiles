@@ -363,8 +363,40 @@ nmap gs :Gstatus<CR>
 nmap gh :Git! log -- %<CR>
 
 " Quicksave and quickload for sessions
-nmap gq :wa<CR>:mksession! ~/.quicksave.vim<CR>:qa<CR>
-nmap gl :source ~/.quicksave.vim<CR>
+let g:quicksave_dir = (exists('$XDG_CACHE_HOME') ? $XDG_CACHE_HOME : $HOME . '/.cache') . '/vim-quicksave'
+function! s:SessionPath(session_name)
+  return g:quicksave_dir . '/' . a:session_name . '.vim'
+endfunction
+function! s:QuickSave(...)
+  if empty(glob(g:quicksave_dir))
+    call mkdir(g:quicksave_dir, 'p')
+  endif
+  if !a:0
+    let session_name = input("Session name? ", 'default')
+  else
+    let session_name = a:1
+  endif
+  if strlen(session_name)
+    exe 'mksession! ' . s:SessionPath(session_name)
+    echo " | Session saved"
+  endif
+endfunction
+function! s:QuickLoad(...)
+  if !a:0
+    let session_name = 'default'
+  else
+    let session_name = a:1
+  endif
+  let path = s:SessionPath(session_name)
+  if !empty(glob(path))
+    exe "source " . path
+  else
+    echoerr "No session named " . session_name
+  endif
+endfunction
+nnoremap ` :wa<CR>:QSave<CR>
+command! -nargs=? QLoad call s:QuickLoad(<f-args>)
+command! -nargs=? QSave call s:QuickSave(<f-args>)
 
 " Use cjsx to build because it's a superset of coffeescript
 let coffee_compiler = '/usr/local/nvm/versions/io.js/v2.3.1/bin/cjsx'
