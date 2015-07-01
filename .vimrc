@@ -1,6 +1,6 @@
 " Load plugins from the bundle directory
-call pathogen#infect() 
-call pathogen#helptags() 
+call pathogen#infect()
+call pathogen#helptags()
 
 " Use Vim settings, rather than Vi
 set nocompatible
@@ -362,7 +362,21 @@ endif
 nmap gs :Gstatus<CR>
 nmap gh :Git! log -- %<CR>
 
+" Configure vim-session
+" Don't save help buffers
+set sessionoptions-=help
+" Don't save quickfix buffers
+set sessionoptions-=qf
+" Don't autoload sessions on startup
+let g:session_autoload = 'no'
+" Don't prompt to save on exit
+let g:session_autosave = 'no'
+let g:session_autosave_periodic = 1
+let g:session_verbose_messages = 0
+let g:session_command_aliases = 1
+let g:session_menu = 0
 
+" Helpful wrappers around vim-session
 function! s:OverwriteQuickSave()
   let name = xolox#session#find_current_session()
   if !empty(name)
@@ -378,24 +392,27 @@ augroup SessionSaveTrigger
   au!
   au BufWrite,BufRead * :call s:OverwriteQuickSave()
 augroup END
-
 nmap <leader>ss :wa<CR>:SaveSession 
-nnoremap <leader>so :OpenSession<CR>
-nnoremap <leader>sd :DeleteSession<CR>
 
-" Configure vim-session
-" Don't save help buffers
-set sessionoptions-=help
-" Don't save quickfix buffers
-set sessionoptions-=qf
-" Don't autoload sessions on startup
-let g:session_autoload = 'no'
-" Don't prompt to save on exit
-let g:session_autosave = 'no'
-let g:session_autosave_periodic = 1
-let g:session_verbose_messages = 0
-let g:session_command_aliases = 1
-let g:session_menu = 0
+let s:openCb = {}
+function! s:openCb.onComplete(item, method)
+  exe ':OpenSession ' . a:item
+endfunction
+function! QuickOpen()
+  let names = xolox#session#get_names(0)
+  call fuf#callbackitem#launch('', 0, 'OPEN>', s:openCb, names, 0)
+endfunction
+nnoremap <leader>so :call QuickOpen()<CR>
+
+let s:deleteCb = {}
+function! s:deleteCb.onComplete(item, method)
+  exe ':DeleteSession ' . a:item
+endfunction
+function! QuickDelete()
+  let names = xolox#session#get_names(0)
+  call fuf#callbackitem#launch('', 0, 'DELETE>', s:deleteCb, names, 0)
+endfunction
+nnoremap <leader>sd :call QuickDelete()<CR>
 
 " Use cjsx to build because it's a superset of coffeescript
 let coffee_compiler = '/usr/local/nvm/versions/io.js/v2.3.1/bin/cjsx'
