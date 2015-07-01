@@ -394,25 +394,9 @@ augroup SessionSaveTrigger
 augroup END
 nmap <leader>ss :wa<CR>:SaveSession 
 
-let s:openCb = {}
-function! s:openCb.onComplete(item, method)
-  exe ':OpenSession ' . a:item
-endfunction
-function! QuickOpen()
-  let names = xolox#session#get_names(0)
-  call fuf#callbackitem#launch('', 0, 'OPEN>', s:openCb, names, 0)
-endfunction
-nnoremap <leader>so :call QuickOpen()<CR>
-
-let s:deleteCb = {}
-function! s:deleteCb.onComplete(item, method)
-  exe ':DeleteSession ' . a:item
-endfunction
-function! QuickDelete()
-  let names = xolox#session#get_names(0)
-  call fuf#callbackitem#launch('', 0, 'DELETE>', s:deleteCb, names, 0)
-endfunction
-nnoremap <leader>sd :call QuickDelete()<CR>
+let g:ctrlp_extensions = ['session_wrapper']
+nnoremap <leader>so :call session_wrapper#QuickOpen()<CR>
+nnoremap <leader>sd :call session_wrapper#SafeDelete()<CR>
 
 " Use cjsx to build because it's a superset of coffeescript
 let coffee_compiler = '/usr/local/nvm/versions/io.js/v2.3.1/bin/cjsx'
