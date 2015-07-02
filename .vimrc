@@ -252,22 +252,24 @@ nmap <Space> za
 nmap <leader><Space> :call ToggleFold()<CR>
 
 " Quickly toggle the quickfix window
-au BufEnter * if !exists('b:showing_quickfix') | let b:showing_quickfix = 0 | endif
-function! ToggleQuickfix()
-    if( b:showing_quickfix == 0 )
-        exec "copen"
-        let b:showing_quickfix = 1
-    else
-        exec "cclose"
-        let b:showing_quickfix = 0
+" from http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window
+function! GetBufferList()
+  redir =>buflist
+  silent! ls!
+  redir END
+  return buflist
+endfunction
+function! QuickfixToggle()
+  let buflist = GetBufferList()
+  for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ "Quickfix List"'), 'str2nr(matchstr(v:val, "\\d\\+"))')
+    if bufwinnr(bufnum) != -1
+      cclose
+      return
     endif
+  endfor
+  copen
 endfunction
-map <leader>q :call ToggleQuickfix()<CR>
-
-function! UpdateQuickfixStatus()
-    let b:showing_quickfix = len(getqflist())
-endfunction
-au QuickfixCmdPost * call UpdateQuickfixStatus()
+map <leader>q :call QuickfixToggle()<CR>
 
 " Close the scratch preview automatically
 autocmd CursorMovedI,InsertLeave * if pumvisible() == 0|pclose|endif
@@ -397,6 +399,20 @@ nmap <leader>ss :wa<CR>:SaveSession
 let g:ctrlp_extensions = ['session_wrapper']
 nnoremap <leader>so :call session_wrapper#QuickOpen()<CR>
 nnoremap <leader>sd :call session_wrapper#SafeDelete()<CR>
+nnoremap <leader>zz :wa<CR>:SaveSession! quicksave<CR>:qa<CR>
+function! s:QuickLoad()
+  let names = xolox#session#get_names(0)
+  for name in names
+    if name == 'quicksave'
+      SessionOpen quicksave
+      SessionDelete! quicksave
+    endif
+  endfor
+endfunction
+aug QuickLoad
+  au!
+  au VimEnter * nested call s:QuickLoad()
+aug END
 
 " Use cjsx to build because it's a superset of coffeescript
 let coffee_compiler = '/usr/local/nvm/versions/io.js/v2.3.1/bin/cjsx'

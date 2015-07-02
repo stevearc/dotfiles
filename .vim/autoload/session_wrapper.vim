@@ -17,8 +17,8 @@ if exists('g:ctrlp_ext_vars')
   call add(g:ctrlp_ext_vars, {
     \ 'init': 'session_wrapper#GetSessions()',
     \ 'accept': 'session_wrapper#ChooseSession',
-    \ 'lname': 'long statusline name',
-    \ 'sname': 'shortname',
+    \ 'lname': 'load session',
+    \ 'sname': 'session',
     \ 'type': 'line',
     \ })
 

@@ -145,7 +145,7 @@ install-cli() {
 
   mkdir -p ~/.bash.d
   cp -r $CLI_DOTFILES $HOME
-  rsync -lrp --exclude bundle .vim $HOME
+  rsync -lrp --exclude bundle --exclude .git .vim $HOME
   mkdir -p ~/.vim/bundle
   for bundle in $DEFAULT_VIM_BUNDLES; do
     cp-vim-bundle $bundle
