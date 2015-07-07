@@ -56,6 +56,8 @@ augroup CursorLine
   au WinLeave * setlocal nocursorline
 augroup END
 
+set formatoptions=rqnlj
+
 " Don't reopen buffers
 set switchbuf=useopen
 
@@ -125,7 +127,7 @@ filetype plugin on
 filetype plugin indent on
 
 " Set auto line wrapping options (overwrites plugins)
-au FileType * setlocal formatoptions=crqnlj
+au FileType * setlocal formatoptions=rqnlj
 
 " Add bash shortcuts for command line
 :cnoremap <C-a>  <Home>
