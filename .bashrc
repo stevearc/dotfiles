@@ -108,4 +108,6 @@ if [ -d ~/.bash.d ]; then
   done
 fi
 # Autoenv
-. activate.sh
+if command -v activate.sh > /dev/null; then
+  . activate.sh
+fi
