@@ -2,7 +2,7 @@ let g:arduino_serial_cmd = 'picocom {port} -b {baud} -l'
 
 function! b:MyStatusLine()
   let port = arduino#GetPort()
-  let line = '%f [' . g:arduino_board . '] ('
+  let line = '%f [' . g:arduino_board . '] [' . g:arduino_programmer . '] ('
   if !empty(port)
     let line = line . port . ':'
   endif
@@ -11,7 +11,8 @@ function! b:MyStatusLine()
 endfunction
 setl statusline=%!b:MyStatusLine()
 
-nnoremap <buffer> <leader>m :ArduinoVerify<CR>
-nnoremap <buffer> <leader>u :ArduinoUpload<CR>
-nnoremap <buffer> <leader>d :ArduinoUploadAndSerial<CR>
-nnoremap <buffer> <leader>b :ArduinoChooseBoard<CR>
+nnoremap <buffer> <leader>ac :wa<CR>:ArduinoVerify<CR>
+nnoremap <buffer> <leader>au :wa<CR>:ArduinoUpload<CR>
+nnoremap <buffer> <leader>ad :wa<CR>:ArduinoUploadAndSerial<CR>
+nnoremap <buffer> <leader>ab :ArduinoChooseBoard<CR>
+nnoremap <buffer> <leader>ap :ArduinoChooseProgrammer<CR>
