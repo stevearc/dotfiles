@@ -403,15 +403,11 @@ nnoremap <leader>so :call session_wrapper#QuickOpen()<CR>
 nnoremap <leader>sd :call session_wrapper#SafeDelete()<CR>
 nnoremap <leader>zz :wa<CR>:SaveSession! quicksave<CR>:qa<CR>
 function! s:QuickLoad()
-  if !xolox#session#is_empty()
-    return
-  endif
   let names = xolox#session#get_names(0)
   for name in names
     if name == 'quicksave'
       SessionOpen quicksave
       SessionDelete! quicksave
-      let v:this_session = ''
     endif
   endfor
 endfunction
@@ -424,3 +420,8 @@ aug END
 let coffee_compiler = '/usr/local/nvm/versions/io.js/v2.3.1/bin/cjsx'
 " Make syntastic work with cjsx files
 let g:syntastic_coffee_coffee_exe = '/usr/local/nvm/versions/io.js/v2.3.1/bin/cjsx'
+
+aug Colorize
+  au!
+  au BufReadPost * command! -buffer -bar Colorize call css_color#init('css', 'extended', 'cssFunction')
+aug END
