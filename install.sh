@@ -1,6 +1,6 @@
 #!/bin/bash -e
 set -e
-declare -r CLI_DOTFILES=".bashrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .bin .agignore .tmuxinator"
+declare -r CLI_DOTFILES=".bashrc .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .bin .agignore .tmuxinator"
 declare -r DEFAULT_VIM_BUNDLES="ctrlp nerdtree syntastic ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-json vim-misc vim-session"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
