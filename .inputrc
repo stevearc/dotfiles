@@ -1,2 +1,16 @@
-set editing-mode vi
 set show-mode-in-prompt on
+set editing-mode vi
+
+$if mode=vi
+
+set keymap vi-command
+Control-l: clear-screen
+Control-p: previous-history
+Control-n: next-history
+
+set keymap vi-insert
+Control-l: clear-screen
+Control-p: previous-history
+Control-n: next-history
+
+$endif
