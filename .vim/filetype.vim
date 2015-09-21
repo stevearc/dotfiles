@@ -8,7 +8,7 @@ au BufRead,BufNewFile *.go setlocal ft=go
 " Broken Arrow
 aug BAFileType
   au!
-  au BufRead,BufNewFile *.json,*.scene,*.prefab,*.particle,*.fx,*.material,*.shading,*.map* :call SetBAFileType()
+  au BufRead,BufNewFile *.json,*.scene,*.prefab,*.particle,*.fx,*.material,*.shading,*.compositor,*.map* :call SetBAFileType()
 aug END
 
 function! SetBAFileType()
