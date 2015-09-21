@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+main() {
+  if ! p4 login -s >/dev/null 2>&1; then
+    if [ -e ~/.p4passwd ]; then
+      p4 login < ~/.p4passwd
+    else
+      echo "You are logged out of Perforce. Please run 'p4 login' to log in."
+      exit 1
+    fi
+  fi
+  p4 sync
+}
+
+main
