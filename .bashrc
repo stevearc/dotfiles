@@ -100,14 +100,25 @@ export EDITOR=vim
 export BROWSER=google-chrome
 
 if [ -f ~/.bash_env ]; then
-    . ~/.bash_env
+    source ~/.bash_env
 fi
 if [ -d ~/.bash.d ]; then
   for filename in $(ls ~/.bash.d);do
     source ~/.bash.d/$filename
   done
 fi
+
+# NVM
+if [ -e /usr/local/nvm ]; then
+  source /usr/local/nvm/nvm.sh
+fi
+
+# RVM (must be done before autoenv)
+if command -v rvm > /dev/null; then
+  source $(dirname $(dirname $(which rvm)))/scripts/rvm
+fi
+
 # Autoenv
 if command -v activate.sh > /dev/null; then
-  . activate.sh
+  source activate.sh
 fi
