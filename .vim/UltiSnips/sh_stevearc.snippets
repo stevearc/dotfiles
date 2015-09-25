@@ -1,0 +1,23 @@
+snippet trap "trap" b!
+cleanup() {
+	kill 0
+}
+trap cleanup SIGINT SIGTERM EXIT
+endsnippet
+
+snippet cleanup "trap that kills child pids" b!
+declare -a PIDS=()
+
+addpid() {
+  PIDS=("${PIDS[@]}" "${1?Need a pid}")
+}
+
+cleanup() {
+  for pid in ${PIDS[@]}; do
+    kill "$pid"
+  done
+}
+trap cleanup SIGINT SIGTERM EXIT
+endsnippet
+
+# vim:ft=snippets:
