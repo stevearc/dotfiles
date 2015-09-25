@@ -121,4 +121,5 @@ fi
 # Autoenv
 if command -v activate.sh > /dev/null; then
   source activate.sh
+  autoenv_init
 fi
