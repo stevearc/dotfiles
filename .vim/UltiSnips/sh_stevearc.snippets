@@ -1,6 +1,6 @@
 snippet trap "trap" b!
 cleanup() {
-	kill 0
+  kill 0
 }
 trap cleanup SIGINT SIGTERM EXIT
 endsnippet
@@ -14,10 +14,46 @@ addpid() {
 
 cleanup() {
   for pid in ${PIDS[@]}; do
+    # Kill any children of child processes
+    pkill -P "$pid"
+    # Kill the child processes themselves
     kill "$pid"
   done
 }
 trap cleanup SIGINT SIGTERM EXIT
+endsnippet
+
+snippet main "main" b!
+main() {
+  $0
+}
+
+main "$@"
+endsnippet
+
+snippet getopts "getopts" b!
+local usage="\$0"
+while getopts "h-:" opt; do
+  case $opt in
+    -)
+      case $OPTARG in
+        *)
+          echo "$usage"
+          exit 1
+          ;;
+      esac
+      ;;
+    h)
+      echo "$usage"
+      exit 0
+      ;;
+    \?)
+      echo "$usage"
+      exit 1
+      ;;
+  esac
+done
+shift $(($OPTIND-1))
 endsnippet
 
 # vim:ft=snippets:

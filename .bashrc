@@ -64,6 +64,7 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 alias vp='xargs vim -p; reset'
 alias fbm='CACA_DRIVER=ncurses mplayer -vo caca -really-quiet'
 alias youtube-dl-mp3='youtube-dl -f bestaudio -x --audio-format mp3 --audio-quality 3'
+alias orphans="ps -elf | head -1; ps -elf | awk '{if (\$5 == 1 && \$3 != \"root\") {print \$0}}' | head"
 ash() {
     autossh -t "$@" 'tmux -2 attach || tmux -2 new'
 }
