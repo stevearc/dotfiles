@@ -92,7 +92,7 @@ fi
 # Environment variables
 export GOROOT=/usr/local/go
 export GOPATH=~/go
-export PATH=$HOME/.bin:$GOROOT/bin:$GOPATH/bin:$PATH
+export PATH=$HOME/bin:$GOROOT/bin:$GOPATH/bin:$PATH
 
 # Default applications
 export GIT_EDITOR=vim

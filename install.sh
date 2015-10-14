@@ -1,6 +1,7 @@
 #!/bin/bash -e
 set -e
-declare -r CLI_DOTFILES=".bashrc .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .bin .agignore .tmuxinator"
+declare -r CLI_DOTFILES=".bashrc .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf bin .agignore .tmuxinator"
+declare -r BIN_EXTRA="parseargs/parseargs.sh"
 declare -r DEFAULT_VIM_BUNDLES="ctrlp nerdtree syntastic ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-json vim-misc vim-session"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
@@ -145,6 +146,7 @@ install-cli() {
 
   mkdir -p ~/.bash.d
   cp -r $CLI_DOTFILES $HOME
+  cp $BIN_EXTRA $HOME/bin/
   rsync -lrp --exclude bundle --exclude .git .vim $HOME
   mkdir -p ~/.vim/bundle
   for bundle in $DEFAULT_VIM_BUNDLES; do
@@ -262,7 +264,7 @@ install-nvm() {
   fi
   source $nvm_dir/nvm.sh
   echo "source $nvm_dir/nvm.sh" > ~/.bash.d/nvm.sh
-  local node_version=$(prompt "Install node version:" iojs-v2.3.1)
+  local node_version=$(prompt "Install node version:" v4.1.0)
   nvm ls $node_version || nvm install $node_version
   nvm ls default || nvm alias default $node_version
   nvm use $node_version
@@ -333,8 +335,8 @@ setup-custom-packages() {
   sudo apt-get install -y -q \
     gthumb \
     encfs
-  if [[ -e ~/.bin ]] && [[ ! -e ~/.bin/youtube-dl ]]; then
-    pushd ~/.bin > /dev/null
+  if [[ -e ~/bin ]] && [[ ! -e ~/bin/youtube-dl ]]; then
+    pushd ~/bin > /dev/null
     wget -O youtube-dl https://yt-dl.org/latest/youtube-dl
     chmod +x youtube-dl
     popd > /dev/null
