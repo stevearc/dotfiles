@@ -250,7 +250,6 @@ function! ToggleFold()
         let b:all_folded = 0
     endif
 endfunction
-nmap <Space> za
 nmap <leader><Space> :call ToggleFold()<CR>
 
 " Quickly toggle the quickfix window
