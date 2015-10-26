@@ -95,10 +95,13 @@ set background=light
 colorscheme solarized
 
 " Return to last edit position when opening files
-autocmd BufReadPost *
-     \ if line("'\"") > 0 && line("'\"") <= line("$") |
-     \   exe "normal! g`\"" |
-     \ endif
+augroup SmartOpen
+  au!
+  autocmd BufReadPost *
+       \ if line("'\"") > 0 && line("'\"") <= line("$") |
+       \   exe "normal! g`\"" |
+       \ endif
+augroup END
 
 " Search mappings: These will make it so that going to the next one in a
 " search will center on the line it's found in.
@@ -273,7 +276,10 @@ endfunction
 map <leader>q :call QuickfixToggle()<CR>
 
 " Close the scratch preview automatically
-autocmd CursorMovedI,InsertLeave * if pumvisible() == 0|pclose|endif
+augroup CloseScratch
+  au!
+  autocmd CursorMovedI,InsertLeave * if pumvisible() == 0|pclose|endif
+augroup END
 
 " Close quickfix if it's the only visible buffer
 aug QFClose

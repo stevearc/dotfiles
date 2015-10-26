@@ -1,5 +1,8 @@
 " Run the code checker when entering a new buffer
-au BufReadPost <buffer> :silent PymodeLint
+augroup PyLint
+  au!
+  au BufReadPost <buffer> :silent PymodeLint
+augroup END
 
 function! RunTests(filename)
     " Write the file and run tests for the given filename
