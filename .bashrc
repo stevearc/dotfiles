@@ -35,8 +35,16 @@ __user="\[\033[01;32m\]\u$__last_color"
 __host="\[\033[01;32m\]\h$__last_color"
 __cur_location="\[\033[01;34m\]\w"
 __git_branch_color="\[\033[0;32m\]"
+__nvm_color="\[\033[0;37m\]"
 __prompt_tail="\[\033[00m\]$"
-PS1="$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)'"$__prompt_tail$__last_color "
+function __nvm_version {
+  command -v nvm > /dev/null || return
+  local root=`git rev-parse --show-toplevel 2> /dev/null`
+  [ -n "$root" ] || return
+  [ -e "$root/package.json" ] || return
+  echo "[`nvm current`]"
+}
+PS1="$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)'"$__nvm_color"'$(__nvm_version)'"$__prompt_tail$__last_color "
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
