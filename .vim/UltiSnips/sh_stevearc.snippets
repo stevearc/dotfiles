@@ -1,24 +1,24 @@
 snippet trap "trap" b!
 cleanup() {
-  kill 0
+  $0
 }
 trap cleanup SIGINT SIGTERM EXIT
 endsnippet
 
 snippet cleanup "trap that kills child pids" b!
-declare -a PIDS=()
-
-addpid() {
-  PIDS=("${PIDS[@]}" "${1?Need a pid}")
-}
-
-cleanup() {
-  for pid in ${PIDS[@]}; do
-    # Kill any children of child processes
-    pkill -P "$pid"
-    # Kill the child processes themselves
-    kill "$pid"
+_kill_tree() {
+  local pid
+  for pid in $*; do
+    local subpids="$(ps -o pid --no-headers --ppid $pid)"
+    local subpid
+    for subpid in $subpids; do
+      _kill_tree $subpid
+    done
+    kill $pid || true
   done
+}
+cleanup() {
+  _kill_tree $(jobs -p)
 }
 trap cleanup SIGINT SIGTERM EXIT
 endsnippet
