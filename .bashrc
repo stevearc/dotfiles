@@ -45,6 +45,7 @@ function __nvm_version {
   echo "[`nvm current`]"
 }
 PS1="$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)'"$__nvm_color"'$(__nvm_version)'"$__prompt_tail$__last_color "
+export PS4='+$0.$LINENO: '
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
