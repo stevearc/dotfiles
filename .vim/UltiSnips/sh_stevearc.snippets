@@ -9,7 +9,7 @@ snippet cleanup "trap that kills child pids" b!
 _kill_tree() {
   local pid
   for pid in $*; do
-    local subpids="$(ps -o pid --no-headers --ppid $pid)"
+    local subpids="$(ps -o pid,ppid | awk '{if (\$2 == '$pid') {print \$1}}')"
     local subpid
     for subpid in $subpids; do
       _kill_tree $subpid
