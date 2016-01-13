@@ -9,10 +9,13 @@ declare -r ALL_LANGUAGES="go python js arduino"
 declare -r USAGE=\
 "$0 [OPTIONS]
 -h            Print this help menu
+-d            Install dotfiles
+-c            Install command line tools
+-s            Set up security
 -l            Install language support (may be specified multiple times)
               Use 'all' to install all support for all languages.
 -g            Set up a typical gnome environment
--c            Install some of my custom decktop packages
+-p            Install some of my custom desktop packages
 -f            Force reinstallation of all programs
 --languages   List all languages that are supported and exit
 "
@@ -114,7 +117,6 @@ setup-install-progs() {
     python-pycurl \
     python-software-properties \
     wget \
-    git \
     curl
   checkpoint setup-progs
 }
@@ -132,18 +134,14 @@ install-cli() {
     unzip \
     vim-nox \
     xsel \
-    ufw \
     tree
 
   which tmuxinator || sudo gem install -q tmuxinator
+  checkpoint cli
+}
 
-  sudo ufw default deny incoming
-  sudo ufw default allow outgoing
-  if confirm "Allow ssh connections?" y; then
-    sudo ufw allow 22/tcp
-    sudo apt-get install -y -q openssh-server
-  fi
-
+install-dotfiles() {
+  has-checkpoint dotfiles && return
   mkdir -p ~/.bash.d
   cp -r $CLI_DOTFILES $HOME
   cp $BIN_EXTRA $HOME/bin/
@@ -152,7 +150,19 @@ install-cli() {
   for bundle in $DEFAULT_VIM_BUNDLES; do
     cp-vim-bundle $bundle
   done
-  checkpoint cli
+  checkpoint dotfiles
+}
+
+install-security() {
+  has-checkpoint security && return
+  installed ufw || sudo apt-get install -y -q ufw
+  sudo ufw default deny incoming
+  sudo ufw default allow outgoing
+  if confirm "Allow ssh connections?" y; then
+    sudo ufw allow 22/tcp
+    sudo apt-get install -y -q openssh-server
+  fi
+  checkpoint security
 }
 
 install-languages() {
@@ -163,6 +173,7 @@ install-languages() {
   if [ "$languages" == "all" ]; then
     languages="$ALL_LANGUAGES"
   fi
+  setup-install-progs
   for language in $languages; do
     install-language-$language
   done
@@ -277,6 +288,7 @@ add-apt-key-google() {
 
 setup-gnome() {
   has-checkpoint gnome && return
+  setup-install-progs
   # Get rid of horrible unity scrollbars
   sudo apt-get purge -y -q \
     overlay-scrollbar \
@@ -306,6 +318,7 @@ setup-gnome() {
 }
 
 setup-custom-packages() {
+  setup-install-progs
   if ! installed google-talkplugin && confirm "Install Google talk plugin?" n; then
     add-apt-key-google
     sudo sh -c 'echo "deb http://dl.google.com/linux/talkplugin/deb/ stable main" > /etc/apt/sources.list.d/google-talk.list'
@@ -332,9 +345,7 @@ setup-custom-packages() {
     wget -qO- https://get.docker.com/ | sh
     confirm "Allow $USER to use docker without sudo?" y && sudo adduser $USER docker
   fi
-  sudo apt-get install -y -q \
-    gthumb \
-    encfs
+  sudo apt-get install -y -q gthumb encfs
   if [[ -e ~/bin ]] && [[ ! -e ~/bin/youtube-dl ]]; then
     pushd ~/bin > /dev/null
     wget -O youtube-dl https://yt-dl.org/latest/youtube-dl
@@ -352,7 +363,10 @@ main() {
   local languages=""
   local gnome=
   local custom_packages=
-  while getopts "hfgcl:-:" opt; do
+  local commandline=
+  local dotfiles=
+  local secure=
+  while getopts "hfgcpdsl:-:" opt; do
     case $opt in
       -)
         case $OPTARG in
@@ -366,11 +380,20 @@ main() {
             ;;
         esac
         ;;
-      c)
+      p)
         custom_packages=1
+        ;;
+      c)
+        commandline=1
+        ;;
+      d)
+      dotfiles=1
         ;;
       g)
         gnome=1
+        ;;
+      s)
+        secure=1
         ;;
       h)
         echo "$USAGE"
@@ -391,9 +414,17 @@ main() {
   shift $((OPTIND-1))
   languages=${languages# } # trim leading whitespace
 
-  setup-install-progs
+  installed git || sudo apt-get install -y -q git
   git submodule update --init --recursive
-  install-cli
+  if [ $commandline ]; then
+    install-cli
+  fi
+  if [ $dotfiles ]; then
+    install-dotfiles
+  fi
+  if [ $secure ]; then
+    install-security
+  fi
   install-languages "$languages"
   if [ $gnome ]; then
     setup-gnome
@@ -404,6 +435,7 @@ main() {
     echo "And use dconf editor org>gnome>desktop>wm to add keyboard shortcuts"
     echo "Maybe install some proprietary graphics drivers? (e.g. nvidia-331)"
   fi
+  echo "Done"
 }
 
 main "$@"
