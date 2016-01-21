@@ -240,8 +240,9 @@ noremap k gkzz
 :set cedit=<C-r>
 nnoremap q: :
 
-" Navigate tabs with <S-Tab>
-map <S-Tab> gt
+" Navigate tabs with <Tab> and <S-Tab>
+map <Tab> gt
+map <S-Tab> gT
 
 " Enter paste mode with <leader>p
 nmap <leader>p :set paste<CR>a
