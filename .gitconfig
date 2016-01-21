@@ -51,6 +51,7 @@
     po = !bash ~/.githelpers push_current_branch
     pof = !bash ~/.githelpers push_current_branch --force
     dopr = !bash ~/.githelpers create_pull_request
+    popr = !git po && sleep 1 && git dopr
     findpr = !bash ~/.githelpers find_pull_request
     fix = !bash ~/.githelpers commit_fix
     uu = !bash ~/.githelpers update_master
