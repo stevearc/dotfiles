@@ -157,6 +157,14 @@ function! RenameFile()
 endfunction
 map <leader>n :call RenameFile()<cr>
 
+" Utility for finding system executables
+function! FindExecutable(name)
+  let path = substitute(system('command -v ' . a:name), "\n*$", '', '')
+  if empty(path) | return 0 | endif
+  let abspath = resolve(path)
+  return abspath
+endfunction
+
 " Execute current file
 function! SmartRun()
     :w
@@ -422,9 +430,9 @@ aug QuickLoad
 aug END
 
 " Use cjsx to build because it's a superset of coffeescript
-let coffee_compiler = '/usr/local/nvm/versions/io.js/v2.3.1/bin/cjsx'
+let coffee_compiler = FindExecutable('cjsx')
 " Make syntastic work with cjsx files
-let g:syntastic_coffee_coffee_exe = '/usr/local/nvm/versions/io.js/v2.3.1/bin/cjsx'
+let g:syntastic_coffee_coffee_exe = FindExecutable('cjsx')
 
 aug Colorize
   au!
