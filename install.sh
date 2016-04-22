@@ -11,7 +11,7 @@ declare -r USAGE=\
 -h            Print this help menu
 -d            Install dotfiles
 -c            Install command line tools
--s            Set up security
+-s            Set up security (ufw)
 -l            Install language support (may be specified multiple times)
               Use 'all' to install all support for all languages.
 -g            Set up a typical gnome environment
@@ -162,6 +162,7 @@ install-security() {
     sudo ufw allow 22/tcp
     sudo apt-get install -y -q openssh-server
   fi
+  sudo ufw enable
   checkpoint security
 }
 
