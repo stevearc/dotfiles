@@ -107,14 +107,16 @@ export PATH=$HOME/bin:$GOROOT/bin:$GOPATH/bin:$PATH
 export GIT_EDITOR=vim
 export SVN_EDITOR=vim
 export EDITOR=vim
-export BROWSER=google-chrome
+export BROWSER=google-chrome-stable
 
 if [ -f ~/.bash_env ]; then
     source ~/.bash_env
 fi
 if [ -d ~/.bash.d ]; then
-  for filename in $(ls ~/.bash.d);do
-    source ~/.bash.d/$filename
+  for filename in ~/.bash.d/*.sh; do
+    if [ -e "$filename" ]; then
+      source "$filename"
+    fi
   done
 fi
 
