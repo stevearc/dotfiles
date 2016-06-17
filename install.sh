@@ -1,6 +1,6 @@
 #!/bin/bash -e
 set -e
-declare -r CLI_DOTFILES=".bashrc .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf bin .agignore .tmuxinator"
+declare -r CLI_DOTFILES=".bashrc .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf bin .agignore"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
 declare -r DEFAULT_VIM_BUNDLES="ctrlp nerdtree syntastic ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-json vim-misc vim-session"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
@@ -136,7 +136,6 @@ install-cli() {
     xsel \
     tree
 
-  which tmuxinator || sudo gem install -q tmuxinator
   checkpoint cli
 }
 

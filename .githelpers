@@ -107,14 +107,10 @@ create_pull_request() {
 
     local repo=$(_get_repo)
     local branch=$(_get_branch)
-    # If no -f specified, try to pull issue number off end of local branch
-    if [[ ! $fix ]] && [[ $branch =~ ([^\-]+-)*[0-9]+ ]]; then
-        local fix="${branch##*-}"
-    fi
 
     local browser=$(_get_browser)
     local url="https://github.com/$repo/compare/$branch?expand=1"
-    if [ $fix ]; then
+    if [ -n "$fix" ]; then
         local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \" | head -n 1)
         local body="Fix #$fix: $issue_title"
         body="$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$body")"
@@ -124,13 +120,8 @@ create_pull_request() {
 }
 
 commit_fix() {
-    local fix="$1"
-    local branch=$(_get_branch)
-    # If no issue specified, try to pull issue number off end of local branch
-    if [[ ! $fix ]] && [[ $branch =~ ([^\-]+-)*[0-9]+ ]]; then
-        local fix="${branch##*-}"
-    fi
-    if [ ! $fix ]; then
+    local fix="${1?Must specify an issue number}"
+    if [ -z "$fix" ]; then
         echo "Usage: git fix ISSUE" >&2
         exit 1
     fi

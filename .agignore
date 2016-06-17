@@ -6,3 +6,4 @@ build-emscripten/
 node_modules/
 gen/
 deps/
+dist/
