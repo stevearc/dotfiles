@@ -139,4 +139,15 @@ find_pull_request() {
     $browser $url
 }
 
+show_modified_files() {
+  local root=$(git rev-parse --show-toplevel)
+  git status --porcelain | \
+    sed '/\/$/d' | \
+    sed '/^ *D /d' | \
+    awk '{print $2}' | \
+    while read filename
+      do echo "$root/$filename"
+    done
+}
+
 $*

@@ -60,6 +60,9 @@
     ra = !git r --all
     la = !git l --all
     patch = format-patch --stdout
+    root = rev-parse --show-toplevel
+    sm = !bash ~/.githelpers show_modified_files
+
 
 [merge]
     tool = vimdiff
