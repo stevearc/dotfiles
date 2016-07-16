@@ -226,23 +226,6 @@ install-language-arduino() {
     popd > /dev/null
   fi
 
-  if [ ! - e /etc/udev/rules.d/adafruit-trinket.rules ]; then
-    wget -O adafruit-trinket.rules https://github.com/adafruit/Trinket_Arduino_Linux/raw/master/adafruit-trinket.rules
-    rm -f adafruit-trinket.rules
-    sudo mv adafruit-trinket.rules /etc/udev/rules.d/
-    sudo reload udev
-  fi
-
-  local arduino_dir=$(dirname $(readlink -f $(which arduino)))
-  if [ ! -e $arduino_dir/hardware/adafruit ]; then
-    pushd /tmp > /dev/null
-    wget -O master.zip https://github.com/adafruit/Adafruit_Arduino_Boards/archive/master.zip
-    unzip master.zip
-    cp -r Adafruit_Arduino_Boards-master/hardware/adafruit $arduino_dir/hardware
-    cp Adafruit_Arduino_Boards-master/hardware/tools/avr/etc/avrdude.conf $arduino_dir/hardware/tools/avr/etc
-    popd > /dev/null
-  fi
-
   sudo apt-get install -q -y picocom
   sudo adduser $USER dialout
   cp-vim-bundle vim-arduino
