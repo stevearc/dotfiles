@@ -329,6 +329,7 @@ setup-custom-packages() {
   if ! which docker && confirm "Install docker?" n; then
     wget -qO- https://get.docker.com/ | sh
     confirm "Allow $USER to use docker without sudo?" y && sudo adduser $USER docker
+    cp bluepill.sh ~/.bash.d/
   fi
   sudo apt-get install -y -q gthumb encfs
   if [[ -e ~/bin ]] && [[ ! -e ~/bin/youtube-dl ]]; then
