@@ -109,26 +109,23 @@ export SVN_EDITOR=vim
 export EDITOR=vim
 export BROWSER=google-chrome-stable
 
-if [ -f ~/.bash_env ]; then
-    source ~/.bash_env
-fi
-if [ -d ~/.bash.d ]; then
-  for filename in ~/.bash.d/*.sh; do
-    if [ -e "$filename" ]; then
-      source "$filename"
-    fi
-  done
-fi
+command -v sourcedir > /dev/null 2>&1 || sourcedir() {
+  if [ -d "$1" ]; then
+    for filename in $1/*.sh; do
+      if [ -e "$filename" ]; then
+        source "$filename"
+      fi
+    done
+  elif [ -f "$1" ]; then
+    source $1
+  fi
+}
+
+sourcedir ~/.bash_env
+sourcedir ~/.bash.d
 
 # NVM
-if [ -e /usr/local/nvm ]; then
-  source /usr/local/nvm/nvm.sh
-fi
-
-# RVM (must be done before autoenv)
-if command -v rvm > /dev/null; then
-  source $(dirname $(dirname $(which rvm)))/scripts/rvm
-fi
+sourcedir /usr/local/nvm/nvm.sh
 
 # Autoenv
 if command -v activate.sh > /dev/null; then

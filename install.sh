@@ -135,7 +135,8 @@ install-cli() {
     vim-nox \
     xsel \
     tree \
-    bsdmainutils
+    bsdmainutils \
+    lsof
 
   checkpoint cli
 }
