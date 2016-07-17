@@ -134,7 +134,8 @@ install-cli() {
     unzip \
     vim-nox \
     xsel \
-    tree
+    tree \
+    bsdmainutils
 
   checkpoint cli
 }
