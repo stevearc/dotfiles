@@ -129,23 +129,20 @@ Usage:  bluepill setup
 Builds your base image that all other containers will inherit from
 
   -h, --help   Print usage"
+  unset OPTIND
   while getopts "h-:" opt; do
     case $opt in
       -)
         case $OPTARG in
-          *)
+          help)
             echo "$usage"
-            exit 1
+            return 0
             ;;
         esac
         ;;
       h)
         echo "$usage"
-        exit 0
-        ;;
-      \?)
-        echo "$usage"
-        exit 1
+        return 0
         ;;
     esac
   done
@@ -171,23 +168,24 @@ Usage:  bluepill edit
 Make interactive changes to your base bluepill image
 
   -h, --help   Print usage"
+  unset OPTIND
   while getopts "h-:" opt; do
     case $opt in
       -)
         case $OPTARG in
           *)
             echo "$usage"
-            exit 1
+            return 1
             ;;
         esac
         ;;
       h)
         echo "$usage"
-        exit 0
+        return 0
         ;;
       \?)
         echo "$usage"
-        exit 1
+        return 1
         ;;
     esac
   done
@@ -212,13 +210,14 @@ Build a docker image for a directory
 
   -f <file>    Path to Dockerfile (looks for DIRECTORY/Dockerfile by default)
   -h, --help   Print usage"
+  unset OPTIND
   while getopts "f:h-:" opt; do
     case $opt in
       -)
         case $OPTARG in
           *)
             echo "$usage"
-            exit 1
+            return 1
             ;;
         esac
         ;;
@@ -227,11 +226,11 @@ Build a docker image for a directory
         ;;
       h)
         echo "$usage"
-        exit 0
+        return 0
         ;;
       \?)
         echo "$usage"
-        exit 1
+        return 1
         ;;
     esac
   done
@@ -266,35 +265,40 @@ bluepill-enter() {
     return 1
   fi
   local usage="
-Usage:  bluepill enter [OPTIONS] [DIRECTORY]
+Usage:  bluepill enter [OPTIONS] [DIRECTORY] [-- DOCKER ARGS]
 
 Build a container for a directory
 
-  Any additional options will be passed to the 'docker run' command
+  You may end the command with '--' and any number of arguments to pass to
+  'docker run'
 
   -h, --help   Print usage"
+  unset OPTIND
   while getopts "h-:" opt; do
     case $opt in
       -)
         case $OPTARG in
-          *)
+          help)
             echo "$usage"
-            exit 1
+            return 0
             ;;
         esac
         ;;
       h)
         echo "$usage"
-        exit 0
-        ;;
-      \?)
-        echo "$usage"
-        exit 1
+        return 0
         ;;
     esac
   done
-  shift $(($OPTIND-1))
-  local dir="$(realpath ${1-.})"; shift
+  local secondToLast=$(($OPTIND-1))
+  local lastArg=${!secondToLast}
+  shift $secondToLast
+  if [ "$lastArg" == "--" ]; then
+    local dir="$(realpath .)"
+  else
+    local dir="$(realpath ${1-.})"; shift
+  fi
+  [ "$1" == "--" ] && shift
   local imageName="$(_bp-image-name "$dir")"
   local containerName="$(_bp-container-name "$dir")"
   if ! docker inspect "$imageName" > /dev/null 2>&1; then
@@ -323,23 +327,24 @@ Usage:  bluepill delete [DIRECTORY]
 Delete the container and image for a directory
 
   -h, --help   Print usage"
+  unset OPTIND
   while getopts "h-:" opt; do
     case $opt in
       -)
         case $OPTARG in
           *)
             echo "$usage"
-            exit 1
+            return 1
             ;;
         esac
         ;;
       h)
         echo "$usage"
-        exit 0
+        return 0
         ;;
       \?)
         echo "$usage"
-        exit 1
+        return 1
         ;;
     esac
   done
