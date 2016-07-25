@@ -116,6 +116,7 @@ setup-install-progs() {
   sudo apt-get install -y -q \
     python-pycurl \
     python-software-properties \
+    software-properties-common \
     wget \
     curl
   checkpoint setup-progs

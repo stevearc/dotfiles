@@ -305,6 +305,14 @@ Build a container for a directory
     echo "Must run 'bluepill build' before doing 'bluepill enter'"
     return 1
   fi
+  local sshArgs=
+  if [ -n "$SSH_AUTH_SOCK" ]; then
+    local sshArgs="-v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent"
+  elif [ -e $HOME/.ssh/id_rsa ]; then
+    local sshArgs="-v $HOME/.ssh/id_rsa:$HOME/.ssh/id_rsa:ro"
+    local sshArgs="$sshArgs -v $HOME/.ssh/id_rsa.pub:$HOME/.ssh/id_rsa.pub:ro"
+  fi
+  echo "Image name: $imageName"
   if docker inspect $containerName > /dev/null 2>&1; then
     docker start -i "$containerName"
   else
@@ -313,8 +321,7 @@ Build a container for a directory
       --userns=host \
       --net=host \
       -v "$dir:$HOME/$(basename "$dir")" \
-      -v $HOME/.ssh/id_rsa:$HOME/.ssh/id_rsa:ro \
-      -v $HOME/.ssh/id_rsa.pub:$HOME/.ssh/id_rsa.pub:ro \
+      $sshArgs \
       "$@" \
       $imageName
   fi
