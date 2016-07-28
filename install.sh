@@ -5,7 +5,7 @@ declare -r BIN_EXTRA="parseargs/parseargs.sh"
 declare -r DEFAULT_VIM_BUNDLES="ctrlp nerdtree syntastic ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-json vim-misc vim-session"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
-declare -r ALL_LANGUAGES="go python js arduino"
+declare -r ALL_LANGUAGES="go python js arduino clojure"
 declare -r USAGE=\
 "$0 [OPTIONS]
 -h            Print this help menu
@@ -193,6 +193,19 @@ install-language-python() {
   cp .pylintrc $HOME
   cp-vim-bundle python-mode
   checkpoint python
+}
+
+install-language-clojure() {
+  has-checkpoint clojure && return
+  pushd ~/bin
+  wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+  chmod a+x lein
+  ./lein
+  popd
+  cp-vim-bundle rainbow_parentheses
+  cp-vim-bundle vim-classpath
+  cp-vim-bundle vim-fireplace
+  checkpoint clojure
 }
 
 install-language-go() {

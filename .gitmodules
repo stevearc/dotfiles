@@ -67,3 +67,12 @@
 [submodule "parseargs"]
 	path = parseargs
 	url = https://github.com/stevearc/parseargs.git
+[submodule ".vim/bundle/rainbow_parentheses"]
+	path = .vim/bundle/rainbow_parentheses
+	url = https://github.com/kien/rainbow_parentheses.vim.git
+[submodule ".vim/bundle/vim-classpath"]
+	path = .vim/bundle/vim-classpath
+	url = https://github.com/tpope/vim-classpath.git
+[submodule ".vim/bundle/vim-fireplace"]
+	path = .vim/bundle/vim-fireplace
+	url = https://github.com/tpope/vim-fireplace.git

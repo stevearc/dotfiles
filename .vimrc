@@ -179,6 +179,9 @@ function! SmartRun()
         GoRun
     elseif match(expand("%"), '.coffee$') != -1
         exec ":!coffee " . @%
+    elseif match(expand("%"), '.clj$') != -1
+        exec ":%Eval"
+        exec ":redraw!"
     end
 endfunction
 map <leader>e :call SmartRun()<cr>
@@ -225,24 +228,21 @@ nmap <silent> <C-N> :cn<CR>zv
 nmap <silent> <C-P> :cp<CR>zv
 
 " Keep cursor in the vertical center of the editor
-noremap <C-d> <C-d>zz
-noremap <C-u> <C-u>zz
-noremap G Gzz
-noremap <C-o> <C-o>zz
-noremap <C-i> <C-i>zz
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+nnoremap G Gzz
+nnoremap <C-o> <C-o>zz
+nnoremap <C-i> <C-i>zz
 
 " j and k navigate line-wraps in a sane way (also vertical center)
-noremap j gjzz
-noremap k gkzz
+nnoremap j gjzz
+nnoremap k gkzz
 
-" Remap q: to just go to commandline.  To open the commandline window,
-" do <C-r> from the commandline
-:set cedit=<C-r>
-nnoremap q: :
-
-" Navigate tabs with <Tab> and <S-Tab>
-map <Tab> gt
-map <S-Tab> gT
+" Navigate tabs with H and L
+" We can't rebind <Tab> because that's equivalent to <C-i> and we want to keep
+" the <C-i>/<C-o> navigation :/
+nmap L gt
+nmap H gT
 
 " Enter paste mode with <leader>p
 nmap <leader>p :set paste<CR>a
