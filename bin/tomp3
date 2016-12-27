@@ -1,20 +1,27 @@
-#!/bin/bash -e
+#!/bin/bash
+set -e
 
 main() {
     local ffmpeg="ffmpeg"
-    local input="$1"
-    local output="$2"
-    if [ ! -e $1 ]; then
-        echo "Usage: $0 input [output]"
+    if [ -z "$1" ]; then
+        echo "Usage: $0 FILE [FILE...]"
         exit 1
     fi
-    if [ ! `which ffmpeg` ]; then
+    if ! command -v ffmpeg > /dev/null; then
         ffmpeg="avconv"
     fi
-    if [ ! $output ]; then
-        output="${input%.*}.mp3"
-    fi
-    $ffmpeg -i "$input" -vn -f mp3 "$output"
+    for file in "$@"; do
+      pushd $(dirname "$file") > /dev/null
+      local base=$(basename "$file")
+      local output="${base%.*}.mp3"
+      if [ -e "$output" ]; then
+        echo "Skipping $file - output file $output already exists!"
+        continue
+      fi
+      echo "Converting $file to $output"
+      $ffmpeg -i "$file" -vn -f mp3 "$output"
+      popd > /dev/null
+    done
 }
 
 main "$@"
