@@ -258,6 +258,7 @@ install-language-js() {
   cp-vim-bundle vim-glsl
   cp-vim-bundle vim-less
   cp-vim-bundle vim-stylus
+  cp-vim-bundle vim-flow
   checkpoint javascript
 }
 

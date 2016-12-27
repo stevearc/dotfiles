@@ -237,6 +237,8 @@ nnoremap <C-i> <C-i>zz
 " j and k navigate line-wraps in a sane way (also vertical center)
 nnoremap j gjzz
 nnoremap k gkzz
+vnoremap j gjzz
+vnoremap k gkzz
 
 " Navigate tabs with H and L
 " We can't rebind <Tab> because that's equivalent to <C-i> and we want to keep

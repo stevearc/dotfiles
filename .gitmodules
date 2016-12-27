@@ -76,3 +76,6 @@
 [submodule ".vim/bundle/vim-fireplace"]
 	path = .vim/bundle/vim-fireplace
 	url = https://github.com/tpope/vim-fireplace.git
+[submodule ".vim/bundle/vim-flow"]
+	path = .vim/bundle/vim-flow
+	url = https://github.com/flowtype/vim-flow.git
