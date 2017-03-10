@@ -1,5 +1,9 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
+OSNAME=$(uname -s)
+if [ "$OSNAME" = "Darwin" ]; then
+  MAC=1
+fi
 
 # don't put duplicate lines in the history. See bash(1) for more options
 # ... or force ignoredups and ignorespace
@@ -29,6 +33,12 @@ function git_branch {
     __git_branch=`git branch --no-color 2> /dev/null | grep -e ^* | sed -E s/^\\\*\ \(.*\)$/\\\1/ | sed -E s/^\\\\\(.*\\\\\)$/"$__cur_ref"/`
     echo `echo $__git_branch | sed -E s/\(.+\)/\[\\\1\]/`
 }
+function hg_branch {
+  local branch=$(hg id -B -t 2> /dev/null)
+  if [ -n "$branch" ]; then
+    echo "[$branch]"
+  fi
+}
 
 __last_color="\[\033[00m\]"
 __user="\[\033[01;32m\]\u$__last_color"
@@ -44,7 +54,7 @@ function __nvm_version {
   [ -e "$root/package.json" ] || return
   echo "[`nvm current`]"
 }
-PS1="$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)'"$__nvm_color"'$(__nvm_version)'"$__prompt_tail$__last_color "
+PS1="$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)$(hg_branch)'"$__nvm_color"'$(__nvm_version)'"$__prompt_tail$__last_color "
 export PS4='+$0.$LINENO: '
 
 # enable color support of ls and also add handy aliases
@@ -54,18 +64,17 @@ if [ -x /usr/bin/dircolors ]; then
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
+elif [ $MAC ]; then
+    alias ls='ls -G'
 fi
 
 # some more ls aliases
 alias ll='ls -lh'
 alias la='ls -A'
 alias lla='ls -Alh'
-alias wat='which'
 alias inetstat='sudo netstat -pna|grep LISTEN|grep tcp'
-alias grep='grep --color=auto'
 alias pc='ps wwaux | grep'
 alias ack='ag'
-alias agc='ag -G ".*\.(coffee|cjsx)"'
 alias ivm='vim'
 alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf'
 alias tm='tmux -2'
@@ -77,6 +86,7 @@ alias youtube-dl-mp3='youtube-dl -f bestaudio -x --audio-format mp3 --audio-qual
 alias orphans="ps -elf | head -1; ps -elf | awk '{if (\$5 == 1 && \$3 != \"root\") {print \$0}}' | head"
 alias bp='bluepill'
 alias bpe='bluepill enter'
+alias mosh='mosh -6'
 ash() {
     autossh -t "$@" 'tmux -2 attach || tmux -2 new'
 }

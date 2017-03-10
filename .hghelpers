@@ -1,0 +1,21 @@
+#!/bin/bash
+
+HASH="{label('phase.{phase}', rev)}"
+RELATIVE_TIME="{label('custom.date', '({date|age})')}"
+AUTHOR="{label('custom.author', '<{author|user}>')}"
+REFS="{if(bookmarks, label('custom.bookmark', ' ({bookmarks})'))}{if(tags, label('custom.tag', ' (tag: {tags})'))}"
+SUBJECT="{desc|firstline}"
+
+FORMAT="${HASH}}${RELATIVE_TIME}}${AUTHOR}}${REFS} ${SUBJECT}"
+
+pretty_hg_log() {
+  hg log --graph --template "${FORMAT}" --color=always --pager=never $* |
+    # Replace (2 years ago) with (2 years)
+    sed -Ee 's/(^[^<]*) ago\)/\1)/' |
+    # Replace (2 years, 5 months) with (2 years)
+    sed -Ee 's/(^[^<]*), [[:digit:]]+ .*months?\)/\1)/' |
+    column -s '}' -t |
+    less -FXRS
+}
+
+$*
