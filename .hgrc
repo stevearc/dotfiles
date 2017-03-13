@@ -7,14 +7,19 @@ graphstyle.missing =
 graphshorten = true
 
 [alias]
+amend = commit --amend
 b = bookmark
-l = !bash ~/.hghelpers pretty_hg_log -l 1000 $@
-r = !bash ~/.hghelpers pretty_hg_log -l 20 $@
+l = !bash ~/.hghelpers pretty_hg_log log -l 1000 $@
+r = !bash ~/.hghelpers pretty_hg_log slog $@
 la = !hg l --all
 ra = !hg r --all
-wip = !bash ~/.hghelpers pretty_hg_log --rev=wip $@
+wip = !bash ~/.hghelpers pretty_hg_log log --rev=wip $@
 po = push -r .
+pr = pull --rebase
+rom = rebase -d master
 amend = commit --amend
+ri = histedit "reverse(ancestor(.,master):. and not public())"
+undo = strip --keep -r .
 
 [revsetalias]
 wip = (parents(not public()) or not public() or . or head()) and (not obsolete() or unstable()^) and not closed()

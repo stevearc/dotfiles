@@ -9,7 +9,8 @@ SUBJECT="{desc|firstline}"
 FORMAT="${HASH}}${RELATIVE_TIME}}${AUTHOR}}${REFS} ${SUBJECT}"
 
 pretty_hg_log() {
-  hg log --graph --template "${FORMAT}" --color=always --pager=never $* |
+  local cmd="$1"; shift
+  hg "$cmd" --graph --template "${FORMAT}" --color=always --pager=never $* |
     # Replace (2 years ago) with (2 years)
     sed -Ee 's/(^[^<]*) ago\)/\1)/' |
     # Replace (2 years, 5 months) with (2 years)
