@@ -39,6 +39,19 @@ function hg_branch {
     echo "[$branch]"
   fi
 }
+__exit_status() {
+  local status="$?"
+  local E=$(printf '\33')
+  local red="${E}[31;1m"
+  local reset="${E}[0;0m"
+  [ "$status" == 0 ] && return
+  if [ "$status" -gt 128 ]; then
+    local signal="$(builtin kill -l $[${status} - 128] 2> /dev/null)"
+    test "$signal" && signal=" ($signal)"
+  fi
+  echo "[${red}EXIT ${status}${signal}${reset}]"
+  echo -e "\n"
+}
 
 __last_color="\[\033[00m\]"
 __user="\[\033[01;32m\]\u$__last_color"
@@ -54,7 +67,7 @@ function __nvm_version {
   [ -e "$root/package.json" ] || return
   echo "[`nvm current`]"
 }
-PS1="$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)$(hg_branch)'"$__nvm_color"'$(__nvm_version)'"$__prompt_tail$__last_color "
+PS1='$(__exit_status)'"$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)$(hg_branch)'"$__nvm_color"'$(__nvm_version)'"$__prompt_tail$__last_color "
 export PS4='+$0.$LINENO: '
 
 # enable color support of ls and also add handy aliases
