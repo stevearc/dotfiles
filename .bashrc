@@ -5,6 +5,9 @@ if [ "$OSNAME" = "Darwin" ]; then
   MAC=1
 fi
 
+# Disable XON/XOFF flow control because it collides with C-s
+[[ $- == *i* ]] && stty -ixon
+
 # don't put duplicate lines in the history. See bash(1) for more options
 # ... or force ignoredups and ignorespace
 HISTCONTROL=ignoredups:ignorespace
