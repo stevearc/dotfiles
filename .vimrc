@@ -250,6 +250,7 @@ nmap H gT
 nmap <leader>p :set paste<CR>a
 nmap <leader>P :set paste<CR>i
 vmap <leader>p s<C-o>:set paste<CR>
+imap <C-v> <C-o>:set paste<CR>
 " Exit paste mode when leaving insert mode
 au InsertLeave * set nopaste
 
@@ -317,6 +318,13 @@ endfunction
 inoremap <Tab> <C-R>=CleverTab()<CR>
 snoremap <Tab> <Esc>:call UltiSnips#ExpandSnippetOrJump()<cr>
 
+" Rebind ultisnips to something never used. We use CleverTab :)
+let g:UltiSnipsExpandTrigger="<f12>"
+let g:UltiSnipsJumpForwardTrigger="<f12>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+" Put all my useful ultisnips globals in here
+py import sys, os; sys.path.append(os.environ['HOME'] + '/.vim/UltiSnips/mods')
 
 " Do syntax checking on file open
 let g:syntastic_check_on_open=1
@@ -334,15 +342,6 @@ endfunc
 inoremap <C-a> <C-o>0
 inoremap <C-e> <C-o>$
 
-" Rebind ultisnips to something never used. We use CleverTab :)
-let g:UltiSnipsExpandTrigger="<f12>"
-let g:UltiSnipsJumpForwardTrigger="<f12>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-
-
-" Put all my useful ultisnips globals in here
-py import sys, os; sys.path.append(os.environ['HOME'] + '/.vim/UltiSnips/mods')
-
 " Toggle nerdtree
 nmap <leader>w :NERDTreeToggle<CR>
 
@@ -355,7 +354,7 @@ let g:EasyMotion_smartcase = 1
 map <C-j> <Plug>(easymotion-j)
 map <C-k> <Plug>(easymotion-k)
 
-map f <Plug>(easymotion-s)
+map F <Plug>(easymotion-s)
 
 
 nmap <C-w><C-b> :tabedit %<CR>
