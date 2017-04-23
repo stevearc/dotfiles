@@ -354,7 +354,7 @@ let g:EasyMotion_smartcase = 1
 map <C-j> <Plug>(easymotion-j)
 map <C-k> <Plug>(easymotion-k)
 
-map F <Plug>(easymotion-s)
+map <leader>f <Plug>(easymotion-s)
 
 
 nmap <C-w><C-b> :tabedit %<CR>
