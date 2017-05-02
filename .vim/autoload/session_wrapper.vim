@@ -47,3 +47,19 @@ function! session_wrapper#SafeDelete()
     echo "No sessions to delete"
   endif
 endfunction
+
+function! session_wrapper#vcs_feature_branch()
+  let [kind, directory] = xolox#session#suggestions#find_vcs_repository()
+  if kind == 'hg'
+    let command = 'hg log -l 1 -T "{bookmarks}" | xargs printf "%s\n"'
+    let names_to_ignore = ['default']
+    let result = xolox#misc#os#exec({'command': command, 'check': 0})
+    if result['exit_code'] == 0 && !empty(result['stdout'])
+      let branch_name = xolox#misc#str#trim(result['stdout'][0])
+      if !empty(branch_name) && index(names_to_ignore, branch_name) == -1
+        return [xolox#misc#str#slug(branch_name)]
+      endif
+    endif
+  endif
+  return xolox#session#suggestions#vcs_feature_branch()
+endfunction

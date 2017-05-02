@@ -395,6 +395,7 @@ let g:session_autosave_periodic = 1
 let g:session_verbose_messages = 0
 let g:session_command_aliases = 1
 let g:session_menu = 0
+let g:session_name_suggestion_function = "session_wrapper#vcs_feature_branch"
 
 " Helpful wrappers around vim-session
 function! s:OverwriteQuickSave()
