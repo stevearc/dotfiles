@@ -379,8 +379,8 @@ else
   map <leader>g :grep -IR <cword> * <CR><CR> :copen <CR> <C-w><C-k>
 endif
 
-nmap gs :Gstatus<CR>
-nmap gh :Git! log -- %<CR>
+nmap <leader>gs :Gstatus<CR>
+nmap <leader>gh :Git! log -- %<CR>
 
 " Configure vim-session
 " Don't save help buffers
@@ -413,7 +413,7 @@ augroup SessionSaveTrigger
   au!
   au BufWrite,BufRead * :call s:OverwriteQuickSave()
 augroup END
-nmap <leader>ss :wa<CR>:SaveSession 
+nmap <leader>ss :wa<CR>:SaveSession
 
 let g:ctrlp_extensions = ['session_wrapper']
 nnoremap <leader>so :call session_wrapper#QuickOpen()<CR>
