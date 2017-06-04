@@ -162,11 +162,18 @@ install-cli-after() {
     go get github.com/wincent/clipper
     go build github.com/wincent/clipper
     sudo cp $GOPATH/bin/clipper /usr/local/bin
-    mkdir -p ~/.config/systemd/user
-    cp $GOPATH/src/github.com/wincent/clipper/contrib/linux/systemd-service/clipper.service ~/.config/systemd/user
-    systemctl --user daemon-reload
-    systemctl --user enable clipper.service
-    systemctl --user start clipper.service
+    if command -v systemctl > /dev/null; then
+      mkdir -p ~/.config/systemd/user
+      cp $GOPATH/src/github.com/wincent/clipper/contrib/linux/systemd-service/clipper.service ~/.config/systemd/user
+      sed -ie 's/^ExecStart.*/ExecStart=/usr/local/bin/clipper -l /var/log/clipper.log -e xsel -f "-bi"/' ~/.config/systemd/user/clipper.service
+      systemctl --user daemon-reload
+      systemctl --user enable clipper.service
+      systemctl --user start clipper.service
+    else
+      sudo cp clipper.conf /etc/init
+      sudo service clipper start
+    fi
+    echo "You may need to create a startup application that runs 'xhost +SI:localuser:root'"
   fi
 }
 

@@ -447,3 +447,6 @@ aug Colorize
   au!
   au BufReadPost * command! -buffer -bar Colorize call css_color#init('css', 'extended', 'cssFunction')
 aug END
+
+" Shortcut for clipper
+nnoremap <leader>y :call system('nc localhost 8377', @0)<CR>
