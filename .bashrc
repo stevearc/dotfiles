@@ -103,6 +103,9 @@ sash() {
     autossh -t "$@" 'sudo tmux -2 attach || sudo tmux -2 new'
 }
 export sash
+if command -v nvim > /dev/null; then
+  alias vim='nvim'
+fi
 
 
 # Alias definitions.

@@ -142,12 +142,41 @@ install-cli() {
   checkpoint cli
 }
 
+install-cli-after() {
+  if ! command -v nvim > /dev/null && confirm "Install Neovim?" n; then
+    sudo apt-get install -y libtool libtool-bin autoconf automake cmake g++
+      \ pkg-config unzip python-dev python-pip python3 python3-dev python3-pip
+      \ ruby
+    pip freeze | grep neovim > /dev/null || sudo pip install neovim
+    pip3 freeze | grep neovim > /dev/null || sudo pip3 install neovim
+    sudo gem install neovim
+    pushd /tmp
+    test -d neovim || git clone https://github.com/neovim/neovim.git
+    cd neovim
+    make CMAKE_BUILD_TYPE=Release
+    sudo make install
+    popd
+  fi
+
+  if ! nc -z localhost 8377 && confirm "Install clipper?" n; then
+    go get github.com/wincent/clipper
+    go build github.com/wincent/clipper
+    sudo cp $GOPATH/bin/clipper /usr/local/bin
+    mkdir -p ~/.config/systemd/user
+    cp $GOPATH/src/github.com/wincent/clipper/contrib/linux/systemd-service/clipper.service ~/.config/systemd/user
+    systemctl --user daemon-reload
+    systemctl --user enable clipper.service
+    systemctl --user start clipper.service
+  fi
+}
+
 install-dotfiles() {
   has-checkpoint dotfiles && return
   mkdir -p ~/.bash.d
   cp -r $CLI_DOTFILES $HOME
   cp $BIN_EXTRA $HOME/bin/
   rsync -lrp --exclude bundle --exclude .git .vim $HOME
+  rsync -lrp .config $HOME
   mkdir -p ~/.vim/bundle
   for bundle in $DEFAULT_VIM_BUNDLES; do
     cp-vim-bundle $bundle
@@ -213,7 +242,7 @@ install-language-go() {
   has-checkpoint go && return
   if [ ! -e /usr/local/go ]; then
     pushd /tmp
-    local pkg="go1.2.2.linux-amd64.tar.gz"
+    local pkg="go1.8.3.linux-amd64.tar.gz"
     if [ ! -e "$pkg" ]; then
       wget -O $pkg https://storage.googleapis.com/golang/$pkg
     fi
@@ -320,18 +349,6 @@ setup-gnome() {
 
 setup-custom-packages() {
   setup-install-progs
-  if ! installed google-talkplugin && confirm "Install Google talk plugin?" n; then
-    add-apt-key-google
-    sudo sh -c 'echo "deb http://dl.google.com/linux/talkplugin/deb/ stable main" > /etc/apt/sources.list.d/google-talk.list'
-    sudo apt-get update -qq
-    sudo apt-get install -y -q google-talkplugin
-  fi
-  if ! installed google-musicmanager-beta && confirm "Install Google music manager?" n; then
-    add-apt-key-google
-    sudo sh -c 'echo "deb http://dl.google.com/linux/musicmanager/deb/ stable main" > /etc/apt/sources.list.d/google-music.list'
-    sudo apt-get update -qq
-    sudo apt-get install -y -q google-musicmanager-beta
-  fi
   if ! installed dropbox && confirm "Install Dropbox?" n; then
     sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5044912E
     sudo sh -c 'echo "deb http://linux.dropbox.com/ubuntu/ precise main" > /etc/apt/sources.list.d/dropbox.list'
@@ -368,7 +385,7 @@ main() {
   local commandline=
   local dotfiles=
   local secure=
-  while getopts "hfgcpdsl:-:" opt; do
+  while getopts "hfgcpndsl:-:" opt; do
     case $opt in
       -)
         case $OPTARG in
@@ -389,7 +406,7 @@ main() {
         commandline=1
         ;;
       d)
-      dotfiles=1
+        dotfiles=1
         ;;
       g)
         gnome=1
@@ -428,6 +445,9 @@ main() {
     install-security
   fi
   install-languages "$languages"
+  if [ $commandline ]; then
+    install-cli-after
+  fi
   if [ $gnome ]; then
     setup-gnome
   fi
