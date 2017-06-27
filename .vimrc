@@ -77,13 +77,13 @@ set softtabstop=2
 set autoindent
 set laststatus=2
 
+" Line width of 80
 set tw=80
-" Use longer lines in coffeescript because that's how we do at Artillery
-au FileType coffee setlocal tw=100
 
 " Use 4-space tabs for certain file types
 au FileType python setlocal shiftwidth=4 tabstop=4 softtabstop=4
 " Trim trailing whitespace on save
+command! TrimTrailingWhitespace :%s/\s\+$//ge
 autocmd BufWrite *.json,*.js,*.coffee,*.cjsx,*.jsx,*.html,*.jinja2,*.j2,*.css,*.less,*.styl,*.py,*.rb,*.go,*.ino,*.c,*.cpp,*.h,*.sh if ! &bin | silent! %s/\s\+$//ge | endif
 
 " use the :help command for 'K' in .vim files
@@ -251,10 +251,7 @@ vnoremap k gkzz
 nmap L gt
 nmap H gT
 
-" Enter paste mode with <leader>p
-nmap <leader>p :set paste<CR>a
-nmap <leader>P :set paste<CR>i
-vmap <leader>p s<C-o>:set paste<CR>
+" Enter paste mode with <C-v> in insert mode
 imap <C-v> <C-o>:set paste<CR>
 " Exit paste mode when leaving insert mode
 au InsertLeave * set nopaste
