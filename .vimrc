@@ -1,3 +1,4 @@
+let g:ale_emit_conflict_warnings = 0
 " Load plugins from the bundle directory
 call pathogen#infect()
 call pathogen#helptags()
@@ -332,7 +333,7 @@ py import sys, os; sys.path.append(os.environ['HOME'] + '/.vim/UltiSnips/mods')
 let g:syntastic_check_on_open=1
 " Don't use syntastic on python, use python-mode instead
 let g:syntastic_mode_map = { 'mode': 'active',
-                               \ 'passive_filetypes': ['python'] }
+                               \ 'passive_filetypes': ['python', 'javascript', 'json'] }
 
 " Useful for removing whitespace after abbreviations
 function! Eatchar(pat)
@@ -447,3 +448,23 @@ aug END
 
 " Shortcut for clipper
 nnoremap <leader>y :call system('nc localhost 8377', @0)<CR>
+
+" Neoformat
+let g:neoformat_enabled_javascript = ['prettier']
+let g:neoformat_enabled_json = ['prettier']
+let g:neoformat_enabled_css = ['prettier']
+let g:neoformat_enabled_less = ['prettier']
+augroup fmt
+  autocmd!
+  autocmd BufWritePre *.js,*.jsx,*.json,*.css,*.less,*.scss Neoformat
+augroup END
+
+" Ale
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 1
+let g:ale_linters = {
+\   'javascript': ['flow'],
+\}
+
+" vim-javascript
+let g:javascript_plugin_flow = 1

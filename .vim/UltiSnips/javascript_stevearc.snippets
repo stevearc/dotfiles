@@ -13,4 +13,18 @@ snippet log "console log" !
 console.log($1)
 endsnippet
 
+snippet for
+for (let ${2:i} = 0, len = ${1:arr}.length; $2 < len; $2++) {
+	const ${3:v} = $1[$2];${0:}
+}
+endsnippet
+
+snippet class
+class ${1:className} {
+	constructor(${2:}) {
+		$0
+	}
+}
+endsnippet
+
 # vim:ft=snippets:

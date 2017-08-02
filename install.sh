@@ -2,7 +2,7 @@
 set -e
 declare -r CLI_DOTFILES=".bashrc .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf bin .agignore .docker"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
-declare -r DEFAULT_VIM_BUNDLES="ctrlp nerdtree syntastic ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-json vim-misc vim-session"
+declare -r DEFAULT_VIM_BUNDLES="ale ctrlp nerdtree syntastic ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-json vim-misc vim-session"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r ALL_LANGUAGES="go python js arduino clojure"
@@ -288,14 +288,15 @@ install-language-arduino() {
 install-language-js() {
   has-checkpoint javascript && return
   install-nvm
-  npm install -g coffee-script uglify-js less clean-css coffee-react
+  npm install -g coffee-script uglify-js less clean-css coffee-react yarn prettier flow-bin
   cp-vim-bundle vim-cjsx
   cp-vim-bundle vim-coffee-script
   cp-vim-bundle vim-css-color
   cp-vim-bundle vim-glsl
   cp-vim-bundle vim-less
   cp-vim-bundle vim-stylus
-  cp-vim-bundle vim-flow
+  cp-vim-bundle vim-javascript
+  cp-vim-bundle vim-jsx
   checkpoint javascript
 }
 
@@ -312,7 +313,7 @@ install-nvm() {
   fi
   source $nvm_dir/nvm.sh
   echo "source $nvm_dir/nvm.sh" > ~/.bash.d/nvm.sh
-  local node_version=$(prompt "Install node version:" v4.1.0)
+  local node_version=$(prompt "Install node version:" v8.2.1)
   nvm ls $node_version || nvm install $node_version
   nvm ls default || nvm alias default $node_version
   nvm use $node_version
