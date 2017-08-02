@@ -1,6 +1,6 @@
 let g:arduino_serial_cmd = 'picocom {port} -b {baud} -l'
 
-function! b:MyStatusLine()
+function! MyStatusLine()
   let port = arduino#GetPort()
   let line = '%f [' . g:arduino_board . '] [' . g:arduino_programmer . ']'
   if !empty(port)
@@ -9,7 +9,7 @@ function! b:MyStatusLine()
 
   return line
 endfunction
-setl statusline=%!b:MyStatusLine()
+setl statusline=%!MyStatusLine()
 
 nnoremap <buffer> <leader>ac :wa<CR>:ArduinoVerify<CR>
 nnoremap <buffer> <leader>au :wa<CR>:ArduinoUpload<CR>
