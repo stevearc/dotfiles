@@ -84,8 +84,12 @@ set tw=80
 " Use 4-space tabs for certain file types
 au FileType python setlocal shiftwidth=4 tabstop=4 softtabstop=4
 " Trim trailing whitespace on save
-command! TrimTrailingWhitespace :%s/\s\+$//ge
-autocmd BufWrite *.json,*.js,*.coffee,*.cjsx,*.jsx,*.html,*.jinja2,*.j2,*.css,*.less,*.styl,*.py,*.rb,*.go,*.ino,*.c,*.cpp,*.h,*.sh if ! &bin | silent! %s/\s\+$//ge | endif
+function! TrimTrailingWhitespace()
+  :%s/\s\+$//ge
+endfunction
+command! TrimTrailingWhitespace :call TrimTrailingWhitespace()
+" Note js & json excluded because we use Neoformat
+autocmd BufWrite *.coffee,*.cjsx,*.jsx,*.html,*.jinja2,*.j2,*.css,*.less,*.styl,*.py,*.rb,*.go,*.ino,*.c,*.cpp,*.h,*.sh if ! &bin | silent! call TrimTrailingWhitespace() | endif
 
 " use the :help command for 'K' in .vim files
 autocmd FileType vim set keywordprg=":help"
