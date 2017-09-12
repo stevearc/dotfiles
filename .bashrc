@@ -20,7 +20,7 @@ HISTSIZE=100000
 HISTFILESIZE=200000
 
 # After each command, append to the history file and reread it
-export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
+export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a"
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -109,7 +109,16 @@ export sash
 if command -v nvim > /dev/null; then
   alias vim='nvim'
 fi
+and() {
+  [ $? = 0 ] && "$@"
+}
+export and
+or() {
+  [ $? != 0 ] && "$@"
+}
+export or
 alias clip='nc localhost 8377'
+alias hr='history -c; history -r'
 
 
 # Alias definitions.
