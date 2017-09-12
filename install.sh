@@ -137,7 +137,8 @@ install-cli() {
     xsel \
     tree \
     bsdmainutils \
-    lsof
+    lsof \
+    inotify-tools
 
   checkpoint cli
 }
