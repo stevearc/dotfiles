@@ -458,10 +458,6 @@ let g:neoformat_enabled_javascript = ['prettier']
 let g:neoformat_enabled_json = ['prettier']
 let g:neoformat_enabled_css = ['prettier']
 let g:neoformat_enabled_less = ['prettier']
-augroup fmt
-  autocmd!
-  autocmd BufWritePre *.js,*.jsx,*.json,*.css,*.less,*.scss Neoformat
-augroup END
 
 " Ale
 let g:ale_lint_on_text_changed = 'never'
