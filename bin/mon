@@ -1,54 +1,92 @@
 #!/bin/bash
-#
-# Watch current directory (recursively) for file changes, and execute
-# a command when a file or directory is created, modified or deleted.
-#
-# Written by: Senko Rasic <senko.rasic@dobarkod.hr>
-#
-# Requires Linux, bash and inotifywait (from inotify-tools package).
-#
-# To avoid executing the command multiple times when a sequence of
-# events happen, the script waits one second after the change - if
-# more changes happen, the timeout is extended by a second again.
-#
-# Released to Public Domain. Use it as you like.
 
-EVENTS="CREATE,CLOSE_WRITE,DELETE,MODIFY,MOVED_FROM,MOVED_TO"
+BUFFER=.5
+USAGE="$0 [<FILE>...] COMMAND
 
-if [ -z "$1" ] || [ "$1" == "-h" ]; then
-    echo "Usage: $0 [dir...] cmd"
-    exit -1;
+Options:
+  -b buffer      Accumulate events for this long before running the command
+                 (default $BUFFER)
+  -s             Single execution. Will not listen for any events while the
+                 command is running.
+"
+
+# Enable history (some of my aliases use that)
+set -o history
+# Don't save history to file, however
+unset HISTFILE
+# Allow expanding aliases
+shopt -s expand_aliases
+# Grab aliases if present
+if [ -e ~/.bash_aliases ]; then
+  source ~/.bash_aliases
 fi
+
+EVENTS="CREATE,CLOSE_WRITE,DELETE,DELETE_SELF,MODIFY,MOVED_FROM,MOVED_TO,MOVE_SELF"
 
 declare -a DIRS=()
 
-if [ -z "$2" ]; then
-  DIRS+=(".")
-else
-  while [ -n "$2" ]; do
-    DIRS+=("$1")
+# Parse arguments
+while [ -n "$1" ]; do
+  if [ "$1" == "-b" ]; then
     shift
-  done
-fi
-CMD="$1"
+    BUFFER="$1"
+  elif [ "$1" == "-h" ]; then
+    echo "$USAGE"
+    exit
+  elif [ "$1" == "-s" ]; then
+    SINGLE=1
+  elif [ -z "$2" ]; then
+    CMD="$1"
+  else
+    DIRS+=("$1")
+  fi
+  shift
+done
 
-inotifywait -e "$EVENTS" -m -r --format '%:e %f' "${DIRS[@]}" | (
-    WAITING="";
-    while true; do
-        LINE="";
-        read -t 1 LINE;
-        if test -z "$LINE"; then
-            if test ! -z "$WAITING"; then
-                    echo "CHANGE";
-                    WAITING="";
-            fi;
-        else
-            WAITING=1;
-        fi;
-    done) | (
-    while true; do
-        read TMP;
-        echo "+$CMD"
-        eval "$CMD"
+# If no files/dirs specified, default to watching the current directory
+if [ -z "${DIRS[0]}" ]; then
+  DIRS+=(".")
+fi
+
+if [ -z "$CMD" ]; then
+  echo "$USAGE"
+  exit 1
+fi
+
+(
+  while true; do
+    # Filter the args for files/folders that exist, because if you attempt to
+    # watch something that isn't there, inotifywait will exit. This is useful if
+    # you want to watch a file that doesn't exist yet, or you are watching a
+    # file that gets deleted.
+    declare -a EXISTING_DIRS=()
+    for DIR in "${DIRS[@]}"; do
+      if [ -e "$DIR" ]; then
+        EXISTING_DIRS+=("$DIR")
+      fi
     done
+    # We don't use -m because we want to watch paths, not inodes. If you watch a
+    # file and that file gets deleted, but then another file replaces it,
+    # inotifywait won't start watching the new file. That's why we have this
+    # whole watch in a loop.
+    inotifywait -q -e "$EVENTS" -r --format '%:e %f' "${EXISTING_DIRS[@]}"
+    # If a file is modified, ignore all events for a brief period after. This
+    # prevents double-triggering the command when a two events come in quick
+    # succession.
+    sleep $BUFFER
+  done
+) | (
+  while true; do
+    # Wait for an event to come in.
+    read TMP
+    # Clear out stdin. We want multiple events to only trigger one run.
+    while read -r -t 0; do read -r; done
+    echo "+$CMD"
+    eval "$CMD"
+    if [ "$SINGLE" ]; then
+      # If we're doing "single execution", then clear out all events that were
+      # fired while running the command.
+      while read -r -t 0; do read -r; done
+    fi
+  done
 )
