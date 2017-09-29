@@ -189,9 +189,14 @@ function! SmartRun()
         GoRun
     elseif match(expand("%"), '.coffee$') != -1
         exec ":!coffee " . @%
+    elseif match(expand("%"), '.js$') != -1
+        exec ":!node " . @%
     elseif match(expand("%"), '.clj$') != -1
         exec ":%Eval"
         exec ":redraw!"
+    else
+        :redraw!
+        :echo "Unknown file type"
     end
 endfunction
 map <leader>e :call SmartRun()<cr>
@@ -349,8 +354,18 @@ endfunc
 inoremap <C-a> <C-o>0
 inoremap <C-e> <C-o>$
 
-" Toggle nerdtree
-nmap <leader>w :NERDTreeToggle<CR>
+" NERDTree
+function! ToggleNerd()
+  if match(expand('%'), '^NERD_tree_') != -1
+    :NERDTreeToggle
+  else
+    exec ':NERDTreeToggle ' . expand('%:p:h')
+  endif
+endfunction
+nmap <leader>w :call ToggleNerd()<CR>
+" Open nerdtree automatically if vim is started with a directory
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
 
 " EasyMotion
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
