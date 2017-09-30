@@ -2,7 +2,7 @@
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf bin .agignore .docker"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
-declare -r DEFAULT_VIM_BUNDLES="ale ctrlp nerdtree syntastic ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-json vim-misc vim-session"
+declare -r DEFAULT_VIM_BUNDLES="ale ctrlp nerdtree syntastic ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-json vim-misc vim-session neoformat"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r ALL_LANGUAGES="go python js arduino clojure"
@@ -145,9 +145,8 @@ install-cli() {
 
 install-cli-after() {
   if ! command -v nvim > /dev/null && confirm "Install Neovim?" n; then
-    sudo apt-get install -y libtool libtool-bin autoconf automake cmake g++
-      \ pkg-config unzip python-dev python-pip python3 python3-dev python3-pip
-      \ ruby
+    sudo apt-get install -y libtool autoconf automake cmake g++ pkg-config \
+      unzip python-dev python-pip python3 python3-dev python3-pip ruby ruby-dev
     pip freeze | grep neovim > /dev/null || sudo pip install neovim
     pip3 freeze | grep neovim > /dev/null || sudo pip3 install neovim
     sudo gem install neovim
