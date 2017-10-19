@@ -22,7 +22,7 @@ set history=1000
 set path=**
 
 " When :find-ing, search for files with this suffix
-set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb,.html,.jinja2,.js,.less,.css,.styl
+set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb,.html,.jinja2,.js,.jsx,.less,.css,.styl
 
 " Make tab completion for files/buffers act like bash
 set wildmenu
@@ -338,12 +338,6 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " Put all my useful ultisnips globals in here
 py import sys, os; sys.path.append(os.environ['HOME'] + '/.vim/UltiSnips/mods')
 
-" Do syntax checking on file open
-let g:syntastic_check_on_open=1
-" Don't use syntastic on python, use python-mode instead
-let g:syntastic_mode_map = { 'mode': 'active',
-                               \ 'passive_filetypes': ['python', 'javascript', 'json'] }
-
 " Useful for removing whitespace after abbreviations
 function! Eatchar(pat)
   let c = nr2char(getchar(0))
@@ -359,7 +353,7 @@ function! ToggleNerd()
   if match(expand('%'), '^NERD_tree_') != -1
     :NERDTreeToggle
   else
-    exec ':NERDTreeToggle ' . expand('%:p:h')
+    :NERDTreeFind
   endif
 endfunction
 nmap <leader>w :call ToggleNerd()<CR>
@@ -457,8 +451,6 @@ aug END
 
 " Use cjsx to build because it's a superset of coffeescript
 let coffee_compiler = FindExecutable('cjsx')
-" Make syntastic work with cjsx files
-let g:syntastic_coffee_coffee_exe = FindExecutable('cjsx')
 
 aug Colorize
   au!
@@ -475,7 +467,7 @@ let g:neoformat_enabled_css = ['prettier']
 let g:neoformat_enabled_less = ['prettier']
 
 " Ale
-let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_text_changed = 'normal'
 let g:ale_lint_on_insert_leave = 1
 let g:ale_linters = {
 \   'javascript': ['flow'],
@@ -483,3 +475,11 @@ let g:ale_linters = {
 
 " vim-javascript
 let g:javascript_plugin_flow = 1
+
+function! ProseMode()
+  setlocal spell noci nosi noai nolist noshowmode noshowcmd nonu
+  setlocal complete+=s
+  setlocal formatoptions+=t
+endfunction
+
+command! ProseMode call ProseMode()

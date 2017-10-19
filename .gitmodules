@@ -1,9 +1,6 @@
 [submodule ".vim/bundle/python-mode"]
 	path = .vim/bundle/python-mode
 	url = https://github.com/klen/python-mode.git
-[submodule ".vim/bundle/syntastic"]
-	path = .vim/bundle/syntastic
-	url = https://github.com/scrooloose/syntastic.git
 [submodule ".vim/bundle/vim-colors-solarized"]
 	path = .vim/bundle/vim-colors-solarized
 	url = https://github.com/altercation/vim-colors-solarized.git
@@ -88,3 +85,12 @@
 [submodule ".vim/bundle/neoformat"]
 	path = .vim/bundle/neoformat
 	url = https://github.com/sbdchd/neoformat.git
+[submodule ".vim/bundle/vim-polyglot"]
+	path = .vim/bundle/vim-polyglot
+	url = https://github.com/sheerun/vim-polyglot
+[submodule ".vim/bundle/closetag"]
+	path = .vim/bundle/closetag
+	url = https://github.com/docunext/closetag.vim
+[submodule ".vim/bundle/vim-sleuth"]
+	path = .vim/bundle/vim-sleuth
+	url = https://github.com/tpope/vim-sleuth.git

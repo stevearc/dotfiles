@@ -2,7 +2,7 @@
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf bin .agignore .docker"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
-declare -r DEFAULT_VIM_BUNDLES="ale ctrlp nerdtree syntastic ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-json vim-misc vim-session neoformat"
+declare -r DEFAULT_VIM_BUNDLES="ale ctrlp nerdtree ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-json vim-misc vim-session neoformat vim-polyglot vim-sleuth"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r ALL_LANGUAGES="go python js arduino clojure"
@@ -156,6 +156,10 @@ install-cli-after() {
     make CMAKE_BUILD_TYPE=Release
     sudo make install
     popd
+    if [ ! -e ~/.nvim_python ]; then
+      command -v python 2> /dev/null && echo "let g:python_host_prog=\"$(command -v python)\"" >> ~/.nvim_python
+      command -v python3 2> /dev/null && echo "let g:python3_host_prog=\"$(command -v python)\"" >> ~/.nvim_python
+    fi
   fi
 
   if ! nc -z localhost 8377 && confirm "Install clipper?" n; then
@@ -297,6 +301,7 @@ install-language-js() {
   cp-vim-bundle vim-stylus
   cp-vim-bundle vim-javascript
   cp-vim-bundle vim-jsx
+  cp-vim-bundle closetag
   checkpoint javascript
 }
 

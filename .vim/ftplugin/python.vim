@@ -1,9 +1,3 @@
-" Run the code checker when entering a new buffer
-augroup PyLint
-  au!
-  au BufReadPost <buffer> :silent PymodeLint
-augroup END
-
 function! RunTests(filename)
     " Write the file and run tests for the given filename
     :w
@@ -37,11 +31,8 @@ endfunction
 noremap <buffer> <leader>dt :call RunTestFile()<CR>
 
 " python-mode options
-let g:pymode_lint_checkers = ['pylint', 'pep8']
-let g:pymode_lint_on_fly = 0
-let g:pymode_lint_cwindow = 0
 let g:pymode_run = 0
-let g:pymode_lint_sort = ['E', 'W', 'C', 'I', 'R']
+let g:pymode_lint = 0
 let g:pymode_rope_organize_imports_bind = '<leader>o'
 let g:pymode_rope_goto_definition_bind = 'gd'
 let g:pymode_rope_goto_definition_cmd = 'e'
