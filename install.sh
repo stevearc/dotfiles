@@ -160,6 +160,14 @@ install-cli-after() {
       command -v python 2> /dev/null && echo "let g:python_host_prog=\"$(command -v python)\"" > ~/.nvim_python
       command -v python3 2> /dev/null && echo "let g:python3_host_prog=\"$(command -v python3)\"" >> ~/.nvim_python
     fi
+    if [ ! -e ~/.config/nvim/init.vim ]; then
+      mkdir -p ~/.config/nvim
+      cat <<EOF > ~/.config/nvim/init.vim
+set runtimepath^=~/.vim runtimepath+=~/.vim/after
+let &packpath = &runtimepath
+source ~/.vimrc
+EOF
+    fi
   fi
 
   if ! nc -z localhost 8377 && confirm "Install clipper?" n; then
