@@ -102,6 +102,7 @@ command -v sourcedir > /dev/null 2>&1 || sourcedir() {
 
 sourcedir ~/.bash_env
 sourcedir ~/.bash.d
+sourcedir ~/.bash.completion
 
 # NVM
 sourcedir /usr/local/nvm/nvm.sh
