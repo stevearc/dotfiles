@@ -52,9 +52,6 @@ set incsearch
 " Highlight search matches
 set hls
 
-" Auto-indent on line wrap
-set showbreak=--->
-
 " Highlight the cursor line only in the active window
 augroup CursorLine
   au!
