@@ -164,6 +164,17 @@ function! RenameFile()
 endfunction
 map <leader>n :call RenameFile()<cr>
 
+" Function to duplicate the current file
+function! DuplicateFile()
+    let old_name = expand('%')
+    let new_name = input('New file name: ', expand('%'), 'file')
+    if new_name != '' && new_name != old_name
+        exec ':saveas ' . new_name
+        redraw!
+    endif
+endfunction
+map <leader>m :call DuplicateFile()<cr>
+
 " Utility for finding system executables
 function! FindExecutable(name)
   let path = substitute(system('command -v ' . a:name), "\n*$", '', '')
@@ -387,6 +398,11 @@ if executable('ag')
 
   " Map leader-g to grep the hovered word in the current workspace
   map <leader>g :grep <cword> <CR><CR> :copen <CR> <C-w><C-k>
+elseif executable('ack')
+  set grepprg=ack\ --nogroup\ --nocolor
+  let g:ctrlp_user_command = 'ack --nocolor -f %s'
+  " Map leader-g to grep the hovered word in the current workspace
+  map <leader>g :grep <cword> <CR><CR> :copen <CR> <C-w><C-k>
 else
   " Map leader-g to grep the hovered word in the current workspace
   map <leader>g :grep -IR <cword> * <CR><CR> :copen <CR> <C-w><C-k>
@@ -456,6 +472,11 @@ aug END
 
 " Shortcut for clipper
 nnoremap <leader>y :call system('nc localhost 8377', @0)<CR>
+
+" Cmdr
+function! Cmdr(cmd)
+  call system('nc localhost 8585', a:cmd)
+endfunction
 
 " Neoformat
 let g:neoformat_enabled_javascript = ['prettier']
