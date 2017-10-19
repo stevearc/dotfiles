@@ -20,7 +20,6 @@ alias lla='ls -Alh'
 alias inetstat='sudo netstat -pna|grep LISTEN|grep tcp'
 alias pc='ps wwaux | grep'
 alias ack='ag'
-alias ivm='vim'
 alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf'
 alias tm='tmux -2'
 if [ $MAC ]; then
@@ -47,6 +46,9 @@ sash() {
 export sash
 if command -v nvim > /dev/null; then
   alias vim='nvim'
+  alias vi='nvim'
+else
+  alias vi='vim'
 fi
 and() {
   [ $? = 0 ] && "$@"

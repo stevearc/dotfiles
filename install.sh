@@ -157,8 +157,8 @@ install-cli-after() {
     sudo make install
     popd
     if [ ! -e ~/.nvim_python ]; then
-      command -v python 2> /dev/null && echo "let g:python_host_prog=\"$(command -v python)\"" >> ~/.nvim_python
-      command -v python3 2> /dev/null && echo "let g:python3_host_prog=\"$(command -v python)\"" >> ~/.nvim_python
+      command -v python 2> /dev/null && echo "let g:python_host_prog=\"$(command -v python)\"" > ~/.nvim_python
+      command -v python3 2> /dev/null && echo "let g:python3_host_prog=\"$(command -v python3)\"" >> ~/.nvim_python
     fi
   fi
 
@@ -292,7 +292,7 @@ install-language-arduino() {
 install-language-js() {
   has-checkpoint javascript && return
   install-nvm
-  npm install -g coffee-script uglify-js less clean-css coffee-react yarn prettier flow-bin
+  npm install -g coffee-script less clean-css coffee-react yarn prettier flow-bin
   cp-vim-bundle vim-cjsx
   cp-vim-bundle vim-coffee-script
   cp-vim-bundle vim-css-color
