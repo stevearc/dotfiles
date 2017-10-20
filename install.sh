@@ -125,20 +125,21 @@ setup-install-progs() {
 install-cli() {
   has-checkpoint cli && return
   sudo apt-get install -y -q \
-    silversearcher-ag \
     autossh \
-    mercurial \
+    bsdmainutils \
     htop \
+    inotify-tools \
     iotop \
+    lsof \
+    mercurial \
+    netcat \
     openssh-client \
+    silversearcher-ag \
     tmux \
+    tree \
     unzip \
     vim-nox \
-    xsel \
-    tree \
-    bsdmainutils \
-    lsof \
-    inotify-tools
+    xsel
 
   checkpoint cli
 }
@@ -147,6 +148,7 @@ install-cli-after() {
   if ! command -v nvim > /dev/null && confirm "Install Neovim?" n; then
     sudo apt-get install -y libtool autoconf automake cmake g++ pkg-config \
       unzip python-dev python-pip python3 python3-dev python3-pip ruby ruby-dev
+    sudo apt-get install -y libtool-bin || : # Ubuntu 16.04
     pip freeze | grep neovim > /dev/null || sudo pip install neovim
     pip3 freeze | grep neovim > /dev/null || sudo pip3 install neovim
     sudo gem install neovim
@@ -171,13 +173,14 @@ EOF
   fi
 
   if ! nc -z localhost 8377 && confirm "Install clipper?" n; then
+    install-language-go
     go get github.com/wincent/clipper
     go build github.com/wincent/clipper
     sudo cp $GOPATH/bin/clipper /usr/local/bin
     if command -v systemctl > /dev/null; then
       mkdir -p ~/.config/systemd/user
       cp $GOPATH/src/github.com/wincent/clipper/contrib/linux/systemd-service/clipper.service ~/.config/systemd/user
-      sed -ie 's/^ExecStart.*/ExecStart=/usr/local/bin/clipper -l /var/log/clipper.log -e xsel -f "-bi"/' ~/.config/systemd/user/clipper.service
+      sed -ie 's|^ExecStart.*|ExecStart=/usr/local/bin/clipper -l /var/log/clipper.log -e xsel -f "-bi"|' ~/.config/systemd/user/clipper.service
       systemctl --user daemon-reload
       systemctl --user enable clipper.service
       systemctl --user start clipper.service
@@ -258,10 +261,9 @@ install-language-clojure() {
 }
 
 install-language-go() {
-  has-checkpoint go && return
   if [ ! -e /usr/local/go ]; then
     pushd /tmp
-    local pkg="go1.8.3.linux-amd64.tar.gz"
+    local pkg="go1.9.1.linux-amd64.tar.gz"
     if [ ! -e "$pkg" ]; then
       wget -O $pkg https://storage.googleapis.com/golang/$pkg
     fi
@@ -270,6 +272,9 @@ install-language-go() {
     popd
   fi
 
+  PATH="/usr/local/go/bin:$PATH"
+  GOPATH="$HOME/go"
+  has-checkpoint go && return
   cp-vim-bundle vim-go
   checkpoint go
 }
@@ -326,7 +331,7 @@ install-nvm() {
   fi
   source $nvm_dir/nvm.sh
   echo "source $nvm_dir/nvm.sh" > ~/.bash.d/nvm.sh
-  local node_version=$(prompt "Install node version:" v8.2.1)
+  local node_version=$(prompt "Install node version:" v8.7.0)
   nvm ls $node_version || nvm install $node_version
   nvm ls default || nvm alias default $node_version
   nvm use $node_version
