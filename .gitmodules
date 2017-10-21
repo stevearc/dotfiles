@@ -16,15 +16,6 @@
 [submodule ".vim/bundle/vim-repeat"]
 	path = .vim/bundle/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
-[submodule ".vim/bundle/vim-coffee-script"]
-	path = .vim/bundle/vim-coffee-script
-	url = https://github.com/kchmck/vim-coffee-script.git
-[submodule ".vim/bundle/vim-less"]
-	path = .vim/bundle/vim-less
-	url = https://github.com/groenewege/vim-less.git
-[submodule ".vim/bundle/vim-go"]
-	path = .vim/bundle/vim-go
-	url = https://github.com/fatih/vim-go.git
 [submodule ".vim/bundle/nerdtree"]
 	path = .vim/bundle/nerdtree
 	url = https://github.com/scrooloose/nerdtree.git
@@ -37,18 +28,6 @@
 [submodule ".vim/bundle/vim-snippets"]
 	path = .vim/bundle/vim-snippets
 	url = https://github.com/honza/vim-snippets.git
-[submodule ".vim/bundle/vim-stylus"]
-	path = .vim/bundle/vim-stylus
-	url = https://github.com/wavded/vim-stylus.git
-[submodule ".vim/bundle/vim-json"]
-	path = .vim/bundle/vim-json
-	url = https://github.com/elzr/vim-json.git
-[submodule ".vim/bundle/vim-glsl"]
-	path = .vim/bundle/vim-glsl
-	url = https://github.com/tikhomirov/vim-glsl
-[submodule ".vim/bundle/vim-cjsx"]
-	path = .vim/bundle/vim-cjsx
-	url = https://github.com/mtscout6/vim-cjsx.git
 [submodule ".vim/bundle/vim-arduino"]
 	path = .vim/bundle/vim-arduino
 	url = https://github.com/stevearc/vim-arduino.git
@@ -73,15 +52,9 @@
 [submodule ".vim/bundle/vim-fireplace"]
 	path = .vim/bundle/vim-fireplace
 	url = https://github.com/tpope/vim-fireplace.git
-[submodule ".vim/bundle/vim-javascript"]
-	path = .vim/bundle/vim-javascript
-	url = https://github.com/pangloss/vim-javascript.git
 [submodule ".vim/bundle/ale"]
 	path = .vim/bundle/ale
 	url = https://github.com/w0rp/ale.git
-[submodule ".vim/bundle/vim-jsx"]
-	path = .vim/bundle/vim-jsx
-	url = https://github.com/mxw/vim-jsx.git
 [submodule ".vim/bundle/neoformat"]
 	path = .vim/bundle/neoformat
 	url = https://github.com/sbdchd/neoformat.git

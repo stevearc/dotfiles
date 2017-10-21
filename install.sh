@@ -2,7 +2,7 @@
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf bin .agignore .docker"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
-declare -r DEFAULT_VIM_BUNDLES="ale ctrlp nerdtree ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-json vim-misc vim-session neoformat vim-polyglot vim-sleuth"
+declare -r DEFAULT_VIM_BUNDLES="ale ctrlp nerdtree ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r ALL_LANGUAGES="go python js arduino clojure"
@@ -274,9 +274,6 @@ install-language-go() {
 
   PATH="/usr/local/go/bin:$PATH"
   GOPATH="$HOME/go"
-  has-checkpoint go && return
-  cp-vim-bundle vim-go
-  checkpoint go
 }
 
 install-language-arduino() {
@@ -305,15 +302,8 @@ install-language-arduino() {
 install-language-js() {
   has-checkpoint javascript && return
   install-nvm
-  npm install -g coffee-script less clean-css coffee-react yarn prettier flow-bin
-  cp-vim-bundle vim-cjsx
-  cp-vim-bundle vim-coffee-script
+  npm install -g yarn prettier flow-bin
   cp-vim-bundle vim-css-color
-  cp-vim-bundle vim-glsl
-  cp-vim-bundle vim-less
-  cp-vim-bundle vim-stylus
-  cp-vim-bundle vim-javascript
-  cp-vim-bundle vim-jsx
   cp-vim-bundle closetag
   checkpoint javascript
 }
