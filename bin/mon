@@ -6,6 +6,7 @@ USAGE="$0 [<FILE>...] COMMAND
 Options:
   -b buffer      Accumulate events for this long before running the command
                  (default $BUFFER)
+  -e             Eager execution. Run the command once after mon is called.
   -s             Single execution. Will not listen for any events while the
                  command is running.
 "
@@ -35,6 +36,8 @@ while [ -n "$1" ]; do
     exit
   elif [ "$1" == "-s" ]; then
     SINGLE=1
+  elif [ "$1" == "-e" ]; then
+    EAGER=1
   elif [ -z "$2" ]; then
     CMD="$1"
   else
@@ -71,14 +74,16 @@ fi
     # whole watch in a loop.
     inotifywait -q -e "$EVENTS" -r --format '%:e %f' "${EXISTING_DIRS[@]}"
     # If a file is modified, ignore all events for a brief period after. This
-    # prevents double-triggering the command when a two events come in quick
+    # prevents double-triggering the command when two events come in quick
     # succession.
-    sleep $BUFFER
+    sleep "$BUFFER"
   done
 ) | (
   while true; do
-    # Wait for an event to come in.
-    read TMP
+    if [ -z "$EAGER" ]; then
+      read _
+      sleep "$BUFFER"
+    fi
     # Clear out stdin. We want multiple events to only trigger one run.
     while read -r -t 0; do read -r; done
     echo "+$CMD"
@@ -87,6 +92,10 @@ fi
       # If we're doing "single execution", then clear out all events that were
       # fired while running the command.
       while read -r -t 0; do read -r; done
+    fi
+    if [ -n "$EAGER" ]; then
+      read _
+      sleep "$BUFFER"
     fi
   done
 )
