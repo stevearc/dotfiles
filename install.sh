@@ -130,10 +130,12 @@ install-cli() {
     htop \
     inotify-tools \
     iotop \
+    jq \
     lsof \
     mercurial \
     netcat \
     openssh-client \
+    shellcheck \
     silversearcher-ag \
     tmux \
     tree \
