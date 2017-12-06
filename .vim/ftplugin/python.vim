@@ -45,3 +45,7 @@ nnoremap <buffer> <leader>a :PymodeLintAuto<CR> zz
 iabbr <buffer> inn is not None
 iabbr <buffer> ipmort import
 iabbr <buffer> improt import
+
+" Foxdot
+nnoremap <CR> :call system('nc localhost 7088', getline('.'))<CR>
+vnoremap <CR> y:call system('nc localhost 7088', @")<CR>

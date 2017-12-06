@@ -322,7 +322,7 @@ aug END
 " Attempt to expand a snippet. If no snippet exists, either autocomplete or
 " insert a tab
 let g:ulti_expand_or_jump_res = 0 "default value, just set once
-let g:autocomplete_cmd = "\<C-P>"
+let g:autocomplete_cmd = "\<C-x>\<C-o>"
 function! CleverTab()
     call UltiSnips#ExpandSnippetOrJump()
     if g:ulti_expand_or_jump_res == 0
@@ -493,6 +493,9 @@ let g:ale_linters = {
 
 " vim-javascript
 let g:javascript_plugin_flow = 1
+
+" vim-jsx
+let g:jsx_ext_required = 0
 
 function! ProseMode()
   setlocal spell noci nosi noai nolist noshowmode noshowcmd nonu
