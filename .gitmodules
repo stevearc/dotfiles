@@ -67,3 +67,6 @@
 [submodule ".vim/bundle/vim-sleuth"]
 	path = .vim/bundle/vim-sleuth
 	url = https://github.com/tpope/vim-sleuth.git
+[submodule ".vim/bundle/vim-flow-plus"]
+	path = .vim/bundle/vim-flow-plus
+	url = git@github.com:stevearc/vim-flow-plus.git

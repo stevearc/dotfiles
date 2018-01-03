@@ -306,6 +306,7 @@ install-language-js() {
   install-nvm
   npm install -g yarn prettier flow-bin
   cp-vim-bundle vim-css-color
+  cp-vim-bundle vim-flow-plus
   cp-vim-bundle closetag
   checkpoint javascript
 }
