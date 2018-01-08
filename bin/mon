@@ -57,6 +57,7 @@ if [ -z "$CMD" ]; then
 fi
 
 (
+  trap exit SIGINT
   while true; do
     # Filter the args for files/folders that exist, because if you attempt to
     # watch something that isn't there, inotifywait will exit. This is useful if
@@ -72,11 +73,17 @@ fi
     # file and that file gets deleted, but then another file replaces it,
     # inotifywait won't start watching the new file. That's why we have this
     # whole watch in a loop.
-    inotifywait -q -e "$EVENTS" -r --format '%:e %f' "${EXISTING_DIRS[@]}"
-    # If a file is modified, ignore all events for a brief period after. This
-    # prevents double-triggering the command when two events come in quick
-    # succession.
-    sleep "$BUFFER"
+    if command -v inotifywait > /dev/null 2>&1; then
+      inotifywait -q -e "$EVENTS" -r --format '%:e %f' "${EXISTING_DIRS[@]}"
+      # If a file is modified, ignore all events for a brief period after. This
+      # prevents double-triggering the command when two events come in quick
+      # succession.
+      sleep "$BUFFER"
+    elif command -v fswatch > /dev/null 2>&1; then
+      fswatch -r -1 -o -l "$BUFFER" "${EXISTING_DIRS[@]}"
+    else
+      exit 1
+    fi
   done
 ) | (
   while true; do
