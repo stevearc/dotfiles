@@ -2,6 +2,7 @@ if (exists('g:loaded_prettier') && g:loaded_prettier)
   finish
 endif
 let g:loaded_prettier = 1
+let s:prettier_config = []
 
 " Check if there is a directive in the jsdoc
 function! prettier#HasDirective(directive)
@@ -23,5 +24,27 @@ endfunction
 function! prettier#SmartFormat()
   if prettier#HasDirective("format")
     Neoformat
+  else
+    for line in s:prettier_config
+      if line == strpart(expand('%:p'), 0, len(line))
+        Neoformat
+        return
+      endif
+    endfor
   endif
 endfunction
+
+function! prettier#LoadRC()
+  let s:cache = $HOME . '/.prettier.vim'
+  if s:FileExists(s:cache)
+    for line in readfile(s:cache)
+      call add(s:prettier_config, line)
+    endfor
+  endif
+endfunction
+
+function! s:FileExists(path)
+  return !empty(glob(a:path))
+endfunction
+
+call prettier#LoadRC()
