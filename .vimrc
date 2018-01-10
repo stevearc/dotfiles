@@ -493,12 +493,6 @@ let g:ale_linters = {
 \   'javascript': ['flow'],
 \}
 
-" vim-javascript
-let g:javascript_plugin_flow = 1
-
-" vim-jsx
-let g:jsx_ext_required = 0
-
 function! ProseMode()
   setlocal spell noci nosi noai nolist noshowmode noshowcmd nonu
   setlocal complete+=s
