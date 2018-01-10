@@ -36,15 +36,11 @@ endfunction
 
 function! prettier#LoadRC()
   let s:cache = $HOME . '/.prettier.vim'
-  if s:FileExists(s:cache)
+  if filereadable(s:cache)
     for line in readfile(s:cache)
       call add(s:prettier_config, line)
     endfor
   endif
-endfunction
-
-function! s:FileExists(path)
-  return !empty(glob(a:path))
 endfunction
 
 call prettier#LoadRC()
