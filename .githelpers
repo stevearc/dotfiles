@@ -82,7 +82,9 @@ _get_branch() {
 }
 
 _get_browser() {
-    if [ $BROWSER ]; then
+    if [ "$(uname -s)" = "Darwin" ]; then
+        echo "open"
+    elif [ -n "$BROWSER" ]; then
         echo "$BROWSER"
     else
         echo "google-chrome"

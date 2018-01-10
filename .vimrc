@@ -167,7 +167,7 @@ map <leader>n :call RenameFile()<cr>
 " Function to duplicate the current file
 function! DuplicateFile()
     let old_name = expand('%')
-    let new_name = input('New file name: ', expand('%'), 'file')
+    let new_name = input('Duplicate to: ', expand('%'), 'file')
     if new_name != '' && new_name != old_name
         exec ':saveas ' . new_name
         redraw!
@@ -389,6 +389,8 @@ let g:ctrlp_lazy_update = 1
 let g:ctrlp_cmd = 'CtrlPMixed'
 let g:ctrlp_map = '<leader>t'
 let g:ctrlp_by_filename = 1
+nnoremap <leader>b :CtrlPBuffer<CR>
+
 if executable('ag')
   " Use Ag over Grep
   set grepprg=ag\ --nogroup\ --nocolor

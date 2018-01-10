@@ -76,6 +76,9 @@ fi
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
+if [ $MAC ] && [ -f $(brew --prefix)/etc/bash_completion ]; then
+    . $(brew --prefix)/etc/bash_completion
+fi
 
 # Environment variables
 export GOROOT=/usr/local/go
@@ -112,3 +115,5 @@ if command -v activate.sh > /dev/null; then
   source activate.sh
   autoenv_init
 fi
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"

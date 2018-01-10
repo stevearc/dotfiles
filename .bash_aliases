@@ -1,3 +1,4 @@
+OSNAME=$(uname -s)
 if [ "$OSNAME" = "Darwin" ]; then
   MAC=1
 fi
@@ -20,6 +21,7 @@ alias lla='ls -Alh'
 alias inetstat='sudo netstat -pna|grep LISTEN|grep tcp'
 alias pc='ps wwaux | grep'
 alias ack='ag'
+alias gg='git grep'
 alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf'
 alias tm='tmux -2'
 if [ $MAC ]; then
