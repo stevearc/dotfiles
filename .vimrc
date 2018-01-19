@@ -356,19 +356,6 @@ endfunc
 inoremap <C-a> <C-o>0
 inoremap <C-e> <C-o>$
 
-" NERDTree
-function! ToggleNerd()
-  if match(expand('%'), '^NERD_tree_') != -1
-    :NERDTreeToggle
-  else
-    :NERDTreeFind
-  endif
-endfunction
-nmap <leader>w :call ToggleNerd()<CR>
-" Open nerdtree automatically if vim is started with a directory
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
-
 " EasyMotion
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 
@@ -492,6 +479,9 @@ let g:ale_lint_on_insert_leave = 1
 let g:ale_linters = {
 \   'javascript': ['flow'],
 \}
+
+" vim-javascript flow syntax highlighting
+let g:javascript_plugin_flow = 1
 
 function! ProseMode()
   setlocal spell noci nosi noai nolist noshowmode noshowcmd nonu
