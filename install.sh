@@ -2,7 +2,7 @@
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf bin .agignore .docker"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
-declare -r DEFAULT_VIM_BUNDLES="ale ctrlp ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth"
+declare -r DEFAULT_VIM_BUNDLES="ale ctrlp ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r ALL_LANGUAGES="go python js arduino clojure"
