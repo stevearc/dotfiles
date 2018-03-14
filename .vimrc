@@ -246,6 +246,9 @@ augroup WinWidth
 augroup END
 nmap <C-w>+ :call ToggleWinEqual()<CR>
 
+" Expand %% to current directory in command mode
+cabbr <expr> %% expand('%:p:h')
+
 " Go to next/prev result with <Ctrl> + n/p
 nmap <silent> <C-N> :cn<CR>zv
 nmap <silent> <C-P> :cp<CR>zv
