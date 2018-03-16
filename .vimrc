@@ -379,6 +379,8 @@ let g:ctrlp_lazy_update = 1
 let g:ctrlp_cmd = 'CtrlPMixed'
 let g:ctrlp_map = '<leader>t'
 let g:ctrlp_by_filename = 1
+" WIP: Use a custom matching function because I'm fancy
+" let g:ctrlp_match_func = { 'match': 'fmatcher#MatchFiles' }
 nnoremap <leader>b :CtrlPBuffer<CR>
 
 if executable('ag')

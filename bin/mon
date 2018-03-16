@@ -75,13 +75,9 @@ fi
     # whole watch in a loop.
     if command -v inotifywait > /dev/null 2>&1; then
       inotifywait -q -e "$EVENTS" -r --format '%:e %f' "${EXISTING_DIRS[@]}"
-      # If a file is modified, ignore all events for a brief period after. This
-      # prevents double-triggering the command when two events come in quick
-      # succession.
-      sleep "$BUFFER"
     elif command -v fswatch > /dev/null 2>&1; then
       # We would like to use fswatch -o, but -o and -1 are mutually exclusive
-      fswatch -r -0 -1 -l "$BUFFER" "${EXISTING_DIRS[@]}"
+      fswatch -r -0 -1 "${EXISTING_DIRS[@]}"
       echo ''
     else
       exit 1
