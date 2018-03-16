@@ -80,7 +80,9 @@ fi
       # succession.
       sleep "$BUFFER"
     elif command -v fswatch > /dev/null 2>&1; then
-      fswatch -r -1 -o -l "$BUFFER" "${EXISTING_DIRS[@]}"
+      # We would like to use fswatch -o, but -o and -1 are mutually exclusive
+      fswatch -r -0 -1 -l "$BUFFER" "${EXISTING_DIRS[@]}"
+      echo ''
     else
       exit 1
     fi
