@@ -3,6 +3,7 @@ let g:flow#autoclose = 1
 nnoremap <buffer> K :FlowTypeAtPos<CR>
 nnoremap <buffer> <leader>c :FlowCoverageToggle<CR>
 nnoremap <buffer> gd :FlowGetDef<CR>zz
+nnoremap <buffer> gD :FlowGetDefTab<CR>zz
 
 augroup jsfmt
   autocmd!
