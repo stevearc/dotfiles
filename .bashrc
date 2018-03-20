@@ -60,7 +60,10 @@ function __nvm_version {
   [ -e "$root/package.json" ] || return
   echo "[`nvm current`]"
 }
-PS1="$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)$(hg_branch)'"$__nvm_color"'$(__nvm_version)'"$__prompt_tail$__last_color "
+function __timestamp {
+  echo "`date +%H:%M:%S` "
+}
+PS1='$(__timestamp)'"$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)$(hg_branch)'"$__nvm_color"'$(__nvm_version)'"$__prompt_tail$__last_color "
 export PS4='+$0.$LINENO: '
 
 # Alias definitions.
