@@ -35,7 +35,7 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
 fi
 
 function git_branch {
-    __cur_ref=`git log --abbrev-commit -1 --pretty="tformat:%h" 2> /dev/null`
+    __cur_ref=`git log --abbrev-commit -1 --decorate=short --pretty="tformat:%h{%D" 2> /dev/null | sed -e 's/{.*\(tag: [^ ,]*\).*$/}\1/' -e 's/{.*//' -e 's/ //' -e 's/}/ /' 2> /dev/null`
     __git_branch=`git branch --no-color 2> /dev/null | grep -e ^* | sed -E s/^\\\*\ \(.*\)$/\\\1/ | sed -E s/^\\\\\(.*\\\\\)$/"$__cur_ref"/`
     echo `echo $__git_branch | sed -E s/\(.+\)/\[\\\1\]/`
 }
