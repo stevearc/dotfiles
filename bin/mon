@@ -86,7 +86,7 @@ fi
 
 # read -t 0 is only available in bash>=4.0
 if [ "$SHELL" = "/bin/bash" ] && \
-  [ $(echo "${BASH_VERSION%%.*}") -ge 4 ]; then
+  [ "${BASH_VERSION%%.*}" -ge 4 ]; then
   function _clear_input() {
     while read -r -t 0; do read -r; done
   }
@@ -109,7 +109,7 @@ fi
         EXISTING_DIRS+=("$DIR")
       fi
     done
-    $WATCHCMD "${EXISTING_DIRS[@]}" | tee -a $LOGFILE
+    eval "$WATCHCMD" "${EXISTING_DIRS[@]}" | tee -a "$LOGFILE"
   done
 ) | (
   while true; do
@@ -119,7 +119,7 @@ fi
     fi
     # Clear out stdin. We want multiple events to only trigger one run.
     _clear_input
-    echo "+$CMD" | tee -a $LOGFILE
+    echo "+$CMD" | tee -a "$LOGFILE"
     eval "$CMD"
     if [ "$SINGLE" ]; then
       # If we're doing "single execution", then clear out all events that were
