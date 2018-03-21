@@ -1,14 +1,23 @@
 #!/bin/bash
 
 BUFFER=.5
-USAGE="$0 [<FILE>...] COMMAND
+if command -v inotifywait > /dev/null 2>&1; then
+  WATCH="inotify"
+elif command -v fswatch > /dev/null 2>&1; then
+  WATCH="fswatch"
+fi
+
+USAGE="$0 [OPTIONS] [<FILE>...] COMMAND
 
 Options:
-  -b buffer      Accumulate events for this long before running the command
-                 (default $BUFFER)
-  -e             Eager execution. Run the command once after mon is called.
-  -s             Single execution. Will not listen for any events while the
-                 command is running.
+  -b buffer             Accumulate events for this long before running the command
+                        (default $BUFFER)
+  -e                    Eager execution. Run the command immediately after mon
+                        is called.
+  -l logfile            Logfile for filesystem events
+  -t <fswatch|inotify>  Select which watcher to use (default $WATCH)
+  -s                    Single execution. Will not listen for any events while
+                        the command is running.
 "
 
 # Enable history (some of my aliases use that)
@@ -23,6 +32,7 @@ if [ -e ~/.bash_aliases ]; then
 fi
 
 EVENTS="CREATE,CLOSE_WRITE,DELETE,DELETE_SELF,MODIFY,MOVED_FROM,MOVED_TO,MOVE_SELF"
+LOGFILE=/dev/null
 
 declare -a DIRS=()
 
@@ -38,6 +48,12 @@ while [ -n "$1" ]; do
     SINGLE=1
   elif [ "$1" == "-e" ]; then
     EAGER=1
+  elif [ "$1" == "-l" ]; then
+    shift
+    LOGFILE="$1"
+  elif [ "$1" == "-t" ]; then
+    shift
+    WATCH="$1"
   elif [ -z "$2" ]; then
     CMD="$1"
   else
@@ -55,6 +71,30 @@ if [ -z "$CMD" ]; then
   echo "$USAGE"
   exit 1
 fi
+if [ "$WATCH" = "inotify" ]; then
+  # We don't use -m because we want to watch paths, not inodes. If you watch a
+  # file and that file gets deleted, but then another file replaces it,
+  # inotifywait won't start watching the new file. That's why we have this whole
+  # watch in a loop.
+  WATCHCMD="inotifywait -q -e '$EVENTS' -r --format '%:e %f'"
+elif [ "$WATCH" = "fswatch" ]; then
+  WATCHCMD="fswatch -r -x -1"
+else
+  echo "Invalid value for -t '$WATCH'" >&2
+  exit 1
+fi
+
+# read -t 0 is only available in bash>=4.0
+if [ "$SHELL" = "/bin/bash" ] && \
+  [ $(echo "${BASH_VERSION%%.*}") -ge 4 ]; then
+  function _clear_input() {
+    while read -r -t 0; do read -r; done
+  }
+else
+  function _clear_input() {
+    read -d '' -r -t 1 -n 100000
+  }
+fi
 
 (
   trap exit SIGINT
@@ -69,19 +109,7 @@ fi
         EXISTING_DIRS+=("$DIR")
       fi
     done
-    # We don't use -m because we want to watch paths, not inodes. If you watch a
-    # file and that file gets deleted, but then another file replaces it,
-    # inotifywait won't start watching the new file. That's why we have this
-    # whole watch in a loop.
-    if command -v inotifywait > /dev/null 2>&1; then
-      inotifywait -q -e "$EVENTS" -r --format '%:e %f' "${EXISTING_DIRS[@]}"
-    elif command -v fswatch > /dev/null 2>&1; then
-      # We would like to use fswatch -o, but -o and -1 are mutually exclusive
-      fswatch -r -0 -1 "${EXISTING_DIRS[@]}"
-      echo ''
-    else
-      exit 1
-    fi
+    $WATCHCMD "${EXISTING_DIRS[@]}" | tee -a $LOGFILE
   done
 ) | (
   while true; do
@@ -90,13 +118,13 @@ fi
       sleep "$BUFFER"
     fi
     # Clear out stdin. We want multiple events to only trigger one run.
-    while read -r -t 0; do read -r; done
-    echo "+$CMD"
+    _clear_input
+    echo "+$CMD" | tee -a $LOGFILE
     eval "$CMD"
     if [ "$SINGLE" ]; then
       # If we're doing "single execution", then clear out all events that were
       # fired while running the command.
-      while read -r -t 0; do read -r; done
+      _clear_input
     fi
     if [ -n "$EAGER" ]; then
       read _
