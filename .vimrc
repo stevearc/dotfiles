@@ -376,7 +376,6 @@ nmap <C-w><C-b> :tabedit %<CR>
 " CTRLP
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_lazy_update = 1
-let g:ctrlp_cmd = 'CtrlPMixed'
 let g:ctrlp_map = '<leader>t'
 let g:ctrlp_by_filename = 1
 " WIP: Use a custom matching function because I'm fancy
