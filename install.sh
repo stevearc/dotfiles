@@ -20,6 +20,13 @@ declare -r USAGE=\
 --languages   List all languages that are supported and exit
 "
 
+OSNAME=$(uname -s)
+if [ "$OSNAME" = "Darwin" ]; then
+  MAC=1
+else
+  LINUX=1
+fi
+
 prompt() {
   # $1 [str] - Prompt string
   # $2 (optional) [str] - The default return value if user just hits enter
@@ -28,7 +35,7 @@ prompt() {
   if [ -n "$default" ]; then
     text="${text}[$default] "
   fi
-  while [ 1 ]; do
+  while true; do
     read -r -p "$text" response
     if [ -n "$response" ]; then
       echo "$response"
@@ -56,7 +63,7 @@ confirm() {
       prompt="$prompt [y/n] "
       ;;
   esac
-  while [ 1 ]; do
+  while true; do
     read -r -p "$prompt" response
     case $response in
       [yY][eE][sS]|[yY])
@@ -100,7 +107,7 @@ clear-checkpoints() {
 }
 
 installed() {
-  dpkg --get-selections | grep install | grep $1 >/dev/null
+  dpkg --get-selections | grep install | grep "$1" >/dev/null
 }
 
 cp-vim-bundle() {
@@ -379,8 +386,24 @@ setup-custom-packages() {
     sudo apt-get install -y -q wine1.6
   fi
   if ! which docker && confirm "Install docker?" n; then
-    wget -qO- https://get.docker.com/ | sh
-    confirm "Allow $USER to use docker without sudo?" y && sudo adduser $USER docker
+    if [ "$(lsb_release -rs)" = '14.04' ]; then
+      sudo apt-get install -y \
+        "linux-image-extra-$(uname -r)" \
+        linux-image-extra-virtual
+    fi
+    sudo apt-get install -y \
+      apt-transport-https \
+      ca-certificates \
+      curl \
+      software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository \
+     "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+     $(lsb_release -cs) \
+     stable"
+    sudo apt-get update
+    sudo apt-get install -y docker-ce
+    confirm "Allow $USER to use docker without sudo?" y && sudo adduser "$USER" docker
     cp bash.d/bluepill.sh ~/.bash.d/
   fi
   sudo apt-get install -y -q gthumb encfs
