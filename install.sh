@@ -110,6 +110,14 @@ installed() {
   dpkg --get-selections | grep install | grep "$1" >/dev/null
 }
 
+hascmd() {
+  if command -v "$1" > /dev/null 2>&1; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 cp-vim-bundle() {
   local bundle=${1?Must specify a vim bundle}
   if [ ! -e ~/.vim/bundle/$bundle ]; then
@@ -154,7 +162,7 @@ install-cli() {
 }
 
 install-cli-after() {
-  if ! command -v nvim > /dev/null && confirm "Install Neovim?" n; then
+  if ! hascmd nvim && confirm "Install Neovim?" n; then
     sudo apt-get install -y libtool autoconf automake cmake g++ pkg-config \
       unzip python-dev python-pip python3 python3-dev python3-pip ruby ruby-dev
     sudo apt-get install -y libtool-bin || : # Ubuntu 16.04
@@ -168,8 +176,8 @@ install-cli-after() {
     sudo make install
     popd
     if [ ! -e ~/.nvim_python ]; then
-      command -v python 2> /dev/null && echo "let g:python_host_prog=\"$(command -v python)\"" > ~/.nvim_python
-      command -v python3 2> /dev/null && echo "let g:python3_host_prog=\"$(command -v python3)\"" >> ~/.nvim_python
+      hascmd python && echo "let g:python_host_prog=\"$(command -v python)\"" > ~/.nvim_python
+      hascmd python3 && echo "let g:python3_host_prog=\"$(command -v python3)\"" >> ~/.nvim_python
     fi
     if [ ! -e ~/.config/nvim/init.vim ]; then
       mkdir -p ~/.config/nvim
@@ -186,7 +194,7 @@ EOF
     go get github.com/wincent/clipper
     go build github.com/wincent/clipper
     sudo cp $GOPATH/bin/clipper /usr/local/bin
-    if command -v systemctl > /dev/null; then
+    if hascmd systemctl; then
       mkdir -p ~/.config/systemd/user
       cp $GOPATH/src/github.com/wincent/clipper/contrib/linux/systemd-service/clipper.service ~/.config/systemd/user
       sed -ie 's|^ExecStart.*|ExecStart=/usr/local/bin/clipper -l /var/log/clipper.log -e xsel -f "-bi"|' ~/.config/systemd/user/clipper.service
@@ -288,7 +296,7 @@ install-language-go() {
 install-language-arduino() {
   has-checkpoint arduino && return
 
-  if ! which arduino; then
+  if ! hascmd arduino; then
     local default_version=$(curl https://github.com/arduino/Arduino/releases/latest | sed 's|^.*tag/\([^"]*\).*$|\1|')
     local version=$(prompt "Arduino IDE version?" $default_version)
     local install_dir=$(prompt "Arduino IDE install dir?" /usr/local/share)
@@ -385,7 +393,7 @@ setup-custom-packages() {
     sudo add-apt-repository -y ppa:ubuntu-wine/ppa
     sudo apt-get install -y -q wine1.6
   fi
-  if ! which docker && confirm "Install docker?" n; then
+  if ! hascmd docker && confirm "Install docker?" n; then
     if [ "$(lsb_release -rs)" = '14.04' ]; then
       sudo apt-get install -y \
         "linux-image-extra-$(uname -r)" \
@@ -405,6 +413,14 @@ setup-custom-packages() {
     sudo apt-get install -y docker-ce
     confirm "Allow $USER to use docker without sudo?" y && sudo adduser "$USER" docker
     cp bash.d/bluepill.sh ~/.bash.d/
+  fi
+  if ! hascmd docker-compose && hascmd docker; then
+    if confirm "Install docker-compose?" y; then
+      local latest="$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .name)"
+      sudo curl -L "https://github.com/docker/compose/releases/download/${latest}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      sudo chmod +x /usr/local/bin/docker-compose
+      sudo curl -L "https://raw.githubusercontent.com/docker/compose/${latest}/contrib/completion/bash/docker-compose" -o /etc/bash_completion.d/docker-compose
+    fi
   fi
   sudo apt-get install -y -q gthumb encfs
   if [[ -e ~/bin ]] && [[ ! -e ~/bin/youtube-dl ]]; then
