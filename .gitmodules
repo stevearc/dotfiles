@@ -66,7 +66,7 @@
 	url = https://github.com/tpope/vim-sleuth.git
 [submodule ".vim/bundle/vim-flow-plus"]
 	path = .vim/bundle/vim-flow-plus
-	url = git@github.com:stevearc/vim-flow-plus.git
+	url = https://github.com/stevearc/vim-flow-plus.git
 [submodule ".vim/bundle/vim-eunuch"]
 	path = .vim/bundle/vim-eunuch
 	url = https://github.com/tpope/vim-eunuch.git
