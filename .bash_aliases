@@ -21,7 +21,7 @@ alias lla='ls -Alh'
 alias inetstat='sudo netstat -pna|grep LISTEN|grep tcp'
 alias pc='ps wwaux | grep'
 alias ack='ag'
-alias gg='git grep'
+alias gg='git grep -I'
 alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf'
 alias tm='tmux -2'
 if [ $MAC ]; then
