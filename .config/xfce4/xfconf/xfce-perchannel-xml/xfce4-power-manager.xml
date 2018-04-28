@@ -4,7 +4,7 @@
   <property name="xfce4-power-manager" type="empty">
     <property name="power-button-action" type="empty"/>
     <property name="lock-screen-suspend-hibernate" type="empty"/>
-    <property name="logind-handle-lid-switch" type="empty"/>
+    <property name="logind-handle-lid-switch" type="bool" value="true"/>
     <property name="blank-on-ac" type="empty"/>
     <property name="blank-on-battery" type="empty"/>
     <property name="dpms-enabled" type="empty"/>
@@ -15,5 +15,8 @@
     <property name="show-panel-label" type="empty"/>
     <property name="brightness-switch-restore-on-exit" type="int" value="1"/>
     <property name="brightness-switch" type="int" value="0"/>
+    <property name="lid-action-on-battery" type="uint" value="1"/>
+    <property name="critical-power-action" type="uint" value="3"/>
+    <property name="lid-action-on-ac" type="uint" value="1"/>
   </property>
 </channel>
