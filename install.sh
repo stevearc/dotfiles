@@ -1,4 +1,5 @@
 #!/bin/bash -e
+# Setup script for (X)Ubuntu 18.04
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf bin .agignore .docker"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
@@ -15,6 +16,7 @@ declare -r USAGE=\
 -l            Install language support (may be specified multiple times)
               Use 'all' to install all support for all languages.
 -g            Set up a typical gnome environment
+-x            Set up a typical xfce environment
 -p            Install some of my custom desktop packages
 -f            Force reinstallation of all programs
 --languages   List all languages that are supported and exit
@@ -130,7 +132,6 @@ setup-install-progs() {
   sudo apt-get update -qq
   sudo apt-get install -y -q \
     python-pycurl \
-    python-software-properties \
     software-properties-common \
     wget \
     curl
@@ -165,7 +166,7 @@ install-cli-after() {
   if ! hascmd nvim && confirm "Install Neovim?" n; then
     sudo apt-get install -y libtool autoconf automake cmake g++ pkg-config \
       unzip python-dev python-pip python3 python3-dev python3-pip ruby ruby-dev
-    sudo apt-get install -y libtool-bin || : # Ubuntu 16.04
+    sudo apt-get install -y libtool-bin
     pip freeze | grep neovim > /dev/null || sudo pip install neovim
     pip3 freeze | grep neovim > /dev/null || sudo pip3 install neovim
     sudo gem install neovim
@@ -215,7 +216,8 @@ install-dotfiles() {
   cp -r $CLI_DOTFILES $HOME
   cp $BIN_EXTRA $HOME/bin/
   rsync -lrp --exclude bundle --exclude .git .vim $HOME
-  rsync -lrp .config $HOME
+  mkdir -p ~/.config
+  rsync -lrp .config/nvim ~/.config/
   mkdir -p ~/.vim/bundle
   for bundle in $DEFAULT_VIM_BUNDLES; do
     cp-vim-bundle $bundle
@@ -346,39 +348,69 @@ install-nvm() {
 }
 
 add-apt-key-google() {
-  apt-key list | grep linux-packages-keymaster@google.com > /dev/null || \
+  apt-key list | grep -q linux-packages-keymaster@google.com || \
     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 }
 
-setup-gnome() {
-  has-checkpoint gnome && return
+setup-desktop() {
+  has-checkpoint desktop && return
   setup-install-progs
+  add-apt-key-google
+  sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
+  # Enable multiverse
+  sudo sed -i -e 's/# \(.* multiverse$\)/\1/' /etc/apt/sources.list
+  sudo apt-get update -qq
+
+  sudo apt-get install -q -y \
+    flashplugin-installer \
+    google-chrome-stable \
+    gparted \
+    ffmpeg \
+    mplayer \
+    vlc
+
+  if ! grep -q "GRUB_TIMEOUT=4" /etc/default/grub; then
+    sudo sed -ie 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=4/' /etc/default/grub
+  fi
+
+  checkpoint desktop
+}
+
+setup-gnome() {
+  setup-desktop
+  has-checkpoint gnome && return
   # Get rid of horrible unity scrollbars
   sudo apt-get purge -y -q \
     overlay-scrollbar \
     liboverlay-scrollbar-0.2-0 \
     liboverlay-scrollbar3-0.2-0
 
-  add-apt-key-google
-  sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
-  # Enable multiverse
-  sudo sed -i -e 's/# \(.* multiverse$\)/\1/' /etc/apt/sources.list
-  sudo apt-get update -qq
   sudo apt-get install -q -y \
     gnome \
     "gnome-do" \
     vim-gnome \
-    flashplugin-installer \
-    google-chrome-stable \
-    gparted \
-    libav-tools \
-    mplayer \
-    vlc \
     xbindkeys
   cp -r $GNOME_DOTFILES $HOME
   sudo cp vim.desktop /usr/share/applications
   cp mimeapps.list ~/.local/share/applications
   checkpoint gnome
+}
+
+setup-xfce() {
+  setup-desktop
+  # Remap caps lock to control
+  if ! grep  "XKBOPTIONS.*ctrl:nocaps" /etc/default/keyboard > /dev/null; then
+    sudo sed -ie 's/XKBOPTIONS=.*/XKBOPTIONS="ctrl:nocaps"/' /etc/default/keyboard
+    sudo dpkg-reconfigure keyboard-configuration
+  fi
+
+  # Set the mouse acceleration for my specific mouse
+  local mouse_id="$(xinput list | grep "SteelSeries.*pointer" | sed -e 's/.*id=\([0-9]*\).*/\1/')"
+  if [ -n "$mouse_id" ]; then
+    xinput set-prop "$mouse_id" "libinput Accel Speed" -0.5
+  fi
+  mkdir -p ~/.config
+  rsync -lrp .config/xfce4 ~/.config/
 }
 
 setup-custom-packages() {
@@ -392,6 +424,12 @@ setup-custom-packages() {
   if ! installed wine1.6 && confirm "Install wine?" n; then
     sudo add-apt-repository -y ppa:ubuntu-wine/ppa
     sudo apt-get install -y -q wine1.6
+  fi
+  if ! hascmd google-play-music-desktop-player && confirm "Install Google Play Music Desktop Player?" n; then
+    wget -qO - https://gpmdp.xyz/bintray-public.key.asc | sudo apt-key add -
+    echo "deb https://dl.bintray.com/marshallofsound/deb debian main" | sudo tee -a /etc/apt/sources.list.d/gpmdp.list
+    sudo apt-get update -qq
+    sudo apt-get install -y -q google-play-music-desktop-player
   fi
   if ! hascmd docker && confirm "Install docker?" n; then
     if [ "$(lsb_release -rs)" = '14.04' ]; then
@@ -409,7 +447,7 @@ setup-custom-packages() {
      "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
      $(lsb_release -cs) \
      stable"
-    sudo apt-get update
+    sudo apt-get update -qq
     sudo apt-get install -y docker-ce
     confirm "Allow $USER to use docker without sudo?" y && sudo adduser "$USER" docker
     cp bash.d/bluepill.sh ~/.bash.d/
@@ -439,11 +477,12 @@ main() {
 
   local languages=""
   local gnome=
+  local xfce=
   local custom_packages=
   local commandline=
   local dotfiles=
   local secure=
-  while getopts "hfgcpndsl:-:" opt; do
+  while getopts "hfgxcpndsl:-:" opt; do
     case $opt in
       -)
         case $OPTARG in
@@ -468,6 +507,9 @@ main() {
         ;;
       g)
         gnome=1
+        ;;
+      x)
+        xfce=1
         ;;
       s)
         secure=1
@@ -508,6 +550,9 @@ main() {
   fi
   if [ $gnome ]; then
     setup-gnome
+  fi
+  if [ $xfce ]; then
+    setup-xfce
   fi
   if [ $custom_packages ]; then
     setup-custom-packages

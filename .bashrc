@@ -89,9 +89,13 @@ export GOPATH=~/go
 export PATH=$HOME/bin:$GOROOT/bin:$GOPATH/bin:$PATH
 
 # Default applications
-export GIT_EDITOR=vim
-export SVN_EDITOR=vim
-export EDITOR=vim
+if command -v nvim > /dev/null; then
+  export EDITOR=nvim
+else
+  export EDITOR=vim
+fi
+export GIT_EDITOR="$EDITOR"
+export SVN_EDITOR="$EDITOR"
 export BROWSER=google-chrome-stable
 
 command -v sourcedir > /dev/null 2>&1 || sourcedir() {
