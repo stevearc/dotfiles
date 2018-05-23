@@ -6,6 +6,7 @@ declare -r BIN_EXTRA="parseargs/parseargs.sh"
 declare -r DEFAULT_VIM_BUNDLES="ale ctrlp ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
+declare -r XFCE_DOTFILES=".xsessionrc"
 declare -r ALL_LANGUAGES="go python js arduino clojure"
 declare -r USAGE=\
 "$0 [OPTIONS]
@@ -371,6 +372,7 @@ setup-desktop() {
 
   if ! grep -q "GRUB_TIMEOUT=4" /etc/default/grub; then
     sudo sed -ie 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=4/' /etc/default/grub
+    sudo update-grub
   fi
 
   checkpoint desktop
@@ -404,11 +406,7 @@ setup-xfce() {
     sudo dpkg-reconfigure keyboard-configuration
   fi
 
-  # Set the mouse acceleration for my specific mouse
-  local mouse_id="$(xinput list | grep "SteelSeries.*pointer" | sed -e 's/.*id=\([0-9]*\).*/\1/')"
-  if [ -n "$mouse_id" ]; then
-    xinput set-prop "$mouse_id" "libinput Accel Speed" -0.5
-  fi
+  cp -r $XFCE_DOTFILES $HOME
   mkdir -p ~/.config
   rsync -lrp .config/xfce4 ~/.config/
 }

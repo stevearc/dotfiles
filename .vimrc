@@ -376,10 +376,9 @@ nmap <C-w><C-b> :tabedit %<CR>
 " CTRLP
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_lazy_update = 1
+let g:ctrlp_cmd = 'CtrlPMixed'
 let g:ctrlp_map = '<leader>t'
 let g:ctrlp_by_filename = 1
-" WIP: Use a custom matching function because I'm fancy
-" let g:ctrlp_match_func = { 'match': 'fmatcher#MatchFiles' }
 nnoremap <leader>b :CtrlPBuffer<CR>
 
 if executable('ag')
@@ -476,12 +475,19 @@ let g:neoformat_enabled_javascript = ['prettier']
 let g:neoformat_enabled_json = ['prettier']
 let g:neoformat_enabled_css = ['prettier']
 let g:neoformat_enabled_less = ['prettier']
+let g:neoformat_enabled_cpp = ['clangformat']
+let g:neoformat_cpp_clangformat = {
+  \ 'exe': 'clang-format-6.0',
+  \ 'stdin': 1,
+  \ }
 
 " Ale
 let g:ale_lint_on_text_changed = 'normal'
 let g:ale_lint_on_insert_leave = 1
+let g:ale_cpp_clangtidy_executable = 'clang-tidy-6.0'
 let g:ale_linters = {
 \   'javascript': ['flow'],
+\   'cpp': ['clangtidy'],
 \}
 
 " vim-javascript flow syntax highlighting

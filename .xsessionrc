@@ -1,0 +1,4 @@
+mouse_id="$(xinput list | grep "SteelSeries.*pointer" | sed -e 's/.*id=\([0-9]*\).*/\1/')"
+if [ -n "$mouse_id" ]; then
+  xinput set-prop "$mouse_id" "libinput Accel Speed" -0.5
+fi
