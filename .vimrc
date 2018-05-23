@@ -27,7 +27,7 @@ set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb,.html,.jinja2,.js,.jsx,.less,.css,.st
 " Make tab completion for files/buffers act like bash
 set wildmenu
 set wildmode=full
-set wildignore+=*.png,*.jpg,*.jpeg,*.gif
+set wildignore+=*.png,*.jpg,*.jpeg,*.gif,*.wav,*.dll,*.meta
 
 " Make searches case-sensitive only if they contain upper-case characters
 set ignorecase
@@ -464,6 +464,17 @@ aug END
 
 " Shortcut for clipper
 nnoremap <leader>y :call system('nc localhost 8377', @0)<CR>
+
+" Omnisharp
+let g:Omnisharp_start_server = 0
+
+" Syntastic (which we really only need for omnisharp)
+let g:syntastic_cs_checkers = ['code_checker']
+let g:syntastic_check_on_wq = 0
+let g:syntastic_mode_map = {
+    \ "mode": "passive",
+    \ "active_filetypes": ["cs"] }
+
 
 " Cmdr
 function! Cmdr(cmd)

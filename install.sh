@@ -3,11 +3,11 @@
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf bin .agignore .docker"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
-declare -r DEFAULT_VIM_BUNDLES="ale ctrlp ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar"
+declare -r DEFAULT_VIM_BUNDLES="ale ctrlp ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar vim-localrc"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r XFCE_DOTFILES=".xsessionrc"
-declare -r ALL_LANGUAGES="go python js arduino clojure"
+declare -r ALL_LANGUAGES="go python js arduino clojure cs"
 declare -r USAGE=\
 "$0 [OPTIONS]
 -h            Print this help menu
@@ -328,6 +328,12 @@ install-language-js() {
   cp-vim-bundle closetag
   checkpoint javascript
 }
+
+install-language-cs() {
+  cp-vim-bundle omnisharp-vim
+  cp-vim-bundle syntastic
+}
+
 
 install-nvm() {
   nvm current && return
