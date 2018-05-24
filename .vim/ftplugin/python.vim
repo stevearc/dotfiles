@@ -1,34 +1,4 @@
-function! RunTests(filename)
-    " Write the file and run tests for the given filename
-    :w
-    :silent !clear
-    exec ":!nosetests " . a:filename
-endfunction
-
-function! SetTestFile()
-    " Set the test file that tests will be run for.
-    let t:test_file=@%
-endfunction
-
-function! RunTestFile(...)
-    if a:0
-        let command_suffix = a:1
-    else
-        let command_suffix = ""
-    endif
-
-    " Run the tests for the previously-marked file.
-    let in_test_file = match(expand("%"), 'test_.*.py') != -1
-    if in_test_file
-        call SetTestFile()
-    elseif !exists("t:test_file")
-        return
-    end
-    call RunTests(t:test_file . command_suffix)
-endfunction
-
-" Run test file
-noremap <buffer> <leader>dt :call RunTestFile()<CR>
+setlocal shiftwidth=4 tabstop=4 softtabstop=4
 
 " python-mode options
 let g:pymode_run = 0

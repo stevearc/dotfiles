@@ -1,5 +1,7 @@
 set completeopt=longest,menuone,preview
 set previewheight=5
+" Line width of 100
+set tw=100
 " Use % to jump between region/endregion
 let b:match_words = '\s*#\s*region.*$:\s*#\s*endregion'
 
