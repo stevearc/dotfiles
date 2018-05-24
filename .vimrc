@@ -245,6 +245,9 @@ augroup WinWidth
   au VimEnter,WinEnter,BufWinEnter * :call ResizeWindows()
 augroup END
 nmap <C-w>+ :call ToggleWinEqual()<CR>
+nmap <C-w>z :resize<CR>:vertical resize<CR>
+set splitbelow
+set splitright
 
 " Expand %% to current directory in command mode
 cabbr <expr> %% expand('%:p:h')
@@ -265,6 +268,27 @@ nnoremap j gjzz
 nnoremap k gkzz
 vnoremap j gjzz
 vnoremap k gkzz
+
+" Customizations for terminal mode
+tnoremap <leader><leader> <C-\><C-N>
+tnoremap <leader>1 <C-\><C-N>1gt
+tnoremap <leader>2 <C-\><C-N>2gt
+tnoremap <leader>3 <C-\><C-N>3gt
+tnoremap <leader>4 <C-\><C-N>4gt
+tnoremap <leader>5 <C-\><C-N>5gt
+tnoremap <leader>6 <C-\><C-N>6gt
+tnoremap <leader>7 <C-\><C-N>7gt
+tnoremap <leader>8 <C-\><C-N>8gt
+tnoremap <leader>9 <C-\><C-N>9gt
+tnoremap <leader>h <C-\><C-N>:wincmd h<CR>
+tnoremap <leader>l <C-\><C-N>:wincmd l<CR>
+tnoremap <leader>j <C-\><C-N>:wincmd j<CR>
+tnoremap <leader>k <C-\><C-N>:wincmd k<CR>
+tnoremap <leader>: <C-\><C-N>:
+highlight TermCursor ctermfg=DarkRed guifg=red
+au BufEnter * if &buftype == 'terminal' | :startinsert | endif
+
+au FocusGained * checktime
 
 " Navigate tabs with H and L
 " We can't rebind <Tab> because that's equivalent to <C-i> and we want to keep
@@ -375,8 +399,8 @@ nmap <C-w><C-b> :tabedit %<CR>
 
 " CTRLP
 let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_switch_buffer = 'eTvh'
 let g:ctrlp_lazy_update = 1
-let g:ctrlp_cmd = 'CtrlPMixed'
 let g:ctrlp_map = '<leader>t'
 let g:ctrlp_by_filename = 1
 nnoremap <leader>b :CtrlPBuffer<CR>
