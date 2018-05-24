@@ -167,8 +167,12 @@ call deoplete#custom#option('min_pattern_length', 1)
 call deoplete#custom#option('sources', {
 \ '_': ['ultisnips'],
 \ 'cs': ['omni', 'ultisnips'],
+\ 'sh': ['LanguageClient', 'ultisnips'],
 \})
 
+let g:LanguageClient_serverCommands = {
+\ 'sh': ['bash-language-server', 'start']
+\ }
 
 " Function to rename the current file
 function! RenameFile()
@@ -271,8 +275,24 @@ set splitright
 cabbr <expr> %% expand('%:p:h')
 
 " Go to next/prev result with <Ctrl> + n/p
-nmap <silent> <C-N> :cn<CR>zv
-nmap <silent> <C-P> :cp<CR>zv
+function! NextResult()
+  if IsBufferOpen("Location List")
+    lnext
+  else
+    cnext
+  endif
+  exec "normal! zv"
+endfunction
+function! PrevResult()
+  if IsBufferOpen("Location List")
+    lprev
+  else
+    cprev
+  endif
+  exec "normal! zv"
+endfunction
+nnoremap <silent> <C-N> :call NextResult()<CR>
+nnoremap <silent> <C-P> :call PrevResult()<CR>
 
 " Keep cursor in the vertical center of the editor
 nnoremap <C-d> <C-d>zz
@@ -340,17 +360,31 @@ function! GetBufferList()
   redir END
   return buflist
 endfunction
-function! QuickfixToggle()
+function! IsBufferOpen(name)
   let buflist = GetBufferList()
-  for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ "Quickfix List"'), 'str2nr(matchstr(v:val, "\\d\\+"))')
+  for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ a:name'), 'str2nr(matchstr(v:val, "\\d\\+"))')
     if bufwinnr(bufnum) != -1
-      cclose
-      return
+      return 1
     endif
   endfor
-  copen
+  return 0
+endfunction
+function! QuickfixToggle()
+  if IsBufferOpen("Quickfix List")
+    cclose
+  else
+    copen
+  endif
 endfunction
 map <leader>q :call QuickfixToggle()<CR>
+function! LocationListToggle()
+  if IsBufferOpen("Location List")
+    lclose
+  else
+    lopen
+  endif
+endfunction
+map <leader>l :call LocationListToggle()<CR>
 
 " Close the scratch preview automatically
 augroup CloseScratch

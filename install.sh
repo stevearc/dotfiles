@@ -3,11 +3,11 @@
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf bin .agignore .docker"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
-declare -r DEFAULT_VIM_BUNDLES="ale ctrlp ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar vim-localrc deoplete.nvim"
+declare -r DEFAULT_VIM_BUNDLES="ale ctrlp ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar vim-localrc deoplete.nvim LanguageClient-neovim"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r XFCE_DOTFILES=".xsessionrc"
-declare -r ALL_LANGUAGES="go python js arduino clojure cs"
+declare -r ALL_LANGUAGES="go python js arduino clojure cs sh"
 declare -r USAGE=\
 "$0 [OPTIONS]
 -h            Print this help menu
@@ -123,8 +123,8 @@ hascmd() {
 
 cp-vim-bundle() {
   local bundle=${1?Must specify a vim bundle}
-  if [ ! -e ~/.vim/bundle/$bundle ]; then
-    cp -r .vim/bundle/$bundle ~/.vim/bundle/$bundle
+  if [ ! -e "$HOME/.vim/bundle/$bundle" ]; then
+    cp -r ".vim/bundle/$bundle" "$HOME/.vim/bundle/$bundle"
   fi
 }
 
@@ -195,10 +195,10 @@ EOF
     install-language-go
     go get github.com/wincent/clipper
     go build github.com/wincent/clipper
-    sudo cp $GOPATH/bin/clipper /usr/local/bin
+    sudo cp "$GOPATH/bin/clipper" /usr/local/bin
     if hascmd systemctl; then
       mkdir -p ~/.config/systemd/user
-      cp $GOPATH/src/github.com/wincent/clipper/contrib/linux/systemd-service/clipper.service ~/.config/systemd/user
+      cp "$GOPATH/src/github.com/wincent/clipper/contrib/linux/systemd-service/clipper.service" ~/.config/systemd/user
       sed -ie 's|^ExecStart.*|ExecStart=/usr/local/bin/clipper -l /var/log/clipper.log -e xsel -f "-bi"|' ~/.config/systemd/user/clipper.service
       systemctl --user daemon-reload
       systemctl --user enable clipper.service
@@ -221,8 +221,13 @@ install-dotfiles() {
   rsync -lrp .config/nvim ~/.config/
   mkdir -p ~/.vim/bundle
   for bundle in $DEFAULT_VIM_BUNDLES; do
-    cp-vim-bundle $bundle
+    cp-vim-bundle "$bundle"
   done
+  if [ ! -e ~/.vim/bundle/LanguageClient-neovim/bin/languageclient ]; then
+    pushd ~/.vim/bundle/LanguageClient-neovim
+    bash install.sh
+    popd
+  fi
   cp bash.d/notifier.sh ~/.bash.d/
   checkpoint dotfiles
 }
@@ -301,32 +306,39 @@ install-language-arduino() {
 
   if ! hascmd arduino; then
     local default_version=$(curl https://github.com/arduino/Arduino/releases/latest | sed 's|^.*tag/\([^"]*\).*$|\1|')
-    local version=$(prompt "Arduino IDE version?" $default_version)
+    local version=$(prompt "Arduino IDE version?" "$default_version")
     local install_dir=$(prompt "Arduino IDE install dir?" /usr/local/share)
     local zipfile="arduino-${version}-linux64.tar.xz"
     pushd /tmp > /dev/null
-    wget -O $zipfile http://downloads.arduino.cc/$zipfile
-    tar -Jxf $zipfile
-    sudo mv arduino-${version} $install_dir
-    sudo ln -s arduino-${version} $install_dir/arduino
-    sudo ln -s $install_dir/arduino/arduino /usr/local/bin
+    wget -O "$zipfile" "http://downloads.arduino.cc/$zipfile"
+    tar -Jxf "$zipfile"
+    sudo mv "arduino-${version}" "$install_dir"
+    sudo ln -s "arduino-${version}" "$install_dir/arduino"
+    sudo ln -s "$install_dir/arduino/arduino" /usr/local/bin
     popd > /dev/null
   fi
 
   sudo apt-get install -q -y picocom
-  sudo adduser $USER dialout
+  sudo adduser "$USER" dialout
   cp-vim-bundle vim-arduino
   checkpoint arduino
 }
 
 install-language-js() {
-  has-checkpoint javascript && return
   install-nvm
-  npm install -g yarn prettier flow-bin
+  hascmd yarn || npm install -g yarn
+  hascmd prettier || npm install -g prettier
+  hascmd flow || npm install -g flow-bin
   cp-vim-bundle vim-css-color
   cp-vim-bundle vim-flow-plus
   cp-vim-bundle closetag
-  checkpoint javascript
+}
+
+install-language-sh() {
+  hascmd bash-language-server && return;
+  # We need npm for this
+  install-nvm
+  npm install -g bash-language-server
 }
 
 install-language-cs() {
