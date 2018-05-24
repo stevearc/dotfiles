@@ -34,9 +34,6 @@
 [submodule ".vim/bundle/vim-session"]
 	path = .vim/bundle/vim-session
 	url = https://github.com/xolox/vim-session.git
-[submodule ".vim/bundle/ctrlp"]
-	path = .vim/bundle/ctrlp
-	url = https://github.com/ctrlpvim/ctrlp.vim.git
 [submodule "parseargs"]
 	path = parseargs
 	url = https://github.com/stevearc/parseargs.git
@@ -82,3 +79,6 @@
 [submodule ".vim/bundle/vim-localrc"]
 	path = .vim/bundle/vim-localrc
 	url = https://github.com/thinca/vim-localrc.git
+[submodule ".vim/bundle/ctrlp"]
+	path = .vim/bundle/ctrlp
+	url = https://github.com/ctrlpvim/ctrlp.vim.git
