@@ -152,6 +152,24 @@ au FileType * setlocal formatoptions=rqnlj
 :cnoremap <Esc>d <S-right><Delete>
 :cnoremap <C-g>  <C-c>
 
+" Deoplete
+let g:deoplete#enable_at_startup = 1
+" Disable the candidates in Comment/String syntaxes.
+call deoplete#custom#source('_', 'disabled_syntaxes', ['Comment', 'String'])
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+call deoplete#custom#var('omni', 'input_patterns', {
+    \ 'ruby': ['[^. *\t]\.\w*', '[a-zA-Z_]\w*::'],
+    \ 'java': '[^. *\t]\.\w*',
+    \ 'cs': '\w+|[^. *\t]\.\w*',
+    \ 'php': '\w+|[^. \t]->\w*|\w+::\w*',
+    \})
+call deoplete#custom#option('min_pattern_length', 1)
+call deoplete#custom#option('sources', {
+\ '_': ['ultisnips'],
+\ 'cs': ['omni', 'ultisnips'],
+\})
+
+
 " Function to rename the current file
 function! RenameFile()
     let old_name = expand('%')
@@ -355,6 +373,8 @@ function! CleverTab()
     if g:ulti_expand_or_jump_res == 0
       if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
           return "\<Tab>"
+      elseif &omnifunc == ''
+          return "\<C-n>"
       else
           return g:autocomplete_cmd
       endif
