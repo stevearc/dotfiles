@@ -1,0 +1,33 @@
+# Unity
+snippet dl "Debug.Log" !b
+Debug.Log(${1:"$2"});$0
+endsnippet
+snippet dlw "Debug.LogWarning" !b
+Debug.LogWarning(${1:"$2"});$0
+endsnippet
+snippet dle "Debug.LogError" !b
+Debug.LogError(${1:"$2"});$0
+endsnippet
+
+# Documentation
+snippet "/// sum" "<summary>" !b
+/// <summary>
+/// $0
+/// </summary>
+endsnippet
+snippet "/// code" "<code>" !b
+/// <code>
+/// $0
+/// </code>
+endsnippet
+snippet "/// ret" "<returns>" !b
+/// <returns> $0 </returns>
+endsnippet
+snippet "/// param" "<param>" !b
+/// <param name="$1"> $0 </param>
+endsnippet
+snippet "pref" "<paramref>" !w
+<paramref name="$1"/>$0
+endsnippet
+
+# vim:ft=snippets:
