@@ -9,7 +9,7 @@ nnoremap <buffer> K :call OmniSharp#TypeLookupWithoutDocumentation()<CR>
 nnoremap <buffer> gd :OmniSharpGotoDefinition<CR>
 nnoremap <buffer> <Leader>fi :OmniSharpFindImplementations<CR>
 nnoremap <buffer> <Leader>fs :OmniSharpFindSymbol<CR>
-nnoremap <buffer> <Leader>fu :OmniSharpFindUsages<CR>
+nnoremap <buffer> gr :OmniSharpFindUsages<CR>
 
 " Finds members in the current buffer
 nnoremap <buffer> <Leader>fm :OmniSharpFindMembers<CR>
@@ -24,14 +24,14 @@ nnoremap <buffer> <Leader>dc :OmniSharpDocumentation<CR>
 nnoremap <buffer> [[ :OmniSharpNavigateUp<CR>
 nnoremap <buffer> ]] :OmniSharpNavigateDown<CR>
 
-nnoremap <Leader><Space> :OmniSharpGetCodeActions<CR>
-xnoremap <Leader><Space> :call OmniSharp#GetCodeActions('visual')<CR>
+nnoremap <buffer> <Leader><Space> :OmniSharpGetCodeActions<CR>
+xnoremap <buffer> <Leader><Space> :call OmniSharp#GetCodeActions('visual')<CR>
 
-nnoremap <Leader>r :OmniSharpRename<CR>
+nnoremap <buffer> <Leader>r :OmniSharpRename<CR>
 " Rename without dialog - with cursor on the symbol to rename: `:Rename newname`
 command! -nargs=1 Rename :call OmniSharp#RenameTo("<args>")
 
-nnoremap <Leader>f :call csformat#FormatPreserveCursor()<CR>
+nnoremap <buffer> <Leader>f :call csformat#FormatPreserveCursor()<CR>
 
 augroup csfmt
   autocmd!
