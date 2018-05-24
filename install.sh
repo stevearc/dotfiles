@@ -329,6 +329,7 @@ install-language-js() {
   hascmd yarn || npm install -g yarn
   hascmd prettier || npm install -g prettier
   hascmd flow || npm install -g flow-bin
+  hascmd flow-language-server || npm install -g flow-language-server
   cp-vim-bundle vim-css-color
   cp-vim-bundle vim-flow-plus
   cp-vim-bundle closetag

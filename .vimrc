@@ -168,10 +168,12 @@ call deoplete#custom#option('sources', {
 \ '_': ['ultisnips'],
 \ 'cs': ['omni', 'ultisnips'],
 \ 'sh': ['LanguageClient', 'ultisnips'],
+\ 'javascript': ['LanguageClient', 'ultisnips'],
 \})
 
 let g:LanguageClient_serverCommands = {
-\ 'sh': ['bash-language-server', 'start']
+\ 'sh': ['bash-language-server', 'start'],
+\ 'javascript': ['flow-language-server', '--stdio']
 \ }
 
 " Function to rename the current file
