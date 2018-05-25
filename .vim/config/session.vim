@@ -51,4 +51,4 @@ aug END
 nnoremap <leader>ss :wa<CR>:SaveSession
 nnoremap <leader>so :call session_wrapper#QuickOpen()<CR>
 nnoremap <leader>sd :call session_wrapper#SafeDelete()<CR>
-nnoremap <leader>zz :wa<CR>:SaveSession! quicksave<CR>:qa<CR>
+nnoremap ZZ :wa<CR>:SaveSession! quicksave<CR>:qa<CR>

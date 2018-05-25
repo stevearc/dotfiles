@@ -9,6 +9,7 @@ nnoremap <leader>6 6gt
 nnoremap <leader>7 7gt
 nnoremap <leader>8 8gt
 nnoremap <leader>9 9gt
+nnoremap <leader>` :$tabnext<CR>
 
 " Navigate tabs with H and L
 " We can't rebind <Tab> because that's equivalent to <C-i> and we want to keep

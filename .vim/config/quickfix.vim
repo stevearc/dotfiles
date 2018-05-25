@@ -45,7 +45,7 @@ function! NextResult()
   else
     cnext
   endif
-  exec "normal! zv"
+  exec "normal! zvzz"
 endfunction
 function! PrevResult()
   if IsBufferOpen("Location List")
@@ -53,7 +53,7 @@ function! PrevResult()
   else
     cprev
   endif
-  exec "normal! zv"
+  exec "normal! zvzz"
 endfunction
 
 nnoremap <leader>q :call QuickfixToggle()<CR>
