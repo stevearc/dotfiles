@@ -245,8 +245,6 @@ endfunc
 inoremap <C-a> <C-o>0
 inoremap <C-e> <C-o>$
 
-nmap <C-w><C-b> :tabedit %<CR>
-
 nmap <leader>gs :Gstatus<CR>
 nmap <leader>gh :Git! log -- %<CR>
 

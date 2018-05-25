@@ -8,7 +8,8 @@ let b:match_words = '\s*#\s*region.*$:\s*#\s*endregion'
 nnoremap <buffer> K :call OmniSharp#TypeLookupWithoutDocumentation()<CR>
 
 " The following commands are contextual, based on the cursor position.
-nnoremap <buffer> gd :OmniSharpGotoDefinition<CR>
+nnoremap <buffer> gd m':OmniSharpGotoDefinition<CR>
+nnoremap <buffer> gD m':$tab split<CR>:OmniSharpGotoDefinition<CR>
 nnoremap <buffer> <Leader>fi :OmniSharpFindImplementations<CR>
 nnoremap <buffer> <Leader>fs :OmniSharpFindSymbol<CR>
 nnoremap <buffer> gr :OmniSharpFindUsages<CR>
@@ -23,8 +24,8 @@ nnoremap <buffer> <Leader>tt :OmniSharpTypeLookup<CR>
 nnoremap <buffer> <Leader>dc :OmniSharpDocumentation<CR>
 
 " Navigate up and down by method/property/field
-nnoremap <buffer> [[ :OmniSharpNavigateUp<CR>
-nnoremap <buffer> ]] :OmniSharpNavigateDown<CR>
+nnoremap <buffer> [[ :OmniSharpNavigateUp<CR>zz
+nnoremap <buffer> ]] :OmniSharpNavigateDown<CR>zz
 
 nnoremap <buffer> <Leader><Space> :OmniSharpGetCodeActions<CR>
 xnoremap <buffer> <Leader><Space> :call OmniSharp#GetCodeActions('visual')<CR>

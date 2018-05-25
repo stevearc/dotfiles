@@ -13,5 +13,10 @@ nnoremap <leader>9 9gt
 " Navigate tabs with H and L
 " We can't rebind <Tab> because that's equivalent to <C-i> and we want to keep
 " the <C-i>/<C-o> navigation :/
-nmap L gt
-nmap H gT
+nnoremap L gt
+nnoremap H gT
+
+nnoremap <C-w><C-b> :tab split<CR>
+nnoremap <C-w><C-t> :$tabnew<CR>
+nnoremap <C-H> :tabm -<CR>
+nnoremap <C-L> :tabm +<CR>
