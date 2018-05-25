@@ -110,7 +110,9 @@ clear-checkpoints() {
 }
 
 installed() {
-  dpkg --get-selections | grep install | grep "$1" >/dev/null
+  # Assume everything is already installed on mac
+  [ $MAC ] && return
+  dpkg --get-selections | grep "^${1}\s*install$" >/dev/null
 }
 
 hascmd() {
