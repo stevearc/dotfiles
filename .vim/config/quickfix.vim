@@ -1,4 +1,6 @@
 " Sugar around the Quickfix and Location List buffers
+let g:qf_min_height = 1
+let g:qf_max_height = 8
 
 " Quickly toggle the quickfix window
 " from http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window
@@ -17,18 +19,37 @@ function! IsBufferOpen(name)
   endfor
   return 0
 endfunction
-function! QuickfixToggle()
-  if IsBufferOpen("Quickfix List")
-    cclose
-  else
-    copen
-  endif
+function! GetPositionInList(list)
+  let bufnum = bufnr('%')
+  let lineno = line('.')
+  let i = 1
+  for item in a:list
+    if bufnum == item.bufnr && lineno == item.lnum
+      return i
+    endif
+    let i += 1
+  endfor
+  return 0
 endfunction
-function! LocationListToggle()
-  if IsBufferOpen("Location List")
-    lclose
+function! QFToggle(cmd, bufpattern)
+  if IsBufferOpen(a:bufpattern)
+    exec a:cmd . "close"
   else
-    lopen
+    let l:winnr = winnr()
+    if a:cmd == "l"
+      let list = getloclist(0)
+    else
+      let list = getqflist()
+    endif
+    let height = min([max([len(list), g:qf_min_height]), g:qf_max_height])
+    let pos = GetPositionInList(list)
+    exec a:cmd . "open " . height
+    if pos > 0
+      exec a:cmd . a:cmd . " " . pos
+    endif
+    if l:winnr !=# winnr()
+      wincmd p
+    endif
   endif
 endfunction
 
@@ -41,22 +62,22 @@ aug END
 " Intelligently go to next location or quickfix
 function! NextResult()
   if IsBufferOpen("Location List")
-    lnext
+    silent! lnext
   else
-    cnext
+    silent! cnext
   endif
   exec "normal! zvzz"
 endfunction
 function! PrevResult()
   if IsBufferOpen("Location List")
-    lprev
+    silent! lprev
   else
-    cprev
+    silent! cprev
   endif
   exec "normal! zvzz"
 endfunction
 
-nnoremap <leader>q :call QuickfixToggle()<CR>
-nnoremap <leader>l :call LocationListToggle()<CR>
+nnoremap <leader>q :call QFToggle('c', 'Quickfix List')<CR>
+nnoremap <leader>l :call QFToggle('l', 'Location List')<CR>
 nnoremap <silent> <C-N> :call NextResult()<CR>
 nnoremap <silent> <C-P> :call PrevResult()<CR>

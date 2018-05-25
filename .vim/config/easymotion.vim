@@ -13,13 +13,17 @@ let s:numbermap = {
 function RelativeJump(motion)
     setlocal relativenumber
     redraw!
-    let numInput = input('Jump to: ')
-    let num = ''
-    for char in split(numInput, '\zs')
-        let num .= get(s:numbermap, char, char)
-    endfor
+    try
+        let numInput = input('Jump to: ')
+        let num = ''
+        for char in split(numInput, '\zs')
+            let num .= get(s:numbermap, char, char)
+        endfor
+        exec "normal! " . num . a:motion
+        exec "normal! zz"
+    catch
+    endtry
     setlocal norelativenumber
-    exec "normal! " . num . a:motion
 endfunction
 
 nnoremap <C-j> :call RelativeJump("j")<CR>

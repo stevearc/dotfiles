@@ -5,4 +5,5 @@ let g:ale_cpp_clangtidy_executable = 'clang-tidy-6.0'
 let g:ale_linters = {
 \   'javascript': ['flow'],
 \   'cpp': ['clangtidy'],
+\   'cs': [],
 \}

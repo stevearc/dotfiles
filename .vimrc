@@ -33,6 +33,7 @@ set wildmode=full
 set wildignore+=*.png,*.jpg,*.jpeg,*.gif,*.wav,*.dll,*.meta
 
 " Make searches case-sensitive only if they contain upper-case characters
+set ignorecase
 set smartcase
 
 " Autocompletion should only insert text up to the longest common substring of

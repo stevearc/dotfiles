@@ -22,7 +22,7 @@ augroup WinWidth
     " Keep window sizes roughly equal
     au VimEnter,WinEnter,BufWinEnter * :call ResizeWindows()
     " Set the winwidth based on the textwidth
-    au BufEnter * :let &winwidth=&tw+8
+    au BufEnter * let &winwidth=&tw+8
 augroup END
 nmap <C-w>+ :call ToggleWinEqual()<CR>
 nmap <C-w>z :resize<CR>:vertical resize<CR>
