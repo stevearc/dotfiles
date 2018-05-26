@@ -126,7 +126,7 @@ hascmd() {
 cp-vim-bundle() {
   local bundle=${1?Must specify a vim bundle}
   if [ ! -e "$HOME/.vim/bundle/$bundle" ]; then
-    cp -r ".vim/bundle/$bundle" "$HOME/.vim/bundle/$bundle"
+    rsync -lrp --delete --exclude .git ".vim/bundle/$bundle" "$HOME/.vim/bundle/"
   fi
 }
 
@@ -214,11 +214,10 @@ EOF
 }
 
 install-dotfiles() {
-  has-checkpoint dotfiles && return
   mkdir -p ~/.bash.d
-  cp -r $CLI_DOTFILES $HOME
-  cp $BIN_EXTRA $HOME/bin/
-  rsync -lrp --exclude bundle --exclude .git .vim $HOME
+  rsync -lrp $CLI_DOTFILES "$HOME"
+  cp $BIN_EXTRA "$HOME/bin/"
+  rsync -lrp --delete --exclude bundle --exclude .git .vim "$HOME"
   mkdir -p ~/.config
   rsync -lrp .config/nvim ~/.config/
   mkdir -p ~/.vim/bundle
@@ -231,7 +230,6 @@ install-dotfiles() {
     popd
   fi
   cp bash.d/notifier.sh ~/.bash.d/
-  checkpoint dotfiles
 }
 
 install-security() {
@@ -356,20 +354,20 @@ install-language-cs() {
 install-nvm() {
   nvm current && return
   local nvm_dir=$(prompt "NVM install dir:" /usr/local/nvm)
-  if [ ! -d $nvm_dir ]; then
+  if [ ! -d "$nvm_dir" ]; then
     pushd /tmp > /dev/null
     wget -O install.sh https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh
     chmod +x install.sh
     sudo bash -c "NVM_DIR=$nvm_dir ./install.sh"
-    sudo chown -R $USER:$USER $nvm_dir
+    sudo chown -R "$USER:$USER" "$nvm_dir"
     popd > /dev/null
   fi
   source $nvm_dir/nvm.sh
   echo "source $nvm_dir/nvm.sh" > ~/.bash.d/nvm.sh
-  local node_version=$(prompt "Install node version:" v8.7.0)
+  local node_version=$(prompt "Install node version:" v10.2.1)
   nvm ls $node_version || nvm install $node_version
-  nvm ls default || nvm alias default $node_version
-  nvm use $node_version
+  nvm ls default | grep $node_version || nvm alias default $node_version
+  nvm current | grep $node_version || nvm use $node_version
 }
 
 add-apt-key-google() {
