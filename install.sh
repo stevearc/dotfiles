@@ -304,8 +304,6 @@ install-language-go() {
 }
 
 install-language-arduino() {
-  has-checkpoint arduino && return
-
   if ! hascmd arduino; then
     local default_version=$(curl https://github.com/arduino/Arduino/releases/latest | sed 's|^.*tag/\([^"]*\).*$|\1|')
     local version=$(prompt "Arduino IDE version?" "$default_version")
@@ -320,10 +318,15 @@ install-language-arduino() {
     popd > /dev/null
   fi
 
-  sudo apt-get install -q -y picocom
-  sudo adduser "$USER" dialout
+  hascmd picocom || sudo apt-get install -q -y picocom
+  groups | grep dialout || sudo adduser "$USER" dialout
+  if [ ! -e /etc/udev/rules.d/99-USBtiny.rules ]; then
+    echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="1781", ATTR{idProduct}=="0c9f", GROUP="dialout", MODE="0666"' | sudo tee /etc/udev/rules.d/99-USBtiny.rules
+    sudo service udev restart
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger
+  fi
   cp-vim-bundle vim-arduino
-  checkpoint arduino
 }
 
 install-language-js() {
