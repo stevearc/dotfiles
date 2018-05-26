@@ -38,5 +38,5 @@ nnoremap <buffer> <Leader>f :call csformat#FormatPreserveCursor()<CR>
 
 augroup csfmt
   autocmd!
-  autocmd BufWritePre *.cs call csformat#SmartFormat()
+  autocmd BufWritePre *.cs call smartformat#Format('cs', 'call csformat#FormatPreserveCursor()')
 augroup END

@@ -157,6 +157,12 @@ augroup end
 :cnoremap <Esc>d <S-right><Delete>
 :cnoremap <C-g>  <C-c>
 
+" Load machine-local g:format_dirs var. Determines which paths will get
+" auto-formatted on write
+let g:format_dirs = {}
+if filereadable(expand('~/.formatdirs.vim'))
+  source ~/.formatdirs.vim
+endif
 source ~/.vim/config/ctrlp.vim
 source ~/.vim/config/quickfix.vim
 source ~/.vim/config/folding.vim
