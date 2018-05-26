@@ -1,7 +1,3 @@
-set completeopt=longest,menuone,preview
-set previewheight=5
-" Line width of 100
-set tw=100
 " Use % to jump between region/endregion
 let b:match_words = '\s*#\s*region.*$:\s*#\s*endregion'
 
@@ -37,6 +33,7 @@ command! -nargs=1 Rename :call OmniSharp#RenameTo("<args>")
 nnoremap <buffer> <Leader>f :call csformat#FormatPreserveCursor()<CR>
 
 augroup csfmt
-  autocmd!
-  autocmd BufWritePre *.cs call smartformat#Format('cs', 'call csformat#FormatPreserveCursor()')
+  autocmd! * <buffer>
+  autocmd BufWritePre <buffer> call smartformat#Format('cs', 'call csformat#FormatPreserveCursor()')
+  autocmd BufWinEnter <buffer> setlocal completeopt=longest,menuone,preview previewheight=5 tw=100
 augroup END

@@ -1,10 +1,10 @@
 " Always enable rainbow parentheses
 aug RainbowParens
-  au!
-  au VimEnter * RainbowParenthesesToggle
-  au Syntax * RainbowParenthesesLoadRound
-  au Syntax * RainbowParenthesesLoadSquare
-  au Syntax * RainbowParenthesesLoadBraces
+  au! * <buffer>
+  au VimEnter <buffer> RainbowParenthesesToggle
+  au Syntax <buffer> RainbowParenthesesLoadRound
+  au Syntax <buffer> RainbowParenthesesLoadSquare
+  au Syntax <buffer> RainbowParenthesesLoadBraces
 aug END
 
 nnoremap <buffer> gd :exec "normal \<Plug>FireplaceDjump"<CR>

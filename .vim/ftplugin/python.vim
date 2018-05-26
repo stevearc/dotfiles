@@ -1,5 +1,3 @@
-setlocal shiftwidth=4 tabstop=4 softtabstop=4
-
 " python-mode options
 let g:pymode_run = 0
 let g:pymode_lint = 0
@@ -17,5 +15,10 @@ iabbr <buffer> ipmort import
 iabbr <buffer> improt import
 
 " Foxdot
-nnoremap <CR> :call system('nc localhost 7088', getline('.'))<CR>
-vnoremap <CR> y:call system('nc localhost 7088', @")<CR>
+nnoremap <buffer> <CR> :call system('nc localhost 7088', getline('.'))<CR>
+vnoremap <buffer> <CR> y:call system('nc localhost 7088', @")<CR>
+
+augroup PythonOptions
+  au! * <buffer>
+  autocmd BufWinEnter <buffer> setlocal shiftwidth=4 tabstop=4 softtabstop=4
+augroup END

@@ -9,7 +9,10 @@ function! MyStatusLine()
 
   return line
 endfunction
-setl statusline=%!MyStatusLine()
+augroup ArduinoStatusLine
+  autocmd! * <buffer>
+  autocmd BufWinEnter <buffer> setlocal statusline=%!MyStatusLine()
+augroup END
 
 nnoremap <buffer> <leader>ac :wa<CR>:ArduinoVerify<CR>
 nnoremap <buffer> <leader>au :wa<CR>:ArduinoUpload<CR>
