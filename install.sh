@@ -1,9 +1,9 @@
 #!/bin/bash -e
 # Setup script for (X)Ubuntu 18.04
 set -e
-declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf bin .agignore .docker"
+declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
-declare -r DEFAULT_VIM_BUNDLES="ale ctrlp ultisnips vim-colors-solarized vim-commentary vim-easymotion vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar vim-localrc deoplete.nvim LanguageClient-neovim"
+declare -r DEFAULT_VIM_BUNDLES="ale ctrlp ultisnips vim-colors-solarized vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar vim-localrc deoplete.nvim LanguageClient-neovim"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r XFCE_DOTFILES=".xsessionrc"
@@ -12,8 +12,9 @@ declare -r USAGE=\
 "$0 [OPTIONS]
 -h            Print this help menu
 -d            Install dotfiles
+-s            Install dotfiles as symbolic links to this repo
 -c            Install command line tools
--s            Set up security (ufw)
+-u            Set up ufw
 -l            Install language support (may be specified multiple times)
               Use 'all' to install all support for all languages.
 -g            Set up a typical gnome environment
@@ -22,6 +23,7 @@ declare -r USAGE=\
 -f            Force reinstallation of all programs
 --languages   List all languages that are supported and exit
 "
+SYMBOLIC=
 
 OSNAME=$(uname -s)
 if [ "$OSNAME" = "Darwin" ]; then
@@ -29,6 +31,13 @@ if [ "$OSNAME" = "Darwin" ]; then
 else
   LINUX=1
 fi
+
+command -v realpath > /dev/null 2>&1 || realpath() {
+  if ! readlink -f "$1" 2> /dev/null; then
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+  fi
+}
+REPO=$(dirname $(realpath "$0"))
 
 prompt() {
   # $1 [str] - Prompt string
@@ -215,9 +224,23 @@ EOF
 
 install-dotfiles() {
   mkdir -p ~/.bash.d
-  rsync -lrp $CLI_DOTFILES "$HOME"
+  if [ $SYMBOLIC ]; then
+    for dotfile in $CLI_DOTFILES; do
+      ln -f -s "$REPO/$dotfile" "$HOME"
+    done
+    mkdir -p ~/.vim
+    for vimfile in .vim/*; do
+      [ "$vimfile" = ".vim/bundle" ] && continue
+      rm -rf "${HOME:?}/$vimfile"
+      ln -f -s "$REPO/$vimfile" "$HOME/.vim/"
+    done
+  else
+    rsync -lrp $CLI_DOTFILES "$HOME"
+    rsync -lrp --delete --exclude bundle --exclude .git .vim "$HOME"
+  fi
+  cp -r bin "$HOME"
   cp $BIN_EXTRA "$HOME/bin/"
-  rsync -lrp --delete --exclude bundle --exclude .git .vim "$HOME"
+  rsync -lrp .docker "$HOME"
   mkdir -p ~/.config
   rsync -lrp .config/nvim ~/.config/
   mkdir -p ~/.vim/bundle
@@ -501,8 +524,8 @@ main() {
   local custom_packages=
   local commandline=
   local dotfiles=
-  local secure=
-  while getopts "hfgxcpndsl:-:" opt; do
+  local ufw=
+  while getopts "hfgxcpndsul:-:" opt; do
     case $opt in
       -)
         case $OPTARG in
@@ -531,8 +554,11 @@ main() {
       x)
         xfce=1
         ;;
+      u)
+        ufw=1
+        ;;
       s)
-        secure=1
+        SYMBOLIC=1
         ;;
       h)
         echo "$USAGE"
@@ -561,7 +587,7 @@ main() {
   if [ $dotfiles ]; then
     install-dotfiles
   fi
-  if [ $secure ]; then
+  if [ $ufw ]; then
     install-security
   fi
   install-languages "$languages"
