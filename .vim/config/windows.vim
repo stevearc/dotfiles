@@ -7,7 +7,7 @@ set splitright
 let g:wequality = 1
 function! ResizeWindows()
     if( g:wequality == 1 )
-        exe ":normal \<C-w>="
+        normal! \<C-w>=
     endif
 endfunction
 function! ToggleWinEqual()

@@ -33,6 +33,7 @@ function RelativeJump(motion, mode) range
         if a:mode == 'x'
             normal! gv
         endif
+        normal! m'
         exec "normal! " . num . a:motion
         normal! zz^
     catch
