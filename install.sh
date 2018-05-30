@@ -156,29 +156,34 @@ setup-install-progs() {
 
 install-cli() {
   has-checkpoint cli && return
-  sudo apt-get install -y -q \
-    autossh \
-    bsdmainutils \
-    htop \
-    inotify-tools \
-    iotop \
-    jq \
-    lsof \
-    mercurial \
-    netcat \
-    openssh-client \
-    shellcheck \
-    silversearcher-ag \
-    tmux \
-    tree \
-    unzip \
-    vim-nox \
-    xsel
+  if [ $WINDOWS ]; then
+    pacman -Sy --noconfirm rsync tmux
+  else
+    sudo apt-get install -y -q \
+      autossh \
+      bsdmainutils \
+      htop \
+      inotify-tools \
+      iotop \
+      jq \
+      lsof \
+      mercurial \
+      netcat \
+      openssh-client \
+      shellcheck \
+      silversearcher-ag \
+      tmux \
+      tree \
+      unzip \
+      vim-nox \
+      xsel
+  fi
 
   checkpoint cli
 }
 
 install-cli-after() {
+  [ ! $LINUX ] && return
   if ! hascmd nvim && confirm "Install Neovim?" n; then
     sudo apt-get install -y libtool autoconf automake cmake g++ pkg-config \
       unzip python-dev python-pip python3 python3-dev python3-pip ruby ruby-dev
