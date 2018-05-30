@@ -28,8 +28,10 @@ SYMBOLIC=
 OSNAME=$(uname -s)
 if [ "$OSNAME" = "Darwin" ]; then
   MAC=1
-else
+elif [ "$OSNAME" = "Linux" ]; then
   LINUX=1
+else
+  WINDOWS=1
 fi
 
 command -v realpath > /dev/null 2>&1 || realpath() {
@@ -119,8 +121,8 @@ clear-checkpoints() {
 }
 
 installed() {
-  # Assume everything is already installed on mac
-  [ $MAC ] && return
+  # Assume everything is already installed on mac/windows
+  [ ! $LINUX ] && return
   dpkg --get-selections | grep "^${1}\s*install$" >/dev/null
 }
 
@@ -249,12 +251,18 @@ install-dotfiles() {
   for bundle in $DEFAULT_VIM_BUNDLES; do
     cp-vim-bundle "$bundle"
   done
-  if [ ! -e ~/.vim/bundle/LanguageClient-neovim/bin/languageclient ]; then
+  if [ $WINDOWS ]; then
+    # This was causing a crazy issue where quitting vim would crash Msys2
+    rm -rf ~/.vim/bundle/LanguageClient-neovim
+  elif [ ! -e ~/.vim/bundle/LanguageClient-neovim/bin/languageclient ]; then
     pushd ~/.vim/bundle/LanguageClient-neovim
     bash install.sh
     popd
   fi
   cp bash.d/notifier.sh ~/.bash.d/
+  if [ $WINDOWS ]; then
+    rsync -lrp win/ "$HOME"
+  fi
 }
 
 install-security() {
@@ -428,6 +436,7 @@ setup-desktop() {
 setup-gnome() {
   setup-desktop
   has-checkpoint gnome && return
+  [ ! $LINUX ] && return 1
   # Get rid of horrible unity scrollbars
   sudo apt-get purge -y -q \
     overlay-scrollbar \
