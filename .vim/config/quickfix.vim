@@ -54,16 +54,20 @@ aug END
 function! NextResult()
   if empty(getloclist(0))
     silent! cnext
+    silent! cc
   else
     silent! lnext
+    silent! ll
   endif
   exec "normal! zvzz"
 endfunction
 function! PrevResult()
   if empty(getloclist(0))
     silent! cprev
+    silent! cc
   else
     silent! lprev
+    silent! ll
   endif
   exec "normal! zvzz"
 endfunction
