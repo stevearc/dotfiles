@@ -35,5 +35,8 @@ nnoremap <buffer> <Leader>f :call csformat#FormatPreserveCursor()<CR>
 augroup csfmt
   autocmd! * <buffer>
   autocmd BufWritePre <buffer> call smartformat#Format('cs', 'call csformat#FormatPreserveCursor()')
-  autocmd BufWinEnter <buffer> setlocal completeopt=longest,menuone,preview previewheight=5 tw=100
+augroup END
+augroup csopts
+  autocmd! * <buffer>
+  autocmd BufWinEnter <buffer> setlocal completeopt=longest,menuone,preview previewheight=5 tw=100 foldmethod=syntax
 augroup END
