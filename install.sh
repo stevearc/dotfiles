@@ -137,7 +137,11 @@ hascmd() {
 cp-vim-bundle() {
   local bundle=${1?Must specify a vim bundle}
   if [ $SYMBOLIC ]; then
-    ln -f -s "$REPO/.vim/bundle/$bundle" "$HOME/.vim/bundle/$bundle"
+    local dest="$HOME/.vim/bundle/$bundle"
+    if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+      rm -rf "$dest"
+    fi
+    ln -f -s "$REPO/.vim/bundle/$bundle" "$dest"
   else
     rsync -lrp --delete --exclude .git ".vim/bundle/$bundle" "$HOME/.vim/bundle/$bundle"
   fi
