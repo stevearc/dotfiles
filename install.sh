@@ -137,9 +137,9 @@ hascmd() {
 cp-vim-bundle() {
   local bundle=${1?Must specify a vim bundle}
   if [ $SYMBOLIC ]; then
-    ls -f -s "$REPO/.vim/bundle/$bundle" "$HOME/.vim/bundle/"
+    ln -f -s "$REPO/.vim/bundle/$bundle" "$HOME/.vim/bundle/$bundle"
   else
-    rsync -lrp --delete --exclude .git ".vim/bundle/$bundle" "$HOME/.vim/bundle/"
+    rsync -lrp --delete --exclude .git ".vim/bundle/$bundle" "$HOME/.vim/bundle/$bundle"
   fi
 }
 
@@ -390,6 +390,9 @@ install-language-cs() {
 
 
 install-nvm() {
+  if [ -e ~/.bash.d/nvm.sh ]; then
+    source ~/.bash.d/nvm.sh
+  fi
   nvm current && return
   local nvm_dir=$(prompt "NVM install dir:" /usr/local/nvm)
   if [ ! -d "$nvm_dir" ]; then
