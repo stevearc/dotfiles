@@ -8,6 +8,8 @@ let g:ctrlp_extensions = ['line']
 if executable('ag')
   " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+elseif executable('ack')
+  let g:ctrlp_user_command = 'ack --nocolor -f %s'
 endif
 
 nnoremap <leader>b :CtrlPBuffer<CR>
