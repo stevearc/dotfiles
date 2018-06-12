@@ -163,6 +163,7 @@ let g:format_dirs = {}
 if filereadable(expand('~/.formatdirs.vim'))
   source ~/.formatdirs.vim
 endif
+source ~/.vim/config/copy.vim
 source ~/.vim/config/ctrlp.vim
 source ~/.vim/config/quickfix.vim
 source ~/.vim/config/folding.vim
@@ -264,9 +265,6 @@ aug Colorize
   au!
   au BufReadPost * command! -buffer -bar Colorize call css_color#init('css', 'extended', 'cssFunction')
 aug END
-
-" Shortcut for clipper
-nnoremap <leader>y :call system('nc localhost 8377', @0)<CR>
 
 " Omnisharp
 let g:Omnisharp_start_server = 0
