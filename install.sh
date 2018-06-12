@@ -499,11 +499,11 @@ setup-custom-packages() {
   fi
   if ! hascmd docker && confirm "Install docker?" n; then
     if [ "$(lsb_release -rs)" = '14.04' ]; then
-      sudo apt-get install -y \
+      sudo apt-get install -yq \
         "linux-image-extra-$(uname -r)" \
         linux-image-extra-virtual
     fi
-    sudo apt-get install -y \
+    sudo apt-get install -yq \
       apt-transport-https \
       ca-certificates \
       curl \
@@ -514,9 +514,13 @@ setup-custom-packages() {
      $(lsb_release -cs) \
      stable"
     sudo apt-get update -qq
-    sudo apt-get install -y docker-ce
+    sudo apt-get install -yq docker-ce
     confirm "Allow $USER to use docker without sudo?" y && sudo adduser "$USER" docker
     cp bash.d/bluepill.sh ~/.bash.d/
+    if [ ! -L /var/lib/docker ]; then
+      sudo rm -rf /var/lib/docker
+      sudo ln -s "$HOME/.docker" /var/lib/docker
+    fi
   fi
   if ! hascmd docker-compose && hascmd docker; then
     if confirm "Install docker-compose?" y; then
