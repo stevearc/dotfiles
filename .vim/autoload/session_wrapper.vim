@@ -2,12 +2,25 @@ if (exists('g:loaded_session_wrapper') && g:loaded_session_wrapper)
 	finish
 endif
 let g:loaded_session_wrapper = 1
+let s:detach_after_open = 0
 
-function! session_wrapper#QuickOpen()
+function! session_wrapper#DetachSession()
+  if xolox#session#is_tab_scoped()
+    let t:this_session = ''
+  else
+    let v:this_session = ''
+  endif
+endfunction
+
+function! session_wrapper#QuickOpen(detach)
   if exists('s:id')
+    let s:detach_after_open = a:detach
     call ctrlp#init(s:id)
   else
     OpenSession
+    if a:detach
+      call session_wrapper#DetachSession()
+    endif
   endif
 endfunction
 
@@ -33,6 +46,9 @@ endfunction
 function! session_wrapper#ChooseSession(mode, str)
 	call ctrlp#exit()
   exe ':OpenSession ' . a:str
+  if s:detach_after_open
+    call session_wrapper#DetachSession()
+  endif
 endfunction
 
 function! session_wrapper#SafeDelete()

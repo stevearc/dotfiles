@@ -10,7 +10,7 @@ let s:numbermap = {
 \ 'l': 9,
 \ ';': 0,
 \}
-function RelativeJump(motion, mode) range
+function! RelativeJump(motion, mode) range
     if a:mode == 'x'
         " This is a hack to get the line numbers to display properly. As soon as
         " we call this function from visual mode, the cursor pops up to the top
