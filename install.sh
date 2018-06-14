@@ -143,7 +143,7 @@ cp-vim-bundle() {
     fi
     ln -f -s "$REPO/.vim/bundle/$bundle" "$dest"
   else
-    rsync -lrp --delete --exclude .git ".vim/bundle/$bundle" "$HOME/.vim/bundle/$bundle"
+    rsync -lrp --delete --exclude .git ".vim/bundle/$bundle" "$HOME/.vim/bundle/"
   fi
 }
 
