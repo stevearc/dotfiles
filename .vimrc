@@ -172,6 +172,7 @@ source ~/.vim/config/lsp.vim
 source ~/.vim/config/smartrun.vim
 source ~/.vim/config/tabs.vim
 source ~/.vim/config/windows.vim
+source ~/.vim/config/platform.vim
 source ~/.vim/config/terminal.vim
 source ~/.vim/config/ultisnips.vim
 source ~/.vim/config/clevertab.vim
@@ -265,9 +266,6 @@ aug Colorize
   au!
   au BufReadPost * command! -buffer -bar Colorize call css_color#init('css', 'extended', 'cssFunction')
 aug END
-
-" Omnisharp
-let g:Omnisharp_start_server = 0
 
 " Cmdr
 function! Cmdr(cmd)
