@@ -1,9 +1,3 @@
-snippet cb "Code block - python" !b
-.. code-block:: python
-
-    $0
-endsnippet
-
 snippet 'cb-(\w+)' "Code block" !br
 .. code-block:: `!p snip.rv = match.group(1) `
 
@@ -36,6 +30,14 @@ endsnippet
 
 snippet tag "Tag reference" !
 .. _$1:
+
+$0
+endsnippet
+
+# Use # instead of = for section headers
+snippet sec "Section" b!
+${1:${VISUAL:Section name}}
+`!p snip.rv = len(t[1])*'#'`
 
 $0
 endsnippet

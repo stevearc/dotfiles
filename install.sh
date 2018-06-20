@@ -607,7 +607,7 @@ main() {
   shift $((OPTIND-1))
   languages=${languages# } # trim leading whitespace
 
-  installed git || sudo apt-get install -y -q git
+  hascmd git || sudo apt-get install -y -q git
   git submodule update --init --recursive
   if [ $commandline ]; then
     install-cli
