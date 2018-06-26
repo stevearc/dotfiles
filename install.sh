@@ -149,6 +149,7 @@ cp-vim-bundle() {
 
 setup-install-progs() {
   [ $WINDOWS ] && return
+  if ! hascmd apt-get; then return; fi
   has-checkpoint setup-progs && return
   sudo apt-get update -qq
   sudo apt-get install -y -q \
