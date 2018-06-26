@@ -303,15 +303,16 @@ install-languages() {
 }
 
 install-language-python() {
+  cp .pylintrc "$HOME"
+  cp-vim-bundle jedi-vim
+  cp-vim-bundle deoplete-jedi
   has-checkpoint python && return
   sudo apt-get install -y -q \
     python-dev \
     python-pip \
     ipython
 
-  sudo pip install -q virtualenv autoenv
-  cp .pylintrc $HOME
-  cp-vim-bundle python-mode
+  sudo pip install --upgrade -q pip virtualenv autoenv
   checkpoint python
 }
 

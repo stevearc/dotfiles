@@ -1,13 +1,22 @@
 " python-mode options
-let g:pymode_run = 0
-let g:pymode_lint = 0
-let g:pymode_rope_organize_imports_bind = '<leader>o'
-let g:pymode_rope_goto_definition_bind = 'gd'
-let g:pymode_rope_goto_definition_cmd = 'e'
-let g:pymode_rope_complete_on_dot = 0
+let b:ale_linters = ['pycodestyle', 'pylint']
 
-" python-mode shortcuts
-nnoremap <buffer> <leader>a :PymodeLintAuto<CR> zz
+" Use deoplete-jedi for completion
+let g:jedi#completions_enabled = 0
+let g:jedi#auto_initialization = 0
+setlocal omnifunc=jedi#completions
+call jedi#configure_call_signatures()
+
+nnoremap gd :call jedi#goto()<CR>
+nnoremap ga :call jedi#goto_assignments()<CR>
+nnoremap gr :call jedi#usages()<CR>
+nnoremap <leader>r :call jedi#rename()<CR>
+vnoremap <leader>r :call jedi#rename_visual()<CR>
+
+command! -buffer -bar JediShowDocumentation call jedi#show_documentation()
+setlocal keywordprg=":JediShowDocumentation"
+
+let g:deoplete#sources#jedi#show_docstring = 1
 
 " Abbreviations
 iabbr <buffer> inn is not None

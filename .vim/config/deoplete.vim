@@ -18,6 +18,7 @@ call deoplete#custom#option('sources', {
 \ '_': ['ultisnips'],
 \ 'cs': ['omni', 'ultisnips'],
 \ 'sh': ['LanguageClient', 'ultisnips'],
+\ 'python': ['jedi', 'ultisnips'],
 \ 'javascript': ['LanguageClient', 'ultisnips'],
 \})
 
