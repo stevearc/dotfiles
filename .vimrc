@@ -257,11 +257,6 @@ inoremap <C-e> <C-o>$
 nmap <leader>gs :Gstatus<CR>
 nmap <leader>gh :Git! log -- %<CR>
 
-" Use cjsx to build because it's a superset of coffeescript
-if executable('cjsx')
-  let coffee_compiler = exepath('cjsx')
-endif
-
 aug Colorize
   au!
   au BufReadPost * command! -buffer -bar Colorize call css_color#init('css', 'extended', 'cssFunction')
@@ -271,9 +266,6 @@ aug END
 function! Cmdr(cmd)
   call system('nc localhost 8585', a:cmd)
 endfunction
-
-" vim-javascript flow syntax highlighting
-let g:javascript_plugin_flow = 1
 
 function! ProseMode()
   setlocal spell noci nosi noai nolist noshowmode noshowcmd nonu

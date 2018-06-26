@@ -1,3 +1,6 @@
+" Don't use ALE; we're using omnisharp-vim
+let b:ale_linters = []
+
 " Use % to jump between region/endregion
 let b:match_words = '\s*#\s*region.*$:\s*#\s*endregion'
 

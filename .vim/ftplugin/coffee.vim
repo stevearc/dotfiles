@@ -1,3 +1,8 @@
+" Use cjsx to build because it's a superset of coffeescript
+if executable('cjsx')
+  let coffee_compiler = exepath('cjsx')
+endif
+
 let g:coffee_make_options = '-o /tmp'
 
 nnoremap <buffer> <leader>m :CoffeeWatch vert<cr>

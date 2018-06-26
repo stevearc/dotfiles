@@ -1,3 +1,9 @@
+let b:ale_linters = ['flow']
+
+" vim-javascript flow syntax highlighting
+let g:javascript_plugin_flow = 1
+
+
 let g:flow#autoclose = 1
 
 nnoremap <buffer> K :call LanguageClient#textDocument_hover()<CR>
