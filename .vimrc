@@ -29,7 +29,7 @@ set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb,.html,.jinja2,.js,.jsx,.less,.css,.st
 
 " Make tab completion for files/buffers act like bash
 set wildmenu
-set wildmode=full
+set wildmode=longest,list,full
 set wildignore+=*.png,*.jpg,*.jpeg,*.gif,*.wav,*.dll,*.meta
 
 " Make searches case-sensitive only if they contain upper-case characters
