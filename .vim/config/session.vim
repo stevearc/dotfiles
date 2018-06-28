@@ -53,3 +53,4 @@ nnoremap <leader>sb :call session_wrapper#QuickOpen(1)<CR>
 nnoremap <leader>sd :call session_wrapper#SafeDelete()<CR>
 nnoremap ZZ :wa<CR>:SaveSession! quicksave<CR>:qa<CR>
 command! SessionDetach call session_wrapper#DetachSession()
+command! DetachSession call session_wrapper#DetachSession()
