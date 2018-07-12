@@ -9,8 +9,8 @@ nnoremap <buffer> K :call OmniSharp#TypeLookupWithoutDocumentation()<CR>
 " The following commands are contextual, based on the cursor position.
 nnoremap <buffer> gd m':OmniSharpGotoDefinition<CR>
 nnoremap <buffer> gD m':$tab split<CR>:OmniSharpGotoDefinition<CR>
-nnoremap <buffer> <Leader>fi :OmniSharpFindImplementations<CR>
-nnoremap <buffer> <Leader>fs :OmniSharpFindSymbol<CR>
+nnoremap <buffer> gi :OmniSharpFindImplementations<CR>
+nnoremap <buffer> gs :OmniSharpFindSymbol 
 nnoremap <buffer> gr :OmniSharpFindUsages<CR>
 
 " Finds members in the current buffer
@@ -31,7 +31,7 @@ xnoremap <buffer> <Leader><Space> :call OmniSharp#GetCodeActions('visual')<CR>
 
 nnoremap <buffer> <Leader>r :OmniSharpRename<CR>
 " Rename without dialog - with cursor on the symbol to rename: `:Rename newname`
-command! -nargs=1 Rename :call OmniSharp#RenameTo("<args>")
+command! -buffer -nargs=1 Rename :call OmniSharp#RenameTo("<args>")
 
 nnoremap <buffer> <Leader>f :OmniSharpCodeFormat<CR>
 
