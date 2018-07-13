@@ -1,8 +1,3 @@
-if (exists('g:loaded_quickfix') && g:loaded_quickfix)
-  finish
-endif
-let g:loaded_quickfix = 1
-
 function! quickfix#QFToggle(cmd)
   let l:wincount = winnr('$')
   let l:winnr = winnr()
@@ -33,27 +28,35 @@ function! quickfix#QFToggle(cmd)
   endif
 endfunction
 
-" Intelligently go to next location or quickfix
-function! quickfix#NextResult()
+function! s:IsLocListOpen() abort
+  return !empty(filter(getwininfo(), 'v:val.quickfix && v:val.loclist'))
+endfunction
+
+function! s:NavCommand(cmd) abort
   if empty(getloclist(0))
-    silent! cnext
+    exec 'silent! c' . a:cmd
     silent! cc
-  else
-    silent! lnext
+  elseif empty(getqflist())
+    exec 'silent! l' . a:cmd
     silent! ll
+  elseif s:IsLocListOpen()
+    silent! lnext
+    exec 'silent! l' . a:cmd
+    silent! ll
+  else
+    exec 'silent! c' . a:cmd
+    silent! cc
   endif
   normal! zvzz
 endfunction
 
+" Intelligently go to next location or quickfix
+function! quickfix#NextResult()
+  call s:NavCommand('next')
+endfunction
+
 function! quickfix#PrevResult()
-  if empty(getloclist(0))
-    silent! cprev
-    silent! cc
-  else
-    silent! lprev
-    silent! ll
-  endif
-  normal! zvzz
+  call s:NavCommand('prev')
 endfunction
 
 function! s:GetPositionInList(list)
