@@ -32,6 +32,10 @@ function! s:IsLocListOpen() abort
   return !empty(filter(getwininfo(), 'v:val.quickfix && v:val.loclist'))
 endfunction
 
+function! s:IsQuickFixOpen() abort
+  return !empty(filter(getwininfo(), 'v:val.quickfix && !v:val.loclist'))
+endfunction
+
 function! s:NavCommand(cmd) abort
   if empty(getloclist(0))
     exec 'silent! c' . a:cmd
@@ -39,13 +43,12 @@ function! s:NavCommand(cmd) abort
   elseif empty(getqflist())
     exec 'silent! l' . a:cmd
     silent! ll
-  elseif s:IsLocListOpen()
-    silent! lnext
-    exec 'silent! l' . a:cmd
-    silent! ll
-  else
+  elseif s:IsQuickFixOpen()
     exec 'silent! c' . a:cmd
     silent! cc
+  else
+    exec 'silent! l' . a:cmd
+    silent! ll
   endif
   normal! zvzz
 endfunction
