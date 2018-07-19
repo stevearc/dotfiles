@@ -179,7 +179,6 @@ source ~/.vim/config/clevertab.vim
 source ~/.vim/config/easymotion.vim
 source ~/.vim/config/grep.vim
 source ~/.vim/config/session.vim
-source ~/.vim/config/syntastic.vim
 source ~/.vim/config/ale.vim
 source ~/.vim/config/neoformat.vim
 

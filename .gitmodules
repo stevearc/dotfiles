@@ -67,9 +67,6 @@
 [submodule ".vim/bundle/omnisharp-vim"]
 	path = .vim/bundle/omnisharp-vim
 	url = https://github.com/stevearc/omnisharp-vim
-[submodule ".vim/bundle/syntastic"]
-	path = .vim/bundle/syntastic
-	url = https://github.com/vim-syntastic/syntastic.git
 [submodule ".vim/bundle/vim-localrc"]
 	path = .vim/bundle/vim-localrc
 	url = https://github.com/thinca/vim-localrc.git

@@ -392,7 +392,6 @@ install-language-sh() {
 
 install-language-cs() {
   cp-vim-bundle omnisharp-vim
-  cp-vim-bundle syntastic
 }
 
 
