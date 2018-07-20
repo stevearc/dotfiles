@@ -31,3 +31,8 @@ augroup PythonOptions
   au! * <buffer>
   autocmd BufWinEnter <buffer> setlocal shiftwidth=4 tabstop=4 softtabstop=4
 augroup END
+
+augroup pyfmt
+  autocmd! * <buffer>
+  autocmd BufWritePre <buffer> call smartformat#Format('python', 'Neoformat')
+augroup END

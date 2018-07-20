@@ -22,5 +22,5 @@ call deoplete#custom#option('sources', {
 \ 'javascript': ['LanguageClient', 'ultisnips'],
 \})
 
-command DeopleteDisable :call deoplete#disable()
-command DeopleteEnable :call deoplete#enable()
+command! DeopleteDisable :call deoplete#disable()
+command! DeopleteEnable :call deoplete#enable()

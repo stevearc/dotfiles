@@ -81,27 +81,15 @@ set laststatus=2
 " Line width of 80
 set tw=80
 
-" Trim trailing whitespace on save
+" Trim trailing whitespace
 function! TrimTrailingWhitespace()
   :%s/\s\+$//ge
 endfunction
 command! TrimTrailingWhitespace :call TrimTrailingWhitespace()
-" Note js & json excluded because we use Neoformat
-aug TrimWhitespace
-  au!
-  autocmd BufWrite *.coffee,*.cjsx,*.jsx,*.html,*.jinja2,*.j2,*.css,*.less,*.styl,*.py,*.rb,*.go,*.ino,*.c,*.cpp,*.h,*.sh if ! &bin | silent! call TrimTrailingWhitespace() | endif
-aug END
 
-
-" SOLARIZED
+" Syntax highlighting
 syntax enable
 syntax on
-set t_Co=256
-let g:solarized_termcolors=256
-let g:solarized_contrast="high"
-let g:solarized_visibility="high"
-set background=light
-colorscheme solarized
 
 " Return to last edit position when opening files
 augroup SmartOpen
@@ -163,6 +151,7 @@ let g:format_dirs = {}
 if filereadable(expand('~/.formatdirs.vim'))
   source ~/.formatdirs.vim
 endif
+source ~/.vim/config/colors.vim
 source ~/.vim/config/copy.vim
 source ~/.vim/config/ctrlp.vim
 source ~/.vim/config/quickfix.vim
