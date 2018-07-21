@@ -30,15 +30,14 @@ set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb,.html,.jinja2,.js,.jsx,.less,.css,.st
 " Make tab completion for files/buffers act like bash
 set wildmenu
 set wildmode=longest,list,full
-set wildignore+=*.png,*.jpg,*.jpeg,*.gif,*.wav,*.dll,*.meta
+set wildignore+=*.png,*.jpg,*.jpeg,*.gif,*.wav,*.dll,*.so,*.swp,*.zip,*.gz,*.bz2,*.meta,*/\.git/*
 
 " Make searches case-sensitive only if they contain upper-case characters
 set ignorecase
 set smartcase
 
-" Autocompletion should only insert text up to the longest common substring of
-" all matches.
-set completeopt+=longest
+set completeopt=longest,menuone,preview
+set previewheight=5
 
 " Show the row, column of the cursor
 set ruler
@@ -158,6 +157,7 @@ source ~/.vim/config/quickfix.vim
 source ~/.vim/config/folding.vim
 source ~/.vim/config/deoplete.vim
 source ~/.vim/config/lsp.vim
+source ~/.vim/config/netrw.vim
 source ~/.vim/config/smartrun.vim
 source ~/.vim/config/tabs.vim
 source ~/.vim/config/windows.vim
@@ -229,7 +229,7 @@ aug END
 " Close the scratch preview automatically
 augroup CloseScratch
   au!
-  autocmd CursorMovedI,InsertLeave * if pumvisible() == 0|pclose|endif
+  autocmd CursorMovedI,InsertLeave * if pumvisible() == 0 && !&pvw|pclose|endif
 augroup END
 
 " Useful for removing whitespace after abbreviations

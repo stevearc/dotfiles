@@ -1,9 +1,4 @@
-if (exists('g:loaded_smartgrep') && g:loaded_smartgrep)
-  finish
-endif
-let g:loaded_smartgrep = 1
-
-function! smartgrep#grep(word)
+function! smartgrep#grep(word) abort
   cclose
   if !empty(fugitive#extract_git_dir(expand('%:p')))
     exec 'silent Ggrep! ' . a:word
@@ -14,4 +9,3 @@ function! smartgrep#grep(word)
   endif
   call quickfix#QFToggle('c')
 endfunction
-

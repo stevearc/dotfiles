@@ -1,10 +1,5 @@
-if (exists('g:loaded_prettier') && g:loaded_prettier)
-  finish
-endif
-let g:loaded_prettier = 1
-
 " Check if there is a directive in the jsdoc
-function! prettier#HasDirective(directive)
+function! prettier#HasDirective(directive) abort
   let n = 1
   while n < line("$")
     let line = getline(n)
@@ -20,7 +15,7 @@ function! prettier#HasDirective(directive)
 endfunction
 
 " Only run Neoformat on files with @format at the top
-function! prettier#SmartFormat()
+function! prettier#SmartFormat() abort
   if prettier#HasDirective("format")
     Neoformat
   else

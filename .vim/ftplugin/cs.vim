@@ -1,6 +1,3 @@
-" Don't use ALE; we're using omnisharp-vim
-let b:ale_linters = ['omnisharp']
-
 " Use % to jump between region/endregion
 let b:match_words = '\s*#\s*region.*$:\s*#\s*endregion'
 
@@ -12,14 +9,11 @@ nnoremap <buffer> gD m':$tab split<CR>:OmniSharpGotoDefinition<CR>
 nnoremap <buffer> gi :OmniSharpFindImplementations<CR>
 nnoremap <buffer> gs :OmniSharpFindSymbol 
 nnoremap <buffer> gr :OmniSharpFindUsages<CR>
+nnoremap <buffer> gm :OmniSharpFindMembers<CR>
 
-" Finds members in the current buffer
-nnoremap <buffer> <Leader>fm :OmniSharpFindMembers<CR>
+nnoremap <buffer> <leader>o :OmniSharpFixUsings<CR>
 
-" Cursor can be anywhere on the line containing an issue
-nnoremap <buffer> <Leader>x  :OmniSharpFixIssue<CR>
-nnoremap <buffer> <Leader>fx :OmniSharpFixUsings<CR>
-nnoremap <buffer> <Leader>tt :OmniSharpTypeLookup<CR>
+nnoremap <buffer> <Leader>k :OmniSharpTypeLookup<CR>
 nnoremap <buffer> <Leader>dc :OmniSharpDocumentation<CR>
 
 " Navigate up and down by method/property/field
@@ -41,5 +35,5 @@ augroup csfmt
 augroup END
 augroup csopts
   autocmd! * <buffer>
-  autocmd BufWinEnter <buffer> setlocal completeopt=longest,menuone,preview previewheight=5 tw=100 foldmethod=syntax
+  autocmd BufWinEnter <buffer> setlocal tw=100 foldmethod=syntax
 augroup END

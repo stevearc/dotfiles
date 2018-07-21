@@ -7,15 +7,23 @@ if empty(globpath(&runtimepath, "plugin/command-t.vim", 1))
 else
   nnoremap <leader>t :CommandT<CR>
 endif
+let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_tabpage_position = 'last'
 let g:ctrlp_by_filename = 1
 let g:ctrlp_extensions = ['line']
+
+let g:ctrlp_user_command = {
+  \ 'types': {
+    \ 'git': ['.git', 'git ls-files --cached --others --exclude-standard %s'],
+    \ 'hg': ['.hg', 'hg --cwd %s locate -I .'],
+    \ },
+  \ }
+
 if executable('ag')
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+  let g:ctrlp_user_command['fallback'] = 'ag %s -l --nocolor -g ""'
 elseif executable('ack')
-  let g:ctrlp_user_command = 'ack --nocolor -f %s'
+  let g:ctrlp_user_command['fallback'] = 'ack --nocolor -f %s'
 endif
 
 nnoremap <leader>b :CtrlPBuffer<CR>
-nnoremap <leader>v :CtrlPLine %<CR>
+nnoremap <leader>v :CtrlPLine<CR>
