@@ -153,7 +153,6 @@ endif
 source ~/.vim/config/colors.vim
 source ~/.vim/config/copy.vim
 source ~/.vim/config/ctrlp.vim
-source ~/.vim/config/quickfix.vim
 source ~/.vim/config/folding.vim
 source ~/.vim/config/deoplete.vim
 source ~/.vim/config/lsp.vim
@@ -167,6 +166,7 @@ source ~/.vim/config/ultisnips.vim
 source ~/.vim/config/clevertab.vim
 source ~/.vim/config/easymotion.vim
 source ~/.vim/config/grep.vim
+source ~/.vim/config/quickfix.vim
 source ~/.vim/config/session.vim
 source ~/.vim/config/ale.vim
 source ~/.vim/config/neoformat.vim
