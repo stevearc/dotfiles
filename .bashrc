@@ -116,9 +116,6 @@ sourcedir ~/.bash_env
 sourcedir ~/.bash.d
 sourcedir ~/.bash.completion
 
-# NVM
-sourcedir /usr/local/nvm/nvm.sh
-
 # Autoenv
 if command -v activate.sh > /dev/null; then
   source activate.sh
