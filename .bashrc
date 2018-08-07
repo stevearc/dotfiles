@@ -35,11 +35,13 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
 fi
 
 function git_branch {
+  [ -n "$NO_SHOW_GIT_BRANCH" ] && return
     __cur_ref=`git log --abbrev-commit -1 --decorate=short --pretty="tformat:%h{%D" 2> /dev/null | sed -e 's/{.*\(tag: [^ ,]*\).*$/}\1/' -e 's/{.*//' -e 's/ //' -e 's/}/ /' 2> /dev/null`
     __git_branch=`git branch --no-color 2> /dev/null | grep -e ^* | sed -E s/^\\\*\ \(.*\)$/\\\1/ | sed -E s/^\\\\\(.*\\\\\)$/"$__cur_ref"/`
     echo `echo $__git_branch | sed -E s/\(.+\)/\[\\\1\]/`
 }
 function hg_branch {
+  [ -n "$NO_SHOW_HG_BRANCH" ] && return
   local branch=$(hg id -B -t 2> /dev/null)
   if [ -n "$branch" ]; then
     echo "[$branch]"
