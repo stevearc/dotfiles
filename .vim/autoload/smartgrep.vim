@@ -7,5 +7,5 @@ function! smartgrep#grep(word) abort
   else
     exec 'silent grep! -IR ' . a:word . ' .'
   endif
-  call quickfix#QFToggle('c')
+  call quickerfix#Open('c')
 endfunction
