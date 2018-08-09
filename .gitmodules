@@ -69,7 +69,7 @@
 	url = https://github.com/thinca/vim-localrc.git
 [submodule ".vim/bundle/ctrlp"]
 	path = .vim/bundle/ctrlp
-	url = https://github.com/ctrlpvim/ctrlp.vim.git
+	url = https://github.com/stevearc/ctrlp.vim.git
 [submodule ".vim/bundle/deoplete.nvim"]
 	path = .vim/bundle/deoplete.nvim
 	url = https://github.com/Shougo/deoplete.nvim.git
