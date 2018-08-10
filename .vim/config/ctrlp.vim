@@ -7,7 +7,6 @@ if empty(globpath(&runtimepath, "plugin/command-t.vim", 1))
 else
   nnoremap <leader>t :CommandT<CR>
 endif
-let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_tabpage_position = 'last'
 let g:ctrlp_by_filename = 1
 let g:ctrlp_extensions = ['line']
