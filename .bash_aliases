@@ -60,5 +60,4 @@ or() {
   [ $? != 0 ] && "$@"
 }
 export or
-alias clip='nc localhost 8377'
 alias hr='history -c; history -r'

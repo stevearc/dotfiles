@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e
+
+hascmd() {
+  if command -v "$1" > /dev/null 2>&1; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+main() {
+  local copy=
+  if [ "$1" != "-o" ]; then
+    local copy=1
+  fi
+  if hascmd pbcopy; then
+    if [ $copy ]; then
+      pbcopy <&0
+    else
+      pbpaste
+    fi
+  elif hascmd win32yank.exe; then
+    if [ $copy ]; then
+      win32yank.exe -i <&0
+    else
+      win32yank.exe -o
+    fi
+  else
+    # TODO check for clipper
+    if [ $copy ]; then
+      xsel -ib <&0
+    else
+      xsel -o
+    fi
+  fi
+}
+
+main "$@"
