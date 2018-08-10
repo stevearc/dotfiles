@@ -151,7 +151,6 @@ if filereadable(expand('~/.formatdirs.vim'))
   source ~/.formatdirs.vim
 endif
 source ~/.vim/config/colors.vim
-source ~/.vim/config/copy.vim
 source ~/.vim/config/ctrlp.vim
 source ~/.vim/config/folding.vim
 source ~/.vim/config/deoplete.vim
@@ -170,6 +169,9 @@ source ~/.vim/config/quickfix.vim
 source ~/.vim/config/session.vim
 source ~/.vim/config/ale.vim
 source ~/.vim/config/neoformat.vim
+
+" Use my universal clipboard tool to copy with <leader>y
+nnoremap <leader>y :call system('clip', @0)<CR>
 
 " Function to rename the current file
 function! RenameFile()
