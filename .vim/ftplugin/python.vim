@@ -1,5 +1,6 @@
 " python-mode options
 let b:ale_linters = ['pycodestyle', 'pylint']
+let b:neoformat_enabled_python = ['black']
 
 " Use deoplete-jedi for completion
 let g:jedi#completions_enabled = 0
@@ -29,7 +30,7 @@ vnoremap <buffer> <CR> y:call system('nc localhost 7088', @")<CR>
 
 augroup PythonOptions
   au! * <buffer>
-  autocmd BufWinEnter <buffer> setlocal shiftwidth=4 tabstop=4 softtabstop=4
+  autocmd BufWinEnter <buffer> setlocal shiftwidth=4 tabstop=4 softtabstop=4 tw=88
 augroup END
 
 augroup pyfmt

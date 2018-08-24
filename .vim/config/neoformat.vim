@@ -1,10 +1,18 @@
-" Neoformat
-let g:neoformat_enabled_javascript = ['prettier']
 let g:neoformat_enabled_json = ['prettier']
-let g:neoformat_enabled_css = ['prettier']
 let g:neoformat_enabled_less = ['prettier']
-let g:neoformat_enabled_cpp = ['clangformat']
+
+let fmt = 'clang-format'
+if !executable(fmt) && executable('clang-format-6.0')
+  let fmt = 'clang-format-6.0'
+endif
+
 let g:neoformat_cpp_clangformat = {
-  \ 'exe': 'clang-format-6.0',
+  \ 'exe': fmt,
   \ 'stdin': 1,
   \ }
+
+
+let g:smartformat_enabled = 1
+
+command! -bar FormatDisable let g:smartformat_enabled = 0
+command! -bar FormatEnable let g:smartformat_enabled = 1
