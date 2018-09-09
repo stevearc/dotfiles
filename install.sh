@@ -141,7 +141,7 @@ cp-vim-bundle() {
     if [ -e "$dest" ] && [ ! -L "$dest" ]; then
       rm -rf "$dest"
     fi
-    ln -f -s "$REPO/.vim/bundle/$bundle" "$dest"
+    ln -sfT "$REPO/.vim/bundle/$bundle" "$dest"
   else
     rsync -lrp --delete --exclude .git ".vim/bundle/$bundle" "$HOME/.vim/bundle/"
   fi
@@ -241,13 +241,13 @@ install-dotfiles() {
   mkdir -p ~/.bash.d
   if [ $SYMBOLIC ]; then
     for dotfile in $CLI_DOTFILES; do
-      ln -f -s "$REPO/$dotfile" "$HOME"
+      ln -sfT "$REPO/$dotfile" "$HOME"
     done
     mkdir -p ~/.vim
     for vimfile in .vim/*; do
       [ "$vimfile" = ".vim/bundle" ] && continue
       rm -rf "${HOME:?}/$vimfile"
-      ln -f -s "$REPO/$vimfile" "$HOME/.vim/"
+      ln -sfT "$REPO/$vimfile" "$HOME/.vim/"
     done
   else
     rsync -lrp $CLI_DOTFILES "$HOME"
@@ -356,8 +356,8 @@ install-language-arduino() {
     wget -O "$zipfile" "http://downloads.arduino.cc/$zipfile"
     tar -Jxf "$zipfile"
     sudo mv "arduino-${version}" "$install_dir"
-    sudo ln -s "arduino-${version}" "$install_dir/arduino"
-    sudo ln -s "$install_dir/arduino/arduino" /usr/local/bin
+    sudo ln -sfT "arduino-${version}" "$install_dir/arduino"
+    sudo ln -sf "$install_dir/arduino/arduino" /usr/local/bin/arduino
     popd > /dev/null
   fi
 
@@ -521,7 +521,7 @@ setup-custom-packages() {
     cp bash.d/bluepill.sh ~/.bash.d/
     if [ ! -L /var/lib/docker ]; then
       sudo rm -rf /var/lib/docker
-      sudo ln -s "$HOME/.docker" /var/lib/docker
+      sudo ln -sfT "$HOME/.docker" /var/lib/docker
     fi
   fi
   if ! hascmd docker-compose && hascmd docker; then
