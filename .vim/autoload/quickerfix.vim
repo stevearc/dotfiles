@@ -29,10 +29,10 @@ function! quickerfix#QFToggle(cmd, ...) abort
 endfunction
 
 function! quickerfix#Open(cmd, ...) abort
-  if cmd == 'c' && quickerfix#IsQuickFixOpen()
+  if a:cmd == 'c' && quickerfix#IsQuickFixOpen()
     return
   endif
-  if cmd == 'l' && quickerfix#IsLocListOpen()
+  if a:cmd == 'l' && quickerfix#IsLocListOpen()
     return
   endif
   let list = a:cmd == 'l' ? getloclist(0) : getqflist()
