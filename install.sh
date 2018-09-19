@@ -317,6 +317,25 @@ install-language-python() {
   checkpoint python
 }
 
+install-language-rust() {
+  if ! rustc --version > /dev/null; then
+    curl https://sh.rustup.rs -sSf | sh
+    source ~/.bash_profile
+  fi
+  if ! hascmd racer; then
+    rustup toolchain list | grep nightly || rustup toolchain add nightly
+    cargo +nightly install racer
+  fi
+  rustup component add rls-preview rust-analysis rust-src
+  # TODO: this fails for me right now
+  rustup component add rustfmt-preview || :
+  rustup component add rls-preview rustfmt-preview rust-analysis rust-src --toolchain nightly
+  if [ ! -e ~/.bash.d/rust.sh ]; then
+    echo 'export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"' > ~/.bash.d/rust.sh
+  fi
+  cp-vim-bundle vim-racer
+}
+
 install-language-clojure() {
   has-checkpoint clojure && return
   pushd ~/bin

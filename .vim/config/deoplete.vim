@@ -17,6 +17,7 @@ call deoplete#custom#option('min_pattern_length', 1)
 call deoplete#custom#option('sources', {
 \ '_': ['ultisnips'],
 \ 'cs': ['omnisharp', 'ultisnips'],
+\ 'rust': ['racer', 'ultisnips'],
 \ 'sh': ['LanguageClient', 'ultisnips'],
 \ 'python': ['jedi', 'ultisnips'],
 \ 'javascript': ['LanguageClient', 'ultisnips'],
