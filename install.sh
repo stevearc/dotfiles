@@ -1,6 +1,6 @@
 #!/bin/bash -e
 # Setup script for (X)Ubuntu 18.04
-set -e
+set -ex
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
 declare -r DEFAULT_VIM_BUNDLES="ale ctrlp ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar vim-localrc deoplete.nvim LanguageClient-neovim space-vim-dark vim-quickerfix"
@@ -241,13 +241,13 @@ install-dotfiles() {
   mkdir -p ~/.bash.d
   if [ $SYMBOLIC ]; then
     for dotfile in $CLI_DOTFILES; do
-      ln -sfT "$REPO/$dotfile" "$HOME"
+      ln -sfT "$REPO/$dotfile" "$HOME/$dotfile"
     done
     mkdir -p ~/.vim
     for vimfile in .vim/*; do
       [ "$vimfile" = ".vim/bundle" ] && continue
       rm -rf "${HOME:?}/$vimfile"
-      ln -sfT "$REPO/$vimfile" "$HOME/.vim/"
+      ln -sfT "$REPO/$vimfile" "$HOME/$vimfile"
     done
   else
     rsync -lrp $CLI_DOTFILES "$HOME"
@@ -416,7 +416,7 @@ install-language-cs() {
 
 install-nvm() {
   if [ -e ~/.bash.d/nvm.sh ]; then
-    source ~/.bash.d/nvm.sh
+    source ~/.bash.d/nvm.sh || :
   fi
   nvm current && return
   local nvm_dir=$(prompt "NVM install dir:" /usr/local/nvm)
@@ -430,7 +430,7 @@ install-nvm() {
   fi
   source $nvm_dir/nvm.sh
   echo "source $nvm_dir/nvm.sh" > ~/.bash.d/nvm.sh
-  local node_version=$(prompt "Install node version:" v10.2.1)
+  local node_version=$(prompt "Install node version:" v10.11.0)
   nvm ls $node_version || nvm install $node_version
   nvm ls default | grep $node_version || nvm alias default $node_version
   nvm current | grep $node_version || nvm use $node_version
