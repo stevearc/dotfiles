@@ -1,6 +1,6 @@
 #!/bin/bash -e
 # Setup script for (X)Ubuntu 18.04
-set -ex
+set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
 declare -r DEFAULT_VIM_BUNDLES="ale ctrlp ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar vim-localrc deoplete.nvim LanguageClient-neovim space-vim-dark vim-quickerfix"
@@ -21,6 +21,7 @@ declare -r USAGE=\
 -x            Set up a typical xfce environment
 -p            Install some of my custom desktop packages
 -f            Force reinstallation of all programs
+-v            Verbose
 --languages   List all languages that are supported and exit
 "
 SYMBOLIC=
@@ -571,7 +572,7 @@ main() {
   local commandline=
   local dotfiles=
   local ufw=
-  while getopts "hfgxcpndsul:-:" opt; do
+  while getopts "hfgxcpndsuvl:-:" opt; do
     case $opt in
       -)
         case $OPTARG in
@@ -615,6 +616,9 @@ main() {
         ;;
       f)
         clear-checkpoints
+        ;;
+      v)
+        set -x
         ;;
       \?)
         echo "$USAGE"
