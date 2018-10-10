@@ -233,7 +233,6 @@ EOF
       sudo cp clipper.conf /etc/init
       sudo service clipper start
     fi
-    echo "You may need to create a startup application that runs 'xhost +SI:localuser:root'"
   fi
 }
 
@@ -442,7 +441,6 @@ add-apt-key-google() {
 }
 
 setup-desktop() {
-  has-checkpoint desktop && return
   setup-install-progs
   add-apt-key-google
   sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
@@ -463,7 +461,7 @@ setup-desktop() {
     sudo update-grub
   fi
 
-  checkpoint desktop
+  sudo cp static/reloadaudio.sh /usr/bin/
 }
 
 setup-gnome() {
