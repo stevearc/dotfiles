@@ -315,6 +315,10 @@ install-language-python() {
   cp .pylintrc "$HOME"
   cp-vim-bundle jedi-vim
   cp-vim-bundle deoplete-jedi
+  if ! hascmd black; then
+    python3 make_standalone.py black --pre
+    mv black ~/bin
+  fi
   has-checkpoint python && return
   sudo apt-get install -y -q \
     python-dev \
