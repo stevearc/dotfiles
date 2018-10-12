@@ -1,0 +1,6 @@
+#!/bin/bash
+out=$(mktemp)
+err=$(mktemp)
+"$@" < /dev/null > "$out" 2> "$err"
+cat "$out"
+>&2 cat "$err"
