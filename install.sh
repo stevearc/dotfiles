@@ -319,6 +319,14 @@ install-language-python() {
     python3 make_standalone.py black --pre
     mv black ~/bin
   fi
+  if ! hascmd pylint; then
+    python3 make_standalone.py pylint
+    mv pylint ~/bin
+  fi
+  if ! hascmd pycodestyle; then
+    python3 make_standalone.py pycodestyle
+    mv pycodestyle ~/bin
+  fi
   has-checkpoint python && return
   sudo apt-get install -y -q \
     python-dev \
