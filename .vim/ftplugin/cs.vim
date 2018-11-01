@@ -29,6 +29,8 @@ command! -buffer -nargs=1 Rename :call OmniSharp#RenameTo("<args>")
 
 nnoremap <buffer> <Leader>f :OmniSharpCodeFormat<CR>
 
+nnoremap <buffer> <F5> :OmniSharpRestartAllServers<CR>
+
 augroup csfmt
   autocmd! * <buffer>
   autocmd BufWritePre <buffer> call smartformat#Format('cs', 'OmniSharpCodeFormat')
