@@ -65,6 +65,7 @@ def main():
         print("Downloading dependencies")
         pip = os.path.join(venv_dir, "bin", "pip")
         subprocess.check_call([pip, "install", "pex"])
+        subprocess.check_call([pip, "install", "wheel"])
         subprocess.check_call([pip, "install", args.package])
 
         print("Building executable")

@@ -193,7 +193,7 @@ install-cli-after() {
   [ ! $LINUX ] && return
   if ! hascmd nvim && confirm "Install Neovim?" y; then
     sudo apt-get install -y libtool autoconf automake cmake g++ gettext pkg-config \
-      unzip python-dev python-pip python3 python3-dev python3-venv
+      unzip python-dev python-pip python3 python3-dev python3-venv ruby-dev
     sudo apt-get install -y libtool-bin
     hascmd virtualenv || sudo pip install -q virtualenv
 
