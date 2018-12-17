@@ -200,8 +200,8 @@ install-cli-after() {
     [ -d ~/.envs ] || mkdir ~/.envs
     [ -d ~/.envs/py2 ] || virtualenv ~/.envs/py2
     [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
-    ~/.envs/py2/bin/pip install -q neovim
-    ~/.envs/py3/bin/pip install -q neovim
+    ~/.envs/py2/bin/pip install -q pynvim
+    ~/.envs/py3/bin/pip install -q pynvim
     hascmd gem && sudo gem install neovim
     pushd /tmp
     test -d neovim || git clone https://github.com/neovim/neovim.git

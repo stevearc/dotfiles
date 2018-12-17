@@ -46,7 +46,9 @@ set ruler
 set showcmd
 
 " When a bracket is inserted, briefly jump to the matching one
-set showmatch
+" Disabling this for now b/c causing hang & crash in WSL
+" set showmatch
+set noshowmatch
 
 " Begin searching as soon as you start typing
 set incsearch
