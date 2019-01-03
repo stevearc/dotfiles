@@ -518,6 +518,7 @@ setup-xfce() {
   cp -r $XFCE_DOTFILES $HOME
   mkdir -p ~/.config
   rsync -lrp .config/xfce4 ~/.config/
+  rsync -lrp .config/autostart ~/.config/
 }
 
 setup-custom-packages() {
