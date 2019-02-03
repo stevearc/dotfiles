@@ -1,5 +1,10 @@
 #!/bin/bash -e
 # Setup script for (X)Ubuntu 18.04
+#
+# If using WSL, first do:
+# Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+# Start-Process -FilePath https://www.microsoft.com/en-us/p/ubuntu-1804-lts/9n9tngvndl3q
+# Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
@@ -36,6 +41,7 @@ else
 fi
 if grep -q Microsoft /proc/version; then
   WSL=1
+  C_DRIVE="/mnt/c"
 fi
 
 command -v realpath > /dev/null 2>&1 || realpath() {
@@ -136,6 +142,14 @@ hascmd() {
   else
     return 1
   fi
+}
+
+winsudo() {
+  if [ -z "$WSL" ]; then
+    echo "Cannot use winsudo if not in WSL"
+    return
+  fi
+  powershell.exe -command "start-process -verb runas powershell" "'-command $*'"
 }
 
 cp-vim-bundle() {
@@ -436,6 +450,28 @@ install-language-sh() {
 
 install-language-cs() {
   cp-vim-bundle omnisharp-vim
+  if [ ! $WSL ]; then
+    return
+  fi
+  if [ ! -e "$C_DRIVE/OmniSharp" ]; then
+    pushd /tmp
+    wget https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v1.32.1/omnisharp.http-win-x64.zip
+    mkdir -p OmniSharp
+    (cd OmniSharp && unzip ../omnisharp.http-win-x64.zip)
+    mv OmniSharp "$C_DRIVE"
+    popd
+  fi
+  local vimrc="$HOME/.local.vimrc"
+  local bin="$C_DRIVE/OmniSharp/OmniSharp.exe"
+  if [ ! -e "$vimrc" ] || ! grep -q "OmniSharp_server_path" "$vimrc"; then
+    echo "let g:OmniSharp_server_path = '$bin'" >> "$vimrc"
+  fi
+  if ! grep -q "OmniSharp_translate_cygwin_wsl" "$vimrc"; then
+    echo "let g:OmniSharp_translate_cygwin_wsl = 1" >> "$vimrc"
+  fi
+  if ! grep -q "OmniSharp_timeout" "$vimrc"; then
+    echo "let g:OmniSharp_timeout = 5" >> "$vimrc"
+  fi
 }
 
 
@@ -523,6 +559,33 @@ setup-xfce() {
   mkdir -p ~/.config
   rsync -lrp .config/xfce4 ~/.config/
   rsync -lrp .config/autostart ~/.config/
+}
+
+setup-wsl() {
+  if [ ! -e "$C_DRIVE/Windows/System32/win32yank.exe" ]; then
+    pushd /tmp
+    wget https://github.com/equalsraf/win32yank/releases/download/v0.0.4/win32yank-x64.zip
+    unzip win32yank-x64.zip
+    mkdir -p "$C_DRIVE/tmp"
+    mv win32yank.exe "$C_DRIVE/tmp"
+    winsudo mv 'C:\tmp\win32yank.exe' 'C:\Windows\System32\'
+    popd
+  fi
+  if [ ! -e "/etc/wsl.conf" ]; then
+    echo -e "[automount]\noptions = case=off" | sudo tee /etc/wsl.conf
+  fi
+}
+
+install-wsl-packages() {
+  winsudo choco install -y chocolatey vlc skype googlechrome discord slack steam dropbox calibre dolphin mupen64plus geforce-experience sharpkeys
+  if [ ! -e "$C_DRIVE/Program Files/Unity Hub" ]; then
+    pushd /tmp
+    [ ! -e UnityHubSetup.exe ] && wget https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.exe
+    mkdir -p "$C_DRIVE/tmp"
+    mv UnityHubSetup.exe "$C_DRIVE/tmp"
+    winsudo 'C:\tmp\UnityHubSetup.exe'
+    popd
+  fi
 }
 
 setup-custom-packages() {
@@ -655,6 +718,12 @@ main() {
   if [ $commandline ]; then
     install-cli
   fi
+  if [ $WSL ]; then
+    if [ -e "$C_DRIVE/tmp" ]; then
+      rm -rf "$C_DRIVE/tmp"
+    fi
+    setup-wsl
+  fi
   if [ $dotfiles ]; then
     install-dotfiles
   fi
@@ -670,6 +739,9 @@ main() {
   fi
   if [ $xfce ]; then
     setup-xfce
+  fi
+  if [ $WSL ]; then
+    install-wsl-packages
   fi
   if [ $custom_packages ]; then
     setup-custom-packages
