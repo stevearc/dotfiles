@@ -34,6 +34,9 @@ elif [ "$OSNAME" = "Linux" ]; then
 else
   WINDOWS=1
 fi
+if grep -q Microsoft /proc/version; then
+  WSL=1
+fi
 
 command -v realpath > /dev/null 2>&1 || realpath() {
   if ! readlink -f "$1" 2> /dev/null; then
@@ -316,6 +319,7 @@ install-language-python() {
   cp-vim-bundle jedi-vim
   cp-vim-bundle deoplete-jedi
   cp-vim-bundle SimpylFold
+  sudo apt-get install -y python3 python3-distutils python3-venv
   if ! hascmd black; then
     python3 make_standalone.py black --pre
     mv black ~/bin
