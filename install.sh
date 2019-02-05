@@ -589,6 +589,10 @@ install-wsl-packages() {
 }
 
 setup-custom-packages() {
+  if [ $WSL ]; then
+    install-wsl-packages
+    return
+  fi
   setup-install-progs
   if ! installed dropbox && confirm "Install Dropbox?" n; then
     echo "TODO: CLI installation for dropbox doesn't work anymore"
@@ -740,14 +744,8 @@ main() {
   if [ $xfce ]; then
     setup-xfce
   fi
-  if [ $WSL ]; then
-    install-wsl-packages
-  fi
   if [ $custom_packages ]; then
     setup-custom-packages
-    echo "Now use gnome-tweak-tool to bind capslock to ctrl"
-    echo "And use dconf editor org>gnome>desktop>wm to add keyboard shortcuts"
-    echo "Maybe install some proprietary graphics drivers? (e.g. nvidia-331)"
   fi
   echo "Done"
 }
