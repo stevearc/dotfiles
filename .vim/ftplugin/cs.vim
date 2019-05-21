@@ -1,5 +1,6 @@
 " Use % to jump between region/endregion
 let b:match_words = '\s*#\s*region.*$:\s*#\s*endregion'
+let g:OmniSharp_server_stdio = 1
 
 nnoremap <buffer> K :call OmniSharp#TypeLookupWithoutDocumentation()<CR>
 
