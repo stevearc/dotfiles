@@ -34,7 +34,7 @@ nnoremap <buffer> <F5> :OmniSharpRestartAllServers<CR>
 
 augroup csfmt
   autocmd! * <buffer>
-  autocmd BufWritePre <buffer> call smartformat#Format('cs', 'OmniSharpCodeFormat')
+  autocmd BufWriteCmd <buffer> call smartformat#Format('cs', 'call OmniSharp#CodeFormat({->execute("noau w")})')
 augroup END
 augroup csopts
   autocmd! * <buffer>
