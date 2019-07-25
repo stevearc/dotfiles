@@ -5,10 +5,7 @@ let b:neoformat_enabled_javascript = ['prettier']
 let g:javascript_plugin_flow = 1
 
 
-let g:flow#autoclose = 1
-
 nnoremap <buffer> K :call LanguageClient#textDocument_hover()<CR>
-nnoremap <buffer> <leader>c :FlowCoverageToggle<CR>
 nnoremap <buffer> gd m':call LanguageClient#textDocument_definition()<CR>zz
 nnoremap <buffer> gD m':$tab split<CR>:call LanguageClient#textDocument_definition()<CR>zz
 
