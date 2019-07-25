@@ -1,12 +1,7 @@
 " CTRLP
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_switch_buffer = 'eTvh'
-" Use ctrl-p only if we're not using command-t
-if empty(globpath(&runtimepath, "plugin/command-t.vim", 1))
-  let g:ctrlp_map = '<leader>t'
-else
-  nnoremap <leader>t :CommandT<CR>
-endif
+let g:ctrlp_map = '<leader>t'
 let g:ctrlp_tabpage_position = 'last'
 let g:ctrlp_by_filename = 1
 let g:ctrlp_extensions = ['line']
