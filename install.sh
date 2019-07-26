@@ -36,12 +36,12 @@ if [ "$OSNAME" = "Darwin" ]; then
   MAC=1
 elif [ "$OSNAME" = "Linux" ]; then
   LINUX=1
+  if grep -q Microsoft /proc/version 2> /dev/null; then
+    WSL=1
+    C_DRIVE="/mnt/c"
+  fi
 else
   WINDOWS=1
-fi
-if grep -q Microsoft /proc/version; then
-  WSL=1
-  C_DRIVE="/mnt/c"
 fi
 
 command -v realpath > /dev/null 2>&1 || realpath() {
@@ -69,6 +69,19 @@ prompt() {
       return 0
     fi
   done
+}
+
+link() {
+  local source="${1?missing source}"
+  local dest="${2?missing dest}"
+  if [ $LINUX ]; then
+    ln -sfT "$source" "$dest"
+  elif [ $MAC ]; then
+    if [ -e "$dest" ]; then
+      rm -rf "$dest"
+    fi
+    ln -s "$source" "$dest"
+  fi
 }
 
 confirm() {
@@ -159,7 +172,7 @@ cp-vim-bundle() {
     if [ -e "$dest" ] && [ ! -L "$dest" ]; then
       rm -rf "$dest"
     fi
-    ln -sfT "$REPO/.vim/bundle/$bundle" "$dest"
+    link "$REPO/.vim/bundle/$bundle" "$dest"
   else
     rsync -lrp --delete --exclude .git ".vim/bundle/$bundle" "$HOME/.vim/bundle/"
   fi
@@ -167,14 +180,17 @@ cp-vim-bundle() {
 
 setup-install-progs() {
   [ $WINDOWS ] && return
-  if ! hascmd apt-get; then return; fi
   has-checkpoint setup-progs && return
-  sudo apt-get update -qq
-  sudo apt-get install -y -q \
-    python-pycurl \
-    software-properties-common \
-    wget \
-    curl
+  if hascmd apt-get; then
+    sudo apt-get update -qq
+    sudo apt-get install -y -q \
+      python-pycurl \
+      software-properties-common \
+      wget \
+      curl
+  elif [ $MAC ]; then
+    hascmd brew || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  fi
   checkpoint setup-progs
 }
 
@@ -182,6 +198,8 @@ install-cli() {
   has-checkpoint cli && return
   if [ $WINDOWS ]; then
     pacman -Sy --noconfirm rsync tmux
+  elif [ $MAC ]; then
+    hascmd tmux || brew install tmux
   else
     sudo apt-get install -y -q \
       autossh \
@@ -236,9 +254,6 @@ install-cli-after() {
 set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath = &runtimepath
 source ~/.vimrc
-if filereadable(expand('~/.local.vimrc'))
-  source ~/.local.vimrc
-endif
 EOF
     fi
   fi
@@ -266,13 +281,13 @@ install-dotfiles() {
   mkdir -p ~/.bash.d
   if [ $SYMBOLIC ]; then
     for dotfile in $CLI_DOTFILES; do
-      ln -sfT "$REPO/$dotfile" "$HOME/$dotfile"
+      link "$REPO/$dotfile" "$HOME/$dotfile"
     done
     mkdir -p ~/.vim
     for vimfile in .vim/*; do
       [ "$vimfile" = ".vim/bundle" ] && continue
       rm -rf "${HOME:?}/$vimfile"
-      ln -sfT "$REPO/$vimfile" "$HOME/$vimfile"
+      link "$REPO/$vimfile" "$HOME/$vimfile"
     done
   else
     rsync -lrp $CLI_DOTFILES "$HOME"
@@ -298,6 +313,9 @@ install-dotfiles() {
   cp bash.d/notifier.sh ~/.bash.d/
   if [ $WINDOWS ]; then
     rsync -lrp win/ "$HOME"
+  fi
+  if [ $MAC ]; then
+    grep "source ~/.bashrc" ~/.bash_profile > /dev/null 2>&1 || echo "source ~/.bashrc" >> ~/.bash_profile
   fi
 }
 

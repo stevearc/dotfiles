@@ -81,7 +81,7 @@ fi
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
-if [ $MAC ] && [ -f $(brew --prefix)/etc/bash_completion ]; then
+if [ $MAC ] && command -v brew > /dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
     . $(brew --prefix)/etc/bash_completion
 fi
 
