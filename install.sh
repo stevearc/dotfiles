@@ -8,7 +8,7 @@
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
 declare -r BIN_EXTRA="parseargs/parseargs.sh"
-declare -r DEFAULT_VIM_BUNDLES="ale ctrlp ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar vim-localrc deoplete.nvim LanguageClient-neovim space-vim-dark vim-quickerfix"
+declare -r DEFAULT_VIM_BUNDLES="ale ctrlp ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar deoplete.nvim LanguageClient-neovim space-vim-dark"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r XFCE_DOTFILES=".xsessionrc"
@@ -333,7 +333,7 @@ install-language-python() {
   cp-vim-bundle jedi-vim
   cp-vim-bundle deoplete-jedi
   cp-vim-bundle SimpylFold
-  sudo apt-get install -y python3 python3-distutils python3-venv
+  hascmd apt-get && sudo apt-get install -y python3 python3-distutils python3-venv
   if ! hascmd black; then
     python3 make_standalone.py black --pre
     mv black ~/bin
@@ -346,6 +346,8 @@ install-language-python() {
     python3 make_standalone.py pycodestyle
     mv pycodestyle ~/bin
   fi
+  # Early return on FB devserver
+  hascmd apt-get || return
   has-checkpoint python && return
   sudo apt-get install -y -q \
     python-dev \
@@ -435,7 +437,6 @@ install-language-js() {
   hascmd yarn || npm install -g yarn
   hascmd prettier || npm install -g prettier
   hascmd flow || npm install -g flow-bin
-  hascmd flow-language-server || npm install -g flow-language-server
   cp-vim-bundle vim-css-color
   cp-vim-bundle vim-flow-plus
   cp-vim-bundle closetag
@@ -476,6 +477,8 @@ install-language-cs() {
 
 
 install-nvm() {
+  # Early return on FB devserver
+  hascmd apt-get || return
   if [ -e ~/.bash.d/nvm.sh ]; then
     source ~/.bash.d/nvm.sh || :
   fi
