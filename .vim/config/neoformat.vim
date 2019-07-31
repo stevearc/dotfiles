@@ -1,5 +1,6 @@
 let g:neoformat_enabled_json = ['prettier']
 let g:neoformat_enabled_less = ['prettier']
+let g:neoformat_enabled_php = ['hackfmt']
 
 let fmt = 'clang-format'
 if !executable(fmt) && executable('clang-format-6.0')
@@ -8,6 +9,11 @@ endif
 
 let g:neoformat_cpp_clangformat = {
   \ 'exe': fmt,
+  \ 'stdin': 1,
+  \ }
+
+let g:neoformat_php_hackfmt = {
+  \ 'exe': 'hackfmt',
   \ 'stdin': 1,
   \ }
 
