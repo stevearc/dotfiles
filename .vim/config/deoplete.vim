@@ -22,6 +22,7 @@ call deoplete#custom#option('sources', {
 \ 'php': ['LanguageClient', 'ultisnips'],
 \ 'python': ['jedi', 'ultisnips'],
 \ 'javascript': ['LanguageClient', 'ultisnips'],
+\ 'javascript.jsx': ['LanguageClient', 'ultisnips'],
 \})
 
 command! DeopleteDisable :call deoplete#disable()
