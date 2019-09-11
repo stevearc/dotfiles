@@ -19,6 +19,7 @@ call deoplete#custom#option('sources', {
 \ 'cs': ['omnisharp', 'ultisnips'],
 \ 'rust': ['racer', 'ultisnips'],
 \ 'sh': ['LanguageClient', 'ultisnips'],
+\ 'php': ['LanguageClient', 'ultisnips'],
 \ 'python': ['jedi', 'ultisnips'],
 \ 'javascript': ['LanguageClient', 'ultisnips'],
 \})
