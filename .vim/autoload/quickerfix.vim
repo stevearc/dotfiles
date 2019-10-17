@@ -169,6 +169,11 @@ endfunction
 
 function! s:NavCommand(cmd, qf) abort
   let jumpcmd = 'silent! ' . a:qf.type . a:qf.type
+  if !g:qf_smart_jump
+    exec 'silent! ' . a:qf.type . a:cmd
+    normal! zvzz
+    return
+  endif
   let pos = quickerfix#GetPositionInList(a:qf.list)
   let lineno = line('.')
   let bufnum = bufnr('%')
@@ -191,9 +196,9 @@ function! s:NavCommand(cmd, qf) abort
       endwhile
     endif
     let jumpcmd = jumpcmd . ' ' . (idx + 1)
+    exec jumpcmd
   endif
 
-  exec jumpcmd
   normal! zvzz
 endfunction
 
