@@ -204,6 +204,9 @@ nmap <leader>r :%s/<C-R>=expand("<cword>")<CR>/<C-R>=expand("<cword>")<CR>
 " Expand %% to current directory in command mode
 cabbr <expr> %% expand('%:p:h')
 
+" Map F5 to reload buffers from disk
+nnoremap <F5> :silent checktime<CR>
+
 " Keep cursor in the vertical center of the editor
 nnoremap <C-d> <C-d>zz
 nnoremap <C-u> <C-u>zz
