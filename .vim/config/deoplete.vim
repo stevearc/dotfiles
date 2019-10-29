@@ -23,6 +23,7 @@ call deoplete#custom#option('sources', {
 \ 'python': ['jedi', 'ultisnips'],
 \ 'javascript': ['LanguageClient', 'ultisnips'],
 \ 'javascript.jsx': ['LanguageClient', 'ultisnips'],
+\ 'hgcommit': ['tasks', 'ultisnips'],
 \})
 
 command! DeopleteDisable :call deoplete#disable()
