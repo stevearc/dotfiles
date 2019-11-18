@@ -347,7 +347,7 @@ install-language-python() {
     mv pycodestyle ~/bin
   fi
   # Early return on FB devserver
-  hascmd apt-get || return
+  if ! hascmd apt-get ; then return; fi
   has-checkpoint python && return
   sudo apt-get install -y -q \
     python-dev \
@@ -478,7 +478,7 @@ install-language-cs() {
 
 install-nvm() {
   # Early return on FB devserver
-  hascmd apt-get || return
+  if ! hascmd apt-get ; then return; fi
   if [ -e ~/.bash.d/nvm.sh ]; then
     source ~/.bash.d/nvm.sh || :
   fi
