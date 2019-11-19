@@ -94,3 +94,6 @@
 [submodule ".vim/bundle/vim-hug-neovim-rpc"]
 	path = .vim/bundle/vim-hug-neovim-rpc
 	url = https://github.com/roxma/vim-hug-neovim-rpc
+[submodule ".vim/bundle/nvim-yarp"]
+	path = .vim/bundle/nvim-yarp
+	url = https://github.com/roxma/nvim-yarp
