@@ -50,6 +50,7 @@ if command -v nvim > /dev/null; then
   alias vim='nvim'
   alias vi='nvim'
 else
+  alias nvim='vim'
   alias vi='vim'
 fi
 and() {
