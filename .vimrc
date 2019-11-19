@@ -171,6 +171,9 @@ source ~/.vim/config/quickfix.vim
 source ~/.vim/config/session.vim
 source ~/.vim/config/ale.vim
 source ~/.vim/config/neoformat.vim
+if filereadable(expand('~/.local.vimrc'))
+  source ~/.local.vimrc
+endif
 
 " Use my universal clipboard tool to copy with <leader>y
 nnoremap <leader>y :call system('clip', @0)<CR>
