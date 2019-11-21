@@ -4,10 +4,7 @@ let b:neoformat_enabled_javascript = ['prettier']
 " vim-javascript flow syntax highlighting
 let g:javascript_plugin_flow = 1
 
-
-nnoremap <buffer> K :call LanguageClient#textDocument_hover()<CR>
-nnoremap <buffer> gd m':call LanguageClient#textDocument_definition()<CR>zz
-nnoremap <buffer> gD m':$tab split<CR>:call LanguageClient#textDocument_definition()<CR>zz
+source ~/.vim/config/lsp_default_bindings.vim
 
 augroup jsfmt
   autocmd! * <buffer>
