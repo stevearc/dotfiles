@@ -32,6 +32,9 @@ set wildmenu
 set wildmode=longest,list,full
 set wildignore+=*.png,*.jpg,*.jpeg,*.gif,*.wav,*.dll,*.pdb,*.mdb,*.so,*.swp,*.zip,*.gz,*.bz2,*.meta,*.cache,*/\.git/*
 
+" Make backspace work properly
+set backspace=indent,eol,start
+
 " Make searches case-sensitive only if they contain upper-case characters
 set ignorecase
 set smartcase
