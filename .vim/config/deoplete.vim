@@ -13,6 +13,10 @@ call deoplete#custom#var('omni', 'input_patterns', {
     \ 'cs': '\w+|[^. *\t]\.\w*',
     \ 'php': '\w+|[^. \t]->\w*|\w+::\w*',
     \})
+" Allow a single colon into php keywords, but a double colon breaks it
+call deoplete#custom#option('keyword_patterns', {
+    \ 'php': '[a-zA-Z_]([a-zA-Z0-9_]+:?)*',
+    \})
 call deoplete#custom#option('min_pattern_length', 1)
 call deoplete#custom#option('sources', {
 \ '_': ['ultisnips'],
