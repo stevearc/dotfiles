@@ -1,0 +1,41 @@
+snippet me "React.MixedElement" 
+React.MixedElement
+endsnippet
+
+snippet nme "null | React.MixedElement" 
+null | React.MixedElement
+endsnippet
+
+snippet useEffect "useEffect" b
+useEffect(() => {
+  $0
+}, []);
+endsnippet
+
+snippet useCallback "useCallback" b
+useCallback(($1) => {
+  $2
+}, [$3]);
+endsnippet
+
+snippet useMemo "useMemo" b
+useMemo(() => {
+  $1
+}, [$2]);$0
+endsnippet
+
+snippet comp "Pure React component" b
+function $1(props: ${2:Props}): React.MixedElement {
+  $0
+}
+endsnippet
+
+snippet ro "$ReadOnly<>" 
+$ReadOnly<${2:{|$1|}}>$0
+endsnippet
+
+snippet props "type Props" b
+type Props = $ReadOnly<{|$1|}>;$0
+endsnippet
+
+# vim:ft=snippets:

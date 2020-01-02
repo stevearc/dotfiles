@@ -15,7 +15,8 @@ tnoremap <leader>j <C-\><C-N>:wincmd j<CR>
 tnoremap <leader>k <C-\><C-N>:wincmd k<CR>
 tnoremap <leader>: <C-\><C-N>:
 highlight TermCursor ctermfg=DarkRed guifg=red
-aug TerminalInsert
-    au!
-    au BufEnter * if &buftype == 'terminal' | :startinsert | endif
-aug END
+" auto-enter insert mode when switching to a terminal
+" aug TerminalInsert
+"     au!
+"     au BufEnter * if &buftype == 'terminal' | :startinsert | endif
+" aug END

@@ -1,12 +1,13 @@
-
 snippet '\?' "a ? b : c" !r
 ${1:a} ? ${2:b} : ${3:c}
 endsnippet
 
-snippet f "Anonymous function" !
-function($1) {
-	$2
-}
+snippet f "() => {}"
+  ($1) => {$2}
+endsnippet
+
+snippet ff "() => "
+  ($1) => $2
 endsnippet
 
 snippet log "console log" !
@@ -25,6 +26,14 @@ class ${1:className} {
 		$0
 	}
 }
+endsnippet
+
+snippet impt "import type" b
+import type {$1} from '$2';
+endsnippet
+
+snippet imp "import" b
+import {$1} from '$2';
 endsnippet
 
 # vim:ft=snippets:
