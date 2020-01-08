@@ -1,7 +1,4 @@
-let b:ale_linters = ['rls']
-
-nnoremap <buffer> gd <Plug>(rust-def)
-nnoremap <buffer> K <Plug>(rust-doc)
+source ~/.vim/config/lsp_default_bindings.vim
 
 se makeprg=cargo\ build
 
