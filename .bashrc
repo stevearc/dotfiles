@@ -125,4 +125,5 @@ fi
 if command -v yarn > /dev/null; then
   export PATH="$(yarn global bin):$PATH"
 fi
+export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
