@@ -14,6 +14,11 @@ let g:ale_sign_style_error = "."
 let g:ale_sign_style_warning = "."
 let g:ale_set_highlights = 0
 hi link ALEErrorSign    Error
-hi link ALEWarningSign  Warning
+hi link ALEWarningSign  WarningMsg
+hi link ALEInfoSign  MoreMsg
 hi link ALEStyleErrorSign    Error
-hi link ALEStyleWarningSign  Warning
+hi link ALEStyleWarningSign  WarningMsg
+
+hi link ALEError SpellBad
+hi link ALEWarning SpellBad
+hi link ALEInfo SpellBad
