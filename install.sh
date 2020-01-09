@@ -452,9 +452,14 @@ install-language-arduino() {
 
 install-language-js() {
   install-nvm
-  hascmd yarn || npm install -g yarn
-  hascmd prettier || npm install -g prettier
-  hascmd flow || npm install -g flow-bin
+  if !hascmd yarn; then
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    sudo apt-get update -qq
+    sudo apt-get install -q -y --no-install-recommends yarn
+  fi
+  hascmd prettier || yarn global add prettier
+  hascmd flow || yarn global add flow-bin
   cp-vim-bundle vim-css-color
   cp-vim-bundle closetag
 }
@@ -463,7 +468,11 @@ install-language-sh() {
   hascmd bash-language-server && return;
   # We need npm for this
   install-nvm
-  npm install -g bash-language-server
+  if hascmd yarn; then
+    yarn global add bash-language-server
+  else
+    npm install -g bash-language-server
+  fi
 }
 
 install-language-cs() {
