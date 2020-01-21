@@ -1,3 +1,8 @@
+fun! Subgrep(args) abort
+  exec "vimgrep /" . a:args . "/ " . b:netrw_curdir . '/**'
+endf
+
+command! -buffer -bar -nargs=+ Subgrep call Subgrep('<args>')
 command! -buffer -bar BookmarkGoto call bookmarks#GotoBookmark()
 command! -buffer -bar BookmarkDelete call bookmarks#DeleteBookmark()
 
