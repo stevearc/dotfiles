@@ -227,9 +227,12 @@ install-cli() {
 install-cli-after() {
   [ ! $LINUX ] && return
   if ! hascmd nvim && confirm "Install Neovim?" y; then
-    sudo apt-get install -y libtool autoconf automake cmake g++ gettext pkg-config \
-      unzip python-dev python-pip python3 python3-dev python3-venv ruby-dev
-    sudo apt-get install -y libtool-bin
+    if confirm "From source?" n; then
+      local from_source=1
+      sudo apt-get install -y libtool autoconf automake cmake g++ gettext pkg-config \
+        unzip python-dev python-pip python3 python3-dev python3-venv ruby-dev
+      sudo apt-get install -y libtool-bin
+    fi
     hascmd virtualenv || sudo pip install -q virtualenv
 
     [ -d ~/.envs ] || mkdir ~/.envs
@@ -238,12 +241,17 @@ install-cli-after() {
     ~/.envs/py2/bin/pip install -q pynvim
     ~/.envs/py3/bin/pip install -q pynvim
     hascmd gem && sudo gem install neovim
-    pushd /tmp
-    test -d neovim || git clone https://github.com/neovim/neovim.git
-    cd neovim
-    make CMAKE_BUILD_TYPE=Release
-    sudo make install
-    popd
+
+    if [ -n "$from_source" ]; then
+      pushd /tmp
+      test -d neovim || git clone https://github.com/neovim/neovim.git
+      cd neovim
+      make CMAKE_BUILD_TYPE=Release
+      sudo make install
+      popd
+    else
+      sudo apt-get install -y neovim
+    fi
     if [ ! -e ~/.nvim_python ]; then
       echo "let g:python_host_prog = \"$HOME/.envs/py2/bin/python\"" > ~/.nvim_python
       echo "let g:python3_host_prog = \"$HOME/.envs/py3/bin/python\"" >> ~/.nvim_python
