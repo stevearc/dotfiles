@@ -11,3 +11,20 @@ augroup jsfmt
   " This calls out to Neoformat, but only if @format is in the jsdoc
   autocmd BufWritePre <buffer> call prettier#SmartFormat()
 augroup END
+
+function! MyStatusLine()
+  let l:percent = get(b:, 'flow_coverage_percent', -1)
+  let l:message = get(b:, 'flow_coverage_message', '')
+  if l:percent == -1 || !flow#isCoverageEnabled()
+    return '%f'
+  endif
+  let line = '%f [' . l:percent . '%%] ' . l:message
+  return line
+endfunction
+augroup FlowCoverageStatusLine
+  autocmd! * <buffer>
+  autocmd BufWinEnter <buffer> setlocal statusline=%!MyStatusLine()
+augroup END
+
+let g:flow_coverage_enabled = v:true
+nnoremap <buffer> <leader>c :FlowCoverageGlobalToggle<CR>
