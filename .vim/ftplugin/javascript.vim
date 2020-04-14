@@ -18,7 +18,7 @@ function! MyStatusLine()
   if l:percent == -1 || !flow#isCoverageEnabled()
     return '%f'
   endif
-  let line = '%f [' . l:percent . '%%] ' . l:message
+  let line = '%f [' . l:percent . '%%]'
   return line
 endfunction
 augroup FlowCoverageStatusLine
