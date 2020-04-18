@@ -39,38 +39,38 @@ function! s:HighlightRange(range, texthl) abort
 endfunction
 
 function! s:HandleCoverage(output, ...) abort
-    let l:quiet = get(a:000, 0)
+  let l:quiet = get(a:000, 0)
 
-    if has_key(a:output, 'result')
-      let l:result = get(a:output, 'result')
-      let b:flow_coverage_message = get(l:result, 'defaultMessage')
-      let b:flow_coverage_percent = get(l:result, 'coveredPercent')
-      let l:ranges = get(l:result, 'uncoveredRanges', [])
-      call flow#hideCoverage()
-      if !empty(l:ranges)
-	for l:range_obj in l:ranges
-	  let l:range = get(l:range_obj, 'range')
-	  call s:HighlightRange(l:range, g:flow_coverage_uncovered_texthl)
-	endfor
-      endif
-    elseif has_key(a:output, 'error')
-        let l:error = get(a:output, 'error')
-	let l:code = get(l:error, 'code')
-	" Don't print error if LSP is not started
-	if l:code == -32603
-	  let l:quiet = v:true
-	endif
-        let l:message = get(l:error, 'message')
-        if !l:quiet
-            echoerr l:message
-        endif
-        return v:null
-    else
-        if !l:quiet
-            echoerr 'Unknown output type: ' . json_encode(a:output)
-        endif
-        return v:null
+  if has_key(a:output, 'result')
+    let l:result = get(a:output, 'result')
+    let b:flow_coverage_message = get(l:result, 'defaultMessage')
+    let b:flow_coverage_percent = get(l:result, 'coveredPercent')
+    let l:ranges = get(l:result, 'uncoveredRanges', [])
+    call flow#hideCoverage()
+    if !empty(l:ranges)
+      for l:range_obj in l:ranges
+        let l:range = get(l:range_obj, 'range')
+        call s:HighlightRange(l:range, g:flow_coverage_uncovered_texthl)
+      endfor
     endif
+  elseif has_key(a:output, 'error')
+    let l:error = get(a:output, 'error')
+    let l:code = get(l:error, 'code')
+    " Don't print error if LSP is not started
+    if l:code == -32603
+      let l:quiet = v:true
+    endif
+    let l:message = get(l:error, 'message')
+    if !l:quiet
+      echoerr l:message
+    endif
+    return v:null
+  else
+    if !l:quiet
+      echoerr 'Unknown output type: ' . json_encode(a:output)
+    endif
+    return v:null
+  endif
 endfunction
 
 function! flow#textDocumentIdentifier() abort

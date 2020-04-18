@@ -7,3 +7,12 @@ nnoremap <buffer> <leader>f :call LanguageClient_textDocument_formatting()<CR>
 nnoremap <buffer> gr :call LanguageClient#textDocument_references()<CR>:lw<CR>
 nnoremap <buffer> <leader><space> :call LanguageClient#textDocument_codeAction()<CR>
 vnoremap <buffer> <leader>f :call LanguageClient#textDocument_rangeFormatting()<CR>
+
+function! LSPStatusLine() abort
+    return '%f ' . lsp#StatusLine()
+endfunction
+
+augroup LSPStatusLine
+  autocmd! * <buffer>
+  autocmd BufWinEnter <buffer> setlocal statusline=%!LSPStatusLine()
+augroup END
