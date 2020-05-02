@@ -16,7 +16,11 @@ function! FlowStatusLine()
   let l:percent = get(b:, 'flow_coverage_percent', -1)
   let l:message = get(b:, 'flow_coverage_message', '')
   let l:line = '%f ' . lsp#StatusLine()
-  let l:diagnosticsDict = LanguageClient#statusLineDiagnosticsCounts()
+  try
+    let l:diagnosticsDict = LanguageClient#statusLineDiagnosticsCounts()
+  catch
+      return l:line
+  endtry
   let l:errors = get(l:diagnosticsDict,'E',0)
   if l:percent == -1 || !flow#isCoverageEnabled() || l:errors > 0
     return l:line
