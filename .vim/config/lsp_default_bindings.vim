@@ -9,7 +9,7 @@ nnoremap <buffer> <leader><space> :call LanguageClient#textDocument_codeAction()
 vnoremap <buffer> <leader>f :call LanguageClient#textDocument_rangeFormatting()<CR>
 
 function! LSPStatusLine() abort
-    return '%f ' . lsp#StatusLine()
+    return '%f ' . lsp_addons#StatusLine()
 endfunction
 
 augroup LSPStatusLine

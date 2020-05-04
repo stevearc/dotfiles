@@ -15,7 +15,7 @@ augroup END
 function! FlowStatusLine()
   let l:percent = get(b:, 'flow_coverage_percent', -1)
   let l:message = get(b:, 'flow_coverage_message', '')
-  let l:line = '%f ' . lsp#StatusLine()
+  let l:line = '%f ' . lsp_addons#StatusLine()
   try
     let l:diagnosticsDict = LanguageClient#statusLineDiagnosticsCounts()
   catch

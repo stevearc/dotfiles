@@ -1,4 +1,4 @@
-function! lsp#StatusLine() abort
+function! lsp_addons#StatusLine() abort
     try
         let l:diagnosticsDict = LanguageClient#statusLineDiagnosticsCounts()
     catch
