@@ -142,14 +142,25 @@ find_pull_request() {
 }
 
 show_modified_files() {
-  local root=$(git rev-parse --show-toplevel)
-  git status --porcelain | \
-    sed '/\/$/d' | \
-    sed '/^ *D /d' | \
-    awk '{print $2}' | \
-    while read filename
-      do echo "$root/$filename"
-    done
+  local commit="$1"
+  local root=
+  root=$(git rev-parse --show-toplevel)
+  if [ -n "$commit" ]; then
+    git diff-tree --no-commit-id --name-status -r "$commit" | \
+      grep "^[AM]" | \
+      awk '{print $2}' | \
+      while read -r filename
+        do echo "$root/$filename"
+      done
+  else
+    git status --porcelain | \
+      sed '/\/$/d' | \
+      sed '/^ *D /d' | \
+      awk '{print $2}' | \
+      while read -r filename
+        do echo "$root/$filename"
+      done
+  fi
 }
 
 $*
