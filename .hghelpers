@@ -19,4 +19,9 @@ pretty_hg_log() {
     less -FXRS
 }
 
+modified() {
+  local rev="${1-.}"
+  hg status --rev "${rev}^:${rev}" 2>/dev/null | grep "^\(A\|M\)" | awk '{print $2}'
+}
+
 $*
