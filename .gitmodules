@@ -94,3 +94,9 @@
 [submodule ".vim/bundle/nvim-yarp"]
 	path = .vim/bundle/nvim-yarp
 	url = https://github.com/roxma/nvim-yarp
+[submodule ".vim/bundle/nvim-lsp"]
+	path = .vim/bundle/nvim-lsp
+	url = https://github.com/neovim/nvim-lsp.git
+[submodule ".vim/bundle/deoplete-lsp"]
+	path = .vim/bundle/deoplete-lsp
+	url = https://github.com/Shougo/deoplete-lsp.git

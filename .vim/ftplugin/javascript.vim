@@ -5,7 +5,6 @@ let b:neoformat_enabled_javascript = ['prettier']
 let g:javascript_plugin_flow = 1
 
 source ~/.vim/config/lsp_default_bindings.vim
-
 augroup jsfmt
   autocmd! * <buffer>
   " This calls out to Neoformat, but only if @format is in the jsdoc
@@ -27,10 +26,27 @@ function! FlowStatusLine()
   endif
   return l:line . ' [' . l:percent . '%%]'
 endfunction
-augroup FlowCoverageStatusLine
-  autocmd! * <buffer>
-  autocmd BufWinEnter <buffer> setlocal statusline=%!FlowStatusLine()
-augroup END
 
-let g:flow_coverage_enabled = v:true
-nnoremap <buffer> <leader>c :FlowCoverageGlobalToggle<CR>
+if luaeval('vim.lsp ~= null')
+lua << END
+  require'nvim_lsp'.flow.setup{
+    cmd = {"flow", "lsp"};
+    settings = {
+      flow = {
+        lazyMode = "--lazy";
+        showUncovered = true;
+        stopFlowOnExit = false;
+        useBundledFlow = false;
+      }
+    }
+  }
+END
+else
+  augroup FlowCoverageStatusLine
+    autocmd! * <buffer>
+    autocmd BufWinEnter <buffer> setlocal statusline=%!FlowStatusLine()
+  augroup END
+
+  let g:flow_coverage_enabled = v:true
+  nnoremap <buffer> <leader>c :FlowCoverageGlobalToggle<CR>
+endif

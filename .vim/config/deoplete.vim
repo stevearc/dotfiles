@@ -18,15 +18,20 @@ call deoplete#custom#option('keyword_patterns', {
     \ 'php': '[a-zA-Z_]([a-zA-Z0-9_]+:?)*',
     \})
 call deoplete#custom#option('min_pattern_length', 1)
+if luaeval('vim.lsp == null')
+    let s:lsp_source = 'LanguageClient'
+else
+    let s:lsp_source = 'lsp'
+endif
 call deoplete#custom#option('sources', {
 \ '_': ['ultisnips'],
 \ 'cs': ['omnisharp', 'ultisnips'],
-\ 'rust': ['LanguageClient', 'ultisnips'],
-\ 'sh': ['LanguageClient', 'ultisnips'],
-\ 'php': ['LanguageClient', 'ultisnips'],
+\ 'rust': [s:lsp_source, 'ultisnips'],
+\ 'sh': [s:lsp_source, 'ultisnips'],
+\ 'php': [s:lsp_source, 'ultisnips'],
 \ 'python': ['jedi', 'ultisnips'],
-\ 'javascript': ['LanguageClient', 'ultisnips'],
-\ 'javascript.jsx': ['LanguageClient', 'ultisnips'],
+\ 'javascript': [s:lsp_source, 'ultisnips'],
+\ 'javascript.jsx': [s:lsp_source, 'ultisnips'],
 \ 'hgcommit': ['tasks', 'ultisnips'],
 \})
 
