@@ -3,9 +3,8 @@ if has('gui_running') || $COLORTERM ==# "truecolor"
 endif
 
 " SOLARIZED
-let g:solarized_visibility="high"
 function! s:SetSolarized() abort
-  colorscheme solarized8_high
+  colorscheme solarized8
 endfunction
 
 " space-vim
