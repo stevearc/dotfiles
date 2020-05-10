@@ -23,6 +23,117 @@ _frames_doc() {
   echo "Extract frames from a video"
 }
 
+# Compress {{{1
+
+_cmd_compress() {
+  local usage="compress <INPUT> <OUTPUT>
+
+Options:
+  -c CRF    Constant Rate Factor (try 18-25. Higher means more compression)
+"
+  parseargs "$usage" "$@"
+  _run "ffmpeg -i '$INPUT' -crf ${CRF-22} '$OUTPUT'"
+}
+_compress_doc() {
+  echo "Compress a video"
+}
+
+# To GIF {{{1
+
+_cmd_togif() {
+  local usage="togif <INPUT> <OUTPUT>
+
+Options:
+  -s START       Start time
+  -t DURATION    Duration of gif
+  -f FPS         Frames per Second (default 12)
+  -w WIDTH       Width of resulting gif (default 1280)
+"
+  parseargs "$usage" "$@"
+  local startargs=
+  if [ -n "$START" ]; then
+    startargs="-ss '$START'"
+  fi
+  local durationargs=
+  if [ -n "$DURATION" ]; then
+    durationargs="-t '$DURATION'"
+  fi
+  _run "ffmpeg $startargs $durationargs -i '$INPUT' -filter_complex '[0:v] fps=${FPS-12},scale=w=${WIDTH-1280}:h=-1,split [a][b];[a] palettegen [p];[b][p] paletteuse' '$OUTPUT'"
+}
+_togif_doc() {
+  echo "Convert a video into a GIF"
+}
+
+# To MP3 {{{1
+
+_cmd_tomp3() {
+  local usage="tomp3 [<FILE>...]"
+  parseargs "$usage" "$@"
+  for file in $FILE; do
+    pushd "$(dirname "$file")" > /dev/null
+    local base=
+    base="$(basename "$file")"
+    local output="${base%.*}.mp3"
+    if [ -e "$output" ]; then
+      echo "Skipping $file - output file $output already exists!"
+      continue
+    fi
+    echo "Converting $file to $output"
+    _run "ffmpeg -i '$file' -vn -f mp3 '$output'"
+    popd > /dev/null
+  done
+}
+_tomp3_doc() {
+  echo "Convert a file into a MP3"
+}
+
+# Stabilize {{{1
+
+_cmd_stabilize() {
+  local usage="stabilize <INFILE> <OUTFILE>
+
+Options:
+  -s SHAKINESS, --shakiness=SHAKINESS  Shakiness [1-10] (default 5)
+  -t STEPSIZE, --stepsize=STEPSIZE     Step size [0-100] (default 6)
+  -a ACCURACY, --accuracy=ACCURACY     Accuracy [1-15] (default 5)
+  -p, --process                        Skip detect, only run transform                                   
+  -z ZOOM, --zoom=ZOOM                 Percent to zoom in [-500-500] (default 0)
+  -o OPTZOOM, --optzoom=OPTZOOM        Automatically determine optimal zoom. 1 - static zoom, 2 - adaptive zoom (default 1)
+  -m SMOOTHING, --smoothing=SMOOTHING  Number of frames for lowpass filtering (2N + 1 frames) [0-100] (default 15)
+  --vectors=VECTORS                    Intermediate vectors file
+"
+  parseargs "$usage" "$@"
+  local transform_vectors="${VECTORS-${INFILE}.trf}"
+  if [ -z "$PROCESS" ]; then
+    _run "ffmpeg -i '$INFILE' -vf 'vidstabdetect=stepsize=${STEPSIZE-6}:shakiness=${SHAKINESS-5}:accuracy=${ACCURACY-5}:result=$transform_vectors' -f null -"
+  fi
+  _run "ffmpeg -i '$INFILE' -vf 'vidstabtransform=input=${transform_vectors}:zoom=${ZOOM-0}:optzoom=${OPTZOOM-1}:smoothing=${SMOOTHING-15},unsharp=5:5:0.8:3:3:0.4' -vcodec libx264 -preset slow -tune film -crf 18 -acodec copy '$OUTFILE'"
+}
+_stabilize_doc() {
+  echo "Stabilize a video"
+}
+
+# Speed {{{1
+
+_cmd_speed() {
+  local usage="speed <INPUT> <OUTPUT>
+
+Options:
+  -r RATE    Multiplier for video speed
+"
+  parseargs "$usage" "$@"
+  local rate="1"
+  local invrate="1"
+  if [ -n "$RATE" ]; then
+    rate="$RATE"
+    invrate="$(echo "1.0 / $RATE" | bc -l | sed 's/0*$//')"
+  fi
+  _run "ffmpeg -i '$INPUT' -filter_complex '[0:v]setpts=${invrate}*PTS[v];[0:a]atempo=${rate}[a]' -map '[v]' -map '[a]' '$OUTPUT'"
+}
+_speed_doc() {
+  echo "Speed up or slow down a video"
+}
+
 # Stop Motion {{{1
 
 _cmd_stopmotion() {
