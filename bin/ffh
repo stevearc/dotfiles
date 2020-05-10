@@ -1,0 +1,209 @@
+#!/bin/bash
+source parseargs.sh
+set -e
+
+
+# Frames {{{1
+
+_cmd_frames() {
+  local usage="frames <INPUT>
+
+Options:
+  -f FILENAME      Base name of frames
+  -r RATE          Framerate (e.g. 1/1, 1/60)
+"
+  parseargs "$usage" "$@"
+  local ratestr=""
+  if [ -n "$RATE" ]; then
+    ratestr="-r $RATE"
+  fi
+  _run "ffmpeg -i $INPUT $ratestr ${FILENAME}%03d.jpg"
+}
+_frames_doc() {
+  echo "Extract frames from a video"
+}
+
+# Stop Motion {{{1
+
+_cmd_stopmotion() {
+  local usage="stopmotion <PATTERN> <OUTPUT>
+
+Options:
+  -f FRAMERATE     Frames per second (default 30)
+  -c CRF           Constant Rate Factor (15-25 is good)
+"
+  parseargs "$usage" "$@"
+  local frames="${FRAMERATE-30}"
+  local crf=""
+  if [ -n "$CRF" ]; then
+    crf="-crf $CRF"
+  fi
+  _run "ffmpeg -framerate $frames -pattern_type glob -i '$PATTERN' -vcodec libx264 $crf -pix_fmt yuv420p $OUTPUT"
+}
+_stopmotion_doc() {
+  echo "Compile images into a video"
+}
+
+# Side by Side {{{1
+
+_cmd_sidebyside() {
+  local usage="sidebyside <INPUT1> <INPUT2> <OUTPUT>"
+  parseargs "$usage" "$@"
+  _run "ffmpeg -i $INPUT1 -i $INPUT2 -filter_complex '[0:v]pad=iw*2:ih[int];[int][1:v]overlay=W/2:0[vid]' -map [vid] -c:v libx264 -crf 23 -preset veryfast $OUTPUT"
+}
+_sidebyside_doc() {
+  echo "Put two videos side-by-side"
+}
+
+# Screenshot {{{1
+
+_cmd_screenshot() {
+  local usage="screenshot <INPUT> <TIME> <OUTPUT>
+
+Notes:
+  TIME     Format is \"hh:mm:ss\"
+"
+  parseargs "$usage" "$@"
+  _run "ffmpeg -ss $TIME -i $INPUT -vframes 1 -q:v 2 $OUTPUT"
+}
+_screenshot_doc() {
+  echo "Extract a screenshot from a video"
+}
+
+# Clip {{{1
+
+_cmd_clip() {
+  local usage="clip <INPUT> <OUTPUT> [<TIME>...]
+
+Notes:
+  TIME     Format is \"hh:mm:ss\"
+"
+  parseargs "$usage" "$@"
+  if [ -e "$OUTPUT" ]; then
+    echo "File '$OUTPUT' already exists!"
+    return 1
+  fi
+  local i=1
+  local tmpbase="tmp-${RANDOM}"
+  local tmpfiles="$tmpbase-files.txt"
+  local cleancmd="rm -f $tmpfiles"
+
+  if [ -z "$TIME" ]; then
+    cp "$INPUT" "$OUTPUT"
+    return
+  fi
+
+  for range in $TIME; do
+    local _start=$(_convert_time "${range%%-*}")
+    local _stop=$(_convert_time "${range##*-}")
+    local duration=
+    if [ -n "$_stop" ]; then
+      local duration=$((_stop - _start))
+    fi
+    local tmpfile="${tmpbase}-${i}.mp4"
+    __clip "$INPUT" "$_start" "$duration" "$tmpfile"
+    echo "file '$tmpfile'" >> "$tmpfiles"
+    cleancmd="$cleancmd $tmpfile"
+    i=$((i+1))
+  done
+  _run "ffmpeg -f concat -i \"$tmpfiles\" -c copy \"$OUTPUT\""
+  _run "$cleancmd"
+
+}
+_clip_doc() {
+  echo "Extract clips from a video"
+}
+
+__clip() {
+  local input="$1"
+  local start="$2"
+  local duration_args=
+  if [ -n "$3" ]; then
+    local duration_args="-t $3"
+  fi
+  local output="$4"
+  # try libfdk_aac if aac doesn't work
+  _run "ffmpeg -y -i \"$input\" -ss $start $duration_args -acodec aac -vcodec h264 \"$output\""
+}
+
+# Concat {{{1
+
+_cmd_concat() {
+  local usage="concat <OUTPUT> [<INPUT>...]"
+  parseargs "$usage" "$@"
+  local tmpfiles="tmp-${RANDOM}-files.txt"
+  for input in $INPUT; do
+    echo "file '$input'" >> "$tmpfiles"
+  done
+  if [ ! -e "$tmpfiles" ]; then
+    # No inputs provided
+    return 0
+  fi
+  _run "ffmpeg -f concat -i \"$tmpfiles\" -c copy \"$OUTPUT\""
+  rm -f "$tmpfiles"
+}
+_concat_doc() {
+  echo "Concat multiple videos into one"
+}
+
+# Concat 2 {{{1
+
+_cmd_concat2() {
+  local usage="concat2 <OUTPUT> [<INPUT>...]"
+  parseargs "$usage" "$@"
+  if [ -z "$INPUT" ]; then
+    return 0
+  fi
+  local tmpbase="tmp-${RANDOM}"
+  local intermediate_all="$tmpbase-intermediate-all.mpg"
+  local cleancmd="rm -f $intermediate_all"
+  let n="0" || :
+  for input in $INPUT; do
+    local intermediate="$tmpbase-$n.mpg"
+    _run "ffmpeg -i $input -qscale:v 1 $intermediate"
+    cleancmd="$cleancmd '$intermediate'"
+    let n="$n + 1"
+  done
+  cat $tmpbase-*.mpg > "$intermediate_all"
+  _run "ffmpeg -i $intermediate_all -qscale:v 2 $OUTPUT"
+  eval "$cleancmd"
+}
+_concat2_doc() {
+  echo "Concat multiple videos into one (alternate implementation)"
+}
+
+# Utils {{{1
+
+_run() {
+  echo "$1"
+  eval "$1"
+}
+
+_convert_time() {
+  if [[ "$1" =~ .*:.* ]]; then
+    local seconds="${1##*:}"
+    # Trim off leading zeroes
+    local seconds="${seconds##0}"
+    local minutes="${1%%:*}"
+    echo "$((minutes*60 + seconds))"
+  else
+    echo "$1"
+  fi
+}
+
+main() {
+  local cmd="$1"; shift || :
+  if [ -z "$cmd" ]; then
+    local cmds
+    cmds="$(declare -F | cut -f 3 -d ' ' | grep "^_cmd_" | sed 's/^_cmd_//' | sort)"
+    (for cmd in $cmds; do
+      echo -n "$cmd | "
+      _${cmd}_doc
+    done) | column -s "|" -t
+  else
+    _cmd_$cmd "$@"
+  fi
+}
+
+main "$@"
+# vim:fen:fdm=marker:fmr={{{,}}}:fdl=0:fdc=1
