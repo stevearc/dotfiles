@@ -1,4 +1,3 @@
-let g:ale_emit_conflict_warnings = 0
 " Load plugins from the bundle directory
 call pathogen#infect()
 call pathogen#helptags()
@@ -172,7 +171,6 @@ source ~/.vim/config/easymotion.vim
 source ~/.vim/config/grep.vim
 source ~/.vim/config/quickfix.vim
 source ~/.vim/config/session.vim
-source ~/.vim/config/ale.vim
 source ~/.vim/config/neoformat.vim
 if filereadable(expand('~/.local.vimrc'))
   source ~/.local.vimrc

@@ -11,7 +11,6 @@ let g:qf_smart_jump = get(g:, 'qf_smart_jump', 0)
 if g:qf_update_position
   augroup QFUpdateListPosition
     autocmd!
-    autocmd User ALELintPost call quickerfix#UpdateQFListPositionBuffered(5)
     autocmd CursorMoved * call quickerfix#UpdateQFListPositionBuffered(g:qf_update_position_delay)
   augroup end
 endif

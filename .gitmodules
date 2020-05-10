@@ -37,9 +37,6 @@
 [submodule ".vim/bundle/vim-fireplace"]
 	path = .vim/bundle/vim-fireplace
 	url = https://github.com/tpope/vim-fireplace.git
-[submodule ".vim/bundle/ale"]
-	path = .vim/bundle/ale
-	url = https://github.com/w0rp/ale.git
 [submodule ".vim/bundle/neoformat"]
 	path = .vim/bundle/neoformat
 	url = https://github.com/sbdchd/neoformat.git

@@ -1,6 +1,5 @@
 source ~/.vim/config/lsp_default_bindings.vim
 
-let b:ale_linters = ['clangtidy']
 let b:neoformat_enabled_cpp = ['clangformat']
 
 augroup cppfmt

@@ -1,5 +1,4 @@
 " python-mode options
-let b:ale_linters = ['pycodestyle', 'pylint']
 let b:neoformat_enabled_python = ['black']
 
 " Use deoplete-jedi for completion

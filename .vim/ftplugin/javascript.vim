@@ -1,4 +1,3 @@
-let b:ale_enabled = 0
 let b:neoformat_enabled_javascript = ['prettier']
 
 " vim-javascript flow syntax highlighting
