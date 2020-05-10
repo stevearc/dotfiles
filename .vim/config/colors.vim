@@ -9,11 +9,9 @@ function! s:SetSolarized() abort
 endfunction
 
 " space-vim
-let g:space_vim_dark_background = 234
 function! s:SetSpaceVim() abort
   set background=dark
-  colorscheme space-vim-dark
-  hi LineNr guifg=#5C6370 ctermfg=59
+  colorscheme space_vim_theme
 endfunction
 
 set background=dark

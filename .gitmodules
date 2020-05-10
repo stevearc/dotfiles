@@ -79,9 +79,6 @@
 [submodule ".vim/bundle/jedi-vim"]
 	path = .vim/bundle/jedi-vim
 	url = https://github.com/davidhalter/jedi-vim.git
-[submodule ".vim/bundle/space-vim-dark"]
-	path = .vim/bundle/space-vim-dark
-	url = https://github.com/liuchengxu/space-vim-dark
 [submodule ".vim/bundle/vim-solarized8"]
 	path = .vim/bundle/vim-solarized8
 	url = https://github.com/lifepillar/vim-solarized8
@@ -100,3 +97,6 @@
 [submodule ".vim/bundle/deoplete-lsp"]
 	path = .vim/bundle/deoplete-lsp
 	url = https://github.com/Shougo/deoplete-lsp.git
+[submodule ".vim/bundle/space-vim-theme"]
+	path = .vim/bundle/space-vim-theme
+	url = https://github.com/liuchengxu/space-vim-theme.git
