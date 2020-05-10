@@ -1,6 +1,6 @@
 source ~/.vim/config/lsp_default_bindings.vim
 
-se makeprg=cargo\ build
+se makeprg=cargo\ $*
 
 augroup rustfmt
   autocmd! * <buffer>

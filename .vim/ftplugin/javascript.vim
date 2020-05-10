@@ -27,21 +27,7 @@ function! FlowStatusLine()
   return l:line . ' [' . l:percent . '%%]'
 endfunction
 
-if luaeval('vim.lsp ~= null')
-lua << END
-  require'nvim_lsp'.flow.setup{
-    cmd = {"flow", "lsp"};
-    settings = {
-      flow = {
-        lazyMode = "--lazy";
-        showUncovered = true;
-        stopFlowOnExit = false;
-        useBundledFlow = false;
-      }
-    }
-  }
-END
-else
+if luaeval('vim.lsp == null')
   augroup FlowCoverageStatusLine
     autocmd! * <buffer>
     autocmd BufWinEnter <buffer> setlocal statusline=%!FlowStatusLine()

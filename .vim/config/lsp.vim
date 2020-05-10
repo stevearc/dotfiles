@@ -61,4 +61,29 @@ else
     sign define LspDiagnosticsWarningSign text=•
     sign define LspDiagnosticsInformationSign text=.
     sign define LspDiagnosticsHintSign text=.
+
+
+    lua << END
+      require'nvim_lsp'.bashls.setup{}
+      require'nvim_lsp'.clangd.setup{}
+      require'nvim_lsp'.html.setup{}
+      require'nvim_lsp'.jsonls.setup{}
+      require'nvim_lsp'.pyls.setup{}
+      require'nvim_lsp'.rust_analyzer.setup{}
+      require'nvim_lsp'.tsserver.setup{}
+      require'nvim_lsp'.vimls.setup{}
+      require'nvim_lsp'.yamlls.setup{}
+
+      require'nvim_lsp'.flow.setup{
+        cmd = {"flow", "lsp", "--lazy"};
+        settings = {
+          flow = {
+            coverageSeverity = "warn";
+            showUncovered = true;
+            stopFlowOnExit = false;
+            useBundledFlow = false;
+          }
+        }
+      }
+END
 endif
