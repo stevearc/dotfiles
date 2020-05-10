@@ -57,10 +57,15 @@ else
     highlight link LspDiagnosticsHint ALEVirtualTextInfo
     highlight link LspDiagnosticsHintSign ALEInfoSign
 
-    sign define LspDiagnosticsErrorSign text=•
-    sign define LspDiagnosticsWarningSign text=•
-    sign define LspDiagnosticsInformationSign text=.
-    sign define LspDiagnosticsHintSign text=.
+    " solarized8 doesn't support ALEVirtualText
+    highlight link ALEVirtualTextError ALEError
+    highlight link ALEVirtualTextWarning ALEWarning
+    highlight link ALEVirtualTextInfo ALEInfo
+
+    sign define LspDiagnosticsErrorSign text=• numhl=ALEErrorSignLineNr
+    sign define LspDiagnosticsWarningSign text=• numhl=ALEWarningSignLineNr
+    sign define LspDiagnosticsInformationSign text=. numhl=ALEInfoSignLineNr
+    sign define LspDiagnosticsHintSign text=. numhl=ALEInfoSignLineNr
 
 
     lua << END

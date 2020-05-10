@@ -2,6 +2,8 @@ if has('gui_running') || $COLORTERM ==# "truecolor"
   set termguicolors
 endif
 
+let g:solarized_extra_hi_groups = 1
+
 " SOLARIZED
 function! s:SetSolarized() abort
   colorscheme solarized8
