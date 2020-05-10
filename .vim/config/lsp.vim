@@ -70,7 +70,9 @@ else
       require'nvim_lsp'.jsonls.setup{}
       require'nvim_lsp'.pyls.setup{}
       require'nvim_lsp'.rust_analyzer.setup{}
-      require'nvim_lsp'.tsserver.setup{}
+      require'nvim_lsp'.tsserver.setup{
+        filetypes = {"typescript", "typescriptreact", "typescript.tsx"};
+      }
       require'nvim_lsp'.vimls.setup{}
       require'nvim_lsp'.yamlls.setup{}
 
