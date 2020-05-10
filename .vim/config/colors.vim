@@ -11,7 +11,6 @@ endfunction
 
 " space-vim
 function! s:SetSpaceVim() abort
-  set background=dark
   colorscheme space_vim_theme
 endfunction
 
