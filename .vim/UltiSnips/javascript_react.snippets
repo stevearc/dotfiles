@@ -31,11 +31,11 @@ function $1(props: ${2:Props}): React.MixedElement {
 endsnippet
 
 snippet ro "$ReadOnly<>" 
-$ReadOnly<${2:{|$1|}}>$0
+$ReadOnly<${1:${VISUAL}}>
 endsnippet
 
 snippet props "type Props" b
-type Props = $ReadOnly<{|$1|}>;$0
+type Props = $ReadOnly<{$1}>;
 endsnippet
 
 # vim:ft=snippets:

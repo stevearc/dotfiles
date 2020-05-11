@@ -44,4 +44,8 @@ snippet fn "filename" !
 ${1:`!p snip.rv = fn`}
 endsnippet
 
+snippet fnn "filename no extension" !
+${1:`!p snip.rv = re.sub(r'\..*$', '', fn)`}
+endsnippet
+
 # vim:ft=snippets:
