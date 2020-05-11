@@ -12,7 +12,7 @@ declare -r DEFAULT_VIM_BUNDLES="ctrlp ultisnips vim-solarized8 vim-commentary vi
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r XFCE_DOTFILES=".xsessionrc"
-declare -r ALL_LANGUAGES="go python js arduino clojure cs sh"
+declare -r ALL_LANGUAGES="go python js arduino clojure cs"
 declare -r USAGE=\
 "$0 [OPTIONS]
 -h            Print this help menu
@@ -230,13 +230,11 @@ install-cli-after() {
     if confirm "From source?" n; then
       local from_source=1
       sudo apt-get install -y libtool autoconf automake cmake g++ gettext pkg-config \
-        unzip python-dev python-pip python3 python3-dev python3-venv ruby-dev
+        unzip python3 python3-dev python3-venv ruby-dev
       sudo apt-get install -y libtool-bin
     fi
-    hascmd virtualenv || sudo pip install -q virtualenv
 
     [ -d ~/.envs ] || mkdir ~/.envs
-    [ -d ~/.envs/py2 ] || virtualenv ~/.envs/py2
     [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
     ~/.envs/py2/bin/pip install -q pynvim
     ~/.envs/py3/bin/pip install -q pynvim
@@ -253,7 +251,6 @@ install-cli-after() {
       sudo apt-get install -y neovim
     fi
     if [ ! -e ~/.nvim_python ]; then
-      echo "let g:python_host_prog = \"$HOME/.envs/py2/bin/python\"" > ~/.nvim_python
       echo "let g:python3_host_prog = \"$HOME/.envs/py3/bin/python\"" >> ~/.nvim_python
     fi
     if [ ! -e ~/.config/nvim/init.vim ]; then
@@ -262,6 +259,9 @@ install-cli-after() {
 set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath = &runtimepath
 source ~/.vimrc
+if filereadable(expand('~/.local.vimrc'))
+  source ~/.local.vimrc
+endif
 EOF
     fi
   fi
@@ -380,7 +380,7 @@ install-language-python() {
     python-pip \
     ipython
 
-  sudo pip install --upgrade -q pip virtualenv autoenv
+  sudo pip install --upgrade -q pip autoenv
   checkpoint python
 }
 
@@ -388,7 +388,7 @@ install-language-rust() {
   if ! rustc --version > /dev/null; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
   fi
-  rustup component add rls rust-src
+  rustup component add rust-analyzer rust-src
   if [ ! -e ~/.bash.d/rust.sh ]; then
     echo 'export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"' > ~/.bash.d/rust.sh
   fi
@@ -461,17 +461,6 @@ install-language-js() {
   hascmd flow || yarn global add flow-bin
   cp-vim-bundle vim-css-color
   cp-vim-bundle closetag
-}
-
-install-language-sh() {
-  hascmd bash-language-server && return;
-  # We need npm for this
-  install-nvm
-  if hascmd yarn; then
-    yarn global add bash-language-server
-  else
-    npm install -g bash-language-server
-  fi
 }
 
 install-language-cs() {
