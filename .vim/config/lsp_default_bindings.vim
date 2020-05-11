@@ -1,3 +1,7 @@
+function! LSPStatusLine() abort
+    return '%f ' . lsp_addons#StatusLine()
+endfunction
+
 if luaeval('vim.lsp == null')
   nnoremap <buffer> K :call LanguageClient_textDocument_hover()<CR>
   nnoremap <buffer> gd :call LanguageClient_textDocument_definition()<CR>
@@ -9,9 +13,6 @@ if luaeval('vim.lsp == null')
   nnoremap <buffer> <leader><space> :call LanguageClient#textDocument_codeAction()<CR>
   vnoremap <buffer> <leader>f :call LanguageClient#textDocument_rangeFormatting()<CR>
 
-  function! LSPStatusLine() abort
-      return '%f ' . lsp_addons#StatusLine()
-  endfunction
 
   augroup LSPStatusLine
     autocmd! * <buffer>
@@ -33,6 +34,8 @@ else
 
   " TODO
   " code actions
+
+  let &l:statusline = '%!LSPStatusLine()'
 
   setlocal omnifunc=v:lua.vim.lsp.omnifunc
 endif
