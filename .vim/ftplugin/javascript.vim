@@ -1,4 +1,5 @@
 let b:neoformat_enabled_javascript = ['prettier']
+setlocal fdm=syntax
 
 " vim-javascript flow syntax highlighting
 let g:javascript_plugin_flow = 1
