@@ -106,3 +106,6 @@
 [submodule ".vim/bundle/vim-endwise"]
 	path = .vim/bundle/vim-endwise
 	url = https://github.com/tpope/vim-endwise
+[submodule ".vim/bundle/vim-gdscript3"]
+	path = .vim/bundle/vim-gdscript3
+	url = https://github.com/clktmr/vim-gdscript3.git
