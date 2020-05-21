@@ -32,5 +32,6 @@ else
   " TODO
   " code actions
 
-  setlocal omnifunc=v:lua.vim.lsp.omnifunc
+  " This produces errors right now. Possibly will be fixed in a later neovim
+  " setlocal omnifunc=v:lua.vim.lsp.omnifunc
 endif
