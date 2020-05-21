@@ -7,7 +7,6 @@
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
-declare -r BIN_EXTRA="parseargs/parseargs.sh"
 declare -r DEFAULT_VIM_BUNDLES="ctrlp ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar deoplete.nvim LanguageClient-neovim nvim-lsp deoplete-lsp space-vim-theme vim-hug-neovim-rpc nvim-yarp vim-surround editorconfig-vim vim-endwise"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
@@ -227,20 +226,16 @@ install-cli() {
 install-cli-after() {
   [ ! $LINUX ] && return
   if ! hascmd nvim && confirm "Install Neovim?" y; then
-    if confirm "From source?" n; then
-      local from_source=1
+    if confirm "From github appimage?" y; then
+      source "$REPO/bash.d/install_neovim.sh"
+      local version
+      install_neovim --list
+      version=$(prompt "Version?" stable)
+      install_neovim -i "$version"
+    elif confirm "From source?" n; then
       sudo apt-get install -y libtool autoconf automake cmake g++ gettext pkg-config \
         unzip python3 python3-dev python3-venv ruby-dev
       sudo apt-get install -y libtool-bin
-    fi
-
-    [ -d ~/.envs ] || mkdir ~/.envs
-    [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
-    ~/.envs/py2/bin/pip install -q pynvim
-    ~/.envs/py3/bin/pip install -q pynvim
-    hascmd gem && sudo gem install neovim
-
-    if [ -n "$from_source" ]; then
       pushd /tmp
       test -d neovim || git clone https://github.com/neovim/neovim.git
       cd neovim
@@ -250,6 +245,13 @@ install-cli-after() {
     else
       sudo apt-get install -y neovim
     fi
+
+    [ -d ~/.envs ] || mkdir ~/.envs
+    [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
+    ~/.envs/py2/bin/pip install -q pynvim
+    ~/.envs/py3/bin/pip install -q pynvim
+    hascmd gem && sudo gem install neovim
+
     if [ ! -e ~/.nvim_python ]; then
       echo "let g:python3_host_prog = \"$HOME/.envs/py3/bin/python\"" >> ~/.nvim_python
     fi
@@ -299,7 +301,11 @@ install-dotfiles() {
     rsync -lrp --delete --exclude bundle --exclude .git .vim "$HOME"
   fi
   cp -r bin "$HOME"
-  cp $BIN_EXTRA "$HOME/bin/"
+  if [ $SYMBOLIC ]; then
+    link "$REPO/parseargs/parseargs.sh" "$HOME/bin/parseargs.sh"
+  else
+    cp "$REPO/parseargs/parseargs.sh" "$HOME/bin/"
+  fi
   rsync -lrp .docker "$HOME"
   mkdir -p ~/.config
   rsync -lrp .config/nvim ~/.config/
@@ -315,11 +321,17 @@ install-dotfiles() {
     bash install.sh
     popd
   fi
-  cp bash.d/notifier.sh ~/.bash.d/
+  if [ $SYMBOLIC ]; then
+    link "$REPO/bash.d/notifier.sh" ~/.bash.d/notifier.sh
+    link "$REPO/bash.d/install_neovim.sh" ~/.bash.d/install_neovim.sh
+  else
+    cp bash.d/notifier.sh ~/.bash.d/
+    cp bash.d/install_neovim.sh ~/.bash.d/
+  fi
   if [ $WINDOWS ]; then
     rsync -lrp win/ "$HOME"
   fi
-  if [ $MAC ]; then
+  if [ -e ~/.bash_profile ]; then
     grep "source ~/.bashrc" ~/.bash_profile > /dev/null 2>&1 || echo "source ~/.bashrc" >> ~/.bash_profile
   fi
 }
@@ -638,7 +650,11 @@ setup-custom-packages() {
     sudo apt-get update -qq
     sudo apt-get install -yq docker-ce
     confirm "Allow $USER to use docker without sudo?" y && sudo adduser "$USER" docker
-    cp bash.d/bluepill.sh ~/.bash.d/
+    if [ $SYMBOLIC ]; then
+      link "$REPO/bash.d/bluepill.sh" ~/.bash.d/bluepill.sh
+    else
+      cp bash.d/bluepill.sh ~/.bash.d/
+    fi
     if [ ! -L /var/lib/docker ]; then
       sudo rm -rf /var/lib/docker
       sudo ln -sfT "$HOME/.docker" /var/lib/docker
