@@ -54,8 +54,8 @@ __load_from_uncompressed() {
     | cut -f 2 -d ' '
   stop_time=$(date +%s.%N)
   local runtime
-  runtime=$(echo "100 * ($stop_time - $start_time)" | bc -l | cut -f 1 -d .)
-  if [ $runtime -gt 50 ]; then
+  runtime=$(echo "1000 * ($stop_time - $start_time)" | bc -l | cut -f 1 -d .)
+  if [ $runtime -gt 500 ]; then
     __compress
   fi
 }
@@ -63,9 +63,8 @@ __load_from_uncompressed() {
 j() {
   declare -g -A JUMP_LOCATIONS
 
-  # TODO Don't know if this works yet
-  if command -v load_jumplocs > /dev/null; then
-    load_jumplocs
+  if command -v __load_jumplocs > /dev/null; then
+    __load_jumplocs
   fi
 
   if [ -z "$DISABLE_ADAPTIVE_JUMPLOCS" ]; then
@@ -76,7 +75,11 @@ j() {
       top_paths=$(__load_from_uncompressed)
     fi
     for path in $top_paths; do
-      JUMP_LOCATIONS[$(basename "$path")]="$path"
+      local key
+      key="$(basename "$path")"
+      if ! test "${JUMP_LOCATIONS[$key]+isset}"; then
+        JUMP_LOCATIONS[$key]="$path"
+      fi
     done
   fi
 
@@ -98,8 +101,17 @@ j() {
     echo "j" "[${!JUMP_LOCATIONS[*]}]"
     return
   else
+    if ! test "${JUMP_LOCATIONS[$key]+isset}"; then
+      echo "No jump location '$key'" >&2
+      return 1
+    fi
     local dest="${JUMP_LOCATIONS[$key]}"
-    cd "$dest" || return
+    if [ -d "$dest" ]; then
+      cd "$dest" || return 1
+    else
+      echo "Jump location '$key' leads to nonexistent dir '$dest'" >&2
+      return 1
+    fi
   fi
 }
 
