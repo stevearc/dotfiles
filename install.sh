@@ -519,7 +519,7 @@ install-nvm() {
   fi
   source $nvm_dir/nvm.sh
   echo "source $nvm_dir/nvm.sh" > ~/.bash.d/nvm.sh
-  local node_version=$(prompt "Install node version:" v10.11.0)
+  local node_version=$(prompt "Install node version:" v12.17.0)
   nvm ls $node_version || nvm install $node_version
   nvm ls default | grep $node_version || nvm alias default $node_version
   nvm current | grep $node_version || nvm use $node_version
