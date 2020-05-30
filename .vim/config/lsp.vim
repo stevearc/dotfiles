@@ -69,6 +69,8 @@ else
 
 
     lua << END
+      local util = require 'nvim_lsp/util'
+
       require'nvim_lsp'.bashls.setup{}
       require'nvim_lsp'.gdscript.setup{}
       require'nvim_lsp'.clangd.setup{}
@@ -78,6 +80,7 @@ else
       require'nvim_lsp'.rust_analyzer.setup{}
       require'nvim_lsp'.tsserver.setup{
         filetypes = {"typescript", "typescriptreact", "typescript.tsx"};
+        root_dir = util.root_pattern("tsconfig.json", ".git");
       }
       require'nvim_lsp'.vimls.setup{}
       require'nvim_lsp'.yamlls.setup{}
