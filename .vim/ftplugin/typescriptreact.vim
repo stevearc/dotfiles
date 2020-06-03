@@ -1,1 +1,1 @@
-source ~/.vim/config/lsp_default_bindings.vim
+source ~/.vim/ftplugin/typescript.vim

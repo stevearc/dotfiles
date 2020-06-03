@@ -1,5 +1,5 @@
 function! LSPStatusLine() abort
-    return '%f ' . lsp_addons#StatusLine()
+    return '%f ' . lsp_addons#StatusLine() . ' %=%l,%c'
 endfunction
 let &l:statusline = '%!LSPStatusLine()'
 

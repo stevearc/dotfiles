@@ -17,6 +17,8 @@ let g:neoformat_php_hackfmt = {
   \ 'stdin': 1,
   \ }
 
+" Use formatprg when available
+let g:neoformat_try_formatprg = 1
 
 let g:smartformat_enabled = 1
 
