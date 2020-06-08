@@ -70,3 +70,19 @@ vimm() {
   fi
 }
 export vimm
+
+scsv() {
+  local tmpfile
+  tmpfile="$(mktemp).sc"
+  local tablefile
+  tablefile="$(mktemp).txt"
+  local macro
+  macro="$(mktemp).sc"
+  echo -e "set tblstyle = 0\ntbl \"$tablefile\"\nquit" > "$macro"
+  cat "$1" | psc -k -d, > "$tmpfile"
+  sc "$tmpfile"
+  sc "$tmpfile" "$macro"
+  cat "$tablefile" | tr -d ' ' | tr ':' ',' > "$1"
+  rm -f "$tmpfile" "$tablefile" "$macro"
+}
+export scsv
