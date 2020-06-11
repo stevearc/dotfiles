@@ -109,3 +109,6 @@
 [submodule ".vim/bundle/vim-gdscript3"]
 	path = .vim/bundle/vim-gdscript3
 	url = https://github.com/clktmr/vim-gdscript3.git
+[submodule ".vim/bundle/vim-autoswap"]
+	path = .vim/bundle/vim-autoswap
+	url = https://github.com/gioele/vim-autoswap.git
