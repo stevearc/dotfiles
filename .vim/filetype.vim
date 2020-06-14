@@ -1,5 +1,4 @@
 " Detect filetypes
-au BufRead,BufNewFile *.jinja2,*.j2 setlocal ft=html
 au BufRead,BufNewFile *.snippets setlocal ft=snippets
 au BufRead,BufNewFile *.js setlocal ft=javascript.jsx
 au BufRead,BufNewFile *.js.flow setlocal ft=javascript.jsx
