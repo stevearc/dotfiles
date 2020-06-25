@@ -1,5 +1,6 @@
 " python-mode options
-let b:neoformat_enabled_python = ['black']
+let b:neoformat_enabled_python = ['isort', 'black']
+let b:neoformat_run_all_formatters = 1
 
 " Try using pyls instead of jedi-vim
 source ~/.vim/config/lsp_default_bindings.vim
