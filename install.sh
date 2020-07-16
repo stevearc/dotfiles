@@ -231,7 +231,7 @@ install-cli-after() {
   [ ! $LINUX ] && return
   if ! hascmd nvim && confirm "Install Neovim?" y; then
     if confirm "From github appimage?" y; then
-      source "$REPO/bash.d/install_neovim.sh"
+      source "$REPO/bash.d/10-install_neovim.sh"
       local version
       install_neovim --list
       version=$(prompt "Version?" stable)
@@ -327,11 +327,11 @@ install-dotfiles() {
   fi
   if [ $SYMBOLIC ]; then
     link "$REPO/bash.d/notifier.sh" ~/.bash.d/notifier.sh
-    link "$REPO/bash.d/install_neovim.sh" ~/.bash.d/install_neovim.sh
+    link "$REPO/bash.d/10-install_neovim.sh" ~/.bash.d/10-install_neovim.sh
     link "$REPO/bash.d/10-jump.sh" ~/.bash.d/10-jump.sh
   else
     cp bash.d/notifier.sh ~/.bash.d/
-    cp bash.d/install_neovim.sh ~/.bash.d/
+    cp bash.d/10-install_neovim.sh ~/.bash.d/
     cp bash.d/10-jump.sh ~/.bash.d/
   fi
   if [ $WINDOWS ]; then
