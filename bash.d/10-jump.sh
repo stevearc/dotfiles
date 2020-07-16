@@ -95,6 +95,7 @@ j() {
     for k in ${!JUMP_LOCATIONS[*]}; do
       if [ "$here" == "$(readlink -f "${JUMP_LOCATIONS[$k]}")" ]; then
         echo -n "$k"
+        break
       fi
     done
   elif [ -z "$key" ] || [ "$key" == "-h" ]; then

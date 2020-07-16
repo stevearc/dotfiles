@@ -325,11 +325,11 @@ install-dotfiles() {
   if [ $SYMBOLIC ]; then
     link "$REPO/bash.d/notifier.sh" ~/.bash.d/notifier.sh
     link "$REPO/bash.d/install_neovim.sh" ~/.bash.d/install_neovim.sh
-    link "$REPO/bash.d/jump.sh" ~/.bash.d/jump.sh
+    link "$REPO/bash.d/10-jump.sh" ~/.bash.d/10-jump.sh
   else
     cp bash.d/notifier.sh ~/.bash.d/
     cp bash.d/install_neovim.sh ~/.bash.d/
-    cp bash.d/jump.sh ~/.bash.d/
+    cp bash.d/10-jump.sh ~/.bash.d/
   fi
   if [ $WINDOWS ]; then
     rsync -lrp win/ "$HOME"
