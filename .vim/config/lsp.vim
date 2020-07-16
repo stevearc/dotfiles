@@ -76,7 +76,23 @@ else
       require'nvim_lsp'.clangd.setup{}
       require'nvim_lsp'.html.setup{}
       require'nvim_lsp'.jsonls.setup{}
-      require'nvim_lsp'.pyls.setup{}
+      require'nvim_lsp'.pyls.setup{
+        settings = {
+          pyls = {
+            plugins = {
+              mccabe = {
+                enabled = false;
+              };
+              pycodestyle = {
+                enabled = false;
+              };
+              yapf = {
+                enabled = false;
+              };
+            }
+          }
+        }
+      }
       require'nvim_lsp'.rust_analyzer.setup{}
       require'nvim_lsp'.tsserver.setup{
         filetypes = {"typescript", "typescriptreact", "typescript.tsx"};
