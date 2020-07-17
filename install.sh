@@ -684,7 +684,7 @@ setup-custom-packages() {
 }
 
 main() {
-  if [ -n "$SUDO_USER" ]; then
+  if [ "$(whoami)" == "root" ]; then
     echo "Do not run this script with sudo!"
     exit 1
   fi
