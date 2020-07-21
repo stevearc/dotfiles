@@ -15,7 +15,18 @@ Options:
     echo "Installing NVIM $VERSION"
     curl -L "https://github.com/neovim/neovim/releases/download/$VERSION/nvim.appimage" -o nvim.appimage
     chmod +x nvim.appimage
-    mv nvim.appimage ~/bin/nvim
+    if ! ./nvim.appimage +qall 2> /dev/null; then
+      mkdir -p ~/.appimages
+      mv nvim.appimage ~/.appimages
+      cd ~/.appimages
+      ./nvim.appimage --appimage-extract
+      mv squashfs-root nvim-appimage
+      ln -s -f ~/.appimages/nvim-appimage/AppRun ~/bin/nvim
+      rm nvim.appimage
+      cd
+    else
+      mv nvim.appimage ~/bin/nvim
+    fi
     echo -n "Installed "
     ~/bin/nvim --version | head -n 1
   else
