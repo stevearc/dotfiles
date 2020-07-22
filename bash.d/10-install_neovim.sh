@@ -19,7 +19,7 @@ Options:
       mkdir -p ~/.appimages
       mv nvim.appimage ~/.appimages
       cd ~/.appimages
-      ./nvim.appimage --appimage-extract
+      ./nvim.appimage --appimage-extract > /dev/null
       mv squashfs-root nvim-appimage
       ln -s -f ~/.appimages/nvim-appimage/AppRun ~/bin/nvim
       rm nvim.appimage
