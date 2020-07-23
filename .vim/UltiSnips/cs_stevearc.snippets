@@ -6,19 +6,16 @@ DOC_ELEMENTS = ["summary", "code", "example", "exception", "list", "para", "rema
 
 endglobal
 
-# Unity
-snippet dl "Debug.Log" !b
-Debug.Log(${1:"$2"});$0
-endsnippet
-snippet dlw "Debug.LogWarning" !b
-Debug.LogWarning(${1:"$2"});$0
-endsnippet
-snippet dle "Debug.LogError" !b
-Debug.LogError(${1:"$2"});$0
+snippet elerp "Exponential lerp" !w
+lerp(${1:target}, ${2:value}, Math.Pow(2, -${3:rate} * ${4:Time.deltaTime}))$0
 endsnippet
 
-snippet elerp "Exponential lerp" !w
-lerp(${1:target}, ${2:value}, Math.Pow(2, -${3:rate} * Time.deltaTime))$0
+snippet new "New cs file" !b
+using System;
+
+public class `!p snip.rv = re.sub(r'\..*$', '', fn)` {
+	$0
+}
 endsnippet
 
 # Documentation
