@@ -112,3 +112,6 @@
 [submodule ".vim/bundle/vim-autoswap"]
 	path = .vim/bundle/vim-autoswap
 	url = https://github.com/gioele/vim-autoswap.git
+[submodule ".vim/bundle/ale"]
+	path = .vim/bundle/ale
+	url = https://github.com/dense-analysis/ale.git

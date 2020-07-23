@@ -479,15 +479,15 @@ install-language-js() {
 }
 
 install-language-cs() {
-  cp-vim-bundle omnisharp-vim
+  cp-vim-bundle omnisharp-vim ale
   if [ ! $WSL ]; then
     return
   fi
   if [ ! -e "$C_DRIVE/OmniSharp" ]; then
     pushd /tmp
-    wget https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v1.32.1/omnisharp.http-win-x64.zip
+    curl -L https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v1.35.2/omnisharp-win-x64.zip -o omnisharp-win-x64.zip
     mkdir -p OmniSharp
-    (cd OmniSharp && unzip ../omnisharp.http-win-x64.zip)
+    (cd OmniSharp && unzip ../omnisharp-win-x64.zip)
     mv OmniSharp "$C_DRIVE"
     popd
   fi

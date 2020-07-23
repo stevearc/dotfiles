@@ -1,8 +1,11 @@
 " Use % to jump between region/endregion
 let b:match_words = '\s*#\s*region.*$:\s*#\s*endregion'
+
+let b:ale_linters = ['OmniSharp']
+
 let g:OmniSharp_server_stdio = 1
 
-nnoremap <buffer> K :call OmniSharp#TypeLookupWithoutDocumentation()<CR>
+nnoremap <buffer> K :call OmniSharp#actions#documentation#TypeLookup()<CR>
 
 " The following commands are contextual, based on the cursor position.
 nnoremap <buffer> gd m':OmniSharpGotoDefinition<CR>
@@ -34,7 +37,7 @@ nnoremap <buffer> <F5> :OmniSharpRestartAllServers<CR>
 
 augroup csfmt
   autocmd! * <buffer>
-  autocmd BufWriteCmd <buffer> call smartformat#Format('cs', 'call OmniSharp#CodeFormat({->execute("noau w")})')
+  autocmd BufWriteCmd <buffer> call smartformat#Format('cs', 'call OmniSharp#actions#format#Format({->execute("noau w")})')
 augroup END
 augroup csopts
   autocmd! * <buffer>

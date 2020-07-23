@@ -73,6 +73,7 @@ else
 
       require'nvim_lsp'.bashls.setup{}
       require'nvim_lsp'.gdscript.setup{}
+      -- require'nvim_lsp'.omnisharp.setup{}
       require'nvim_lsp'.clangd.setup{}
       require'nvim_lsp'.html.setup{}
       require'nvim_lsp'.jsonls.setup{}
