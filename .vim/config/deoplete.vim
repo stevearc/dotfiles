@@ -11,11 +11,11 @@ call deoplete#custom#var('omni', 'input_patterns', {
     \ 'ruby': ['[^. *\t]\.\w*', '[a-zA-Z_]\w*::'],
     \ 'java': '[^. *\t]\.\w*',
     \ 'cs': '\w+|[^. *\t]\.\w*',
-    \ 'php': '\w+|[^. \t]->\w*|\w+::\w*',
     \})
+    " \ 'php': '\w+|[^. \t]->\w*|\w+::\w*',
 " Allow a single colon into php keywords, but a double colon breaks it
 call deoplete#custom#option('keyword_patterns', {
-    \ 'php': '[a-zA-Z_]([a-zA-Z0-9_]+:?)*',
+    \ 'php': '([\w-]+:)*[\w-]+',
     \})
 call deoplete#custom#option('min_pattern_length', 1)
 if luaeval('vim.lsp == null')
