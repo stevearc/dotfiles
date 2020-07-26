@@ -5,6 +5,9 @@ let b:ale_linters = ['OmniSharp']
 
 let g:OmniSharp_server_stdio = 1
 
+se foldlevelstart=0
+let b:all_folded = 1
+
 nnoremap <buffer> K :call OmniSharp#actions#documentation#TypeLookup()<CR>
 
 " The following commands are contextual, based on the cursor position.
@@ -33,7 +36,7 @@ command! -buffer -nargs=1 Rename :call OmniSharp#RenameTo("<args>")
 
 nnoremap <buffer> <Leader>f :OmniSharpCodeFormat<CR>
 
-nnoremap <buffer> <F5> :OmniSharpRestartAllServers<CR>
+" nnoremap <buffer> <F5> :OmniSharpRestartAllServers<CR>
 
 augroup csfmt
   autocmd! * <buffer>

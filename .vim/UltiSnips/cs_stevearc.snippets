@@ -101,4 +101,21 @@ snippet "/// val" "<value>" !b
 /// </value>
 endsnippet
 
+snippet disposable "Disposable" !b
+~`!p snip.rv = fn[:-3]`() {
+	Dispose(false);
+}
+
+public void Dispose() {
+	Dispose(true);
+}
+
+protected virtual void Dispose(bool disposing) {
+	if (disposing) {
+		GC.SuppressFinalize(this);
+	}
+	$0
+}
+endsnippet
+
 # vim:ft=snippets:

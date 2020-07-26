@@ -25,7 +25,7 @@ else
 endif
 call deoplete#custom#option('sources', {
 \ '_': ['ultisnips'],
-\ 'cs': ['omnisharp', 'ultisnips'],
+\ 'cs': ['omni', 'ultisnips'],
 \ 'rust': [s:lsp_source, 'ultisnips'],
 \ 'sh': [s:lsp_source, 'ultisnips'],
 \ 'php': [s:lsp_source, 'ultisnips'],
@@ -34,6 +34,7 @@ call deoplete#custom#option('sources', {
 \ 'javascript.jsx': [s:lsp_source, 'ultisnips'],
 \ 'hgcommit': ['tasks', 'ultisnips'],
 \})
+
 
 command! DeopleteDisable :call deoplete#disable()
 command! DeopleteEnable :call deoplete#enable()
