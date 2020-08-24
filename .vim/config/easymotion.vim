@@ -44,7 +44,7 @@ function! RelativeJump(motion, mode) range
     setlocal norelativenumber
 endfunction
 
-nnoremap <C-j> :call RelativeJump('j', 'n')<CR>
-nnoremap <C-k> :call RelativeJump('k', 'n')<CR>
-xnoremap <C-j> :call RelativeJump('j', 'x')<CR>
-xnoremap <C-k> :call RelativeJump('k', 'x')<CR>
+nnoremap <leader>j :call RelativeJump('j', 'n')<CR>
+nnoremap <leader>k :call RelativeJump('k', 'n')<CR>
+xnoremap <leader>j :call RelativeJump('j', 'x')<CR>
+xnoremap <leader>k :call RelativeJump('k', 'x')<CR>

@@ -1,5 +1,6 @@
 fun! Subgrep(args) abort
   exec "vimgrep /" . a:args . "/ " . b:netrw_curdir . '/**'
+  call quickerfix#Open('c')
 endf
 
 command! -buffer -bar -nargs=+ Subgrep call Subgrep('<args>')

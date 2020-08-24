@@ -8,4 +8,14 @@ elseif executable('ack')
 else
 endif
 
+function! BufGrep(text) abort
+  %argd
+  let buf = bufnr('%')
+  bufdo argadd %
+  exec 'b' buf
+  exec 'vimgrep /' . a:text . '/ ##'
+  call quickerfix#Open('c')
+endfunction
+
 nnoremap <leader>g :call smartgrep#grep(expand('<cword>'))<CR>
+command! -nargs=+ Bufgrep call BufGrep('<args>')
