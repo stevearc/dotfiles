@@ -63,14 +63,14 @@ or() {
 }
 export or
 alias hr='history -c; history -r'
-vimm() {
+__vimm() {
   if git rev-parse --git-dir 2> /dev/null; then
     vim -p $(git sm @)
   elif hg id 2> /dev/null; then
     vim -p $(hg mod)
   fi
 }
-export vimm
+alias vimm='__vimm'
 
 scsv() {
   local tmpfile
