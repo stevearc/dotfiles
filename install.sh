@@ -471,7 +471,8 @@ install-language-js() {
 }
 
 install-language-cs() {
-  cp-vim-bundle omnisharp-vim ale
+  cp-vim-bundle omnisharp-vim
+  cp-vim-bundle ale
   if [ ! $WSL ]; then
     return
   fi
