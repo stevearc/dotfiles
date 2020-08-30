@@ -10,7 +10,7 @@
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
-declare -r DEFAULT_VIM_BUNDLES="ctrlp ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar deoplete.nvim LanguageClient-neovim nvim-lsp deoplete-lsp space-vim-theme vim-hug-neovim-rpc nvim-yarp vim-surround editorconfig-vim vim-endwise vim-autoswap"
+declare -r DEFAULT_VIM_BUNDLES="ctrlp ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch vim-vinegar deoplete.nvim nvim-lsp deoplete-lsp space-vim-theme vim-hug-neovim-rpc nvim-yarp vim-surround editorconfig-vim vim-endwise vim-autoswap"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r XFCE_DOTFILES=".xsessionrc"
@@ -317,14 +317,6 @@ install-dotfiles() {
   for bundle in $DEFAULT_VIM_BUNDLES; do
     cp-vim-bundle "$bundle"
   done
-  if [ $WINDOWS ]; then
-    # This was causing a crazy issue where quitting vim would crash Msys2
-    rm -rf ~/.vim/bundle/LanguageClient-neovim
-  elif [ ! -e ~/.vim/bundle/LanguageClient-neovim/bin/languageclient ]; then
-    pushd ~/.vim/bundle/LanguageClient-neovim
-    bash install.sh
-    popd
-  fi
   if [ $SYMBOLIC ]; then
     link "$REPO/bash.d/notifier.sh" ~/.bash.d/notifier.sh
     link "$REPO/bash.d/10-install_neovim.sh" ~/.bash.d/10-install_neovim.sh

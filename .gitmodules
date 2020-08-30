@@ -67,9 +67,6 @@
 [submodule ".vim/bundle/deoplete.nvim"]
 	path = .vim/bundle/deoplete.nvim
 	url = https://github.com/Shougo/deoplete.nvim.git
-[submodule ".vim/bundle/LanguageClient-neovim"]
-	path = .vim/bundle/LanguageClient-neovim
-	url = https://github.com/autozimu/LanguageClient-neovim.git
 [submodule ".vim/bundle/deoplete-jedi"]
 	path = .vim/bundle/deoplete-jedi
 	url = https://github.com/zchee/deoplete-jedi.git
