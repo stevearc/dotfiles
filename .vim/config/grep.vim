@@ -19,3 +19,4 @@ endfunction
 
 nnoremap <leader>g :call smartgrep#grep(expand('<cword>'))<CR>
 command! -nargs=+ Bufgrep call BufGrep('<args>')
+nnoremap gR :call BufGrep(expand('<cword>'))<CR>
