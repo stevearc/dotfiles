@@ -16,15 +16,15 @@ endsnippet
 
 snippet for
 for (let ${2:i} = 0, len = ${1:arr}.length; $2 < len; $2++) {
-	const ${3:v} = $1[$2];${0:}
+  const ${3:v} = $1[$2];${0:}
 }
 endsnippet
 
 snippet class
 class ${1:className} {
-	constructor(${2:}) {
-		$0
-	}
+  constructor(${2:}) {
+    $0
+  }
 }
 endsnippet
 
@@ -33,7 +33,7 @@ import type {$1} from '$2';
 endsnippet
 
 snippet imp "import" b
-import {$1} from '$2';
+import ${1:{$2}} from '$2';
 endsnippet
 
 # vim:ft=snippets:

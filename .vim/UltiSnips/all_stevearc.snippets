@@ -40,12 +40,12 @@ snippet tm "tm" !
 ™
 endsnippet
 
-snippet fn "filename" !
-`!p snip.rv = fn`
+snippet fn "filename with extension" !w
+`!p snip.rv = re.sub(r'\..*$', '', fn)`
 endsnippet
 
-snippet fnn "filename no extension" !
-`!p snip.rv = re.sub(r'\..*$', '', fn)`
+snippet fnn "filename no extension" !w
+`!p snip.rv = fn`
 endsnippet
 
 # vim:ft=snippets:

@@ -6,22 +6,26 @@ snippet nme "null | React.MixedElement"
 null | React.MixedElement
 endsnippet
 
-snippet useEffect "useEffect" b
-useEffect(() => {
-  $0
-}, []);
+snippet useS "useState" b
+const [$1, [`!p snip.rv = "set" + t[1].capitalize()`] = useState($2);
 endsnippet
 
-snippet useCallback "useCallback" b
+snippet useE "useEffect" b
+useEffect(() => {
+  $1
+}, [$2]);
+endsnippet
+
+snippet useC "useCallback" b
 useCallback(($1) => {
   $2
 }, [$3]);
 endsnippet
 
-snippet useMemo "useMemo" b
+snippet useM "useMemo" b
 useMemo(() => {
   $1
-}, [$2]);$0
+}, [$2]);
 endsnippet
 
 snippet comp "Pure React component" b
