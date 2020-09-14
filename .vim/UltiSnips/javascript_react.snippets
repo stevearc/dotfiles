@@ -6,26 +6,8 @@ snippet nme "null | React.MixedElement"
 null | React.MixedElement
 endsnippet
 
-snippet useS "useState" b
-const [$1, [`!p snip.rv = "set" + t[1].capitalize()`] = useState($2);
-endsnippet
-
-snippet useE "useEffect" b
-useEffect(() => {
-  $1
-}, [$2]);
-endsnippet
-
-snippet useC "useCallback" b
-useCallback(($1) => {
-  $2
-}, [$3]);
-endsnippet
-
-snippet useM "useMemo" b
-useMemo(() => {
-  $1
-}, [$2]);
+snippet useS "useState Hook" !b
+const [${1}, set`!p snip.rv=t[1][0:1].upper() + t[1][1:]`] = useState(${3:"${4}"})
 endsnippet
 
 snippet comp "Pure React component" b
