@@ -276,3 +276,9 @@ function! ProseMode()
 endfunction
 
 command! ProseMode call ProseMode()
+
+" Fix * and # behavior to respect smartcase
+nnoremap <silent> * :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=1<CR>nzz
+nnoremap <silent> # :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=0<CR>nzz
+nnoremap <silent> g* :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR>nzz
+nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>nzz
