@@ -3,13 +3,12 @@ fun! Subgrep(args) abort
   call quickerfix#Open('c')
 endf
 
-command! -buffer -bar -nargs=+ Subgrep call Subgrep('<args>')
+command! -buffer -bar -nargs=+ Sgrep call Subgrep('<args>')
 command! -buffer -bar BookmarkGoto call bookmarks#GotoBookmark()
 command! -buffer -bar BookmarkDelete call bookmarks#DeleteBookmark()
 
 setlocal noswapfile
 
-nnoremap <buffer> <leader>db :BookmarkDelete<CR>
 nnoremap <buffer> gb :BookmarkGoto<CR>
 nnoremap <buffer> <leader>c :exec 'Explore ' . getcwd()<CR>
 
