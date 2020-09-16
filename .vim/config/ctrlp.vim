@@ -2,7 +2,6 @@
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_switch_buffer = 'eTvh'
 let g:ctrlp_map = '<leader>t'
-let g:ctrlp_tabpage_position = 'last'
 let g:ctrlp_by_filename = 1
 let g:ctrlp_extensions = ['line']
 
