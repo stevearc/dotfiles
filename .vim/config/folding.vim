@@ -2,8 +2,6 @@
 
 " Don't nest folds
 se foldnestmax=1
-" Close folds when cursor leaves
-se foldclose=all
 " Start with folds open
 se foldlevelstart=99
 
