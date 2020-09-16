@@ -84,6 +84,9 @@ set laststatus=2
 " Line width of 80
 set tw=80
 
+" CursorHold time default is 4s. Way too long
+set updatetime=100
+
 " Trim trailing whitespace
 function! TrimTrailingWhitespace()
   :%s/\s\+$//ge
@@ -227,6 +230,12 @@ nnoremap j gjzz
 nnoremap k gkzz
 vnoremap j gjzz
 vnoremap k gkzz
+
+" Helpful delete/change into blackhole buffer
+nnoremap <leader>d "_d
+nnoremap <leader>c "_c
+vnoremap <leader>d "_d
+vnoremap <leader>c "_c
 
 aug Checkt
   au!

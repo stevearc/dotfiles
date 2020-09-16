@@ -31,7 +31,7 @@ nnoremap <silent><buffer><expr> S
   \ defx#do_action('toggle_sort', 'time')
 nnoremap <silent><buffer><expr> D
   \ defx#do_action('remove')
-nnoremap <silent><buffer><expr> n
+nnoremap <silent><buffer><expr> <leader>n
   \ defx#do_action('rename')
 nnoremap <silent><buffer><expr> !
   \ defx#do_action('execute_command')
