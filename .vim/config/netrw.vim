@@ -19,11 +19,4 @@ function! s:ToggleTree() abort
 endfunction
 
 command! ToggleTree call s:ToggleTree()
-nnoremap <leader>w :ToggleTree<cr>
-
-" TODO:
-" reset root of tree view
-" open tree view expanded to file
-" Jump up/down section in tree view
-" expand tree to depth N
-" correctly set width of tree
+" nnoremap <leader>w :ToggleTree<cr>
