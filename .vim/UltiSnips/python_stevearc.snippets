@@ -17,6 +17,10 @@ def ${1:main}():
 
 endsnippet
 
+snippet const "const value" b
+$1: Final[Literal["$1"]] = "$1"
+endsnippet
+
 snippet try "Try / Except / Else / Finally" b!
 try:
 	${1:pass}
@@ -137,14 +141,6 @@ endsnippet
 #  Unittest  #
 ##############
 
-snippet unittest2 "Import unittest2" !b
-try:
-    import unittest2 as unittest  # pylint: disable=F0401
-except ImportError:
-    import unittest
-$0
-endsnippet
-
 snippet ae "Assert equal" b!
 self.assertEqual($1, $2)
 endsnippet
@@ -159,7 +155,19 @@ with self.assertRaises(${1:Exception}):
 endsnippet
 
 snippet aie "Assert items equal" !b
-self.assertItemsEqual($1, $2)
+self.assertCountEqual($1, $2)
+endsnippet
+
+snippet ain "Assert is None" !b
+self.assertIsNone($1)
+endsnippet
+
+snippet ainn "Assert is not None" !b
+self.assertIsNotNone($1)
+endsnippet
+
+snippet ace "Assert count equal" !b
+self.assertCountEqual($1, $2)
 endsnippet
 
 snippet T_ "Unittest class" b!

@@ -8,19 +8,6 @@ source ~/.vim/config/lsp_default_bindings.vim
 " Use deoplete-jedi for completion
 let g:jedi#completions_enabled = 0
 let g:jedi#auto_initialization = 0
-" setlocal omnifunc=jedi#completions
-" call jedi#configure_call_signatures()
-
-" nnoremap gd :call jedi#goto()<CR>
-" nnoremap ga :call jedi#goto_assignments()<CR>
-" nnoremap gr :call jedi#usages()<CR>
-" nnoremap <leader>r :call jedi#rename()<CR>
-" vnoremap <leader>r :call jedi#rename_visual()<CR>
-
-" command! -buffer -bar JediShowDocumentation call jedi#show_documentation()
-" setlocal keywordprg=":JediShowDocumentation"
-
-" let g:deoplete#sources#jedi#show_docstring = 1
 
 " Abbreviations
 iabbr <buffer> inn is not None
