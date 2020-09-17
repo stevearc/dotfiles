@@ -76,12 +76,6 @@
 [submodule ".vim/bundle/SimpylFold"]
 	path = .vim/bundle/SimpylFold
 	url = https://github.com/tmhedberg/SimpylFold.git
-[submodule ".vim/bundle/vim-hug-neovim-rpc"]
-	path = .vim/bundle/vim-hug-neovim-rpc
-	url = https://github.com/roxma/vim-hug-neovim-rpc
-[submodule ".vim/bundle/nvim-yarp"]
-	path = .vim/bundle/nvim-yarp
-	url = https://github.com/roxma/nvim-yarp
 [submodule ".vim/bundle/nvim-lsp"]
 	path = .vim/bundle/nvim-lsp
 	url = https://github.com/neovim/nvim-lsp.git
