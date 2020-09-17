@@ -10,9 +10,6 @@
 [submodule ".vim/bundle/vim-repeat"]
 	path = .vim/bundle/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
-[submodule ".vim/bundle/vim-css-color"]
-	path = .vim/bundle/vim-css-color
-	url = https://github.com/ap/vim-css-color.git
 [submodule ".vim/bundle/vim-snippets"]
 	path = .vim/bundle/vim-snippets
 	url = https://github.com/honza/vim-snippets.git
@@ -106,3 +103,6 @@
 [submodule ".vim/bundle/defx.nvim"]
 	path = .vim/bundle/defx.nvim
 	url = https://github.com/Shougo/defx.nvim.git
+[submodule ".vim/bundle/nvim-colorizer.lua"]
+	path = .vim/bundle/nvim-colorizer.lua
+	url = https://github.com/norcalli/nvim-colorizer.lua.git
