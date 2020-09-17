@@ -97,3 +97,6 @@
 [submodule ".vim/bundle/nvim-colorizer.lua"]
 	path = .vim/bundle/nvim-colorizer.lua
 	url = https://github.com/norcalli/nvim-colorizer.lua.git
+[submodule ".vim/bundle/aerial.nvim"]
+	path = .vim/bundle/aerial.nvim
+	url = git@github.com:stevearc/aerial.nvim.git

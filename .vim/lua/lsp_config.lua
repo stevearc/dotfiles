@@ -1,12 +1,28 @@
 local util = require 'nvim_lsp/util'
+local aerial = require 'aerial'
+
+aerial.set_open_automatic{
+  ['_'] = true,
+}
 
 local mapper = function(mode, key, result)
   vim.fn.nvim_buf_set_keymap(0, mode, key, result, {noremap = true, silent = true})
 end
 
-local custom_attach = function(client)
+local M = {}
+
+M.on_attach = function(client)
   local ft = vim.api.nvim_buf_get_option(0, 'filetype')
 
+  -- Aerial
+  vim.api.nvim_set_var('aerial_open_automatic_min_lines', 240)
+  mapper('n', '<leader>a', '<cmd>lua require"aerial".toggle()<CR>')
+  mapper('n', '{', '<cmd>lua require"aerial".prev_item()<CR>zzzv')
+  mapper('v', '{', '<cmd>lua require"aerial".prev_item()<CR>zzzv')
+  mapper('n', '}', '<cmd>lua require"aerial".next_item()<CR>zzzv')
+  mapper('v', '}', '<cmd>lua require"aerial".next_item()<CR>zzzv')
+
+  -- Standard LSP
   mapper('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>zzzv')
   mapper('n', '1gd', '<cmd>lua vim.lsp.buf.declaration()<CR>zzzv')
   mapper('n', '2gd', '<cmd>lua vim.lsp.buf.type_definition()<CR>zzzv')
@@ -18,7 +34,6 @@ local custom_attach = function(client)
   mapper('n', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
   mapper('i', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
   mapper('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>')
-  mapper('n', 'g0', '<cmd>lua vim.lsp.buf.document_symbol()<CR>')
   mapper('n', 'gs', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>')
   mapper('n', '<leader><space>', '<cmd>lua vim.lsp.buf.code_action()<CR>')
   mapper('n', '=', '<cmd>lua vim.lsp.buf.formatting()<CR>')
@@ -42,26 +57,27 @@ local custom_attach = function(client)
     vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)]]
   end
 
+  aerial.on_attach(client)
 end
 
 require'nvim_lsp'.bashls.setup{
-  on_attach = custom_attach,
+  on_attach = M.on_attach,
 }
 require'nvim_lsp'.gdscript.setup{
-  on_attach = custom_attach,
+  on_attach = M.on_attach,
 }
 -- require'nvim_lsp'.omnisharp.setup{}
 require'nvim_lsp'.clangd.setup{
-  on_attach = custom_attach,
+  on_attach = M.on_attach,
 }
 require'nvim_lsp'.html.setup{
-  on_attach = custom_attach,
+  on_attach = M.on_attach,
 }
 require'nvim_lsp'.jsonls.setup{
-  on_attach = custom_attach,
+  on_attach = M.on_attach,
 }
 require'nvim_lsp'.pyls_ms.setup{
-  on_attach = custom_attach,
+  on_attach = M.on_attach,
   settings = {
     python = {
       analysis = {
@@ -91,21 +107,21 @@ require'nvim_lsp'.pyls_ms.setup{
   }
 }
 require'nvim_lsp'.rust_analyzer.setup{
-  on_attach = custom_attach,
+  on_attach = M.on_attach,
 }
 require'nvim_lsp'.tsserver.setup{
-  on_attach = custom_attach,
+  on_attach = M.on_attach,
   filetypes = {"typescript", "typescriptreact", "typescript.tsx"};
   root_dir = util.root_pattern("tsconfig.json", ".git");
 }
 require'nvim_lsp'.vimls.setup{
-  on_attach = custom_attach,
+  on_attach = M.on_attach,
 }
 require'nvim_lsp'.yamlls.setup{
-  on_attach = custom_attach,
+  on_attach = M.on_attach,
 }
 require'nvim_lsp'.flow.setup{
-  on_attach = custom_attach,
+  on_attach = M.on_attach,
   cmd = {"flow", "lsp", "--lazy"};
   settings = {
     flow = {
@@ -116,3 +132,5 @@ require'nvim_lsp'.flow.setup{
     }
   }
 }
+
+return M

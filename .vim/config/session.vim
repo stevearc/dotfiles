@@ -1,10 +1,10 @@
 " Configure vim-session
 
-" Don't save help buffers
+" Don't save help, quickfix, empty buffers, or fold status
 set sessionoptions-=help
-
-" Don't save quickfix buffers
 set sessionoptions-=qf
+set sessionoptions-=blank
+set sessionoptions-=folds
 
 " Don't autoload sessions on startup
 let g:session_autoload = 'no'

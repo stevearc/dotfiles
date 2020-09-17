@@ -24,7 +24,6 @@ sign define LspDiagnosticsWarningSign text=• numhl=ALEWarningSignLineNr
 sign define LspDiagnosticsInformationSign text=. numhl=ALEInfoSignLineNr
 sign define LspDiagnosticsHintSign text=. numhl=ALEInfoSignLineNr
 
-
 lua << END
   require 'lsp_config'
 END
