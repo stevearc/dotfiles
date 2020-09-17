@@ -5,21 +5,25 @@ local mapper = function(mode, key, result)
 end
 
 local custom_attach = function(client)
-  mapper('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>zz')
-  mapper('n', '1gd', '<cmd>lua vim.lsp.buf.declaration()<CR>zz')
-  mapper('n', '2gd', '<cmd>lua vim.lsp.buf.type_definition()<CR>zz')
-  mapper('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>')
-  mapper('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>')
+  local ft = vim.api.nvim_buf_get_option(0, 'filetype')
+
+  mapper('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>zzzv')
+  mapper('n', '1gd', '<cmd>lua vim.lsp.buf.declaration()<CR>zzzv')
+  mapper('n', '2gd', '<cmd>lua vim.lsp.buf.type_definition()<CR>zzzv')
+  -- vim already has nice help behavior
+  if ft ~= 'vim' then
+    mapper('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>')
+  end
+  mapper('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>zzzv')
   mapper('n', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
   mapper('i', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
   mapper('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>')
-  -- These are not useful yet :/
-  -- mapper('n', 'g0', '<cmd>lua vim.lsp.buf.document_symbol()<CR>')
-  -- mapper('n', 'gs', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>')
+  mapper('n', 'g0', '<cmd>lua vim.lsp.buf.document_symbol()<CR>')
+  mapper('n', 'gs', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>')
   mapper('n', '<leader><space>', '<cmd>lua vim.lsp.buf.code_action()<CR>')
-  mapper('n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>')
+  mapper('n', '=', '<cmd>lua vim.lsp.buf.formatting()<CR>')
+  mapper('v', '=', '<cmd>lua vim.lsp.buf.range_formatting()<CR>')
   mapper('n', '<leader>r', '<cmd>lua vim.lsp.buf.rename()<CR>')
-  mapper('v', '<leader>f', '<cmd>lua vim.lsp.buf.range_formatting()<CR>')
 
   mapper('n', '<space>', '<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>')
   vim.cmd [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]
@@ -28,7 +32,6 @@ local custom_attach = function(client)
 
   vim.cmd("setlocal omnifunc=v:lua.vim.lsp.omnifunc")
 
-  local ft = vim.api.nvim_buf_get_option(0, 'filetype')
   local autoformat_fts = {
     ['rust'] = true,
     ['typescript'] = true,
