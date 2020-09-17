@@ -1,5 +1,3 @@
-source ~/.vim/config/lsp_default_bindings.vim
-
 iabbr <buffer> inn is nonnull
 
 augroup hackfmt

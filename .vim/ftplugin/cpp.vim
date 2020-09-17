@@ -1,5 +1,3 @@
-source ~/.vim/config/lsp_default_bindings.vim
-
 let b:neoformat_enabled_cpp = ['clangformat']
 
 augroup cppfmt

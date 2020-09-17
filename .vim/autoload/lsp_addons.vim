@@ -3,7 +3,11 @@ let s:interval = 5
 let s:timer = localtime() - s:interval
 
 function! lsp_addons#StatusLine() abort
-    let sl = ''
+    if luaeval('#vim.lsp.buf_get_clients() == 0')
+        return '%f %h%w%m%r %=%(%l,%c%V %= %P%)'
+    endif
+
+    let l:sl = ''
 
     if !s:ready && (localtime() - s:timer) > s:interval
         let s:ready = luaeval('vim.lsp.buf.server_ready()')
@@ -14,14 +18,14 @@ function! lsp_addons#StatusLine() abort
         try
             let l:errors = luaeval("vim.lsp.util.buf_diagnostics_count(\"Error\")")
             let l:warnings = luaeval("vim.lsp.util.buf_diagnostics_count(\"Warning\")")
-            let sl .= s:getStatus(l:errors, l:warnings)
+            let l:sl .= s:getStatus(l:errors, l:warnings)
         catch
             let s:ready = v:false
         endtry
     else
-        let sl .= '[LSP off]'
+        let l:sl .= '[LSP off]'
     endif
-    return sl
+    return '%f %h%w%m%r ' . l:sl . ' %=%(%l,%c%V %= %P%)'
 endfunction
 
 function! s:getStatus(errors, warnings) abort

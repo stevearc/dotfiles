@@ -1,3 +1,5 @@
+" Not using this atm
+
 let s:numbermap = {
 \ 'a': 1,
 \ 's': 2,
@@ -44,7 +46,7 @@ function! RelativeJump(motion, mode) range
     setlocal norelativenumber
 endfunction
 
-nnoremap <leader>j :call RelativeJump('j', 'n')<CR>
-nnoremap <leader>k :call RelativeJump('k', 'n')<CR>
-xnoremap <leader>j :call RelativeJump('j', 'x')<CR>
-xnoremap <leader>k :call RelativeJump('k', 'x')<CR>
+" nnoremap <leader>j :call RelativeJump('j', 'n')<CR>
+" nnoremap <leader>k :call RelativeJump('k', 'n')<CR>
+" xnoremap <leader>j :call RelativeJump('j', 'x')<CR>
+" xnoremap <leader>k :call RelativeJump('k', 'x')<CR>

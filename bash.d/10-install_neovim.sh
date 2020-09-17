@@ -15,7 +15,7 @@ Options:
     echo "Installing NVIM $VERSION"
     curl -L "https://github.com/neovim/neovim/releases/download/$VERSION/nvim.appimage" -o nvim.appimage
     chmod +x nvim.appimage
-    if ! ./nvim.appimage +qall 2> /dev/null; then
+    if ! ./nvim.appimage --headless +qall 2> /dev/null; then
       mkdir -p ~/.appimages
       mv nvim.appimage ~/.appimages
       cd ~/.appimages
@@ -27,6 +27,7 @@ Options:
     else
       mv nvim.appimage ~/bin/nvim
     fi
+    ~/bin/nvim --headless +UpdateRemotePlugins +qall
     echo -n "Installed "
     ~/bin/nvim --version | head -n 1
   else

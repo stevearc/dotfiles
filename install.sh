@@ -363,8 +363,6 @@ install-languages() {
 
 install-language-python() {
   cp .pylintrc "$HOME"
-  cp-vim-bundle jedi-vim
-  cp-vim-bundle deoplete-jedi
   cp-vim-bundle SimpylFold
   hascmd apt-get && sudo apt-get install -y python3 python3-distutils python3-venv
   if ! hascmd black; then
@@ -379,6 +377,13 @@ install-language-python() {
     python3 make_standalone.py pycodestyle
     mv pycodestyle ~/bin
   fi
+  if ! hascmd dotnet; then
+    pushd /tmp
+    curl -o dotnet-install.sh -L https://dot.net/v1/dotnet-install.sh
+    bash dotnet-install.sh -c Current --runtime dotnet
+    popd
+  fi
+  nvim --headless +"LspInstall pyls_ms" +qall
   # Early return on FB devserver
   if ! hascmd apt-get ; then return; fi
   has-checkpoint python && return

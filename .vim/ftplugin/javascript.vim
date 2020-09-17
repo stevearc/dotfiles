@@ -4,7 +4,6 @@ setlocal fdm=syntax
 " vim-javascript flow syntax highlighting
 let g:javascript_plugin_flow = 1
 
-source ~/.vim/config/lsp_default_bindings.vim
 augroup jsfmt
   autocmd! * <buffer>
   " This calls out to Neoformat, but only if @format is in the jsdoc
@@ -27,12 +26,10 @@ function! FlowStatusLine()
   return l:line . ' [' . l:percent . '%%]'
 endfunction
 
-if luaeval('vim.lsp == null')
-  augroup FlowCoverageStatusLine
-    autocmd! * <buffer>
-    autocmd BufWinEnter <buffer> setlocal statusline=%!FlowStatusLine()
-  augroup END
+" augroup FlowCoverageStatusLine
+"   autocmd! * <buffer>
+"   autocmd BufWinEnter <buffer> setlocal statusline=%!FlowStatusLine()
+" augroup END
 
-  let g:flow_coverage_enabled = v:true
-  nnoremap <buffer> <leader>c :FlowCoverageGlobalToggle<CR>
-endif
+" let g:flow_coverage_enabled = v:true
+" nnoremap <buffer> <leader>c :FlowCoverageGlobalToggle<CR>

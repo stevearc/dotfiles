@@ -117,7 +117,9 @@ set ff=unix
 " Set encoding to UTF
 set enc=utf-8
 
-" Line numbers on
+" Relative line numbers
+se relativenumber
+" Except for current line
 set nu
 
 " Enable use of mouse
@@ -196,7 +198,8 @@ function! RenameFile()
         redraw!
     endif
 endfunction
-map <leader>n :call RenameFile()<cr>
+" Replaced by defx
+" map <leader>n :call RenameFile()<cr>
 
 " Function to duplicate the current file
 function! DuplicateFile()
@@ -207,7 +210,8 @@ function! DuplicateFile()
         redraw!
     endif
 endfunction
-map <leader>m :call DuplicateFile()<cr>
+" Replaced by defx
+" map <leader>m :call DuplicateFile()<cr>
 
 " Map leader-r to do a global replace of a word
 nmap <leader>r :%s/<C-R>=expand("<cword>")<CR>/<C-R>=expand("<cword>")<CR>
@@ -224,6 +228,8 @@ nnoremap <C-u> <C-u>zz
 nnoremap G Gzz
 nnoremap <C-o> <C-o>zz
 nnoremap <C-i> <C-i>zz
+nnoremap { {zz
+nnoremap } }zz
 
 " j and k navigate line-wraps in a sane way (also vertical center)
 nnoremap j gjzz
@@ -269,11 +275,6 @@ inoremap <C-e> <C-o>$
 nmap <leader>gs :Gstatus<CR>
 nmap <leader>gh :Git! log -- %<CR>
 
-aug Colorize
-  au!
-  au BufReadPost * command! -buffer -bar Colorize call css_color#init('css', 'extended', 'cssFunction')
-aug END
-
 " Cmdr
 function! Cmdr(cmd)
   call system('nc localhost 8585', a:cmd)
@@ -292,3 +293,5 @@ nnoremap <silent> * :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=
 nnoremap <silent> # :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=0<CR>nzz
 nnoremap <silent> g* :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR>nzz
 nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>nzz
+
+let &l:statusline = '%!lsp_addons#StatusLine()'
