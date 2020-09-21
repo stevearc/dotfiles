@@ -100,3 +100,9 @@
 [submodule ".vim/bundle/aerial.nvim"]
 	path = .vim/bundle/aerial.nvim
 	url = git@github.com:stevearc/aerial.nvim.git
+[submodule ".vim/bundle/targets.vim"]
+	path = .vim/bundle/targets.vim
+	url = https://github.com/wellle/targets.vim.git
+[submodule ".vim/bundle/quickfix-reflector.vim"]
+	path = .vim/bundle/quickfix-reflector.vim
+	url = https://github.com/stefandtw/quickfix-reflector.vim.git
