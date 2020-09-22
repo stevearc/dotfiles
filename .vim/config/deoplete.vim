@@ -20,7 +20,6 @@ call deoplete#custom#option('keyword_patterns', {
 call deoplete#custom#option('min_pattern_length', 1)
 call deoplete#custom#option('sources', {
 \ '_': ['lsp', 'ultisnips'],
-\ 'cs': ['omni', 'ultisnips'],
 \ 'hgcommit': ['tasks', 'ultisnips'],
 \})
 
