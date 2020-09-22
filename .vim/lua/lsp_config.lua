@@ -38,20 +38,35 @@ M.on_attach = function(client)
   local ft = vim.api.nvim_buf_get_option(0, 'filetype')
   local config = ft_config[ft] or {}
 
+  -- Make all the "jump" commands call zvzz after execution
+  local jump_callbacks = {
+    'textDocument/declaration',
+    'textDocument/definition',
+    'textDocument/typeDefinition',
+    'textDocument/implementation',
+  }
+  for _,cb in pairs(jump_callbacks) do
+    local orig_callback = vim.lsp.callbacks[cb]
+    local new_callback = function(idk, method, result)
+      orig_callback(idk, method, result)
+      vim.cmd('normal! zvzz')
+    end
+    vim.lsp.callbacks[cb] = new_callback
+  end
+
   -- Aerial
   vim.api.nvim_set_var('aerial_open_automatic_min_lines', 200)
   mapper('n', '<leader>a', '<cmd>lua require"aerial".toggle()<CR>')
-  mapper('n', '{', '<cmd>lua require"aerial".prev_item()<CR>zzzv')
-  mapper('v', '{', '<cmd>lua require"aerial".prev_item()<CR>zzzv')
-  mapper('n', '}', '<cmd>lua require"aerial".next_item()<CR>zzzv')
-  mapper('v', '}', '<cmd>lua require"aerial".next_item()<CR>zzzv')
+  mapper('n', '{', '<cmd>lua require"aerial".prev_item()<CR>zvzz')
+  mapper('v', '{', '<cmd>lua require"aerial".prev_item()<CR>zvzz')
+  mapper('n', '}', '<cmd>lua require"aerial".next_item()<CR>zvzz')
+  mapper('v', '}', '<cmd>lua require"aerial".next_item()<CR>zvzz')
 
   -- Standard LSP
-  -- TODO the zzzv doesn't work because these are async :/
-  mapper('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>zzzv')
-  mapper('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>zzzv')
-  mapper('n', 'tgd', '<cmd>lua vim.lsp.buf.type_definition()<CR>zzzv')
-  mapper('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>zzzv')
+  mapper('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>')
+  mapper('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>')
+  mapper('n', 'tgd', '<cmd>lua vim.lsp.buf.type_definition()<CR>')
+  mapper('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>')
   mapper('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>')
   mapper('n', 'gs', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>')
   if config.help ~= false then
