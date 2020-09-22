@@ -9,13 +9,37 @@ local mapper = function(mode, key, result)
   vim.fn.nvim_buf_set_keymap(0, mode, key, result, {noremap = true, silent = true})
 end
 
+local ft_config = {
+  vim = {
+    help = false
+  },
+  cs = {
+    autoformat = true,
+    cursor_highlight = false,
+    code_action = false, -- TODO: this borks the omnisharp server
+  },
+  rust = {
+    autoformat = true
+  },
+  typescript = {
+    autoformat = true
+  },
+  typescriptreact = {
+    autoformat = true
+  },
+  ['typescript.jsx'] = {
+    autoformat = true
+  },
+}
+
 local M = {}
 
 M.on_attach = function(client)
   local ft = vim.api.nvim_buf_get_option(0, 'filetype')
+  local config = ft_config[ft] or {}
 
   -- Aerial
-  vim.api.nvim_set_var('aerial_open_automatic_min_lines', 240)
+  vim.api.nvim_set_var('aerial_open_automatic_min_lines', 200)
   mapper('n', '<leader>a', '<cmd>lua require"aerial".toggle()<CR>')
   mapper('n', '{', '<cmd>lua require"aerial".prev_item()<CR>zzzv')
   mapper('v', '{', '<cmd>lua require"aerial".prev_item()<CR>zzzv')
@@ -23,37 +47,37 @@ M.on_attach = function(client)
   mapper('v', '}', '<cmd>lua require"aerial".next_item()<CR>zzzv')
 
   -- Standard LSP
+  -- TODO the zzzv doesn't work because these are async :/
   mapper('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>zzzv')
-  mapper('n', '1gd', '<cmd>lua vim.lsp.buf.declaration()<CR>zzzv')
-  mapper('n', '2gd', '<cmd>lua vim.lsp.buf.type_definition()<CR>zzzv')
-  -- vim already has nice help behavior
-  if ft ~= 'vim' then
-    mapper('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>')
-  end
+  mapper('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>zzzv')
+  mapper('n', 'tgd', '<cmd>lua vim.lsp.buf.type_definition()<CR>zzzv')
   mapper('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>zzzv')
-  mapper('n', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
-  mapper('i', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
   mapper('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>')
   mapper('n', 'gs', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>')
-  mapper('n', '<leader><space>', '<cmd>lua vim.lsp.buf.code_action()<CR>')
+  if config.help ~= false then
+    mapper('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>')
+  end
+  mapper('n', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
+  mapper('i', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
+  if config.code_action ~= false then
+    mapper('n', '<leader><space>', '<cmd>lua vim.lsp.buf.code_action()<CR>')
+  end
   mapper('n', '=', '<cmd>lua vim.lsp.buf.formatting()<CR>')
   mapper('v', '=', '<cmd>lua vim.lsp.buf.range_formatting()<CR>')
   mapper('n', '<leader>r', '<cmd>lua vim.lsp.buf.rename()<CR>')
 
   mapper('n', '<space>', '<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>')
-  vim.cmd [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]
-  vim.cmd [[autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]]
-  vim.cmd [[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]]
+
+  if config.cursor_highlight ~= false then
+    vim.cmd [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]
+    vim.cmd [[autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]]
+    vim.cmd [[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]]
+  end
 
   vim.cmd("setlocal omnifunc=v:lua.vim.lsp.omnifunc")
 
-  local autoformat_fts = {
-    ['rust'] = true,
-    ['typescript'] = true,
-    ['typescriptreact'] = true,
-    ['typescript.jsx'] = true
-  }
-  if autoformat_fts[ft] then
+  -- TODO should check my custom autoformat dict
+  if config.autoformat then
     vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)]]
   end
 
@@ -66,7 +90,6 @@ require'nvim_lsp'.bashls.setup{
 require'nvim_lsp'.gdscript.setup{
   on_attach = M.on_attach,
 }
--- require'nvim_lsp'.omnisharp.setup{}
 require'nvim_lsp'.clangd.setup{
   on_attach = M.on_attach,
 }
@@ -74,6 +97,9 @@ require'nvim_lsp'.html.setup{
   on_attach = M.on_attach,
 }
 require'nvim_lsp'.jsonls.setup{
+  on_attach = M.on_attach,
+}
+require'nvim_lsp'.omnisharp.setup{
   on_attach = M.on_attach,
 }
 require'nvim_lsp'.pyls_ms.setup{

@@ -161,7 +161,6 @@ let g:format_dirs = {}
 if filereadable(expand('~/.formatdirs.vim'))
   source ~/.formatdirs.vim
 endif
-source ~/.vim/config/ale.vim
 source ~/.vim/config/colors.vim
 source ~/.vim/config/ctrlp.vim
 source ~/.vim/config/defx.vim

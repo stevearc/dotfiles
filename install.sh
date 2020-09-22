@@ -361,6 +361,22 @@ install-languages() {
   done
 }
 
+install-dotnet() {
+  if hascmd dotnet; then
+    return
+  fi
+  # From https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
+  pushd /tmp
+  wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+  sudo dpkg -i packages-microsoft-prod.deb
+
+  sudo apt-get update
+  sudo apt-get install -y apt-transport-https
+  sudo apt-get update
+  sudo apt-get install -y dotnet-sdk-3.1
+  popd
+}
+
 install-language-python() {
   cp .pylintrc "$HOME"
   cp-vim-bundle SimpylFold
@@ -377,12 +393,7 @@ install-language-python() {
     python3 make_standalone.py pycodestyle
     mv pycodestyle ~/bin
   fi
-  if ! hascmd dotnet; then
-    pushd /tmp
-    curl -o dotnet-install.sh -L https://dot.net/v1/dotnet-install.sh
-    bash dotnet-install.sh -c Current --runtime dotnet
-    popd
-  fi
+  install-dotnet
   nvim --headless +"LspInstall pyls_ms" +qall
   # Early return on FB devserver
   if ! hascmd apt-get ; then return; fi
@@ -475,30 +486,11 @@ install-language-js() {
 }
 
 install-language-cs() {
-  cp-vim-bundle omnisharp-vim
-  cp-vim-bundle ale
   if [ ! $WSL ]; then
     return
   fi
-  if [ ! -e "$C_DRIVE/OmniSharp" ]; then
-    pushd /tmp
-    curl -L https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v1.35.2/omnisharp-win-x64.zip -o omnisharp-win-x64.zip
-    mkdir -p OmniSharp
-    (cd OmniSharp && unzip ../omnisharp-win-x64.zip)
-    mv OmniSharp "$C_DRIVE"
-    popd
-  fi
-  local vimrc="$HOME/.local.vimrc"
-  local bin="$C_DRIVE/OmniSharp/OmniSharp.exe"
-  if [ ! -e "$vimrc" ] || ! grep -q "OmniSharp_server_path" "$vimrc"; then
-    echo "let g:OmniSharp_server_path = '$bin'" >> "$vimrc"
-  fi
-  if ! grep -q "OmniSharp_translate_cygwin_wsl" "$vimrc"; then
-    echo "let g:OmniSharp_translate_cygwin_wsl = 1" >> "$vimrc"
-  fi
-  if ! grep -q "OmniSharp_timeout" "$vimrc"; then
-    echo "let g:OmniSharp_timeout = 5" >> "$vimrc"
-  fi
+  install-dotnet
+  nvim --headless +"LspInstall omnisharp" +qall
 }
 
 
