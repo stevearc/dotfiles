@@ -55,6 +55,9 @@ set noshowmatch
 " Begin searching as soon as you start typing
 set incsearch
 
+" Magic preview for substitute and friends
+set inccommand
+
 " Highlight search matches
 set hls
 
