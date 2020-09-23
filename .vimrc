@@ -56,7 +56,7 @@ set noshowmatch
 set incsearch
 
 " Magic preview for substitute and friends
-set inccommand
+set inccommand=nosplit
 
 " Highlight search matches
 set hls
@@ -156,6 +156,21 @@ augroup end
 :cnoremap <Esc>d <S-right><Delete>
 :cnoremap <C-g>  <C-c>
 
+" Keep cursor in the vertical center of the editor
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+nnoremap G Gzz
+nnoremap <C-o> <C-o>zz
+nnoremap <C-i> <C-i>zz
+nnoremap { {zz
+nnoremap } }zz
+
+" j and k navigate line-wraps in a sane way (also vertical center)
+nnoremap j gjzz
+nnoremap k gkzz
+vnoremap j gjzz
+vnoremap k gkzz
+
 let g:polyglot_disabled = ['gdscript']
 
 " Load machine-local g:format_dirs var. Determines which paths will get
@@ -223,21 +238,6 @@ cabbr <expr> %% expand('%:p:h')
 
 " Map F5 to reload buffers from disk
 nnoremap <F5> :silent checktime<CR>
-
-" Keep cursor in the vertical center of the editor
-nnoremap <C-d> <C-d>zz
-nnoremap <C-u> <C-u>zz
-nnoremap G Gzz
-nnoremap <C-o> <C-o>zz
-nnoremap <C-i> <C-i>zz
-nnoremap { {zz
-nnoremap } }zz
-
-" j and k navigate line-wraps in a sane way (also vertical center)
-nnoremap j gjzz
-nnoremap k gkzz
-vnoremap j gjzz
-vnoremap k gkzz
 
 " Helpful delete/change into blackhole buffer
 nnoremap <leader>d "_d
