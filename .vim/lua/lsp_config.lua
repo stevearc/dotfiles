@@ -83,8 +83,6 @@ M.on_attach = function(client)
   -- Aerial
   vim.api.nvim_set_var('aerial_open_automatic_min_lines', 200)
   mapper('n', '<leader>a', '<cmd>lua require"aerial".toggle()<CR>')
-  vim.api.nvim_del_keymap('n', '}')
-  vim.api.nvim_del_keymap('n', '{')
   mapper('n', '{', '<cmd>lua require"aerial".prev_item()<CR>zvzz')
   mapper('v', '{', '<cmd>lua require"aerial".prev_item()<CR>zvzz')
   mapper('n', '}', '<cmd>lua require"aerial".next_item()<CR>zvzz')
