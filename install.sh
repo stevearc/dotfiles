@@ -229,7 +229,7 @@ install-cli() {
 
 install-cli-after() {
   [ ! $LINUX ] && return
-  if ! hascmd nvim && confirm "Install Neovim?" y; then
+  if ! hascmd nvim; then
     if confirm "From github appimage?" y; then
       source "$REPO/bash.d/10-install_neovim.sh"
       local version
@@ -249,24 +249,24 @@ install-cli-after() {
     else
       sudo apt-get install -y neovim
     fi
+  fi
 
-    [ -d ~/.envs ] || mkdir ~/.envs
-    [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
-    ~/.envs/py2/bin/pip install -q pynvim
-    ~/.envs/py3/bin/pip install -q pynvim
-    hascmd gem && sudo gem install neovim
+  # Let's just always do the things for neovim
+  [ -d ~/.envs ] || mkdir ~/.envs
+  [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
+  ~/.envs/py3/bin/pip install -q pynvim
+  hascmd gem && sudo gem install neovim
 
-    if [ ! -e ~/.nvim_python ]; then
-      echo "let g:python3_host_prog = \"$HOME/.envs/py3/bin/python\"" >> ~/.nvim_python
-    fi
-    if [ ! -e ~/.config/nvim/init.vim ]; then
-      mkdir -p ~/.config/nvim
-      cat <<EOF > ~/.config/nvim/init.vim
+  if [ ! -e ~/.nvim_python ]; then
+    echo "let g:python3_host_prog = \"$HOME/.envs/py3/bin/python\"" >> ~/.nvim_python
+  fi
+  if [ ! -e ~/.config/nvim/init.vim ]; then
+    mkdir -p ~/.config/nvim
+    cat <<EOF > ~/.config/nvim/init.vim
 set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath = &runtimepath
 source ~/.vimrc
 EOF
-    fi
   fi
 
   if ! nc -z localhost 8377 && confirm "Install clipper?" n; then
