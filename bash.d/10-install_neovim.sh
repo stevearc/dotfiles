@@ -6,6 +6,7 @@ install_neovim(){
 Options:
   -l, --list    List available versions
   -i VERSION    Install Neovim version
+  -s, --silent  Quiet download
 "
   source parseargs.sh
   parseargs "$usage" "$@" || return
@@ -13,7 +14,8 @@ Options:
     curl -s https://api.github.com/repos/neovim/neovim/releases | jq ".[].tag_name" | tr -d '"'
   elif [ -n "$VERSION" ]; then
     echo "Installing NVIM $VERSION"
-    curl -L "https://github.com/neovim/neovim/releases/download/$VERSION/nvim.appimage" -o nvim.appimage
+    [ -n "$SILENT" ] && silent="-s"
+    curl $silent -L "https://github.com/neovim/neovim/releases/download/$VERSION/nvim.appimage" -o nvim.appimage
     chmod +x nvim.appimage
     if ! ./nvim.appimage --headless +qall 2> /dev/null; then
       mkdir -p ~/.appimages
