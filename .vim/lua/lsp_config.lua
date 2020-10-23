@@ -18,6 +18,9 @@ local ft_config = {
     cursor_highlight = false,
     code_action = false, -- TODO: this borks the omnisharp server
   },
+  php = {
+    cursor_highlight = false,
+  },
   rust = {
     autoformat = true
   },
