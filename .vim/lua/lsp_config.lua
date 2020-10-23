@@ -9,30 +9,27 @@ local mapper = function(mode, key, result)
   vim.fn.nvim_buf_set_keymap(0, mode, key, result, {noremap = true, silent = true})
 end
 
+local ts_lsp_config = {
+  autoformat = true
+}
+local js_lsp_config = { }
 local ft_config = {
   vim = {
     help = false
   },
   cs = {
     autoformat = true,
-    cursor_highlight = false,
     code_action = false, -- TODO: this borks the omnisharp server
-  },
-  php = {
-    cursor_highlight = false,
   },
   rust = {
     autoformat = true
   },
-  typescript = {
-    autoformat = true
-  },
-  typescriptreact = {
-    autoformat = true
-  },
-  ['typescript.jsx'] = {
-    autoformat = true
-  },
+  typescript = ts_lsp_config,
+  typescriptreact = ts_lsp_config,
+  ['typescript.jsx'] = ts_lsp_config,
+  javascript = js_lsp_config,
+  javascriptreact = js_lsp_config,
+  ['javascript.jsx'] = js_lsp_config,
 }
 
 -- Patch diagnostics callback to not get called when in insert mode
@@ -113,7 +110,7 @@ M.on_attach = function(client)
 
   mapper('n', '<space>', '<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>')
 
-  if config.cursor_highlight ~= false then
+  if config.cursor_highlight == true then
     vim.cmd [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]
     vim.cmd [[autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]]
     vim.cmd [[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]]
