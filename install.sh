@@ -361,7 +361,7 @@ install-languages() {
 }
 
 install-dotnet() {
-  if hascmd dotnet; then
+  if hascmd dotnet || ! hascmd apt-get; then
     return
   fi
   # From https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
@@ -392,10 +392,10 @@ install-language-python() {
     python3 make_standalone.py pycodestyle
     mv pycodestyle ~/bin
   fi
-  install-dotnet
-  nvim --headless +"LspInstall pyls_ms" +qall
   # Early return on FB devserver
   if ! hascmd apt-get ; then return; fi
+  install-dotnet
+  nvim --headless +"LspInstall pyls_ms" +qall
   has-checkpoint python && return
   sudo apt-get install -y -q \
     python-dev \
