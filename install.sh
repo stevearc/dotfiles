@@ -228,14 +228,14 @@ install-cli() {
 }
 
 install-cli-after() {
-  [ ! $LINUX ] && return
+  [ ! $LINUX ] && [ ! $MAC ] && return
   if ! hascmd nvim; then
     if confirm "From github appimage?" y; then
       source "$REPO/bash.d/10-install_neovim.sh"
       local version
       install_neovim --list
       version=$(prompt "Version?" stable)
-      install_neovim -i "$version"
+      install_neovim "$version"
     elif confirm "From source?" n; then
       sudo apt-get install -y libtool autoconf automake cmake g++ gettext pkg-config \
         unzip python3 python3-dev python3-venv ruby-dev
@@ -268,23 +268,24 @@ source ~/.vimrc
 EOF
   fi
 
-  if ! nc -z localhost 8377 && confirm "Install clipper?" n; then
-    install-language-go
-    go get github.com/wincent/clipper
-    go build github.com/wincent/clipper
-    sudo cp "$GOPATH/bin/clipper" /usr/local/bin
-    if hascmd systemctl; then
-      mkdir -p ~/.config/systemd/user
-      cp "$GOPATH/src/github.com/wincent/clipper/contrib/linux/systemd-service/clipper.service" ~/.config/systemd/user
-      sed -ie 's|^ExecStart.*|ExecStart=/usr/local/bin/clipper -l /var/log/clipper.log -e xsel -f "-bi"|' ~/.config/systemd/user/clipper.service
-      systemctl --user daemon-reload
-      systemctl --user enable clipper.service
-      systemctl --user start clipper.service
-    else
-      sudo cp clipper.conf /etc/init
-      sudo service clipper start
-    fi
-  fi
+  # Probably don't care about clipper anymore
+  # if ! nc -z localhost 8377 && confirm "Install clipper?" n; then
+  #   install-language-go
+  #   go get github.com/wincent/clipper
+  #   go build github.com/wincent/clipper
+  #   sudo cp "$GOPATH/bin/clipper" /usr/local/bin
+  #   if hascmd systemctl; then
+  #     mkdir -p ~/.config/systemd/user
+  #     cp "$GOPATH/src/github.com/wincent/clipper/contrib/linux/systemd-service/clipper.service" ~/.config/systemd/user
+  #     sed -ie 's|^ExecStart.*|ExecStart=/usr/local/bin/clipper -l /var/log/clipper.log -e xsel -f "-bi"|' ~/.config/systemd/user/clipper.service
+  #     systemctl --user daemon-reload
+  #     systemctl --user enable clipper.service
+  #     systemctl --user start clipper.service
+  #   else
+  #     sudo cp clipper.conf /etc/init
+  #     sudo service clipper start
+  #   fi
+  # fi
 }
 
 install-dotfiles() {
