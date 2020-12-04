@@ -2,7 +2,7 @@ local util = require 'nvim_lsp/util'
 local aerial = require 'aerial'
 
 aerial.set_open_automatic{
-  ['_'] = true,
+  ['_'] = false,
 }
 
 local mapper = function(mode, key, result)
