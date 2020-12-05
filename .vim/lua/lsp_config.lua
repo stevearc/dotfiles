@@ -9,6 +9,16 @@ local mapper = function(mode, key, result)
   vim.fn.nvim_buf_set_keymap(0, mode, key, result, {noremap = true, silent = true})
 end
 
+local is_loclist_visible = function()
+  local win_info = vim.fn.getwininfo()
+  for _,info in ipairs(win_info) do
+    if info.loclist == 1 then
+      return true
+    end
+  end
+  return false
+end
+
 local ts_lsp_config = {
   autoformat = true
 }
@@ -32,12 +42,6 @@ local ft_config = {
   ['javascript.jsx'] = js_lsp_config,
 }
 
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
-    update_in_insert = false,
-  }
-)
-
 local M = {}
 
 M.on_attach = function(client)
@@ -52,13 +56,38 @@ M.on_attach = function(client)
     'textDocument/implementation',
   }
   for _,cb in pairs(jump_callbacks) do
-    local orig_callback = vim.lsp.callbacks[cb]
+    local orig_callback = vim.lsp.handlers[cb]
     local new_callback = function(idk, method, result)
       orig_callback(idk, method, result)
       vim.cmd('normal! zvzz')
     end
-    vim.lsp.callbacks[cb] = new_callback
+    vim.lsp.handlers[cb] = new_callback
   end
+
+  -- Update loclist when diagnostics change
+  local orig_callback = vim.lsp.handlers['textDocument/publishDiagnostics']
+  local new_callback = function(a1, a2, params, client_id, a5, config)
+    orig_callback(a1, a2, params, client_id, a5, config)
+    local mode = vim.api.nvim_get_mode()
+    if string.sub(mode.mode, 1, 1) == 'i' then return end
+
+    local errors = vim.lsp.diagnostic.get_count(0, "Error")
+    local warnings = vim.lsp.diagnostic.get_count(0, "Warning")
+    if warnings + errors == 0 then
+      vim.lsp.util.set_loclist({})
+      vim.cmd('lclose')
+    else
+      vim.lsp.diagnostic.set_loclist({open_loclist = false})
+      -- Resize the loclist
+      if is_loclist_visible() then
+        local winid = vim.fn.win_getid()
+        local height = math.max(vim.g.qf_min_height, math.min(vim.g.qf_max_height, errors + warnings))
+        vim.cmd('lopen '..height)
+        vim.fn.win_gotoid(winid)
+      end
+    end
+  end
+  vim.lsp.handlers['textDocument/publishDiagnostics'] = new_callback
 
   -- Aerial
   vim.api.nvim_set_var('aerial_open_automatic_min_lines', 200)
@@ -88,7 +117,7 @@ M.on_attach = function(client)
   mapper('v', '=', '<cmd>lua vim.lsp.buf.range_formatting()<CR>')
   mapper('n', '<leader>r', '<cmd>lua vim.lsp.buf.rename()<CR>')
 
-  mapper('n', '<space>', '<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>')
+  mapper('n', '<space>', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>')
 
   if config.cursor_highlight == true then
     vim.cmd [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]
