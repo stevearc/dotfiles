@@ -63,7 +63,7 @@ Options:
     else
       _install_linux
     fi
-    ~/bin/nvim --headless +UpdateRemotePlugins +qall
+    ~/bin/nvim --headless +UpdateRemotePlugins +qall > /dev/null
     echo -n "Installed "
     ~/bin/nvim --version | head -n 1
   else
@@ -87,11 +87,12 @@ _install_linux() {
   [ -n "$SILENT" ] && silent="-s"
   curl $silent -L "https://github.com/neovim/neovim/releases/download/$VERSION/nvim.appimage" -o nvim.appimage
   chmod +x nvim.appimage
-  if ! ./nvim.appimage --headless +qall 2> /dev/null; then
+  if ! ./nvim.appimage --headless +qall > /dev/null 2>&1; then
     mkdir -p ~/.appimages
     mv nvim.appimage ~/.appimages
     cd ~/.appimages
     ./nvim.appimage --appimage-extract > /dev/null
+    rm -rf nvim-appimage
     mv squashfs-root nvim-appimage
     ln -s -f ~/.appimages/nvim-appimage/AppRun ~/bin/nvim
     rm nvim.appimage

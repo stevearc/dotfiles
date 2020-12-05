@@ -16,8 +16,8 @@ function! lsp_addons#StatusLine() abort
 
     if s:ready
         try
-            let l:errors = luaeval("vim.lsp.util.buf_diagnostics_count(\"Error\")")
-            let l:warnings = luaeval("vim.lsp.util.buf_diagnostics_count(\"Warning\")")
+            let l:errors = luaeval("vim.lsp.diagnostic.get_count(vim.fn.bufnr('%'), [[Error]])")
+            let l:warnings = luaeval("vim.lsp.diagnostic.get_count(vim.fn.bufnr('%'), [[Warning]])")
             let l:sl .= s:getStatus(l:errors, l:warnings)
         catch
             let s:ready = v:false

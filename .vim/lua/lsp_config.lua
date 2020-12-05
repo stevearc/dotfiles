@@ -32,29 +32,11 @@ local ft_config = {
   ['javascript.jsx'] = js_lsp_config,
 }
 
--- Patch diagnostics callback to not get called when in insert mode
--- Taken from https://github.com/neovim/nvim-lspconfig/issues/127#issuecomment-587543723
-do
-  local default_callback = vim.lsp.callbacks["textDocument/publishDiagnostics"]
-  local err, method, result, client_id
-
-  vim.lsp.callbacks["textDocument/publishDiagnostics"] = function(...)
-    err, method, result, client_id = ...
-    if not result then return end
-    local bufnr = vim.uri_to_bufnr(result.uri)
-    if not bufnr or bufnr ~= vim.api.nvim_get_current_buf() then
-      return
-    end
-    local mode = vim.api.nvim_get_mode().mode
-    if mode ~= "i" and mode ~= "ic" then
-      publish_diagnostics()
-    end
-  end
-
-  function publish_diagnostics()
-    default_callback(err, method, result, client_id)
-  end
-end
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    update_in_insert = false,
+  }
+)
 
 local M = {}
 
@@ -77,8 +59,6 @@ M.on_attach = function(client)
     end
     vim.lsp.callbacks[cb] = new_callback
   end
-
-  vim.api.nvim_command [[autocmd InsertLeave <buffer> lua publish_diagnostics()]]
 
   -- Aerial
   vim.api.nvim_set_var('aerial_open_automatic_min_lines', 200)
