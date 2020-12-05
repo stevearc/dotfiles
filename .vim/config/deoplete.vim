@@ -1,6 +1,6 @@
 " Deoplete
 
-let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_at_startup = !g:new_completion
 " Disable the candidates in Comment/String syntaxes.
 call deoplete#custom#source('_', 'disabled_syntaxes', ['Comment', 'String'])
 aug ClosePreview

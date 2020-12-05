@@ -97,3 +97,6 @@
 [submodule ".vim/bundle/nvim-lspconfig"]
 	path = .vim/bundle/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig
+[submodule ".vim/bundle/completion-nvim"]
+	path = .vim/bundle/completion-nvim
+	url = https://github.com/nvim-lua/completion-nvim.git

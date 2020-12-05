@@ -38,7 +38,8 @@ set backspace=indent,eol,start
 set ignorecase
 set smartcase
 
-set completeopt=longest,menuone,preview
+set completeopt=menuone,noinsert,noselect
+set shortmess+=c
 set previewheight=5
 
 " Show the row, column of the cursor
@@ -179,6 +180,9 @@ let g:format_dirs = {}
 if filereadable(expand('~/.formatdirs.vim'))
   source ~/.formatdirs.vim
 endif
+
+let g:new_completion = 0
+
 source ~/.vim/config/colors.vim
 source ~/.vim/config/ctrlp.vim
 source ~/.vim/config/defx.vim
@@ -198,6 +202,7 @@ source ~/.vim/config/grep.vim
 source ~/.vim/config/quickfix.vim
 source ~/.vim/config/session.vim
 source ~/.vim/config/neoformat.vim
+lua require 'init_lua'
 if filereadable(expand('~/.local.vimrc'))
   source ~/.local.vimrc
 endif

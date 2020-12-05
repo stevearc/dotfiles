@@ -1,7 +1,4 @@
 " Configuration for LSP
-if luaeval('vim.lsp == null')
-  finish
-endif
 
 " lua vim.lsp.set_log_level('trace')
 
@@ -23,7 +20,3 @@ sign define LspDiagnosticsErrorSign text=• numhl=ALEErrorSignLineNr
 sign define LspDiagnosticsWarningSign text=• numhl=ALEWarningSignLineNr
 sign define LspDiagnosticsInformationSign text=. numhl=ALEInfoSignLineNr
 sign define LspDiagnosticsHintSign text=. numhl=ALEInfoSignLineNr
-
-lua << END
-  require 'lsp_config'
-END
