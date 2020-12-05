@@ -1,4 +1,3 @@
-local util = require 'nvim_lsp/util'
 local aerial = require 'aerial'
 
 aerial.set_open_automatic{
@@ -135,25 +134,25 @@ M.on_attach = function(client)
   aerial.on_attach(client)
 end
 
-require'nvim_lsp'.bashls.setup{
+require'lspconfig'.bashls.setup{
   on_attach = M.on_attach,
 }
-require'nvim_lsp'.gdscript.setup{
+require'lspconfig'.gdscript.setup{
   on_attach = M.on_attach,
 }
-require'nvim_lsp'.clangd.setup{
+require'lspconfig'.clangd.setup{
   on_attach = M.on_attach,
 }
-require'nvim_lsp'.html.setup{
+require'lspconfig'.html.setup{
   on_attach = M.on_attach,
 }
-require'nvim_lsp'.jsonls.setup{
+require'lspconfig'.jsonls.setup{
   on_attach = M.on_attach,
 }
-require'nvim_lsp'.omnisharp.setup{
+require'lspconfig'.omnisharp.setup{
   on_attach = M.on_attach,
 }
-require'nvim_lsp'.pyls_ms.setup{
+require'lspconfig'.pyls_ms.setup{
   on_attach = M.on_attach,
   settings = {
     python = {
@@ -183,21 +182,21 @@ require'nvim_lsp'.pyls_ms.setup{
     }
   }
 }
-require'nvim_lsp'.rust_analyzer.setup{
+require'lspconfig'.rust_analyzer.setup{
   on_attach = M.on_attach,
 }
-require'nvim_lsp'.tsserver.setup{
+require'lspconfig'.tsserver.setup{
   on_attach = M.on_attach,
   filetypes = {"typescript", "typescriptreact", "typescript.tsx"};
-  root_dir = util.root_pattern("tsconfig.json", ".git");
+  root_dir = require 'lspconfig/util'.root_pattern("tsconfig.json", ".git");
 }
-require'nvim_lsp'.vimls.setup{
+require'lspconfig'.vimls.setup{
   on_attach = M.on_attach,
 }
-require'nvim_lsp'.yamlls.setup{
+require'lspconfig'.yamlls.setup{
   on_attach = M.on_attach,
 }
-require'nvim_lsp'.flow.setup{
+require'lspconfig'.flow.setup{
   on_attach = M.on_attach,
   cmd = {"flow", "lsp", "--lazy"};
   settings = {

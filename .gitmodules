@@ -61,9 +61,6 @@
 [submodule ".vim/bundle/SimpylFold"]
 	path = .vim/bundle/SimpylFold
 	url = https://github.com/tmhedberg/SimpylFold.git
-[submodule ".vim/bundle/nvim-lsp"]
-	path = .vim/bundle/nvim-lsp
-	url = https://github.com/neovim/nvim-lsp.git
 [submodule ".vim/bundle/deoplete-lsp"]
 	path = .vim/bundle/deoplete-lsp
 	url = https://github.com/Shougo/deoplete-lsp.git
@@ -97,3 +94,6 @@
 [submodule ".vim/bundle/quickfix-reflector.vim"]
 	path = .vim/bundle/quickfix-reflector.vim
 	url = https://github.com/stefandtw/quickfix-reflector.vim.git
+[submodule ".vim/bundle/nvim-lspconfig"]
+	path = .vim/bundle/nvim-lspconfig
+	url = https://github.com/neovim/nvim-lspconfig

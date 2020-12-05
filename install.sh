@@ -10,7 +10,7 @@
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
-declare -r DEFAULT_VIM_BUNDLES="ctrlp ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch deoplete.nvim nvim-lsp deoplete-lsp space-vim-theme vim-surround editorconfig-vim nvim-colorizer.lua vim-endwise vim-autoswap defx.nvim aerial.nvim targets.vim quickfix-reflector.vim"
+declare -r DEFAULT_VIM_BUNDLES="ctrlp ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch deoplete.nvim nvim-lspconfig deoplete-lsp space-vim-theme vim-surround editorconfig-vim nvim-colorizer.lua vim-endwise vim-autoswap defx.nvim aerial.nvim targets.vim quickfix-reflector.vim"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r XFCE_DOTFILES=".xsessionrc"
