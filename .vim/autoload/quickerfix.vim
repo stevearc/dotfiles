@@ -1,5 +1,3 @@
-" Public functions {{{ "
-
 function! quickerfix#QFToggle(cmd, ...) abort
   let l:wincount = winnr('$')
   let l:winnr = winnr()
@@ -117,89 +115,8 @@ function! quickerfix#GetPositionInList(list) abort
   return foundbuf ? i - 1 : -1
 endfunction
 
-" }}} Public functions "
-
-" Update position {{{ "
-
-function! quickerfix#UpdateQFListPosition(...) abort
-  let qf = quickerfix#GetActiveList()
-  if empty(qf.list)
-    return
-  endif
-  if !s:IsListOpen(qf.type)
-    return
-  endif
-  let pos = quickerfix#GetPositionInList(qf.list)
-  let cur = getcurpos()
-  if pos != -1 && qf.list[pos].bufnr == bufnr('%')
-    exec qf.type . qf.type . " " . (pos + 1)
-    call setpos('.', cur)
-  endif
-  if s:timerid != -1
-    call timer_stop(s:timerid)
-    let s:timerid = -1
-  endif
-endfunction
-
-let s:timerid = -1
-function! quickerfix#UpdateQFListPositionBuffered(...) abort
-  let delay = a:0 ? a:1 : 100
-  if s:timerid != -1
-    call timer_stop(s:timerid)
-  endif
-  let timerid = timer_start(delay, function('quickerfix#UpdateQFListPosition'))
-endfunction
-
-
-" }}} Update position "
-
-" Private functions {{{ "
-
-function! s:GetActiveFromType(type) abort
-  if a:type == 'c'
-    return { 'type': a:type, 'list': getqflist() }
-  else
-    return { 'type': a:type, 'list': getloclist(0) }
-  endif
-endfunction
-
-function! s:IsListOpen(type) abort
-  return a:type == 'c' ? quickerfix#IsQuickFixOpen() : quickerfix#IsLocListOpen()
-endfunction
-
 function! s:NavCommand(cmd, qf) abort
   let jumpcmd = 'silent! ' . a:qf.type . a:qf.type
-  if !g:qf_smart_jump
-    exec 'silent! ' . a:qf.type . a:cmd
-    normal! zvzz
-    return
-  endif
-  let pos = quickerfix#GetPositionInList(a:qf.list)
-  let lineno = line('.')
-  let bufnum = bufnr('%')
-
-  " If we don't know the position in the list, we must be in a buffer that
-  " doesn't have an entry in the (quickfix) list.
-  " Execute (c|l)(prev|next) and get on with our life
-  if pos == -1
-    exec 'silent! ' . a:qf.type . a:cmd
-  else
-    " Otherwise, go to the next/prev entry that has a different line number
-    let idx = pos
-    if a:cmd == 'prev'
-      while idx > 0 && a:qf.list[idx].bufnr == bufnum && a:qf.list[idx].lnum >= lineno
-	let idx -= 1
-      endwhile
-    else
-      while idx < len(a:qf.list) - 1&& a:qf.list[idx].bufnr == bufnum && a:qf.list[idx].lnum <= lineno 
-	let idx += 1
-      endwhile
-    endif
-    let jumpcmd = jumpcmd . ' ' . (idx + 1)
-    exec jumpcmd
-  endif
-
+  exec 'silent! ' . a:qf.type . a:cmd
   normal! zvzz
 endfunction
-
-" }}} Private functions "

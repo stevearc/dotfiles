@@ -1,4 +1,3 @@
-
 nnoremap <silent> <C-N> :QuickFixAutoNext<CR>
 nnoremap <silent> <C-P> :QuickFixAutoPrev<CR>
 
