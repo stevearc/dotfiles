@@ -172,8 +172,6 @@ nnoremap k gkzz
 vnoremap j gjzz
 vnoremap k gkzz
 
-let g:polyglot_disabled = ['gdscript']
-
 " Load machine-local g:format_dirs var. Determines which paths will get
 " auto-formatted on write
 let g:format_dirs = {}
