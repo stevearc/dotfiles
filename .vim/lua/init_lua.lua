@@ -62,6 +62,27 @@ vim.fn.nvim_buf_set_keymap(0, 'i', '<c-h>', '<Plug>(completion_prev_source)', {s
 
 local M = {}
 
+M.on_update_diagnostics = function(bufnr)
+  local mode = vim.api.nvim_get_mode()
+  if string.sub(mode.mode, 1, 1) == 'i' then return end
+
+  local errors = vim.lsp.diagnostic.get_count(bufnr, "Error")
+  local warnings = vim.lsp.diagnostic.get_count(bufnr, "Warning")
+  if warnings + errors == 0 then
+    vim.lsp.util.set_loclist({})
+    vim.cmd('lclose')
+  else
+    vim.lsp.diagnostic.set_loclist({open_loclist = false})
+    -- Resize the loclist
+    if is_loclist_visible() then
+      local winid = vim.fn.win_getid()
+      local height = math.max(vim.g.qf_min_height, math.min(vim.g.qf_max_height, errors + warnings))
+      vim.cmd('lopen '..height)
+      vim.fn.win_gotoid(winid)
+    end
+  end
+end
+
 M.on_attach = function(client)
   local ft = vim.api.nvim_buf_get_option(0, 'filetype')
   local config = ft_config[ft] or {}
@@ -86,26 +107,10 @@ M.on_attach = function(client)
   local orig_callback = vim.lsp.handlers['textDocument/publishDiagnostics']
   local new_callback = function(a1, a2, params, client_id, bufnr, config)
     orig_callback(a1, a2, params, client_id, bufnr, config)
-    local mode = vim.api.nvim_get_mode()
-    if string.sub(mode.mode, 1, 1) == 'i' then return end
-
-    local errors = vim.lsp.diagnostic.get_count(bufnr, "Error")
-    local warnings = vim.lsp.diagnostic.get_count(bufnr, "Warning")
-    if warnings + errors == 0 then
-      vim.lsp.util.set_loclist({})
-      vim.cmd('lclose')
-    else
-      vim.lsp.diagnostic.set_loclist({open_loclist = false})
-      -- Resize the loclist
-      if is_loclist_visible() then
-        local winid = vim.fn.win_getid()
-        local height = math.max(vim.g.qf_min_height, math.min(vim.g.qf_max_height, errors + warnings))
-        vim.cmd('lopen '..height)
-        vim.fn.win_gotoid(winid)
-      end
-    end
+    M.on_update_diagnostics(bufnr)
   end
   vim.lsp.handlers['textDocument/publishDiagnostics'] = new_callback
+  vim.cmd [[autocmd InsertLeave <buffer> lua require'init_lua'.on_update_diagnostics()]]
 
   -- Aerial
   vim.api.nvim_set_var('aerial_open_automatic_min_lines', 200)
