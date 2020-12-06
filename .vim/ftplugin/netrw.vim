@@ -4,12 +4,9 @@ fun! Subgrep(args) abort
 endf
 
 command! -buffer -bar -nargs=+ Sgrep call Subgrep('<args>')
-command! -buffer -bar BookmarkGoto call bookmarks#GotoBookmark()
-command! -buffer -bar BookmarkDelete call bookmarks#DeleteBookmark()
 
 setlocal noswapfile
 
-nnoremap <buffer> gb :BookmarkGoto<CR>
 nnoremap <buffer> <leader>c :exec 'Explore ' . getcwd()<CR>
 
 " If tree view
