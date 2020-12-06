@@ -166,13 +166,6 @@ nnoremap k gkzz
 vnoremap j gjzz
 vnoremap k gkzz
 
-" Load machine-local g:no_format_dirs var. Determines which paths will get
-" auto-formatted on write
-let g:no_format_dirs = {}
-if filereadable(expand('~/.formatdirs.vim'))
-  source ~/.formatdirs.vim
-endif
-
 " Use completion-nvim instead of deoplete
 let g:new_completion = 1
 
