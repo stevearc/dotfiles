@@ -64,9 +64,6 @@
 [submodule ".vim/bundle/deoplete-lsp"]
 	path = .vim/bundle/deoplete-lsp
 	url = https://github.com/Shougo/deoplete-lsp.git
-[submodule ".vim/bundle/space-vim-theme"]
-	path = .vim/bundle/space-vim-theme
-	url = https://github.com/liuchengxu/space-vim-theme.git
 [submodule ".vim/bundle/vim-surround"]
 	path = .vim/bundle/vim-surround
 	url = https://github.com/tpope/vim-surround.git
