@@ -10,7 +10,7 @@
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
-declare -r DEFAULT_VIM_BUNDLES="completion-nvim ctrlp ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch deoplete.nvim nvim-lspconfig deoplete-lsp space-vim-theme vim-surround editorconfig-vim nvim-colorizer.lua vim-endwise vim-autoswap defx.nvim aerial.nvim targets.vim quickfix-reflector.vim"
+declare -r DEFAULT_VIM_BUNDLES="completion-nvim ctrlp ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch deoplete.nvim nvim-lspconfig deoplete-lsp vim-surround editorconfig-vim nvim-colorizer.lua vim-endwise vim-autoswap defx.nvim aerial.nvim targets.vim quickfix-reflector.vim"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r XFCE_DOTFILES=".xsessionrc"
@@ -214,6 +214,7 @@ install-cli() {
       mercurial \
       netcat \
       openssh-client \
+      rsync \
       shellcheck \
       silversearcher-ag \
       tmux \
@@ -231,11 +232,10 @@ install-cli-after() {
   [ ! $LINUX ] && [ ! $MAC ] && return
   if ! hascmd nvim; then
     if confirm "From github appimage?" y; then
-      source "$REPO/bash.d/10-install_neovim.sh"
       local version
-      install_neovim --list
-      version=$(prompt "Version?" stable)
-      install_neovim "$version"
+      install_neovim.sh --list
+      version=$(prompt "Version?" nightly)
+      install_neovim.sh "$version"
     elif confirm "From source?" n; then
       sudo apt-get install -y libtool autoconf automake cmake g++ gettext pkg-config \
         unzip python3 python3-dev python3-venv ruby-dev
@@ -319,11 +319,9 @@ install-dotfiles() {
   done
   if [ $SYMBOLIC ]; then
     link "$REPO/bash.d/notifier.sh" ~/.bash.d/notifier.sh
-    link "$REPO/bash.d/10-install_neovim.sh" ~/.bash.d/10-install_neovim.sh
     link "$REPO/bash.d/10-jump.sh" ~/.bash.d/10-jump.sh
   else
     cp bash.d/notifier.sh ~/.bash.d/
-    cp bash.d/10-install_neovim.sh ~/.bash.d/
     cp bash.d/10-jump.sh ~/.bash.d/
   fi
   if [ $WINDOWS ]; then
