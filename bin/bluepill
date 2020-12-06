@@ -19,9 +19,9 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-command -v docker > /dev/null || return
+set -e -o pipefail
 
-[ -z "$BLUEPILL_ROOT_IMAGE" ] && BLUEPILL_ROOT_IMAGE="ubuntu:18.04"
+[ -z "$BLUEPILL_ROOT_IMAGE" ] && BLUEPILL_ROOT_IMAGE="ubuntu:20.04"
 BLUEPILL_BASE_IMAGE="bluepill-$USER"
 
 ###########
@@ -30,7 +30,7 @@ BLUEPILL_BASE_IMAGE="bluepill-$USER"
 
 _confirm() {
   # $1 (optional) [str] - Prompt string
-  # $2 (optional) [y|n] - The default return value if user just hits enter
+  # $2 (optional) [y|n] - The default return value ("y" or "n") if user just hits enter
   local prompt="${1-Are you sure?}"
   local default="$2"
   case $default in
@@ -76,30 +76,16 @@ command -v realpath > /dev/null 2>&1 || realpath() {
 }
 
 _bp-image-name() {
-  echo "$(basename "${1?_bp-image-name missing arg}")-$(echo "$1" | md5sum | cut -f 1 -d ' ')"
+  echo "bp-$(basename "${1?_bp-image-name missing arg}")-$(echo "$1" | md5sum | cut -f 1 -d ' ')"
 }
 
 _bp-container-name() {
-  echo "C$(basename "${1?_bp-image-name missing arg}")-$(echo "$1" | md5sum | cut -f 1 -d ' ')"
+  echo "bp-container-$(basename "${1?_bp-image-name missing arg}")-$(echo "$1" | md5sum | cut -f 1 -d ' ')"
 }
 
 ##############
 #  COMMANDS  #
 ##############
-
-bluepill() {
-  if [ -z "$1" ]; then
-    bluepill-help
-  else
-    local cmd="bluepill-$1"
-    if command -v "$cmd" > /dev/null; then
-      shift
-      $cmd "$@"
-    else
-      bluepill-help "$@"
-    fi
-  fi
-}
 
 bluepill-help() {
   if [ -z "$1" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
@@ -146,7 +132,7 @@ Builds your base image that all other containers will inherit from
         ;;
     esac
   done
-  shift "(($OPTIND-1))"
+  shift "$(($OPTIND-1))"
   if docker inspect "$BLUEPILL_BASE_IMAGE" > /dev/null 2>&1; then
     _confirm "Image $BLUEPILL_BASE_IMAGE already exists. Would you like to replace it?" n || \
       return
@@ -155,7 +141,9 @@ Builds your base image that all other containers will inherit from
 FROM $BLUEPILL_ROOT_IMAGE
 RUN groupadd -g $(id -g) $USER && \
   useradd -m -u $UID -g $(id -g) -s /bin/bash $USER && \
-  echo "$USER ALL = (ALL) NOPASSWD: ALL" > /etc/sudoers.d/user
+  apt-get update -q && \
+  apt-get install -y -q sudo && \
+  echo "$USER ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers.d/user
 EOF
   echo "Customize your base image. Type 'exit' when done"
   bluepill-edit
@@ -189,7 +177,7 @@ Make interactive changes to your base bluepill image
         ;;
     esac
   done
-  shift "(($OPTIND-1))"
+  shift "$(($OPTIND-1))"
   docker inspect bluepill-setup >/dev/null 2>&1 && docker rm bluepill-setup
   docker run --name bluepill-setup -it -e USER -w "/home/$USER" -u "$UID:$(id -g)" \
     "$BLUEPILL_BASE_IMAGE" /bin/bash -l
@@ -234,7 +222,7 @@ Build a docker image for a directory
         ;;
     esac
   done
-  shift "(($OPTIND-1))"
+  shift "$(($OPTIND-1))"
   local dir
   dir="$(realpath "${1-.}")"
   local imageName
@@ -363,7 +351,7 @@ Delete the container and image for a directory
         ;;
     esac
   done
-  shift "(($OPTIND-1))"
+  shift "$(($OPTIND-1))"
   local dir
   dir="$(realpath "${1-.}")"
   local imageName
@@ -375,3 +363,25 @@ Delete the container and image for a directory
   _confirm "Delete docker image $imageName?" n || return
   docker rmi "$imageName"
 }
+
+main() {
+  if ! command -v docker > /dev/null; then
+    echo "Could not find 'docker' command. Please install docker"
+    return 1
+  fi
+  if [ -z "$1" ]; then
+    bluepill-help
+    return 1
+  else
+    local cmd="bluepill-$1"
+    if command -v "$cmd" > /dev/null; then
+      shift
+      $cmd "$@"
+    else
+      bluepill-help "$@"
+      return 1
+    fi
+  fi
+}
+
+main "$@"

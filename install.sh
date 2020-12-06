@@ -304,12 +304,18 @@ install-dotfiles() {
     rsync -lrp $CLI_DOTFILES "$HOME"
     rsync -lrp --delete --exclude bundle --exclude .git .vim "$HOME"
   fi
-  cp -r bin "$HOME"
+
+  mkdir -p ~/bin
   if [ $SYMBOLIC ]; then
+    for executable in bin/*; do
+      link "$REPO/$executable" "$HOME/$executable"
+    done
     link "$REPO/parseargs/parseargs.sh" "$HOME/bin/parseargs.sh"
   else
+    rsync -lrp bin "$HOME/bin"
     cp "$REPO/parseargs/parseargs.sh" "$HOME/bin/"
   fi
+
   rsync -lrp .docker "$HOME"
   mkdir -p ~/.config
   rsync -lrp .config/nvim ~/.config/
