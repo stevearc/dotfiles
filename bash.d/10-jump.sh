@@ -1,7 +1,8 @@
 #!/bin/bash
 LOG_FILE="$HOME/.jump.log"
 COMPRESSED_LOG_FILE="$HOME/.jump-compressed.log"
-DEFAULT_ADAPTIVE_JUMPLOCS=5
+DEFAULT_ADAPTIVE_JUMPLOCS=20
+NUM_COMPRESSED_JUMPLOCS=40
 
 __log_pwd() {
   if [ "$PWD" != "$HOME" ]; then
@@ -21,13 +22,13 @@ __compress() {
   # Dump the count into the compressed file
   awk '{!seen[$0]++}END{for (i in seen) print seen[i], i}' "$LOG_FILE" \
     | sort -rn  \
-    | head -n 20 >> "$COMPRESSED_LOG_FILE"
+    | head -n "$NUM_COMPRESSED_JUMPLOCS" >> "$COMPRESSED_LOG_FILE"
   # Compress the compressed file
   local tmpfile
   tmpfile="${COMPRESSED_LOG_FILE}.tmp"
   awk '{seen[$2]+=$1}END{for (i in seen) print seen[i], i}' "$COMPRESSED_LOG_FILE" \
     | sort -rn \
-    | head -n 20 > "$tmpfile"
+    | head -n "$NUM_COMPRESSED_JUMPLOCS" > "$tmpfile"
   mv "$tmpfile" "$COMPRESSED_LOG_FILE"
   # Delete log file
   rm -f "$LOG_FILE"

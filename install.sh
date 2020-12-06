@@ -201,7 +201,7 @@ install-cli() {
   if [ $WINDOWS ]; then
     pacman -Sy --noconfirm rsync tmux
   elif [ $MAC ]; then
-    hascmd tmux || brew install tmux
+    hascmd tmux || install_tmux.sh
   else
     sudo apt-get install -y -q \
       autossh \
@@ -289,7 +289,6 @@ EOF
 }
 
 install-dotfiles() {
-  mkdir -p ~/.bash.d
   if [ $SYMBOLIC ]; then
     for dotfile in $CLI_DOTFILES; do
       link "$REPO/$dotfile" "$HOME/$dotfile"
@@ -323,13 +322,16 @@ install-dotfiles() {
   for bundle in $DEFAULT_VIM_BUNDLES; do
     cp-vim-bundle "$bundle"
   done
+
+  mkdir -p ~/.bash.d
   if [ $SYMBOLIC ]; then
-    link "$REPO/bash.d/notifier.sh" ~/.bash.d/notifier.sh
-    link "$REPO/bash.d/10-jump.sh" ~/.bash.d/10-jump.sh
+    for file in bash.d/*; do
+      link "$REPO/$file" "$HOME/.$file"
+    done
   else
-    cp bash.d/notifier.sh ~/.bash.d/
-    cp bash.d/10-jump.sh ~/.bash.d/
+    rsync -lrp bash.d "$HOME/.bash.d"
   fi
+
   if [ $WINDOWS ]; then
     rsync -lrp win/ "$HOME"
   fi
@@ -371,7 +373,7 @@ install-dotnet() {
   fi
   # From https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
   pushd /tmp
-  wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+  wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
   sudo dpkg -i packages-microsoft-prod.deb
 
   sudo apt-get update
@@ -384,9 +386,12 @@ install-dotnet() {
 install-language-python() {
   cp .pylintrc "$HOME"
   cp-vim-bundle SimpylFold
-  hascmd apt-get && sudo apt-get install -y python3 python3-distutils python3-venv
+  hascmd apt-get && sudo apt-get install -y -q \
+    python3 \
+    python3-distutils \
+    python3-venv
   if ! hascmd black; then
-    python3 make_standalone.py black --pre
+    python3 make_standalone.py black
     mv black ~/bin
   fi
   if ! hascmd pylint; then
@@ -537,7 +542,6 @@ setup-desktop() {
   sudo apt-get update -qq
 
   sudo apt-get install -q -y \
-    flashplugin-installer \
     google-chrome-stable \
     gparted \
     ffmpeg \
@@ -620,23 +624,7 @@ setup-custom-packages() {
     return
   fi
   setup-install-progs
-  if ! installed dropbox && confirm "Install Dropbox?" n; then
-    echo "TODO: CLI installation for dropbox doesn't work anymore"
-    # sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5044912E
-    # sudo sh -c 'echo "deb http://linux.dropbox.com/ubuntu/ precise main" > /etc/apt/sources.list.d/dropbox.list'
-    # sudo apt-get update -qq
-    # sudo apt-get install -y -q dropbox
-  fi
-  if ! installed wine1.6 && confirm "Install wine?" n; then
-    sudo add-apt-repository -y ppa:ubuntu-wine/ppa
-    sudo apt-get install -y -q wine1.6
-  fi
   if ! hascmd docker && confirm "Install docker?" n; then
-    if [ "$(lsb_release -rs)" = '14.04' ]; then
-      sudo apt-get install -yq \
-        "linux-image-extra-$(uname -r)" \
-        linux-image-extra-virtual
-    fi
     sudo apt-get install -yq \
       apt-transport-https \
       ca-certificates \
@@ -650,11 +638,6 @@ setup-custom-packages() {
     sudo apt-get update -qq
     sudo apt-get install -yq docker-ce
     confirm "Allow $USER to use docker without sudo?" y && sudo adduser "$USER" docker
-    if [ $SYMBOLIC ]; then
-      link "$REPO/bash.d/bluepill.sh" ~/.bash.d/bluepill.sh
-    else
-      cp bash.d/bluepill.sh ~/.bash.d/
-    fi
     if [ ! -L /var/lib/docker ]; then
       sudo rm -rf /var/lib/docker
       sudo ln -sfT "$HOME/.docker" /var/lib/docker
@@ -668,7 +651,7 @@ setup-custom-packages() {
       sudo curl -L "https://raw.githubusercontent.com/docker/compose/${latest}/contrib/completion/bash/docker-compose" -o /etc/bash_completion.d/docker-compose
     fi
   fi
-  sudo apt-get install -y -q gthumb encfs
+  sudo apt-get install -y -q gthumb
   if [[ -e ~/bin ]] && [[ ! -e ~/bin/youtube-dl ]]; then
     pushd ~/bin > /dev/null
     wget -O youtube-dl https://yt-dl.org/latest/youtube-dl
