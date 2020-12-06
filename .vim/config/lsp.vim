@@ -2,21 +2,21 @@
 
 " lua vim.lsp.set_log_level('trace')
 
-highlight link LspDiagnosticsError ALEVirtualTextError
-highlight link LspDiagnosticsErrorSign ALEErrorSign
-highlight link LspDiagnosticsWarning ALEVirtualTextWarning
-highlight link LspDiagnosticsWarningSign ALEWarningSign
-highlight link LspDiagnosticsInformation ALEVirtualTextInfo
-highlight link LspDiagnosticsInformationSign ALEInfoSign
-highlight link LspDiagnosticsHint ALEVirtualTextInfo
-highlight link LspDiagnosticsHintSign ALEInfoSign
+highlight link LspDiagnosticsDefaultError ALEVirtualTextError
+highlight link LspDiagnosticsSignError ALEErrorSign
+highlight link LspDiagnosticsDefaultWarning ALEVirtualTextWarning
+highlight link LspDiagnosticsSignWarning ALEWarningSign
+highlight link LspDiagnosticsDefaultInformation ALEVirtualTextInfo
+highlight link LspDiagnosticsSignInformation ALEInfoSign
+highlight link LspDiagnosticsDefaultHint ALEVirtualTextInfo
+highlight link LspDiagnosticsSignHint ALEInfoSign
 
 " solarized8 doesn't support ALEVirtualText
 highlight link ALEVirtualTextError ALEError
 highlight link ALEVirtualTextWarning ALEWarning
 highlight link ALEVirtualTextInfo ALEInfo
 
-sign define LspDiagnosticsErrorSign text=• numhl=ALEErrorSignLineNr
-sign define LspDiagnosticsWarningSign text=• numhl=ALEWarningSignLineNr
-sign define LspDiagnosticsInformationSign text=. numhl=ALEInfoSignLineNr
-sign define LspDiagnosticsHintSign text=. numhl=ALEInfoSignLineNr
+sign define LspDiagnosticsSignError text=• numhl=LspDiagnosticsSignError texthl=LspDiagnosticsSignError
+sign define LspDiagnosticsSignWarning text=• numhl=LspDiagnosticsSignWarning texthl=LspDiagnosticsSignWarning
+sign define LspDiagnosticsSignInformation text=. numhl=LspDiagnosticsSignInformation texthl=LspDiagnosticsSignInformation
+sign define LspDiagnosticsSignHint text=. numhl=LspDiagnosticsSignHint texthl=LspDiagnosticsSignHint
