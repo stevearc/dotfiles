@@ -38,7 +38,7 @@ set backspace=indent,eol,start
 set ignorecase
 set smartcase
 
-set completeopt=menuone,noinsert,noselect
+set completeopt=menuone,noselect
 set shortmess+=c
 set previewheight=5
 
@@ -173,12 +173,36 @@ if filereadable(expand('~/.formatdirs.vim'))
   source ~/.formatdirs.vim
 endif
 
-let g:new_completion = 0
+" Use completion-nvim instead of deoplete
+let g:new_completion = 1
+
+" Treesitter
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = {
+    "bash", "c", "c_sharp", "cpp", "go", "graphql",
+    "java", "json", "lua", "python", "rst", "rust",
+    "toml", "typescript",
+  },
+  highlight = {
+    enable = true,
+  },
+  indent = {
+    enable = true
+  },
+}
+EOF
+let g:debug_treesitter = 0
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
+" Start with folds open
+se foldlevelstart=99
+" Disable fold column
+se foldcolumn=0
 
 source ~/.vim/config/colors.vim
 source ~/.vim/config/ctrlp.vim
 source ~/.vim/config/defx.vim
-source ~/.vim/config/folding.vim
 source ~/.vim/config/deoplete.vim
 source ~/.vim/config/lsp.vim
 source ~/.vim/config/netrw.vim
@@ -189,7 +213,6 @@ source ~/.vim/config/platform.vim
 source ~/.vim/config/terminal.vim
 source ~/.vim/config/ultisnips.vim
 source ~/.vim/config/clevertab.vim
-source ~/.vim/config/easymotion.vim
 source ~/.vim/config/grep.vim
 source ~/.vim/config/quickfix.vim
 source ~/.vim/config/session.vim
@@ -201,18 +224,6 @@ endif
 
 " Use my universal clipboard tool to copy with <leader>y
 nnoremap <leader>y :call system('clip', @0)<CR>
-
-" Function to duplicate the current file
-function! DuplicateFile()
-    let old_name = expand('%')
-    let new_name = input('Duplicate to: ', expand('%'), 'file')
-    if new_name != '' && new_name != old_name
-        exec ':saveas ' . new_name
-        redraw!
-    endif
-endfunction
-" Replaced by defx
-" map <leader>m :call DuplicateFile()<cr>
 
 " Map leader-r to do a global replace of a word
 nmap <leader>r :%s/<C-R>=expand("<cword>")<CR>/<C-R>=expand("<cword>")<CR>
@@ -267,4 +278,4 @@ nnoremap <silent> # :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=
 nnoremap <silent> g* :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR>nzz
 nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>nzz
 
-let &l:statusline = '%!lsp_addons#StatusLine()'
+let &l:statusline = '%!statusline#StatusLine()'

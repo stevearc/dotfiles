@@ -58,9 +58,6 @@
 [submodule ".vim/bundle/vim-solarized8"]
 	path = .vim/bundle/vim-solarized8
 	url = https://github.com/lifepillar/vim-solarized8
-[submodule ".vim/bundle/SimpylFold"]
-	path = .vim/bundle/SimpylFold
-	url = https://github.com/tmhedberg/SimpylFold.git
 [submodule ".vim/bundle/deoplete-lsp"]
 	path = .vim/bundle/deoplete-lsp
 	url = https://github.com/Shougo/deoplete-lsp.git
@@ -100,3 +97,6 @@
 [submodule ".vim/bundle/flow-coverage.nvim"]
 	path = .vim/bundle/flow-coverage.nvim
 	url = https://github.com/stevearc/flow-coverage.nvim.git
+[submodule ".vim/bundle/nvim-treesitter"]
+	path = .vim/bundle/nvim-treesitter
+	url = https://github.com/nvim-treesitter/nvim-treesitter
