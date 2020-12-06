@@ -483,6 +483,7 @@ install-language-js() {
   hascmd prettier || yarn global add prettier
   hascmd flow || yarn global add flow-bin
   cp-vim-bundle closetag
+  cp-vim-bundle flow-coverage.nvim
 }
 
 install-language-cs() {

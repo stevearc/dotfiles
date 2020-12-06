@@ -16,9 +16,13 @@ function! lsp_addons#StatusLine() abort
 
     if s:ready
         try
-            let l:errors = luaeval("vim.lsp.diagnostic.get_count(vim.fn.bufnr('%'), [[Error]])")
-            let l:warnings = luaeval("vim.lsp.diagnostic.get_count(vim.fn.bufnr('%'), [[Warning]])")
+            let l:errors = luaeval("vim.lsp.diagnostic.get_count(0, [[Error]])")
+            let l:warnings = luaeval("vim.lsp.diagnostic.get_count(0, [[Warning]])")
             let l:sl .= s:getStatus(l:errors, l:warnings)
+            let l:coverage = luaeval("require'flow'.get_coverage_percent()")
+            if l:coverage != v:null && l:coverage != 100
+                let l:sl .= ' [' . l:coverage . '%%]'
+            endif
         catch
             let s:ready = v:false
         endtry

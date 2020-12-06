@@ -97,3 +97,6 @@
 [submodule ".vim/bundle/completion-nvim"]
 	path = .vim/bundle/completion-nvim
 	url = https://github.com/nvim-lua/completion-nvim.git
+[submodule ".vim/bundle/flow-coverage.nvim"]
+	path = .vim/bundle/flow-coverage.nvim
+	url = https://github.com/stevearc/flow-coverage.nvim.git

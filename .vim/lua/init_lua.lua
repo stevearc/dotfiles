@@ -84,13 +84,13 @@ M.on_attach = function(client)
 
   -- Update loclist when diagnostics change
   local orig_callback = vim.lsp.handlers['textDocument/publishDiagnostics']
-  local new_callback = function(a1, a2, params, client_id, a5, config)
-    orig_callback(a1, a2, params, client_id, a5, config)
+  local new_callback = function(a1, a2, params, client_id, bufnr, config)
+    orig_callback(a1, a2, params, client_id, bufnr, config)
     local mode = vim.api.nvim_get_mode()
     if string.sub(mode.mode, 1, 1) == 'i' then return end
 
-    local errors = vim.lsp.diagnostic.get_count(0, "Error")
-    local warnings = vim.lsp.diagnostic.get_count(0, "Warning")
+    local errors = vim.lsp.diagnostic.get_count(bufnr, "Error")
+    local warnings = vim.lsp.diagnostic.get_count(bufnr, "Warning")
     if warnings + errors == 0 then
       vim.lsp.util.set_loclist({})
       vim.cmd('lclose')
@@ -151,6 +151,11 @@ M.on_attach = function(client)
   end
 
   aerial.on_attach(client)
+end
+
+function on_attach_flow(client)
+  require'flow'.on_attach(client)
+  M.on_attach(client)
 end
 
 require'lspconfig'.bashls.setup{
@@ -216,7 +221,7 @@ require'lspconfig'.yamlls.setup{
   on_attach = M.on_attach,
 }
 require'lspconfig'.flow.setup{
-  on_attach = M.on_attach,
+  on_attach = on_attach_flow,
   cmd = {"flow", "lsp", "--lazy"};
   settings = {
     flow = {
