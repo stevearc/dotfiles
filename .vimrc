@@ -166,9 +166,9 @@ nnoremap k gkzz
 vnoremap j gjzz
 vnoremap k gkzz
 
-" Load machine-local g:format_dirs var. Determines which paths will get
+" Load machine-local g:no_format_dirs var. Determines which paths will get
 " auto-formatted on write
-let g:format_dirs = {}
+let g:no_format_dirs = {}
 if filereadable(expand('~/.formatdirs.vim'))
   source ~/.formatdirs.vim
 endif

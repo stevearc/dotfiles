@@ -150,7 +150,6 @@ M.on_attach = function(client)
 
   vim.cmd("setlocal omnifunc=v:lua.vim.lsp.omnifunc")
 
-  -- TODO should check my custom autoformat dict
   if config.autoformat then
     vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)]]
   end
