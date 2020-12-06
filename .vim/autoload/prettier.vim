@@ -5,7 +5,9 @@ function! prettier#HasDirective(directive) abort
     let line = getline(n)
     if match(line, '^\s*\*\s*@' . a:directive . '\s*$') >= 0
       return 1
-    elseif match(line, '^\s*/\?\*') == -1
+    elseif match(line, '^\s*//\s*@' . a:directive . '\s*$') >= 0
+      return 1
+    elseif match(line, '^\s*\(/\?\*\|//\)') == -1
       " If we've reached the end of the jsdocs, return
       return 0
     endif
