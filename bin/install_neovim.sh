@@ -1,12 +1,13 @@
 #!/bin/bash
+set -e -o pipefail
 
 OSNAME=$(uname -s)
 if [ "$OSNAME" = "Darwin" ]; then
   MAC=1
 fi
 
-install_neovim(){
-  local usage="install_neovim [VERSION]
+main(){
+  local usage="$0 [VERSION]
 
 Options:
   -l, --list    List available versions
@@ -90,16 +91,16 @@ _install_linux() {
   if ! ./nvim.appimage --headless +qall > /dev/null 2>&1; then
     mkdir -p ~/.appimages
     mv nvim.appimage ~/.appimages
-    cd ~/.appimages
+    pushd ~/.appimages
     ./nvim.appimage --appimage-extract > /dev/null
     rm -rf nvim-appimage
     mv squashfs-root nvim-appimage
     ln -s -f ~/.appimages/nvim-appimage/AppRun ~/bin/nvim
     rm nvim.appimage
-    cd
+    popd
   else
     mv nvim.appimage ~/bin/nvim
   fi
 }
 
-export install_neovim
+main "$@"

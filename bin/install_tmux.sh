@@ -1,9 +1,13 @@
 #!/bin/bash
+set -e
 
 OSNAME=$(uname -s)
 if [ "$OSNAME" = "Darwin" ]; then
-  install_tmux(){
-    set -e
+  MAC=1
+fi
+
+main(){
+  if [ $MAC ]; then
     cd ~/Downloads
     curl -OL https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
     tar -xvf libevent-2.1.12-stable.tar.gz
@@ -26,5 +30,9 @@ if [ "$OSNAME" = "Darwin" ]; then
     rm -rf tmux-3.1c/
 
     tmux -V
-  }
-fi
+  else
+    sudo apt install -y -q tmux
+  fi
+}
+
+main "$@"
