@@ -13,3 +13,5 @@ nnoremap <buffer> <Leader>dv <Plug>(go-def-vertical)
 let g:autocomplete_cmd = "\<C-X>\<C-O>"
 " Conflicts with syntastic
 let g:go_auto_type_info = 0
+
+nnoremap <leader>e :GoRun<cr>

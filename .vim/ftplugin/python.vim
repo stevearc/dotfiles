@@ -15,3 +15,5 @@ augroup pyfmt
   autocmd! * <buffer>
   autocmd BufWritePre <buffer> call smartformat#Format('python', 'Neoformat')
 augroup END
+
+nnoremap <leader>e :call execute#Run('python')<cr>

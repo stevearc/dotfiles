@@ -200,28 +200,6 @@ se foldlevelstart=99
 " Disable fold column
 se foldcolumn=0
 
-source ~/.vim/config/colors.vim
-source ~/.vim/config/ctrlp.vim
-source ~/.vim/config/defx.vim
-source ~/.vim/config/deoplete.vim
-source ~/.vim/config/lsp.vim
-source ~/.vim/config/netrw.vim
-source ~/.vim/config/smartrun.vim
-source ~/.vim/config/tabs.vim
-source ~/.vim/config/windows.vim
-source ~/.vim/config/platform.vim
-source ~/.vim/config/terminal.vim
-source ~/.vim/config/ultisnips.vim
-source ~/.vim/config/clevertab.vim
-source ~/.vim/config/grep.vim
-source ~/.vim/config/quickfix.vim
-source ~/.vim/config/session.vim
-source ~/.vim/config/neoformat.vim
-lua require 'init_lua'
-if filereadable(expand('~/.local.vimrc'))
-  source ~/.local.vimrc
-endif
-
 " Use my universal clipboard tool to copy with <leader>y
 nnoremap <leader>y :call system('clip', @0)<CR>
 
@@ -277,5 +255,31 @@ nnoremap <silent> * :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=
 nnoremap <silent> # :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=0<CR>nzz
 nnoremap <silent> g* :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR>nzz
 nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>nzz
+
+" Defx mappings
+nnoremap <silent> - :Defx `expand('%:p:h')` -search=`expand('%:p')` -vertical-preview -preview-height=100 -preview-width=80<CR>
+nnoremap <leader>w :Defx -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
+nnoremap <leader>W :Defx `expand('%:p:h')` -search=`expand('%:p')` -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
+
+" Netrw
+" detail view
+let g:netrw_liststyle = 1
+" vsplit the preview
+let g:netrw_preview = 1
+" Show human-readable sizes
+let g:netrw_sizestyle = "H"
+" Preview splits right
+let g:netrw_alto = 0
+" Don't let Lexplore change the behavior of <cr>
+let g:netrw_chgwin = 0
+
+if has('win32')
+  set shell=powershell
+  set shellcmdflag=-command
+  set shellquote=\"
+  set shellxquote=
+endif
+
+lua require 'init_lua'
 
 let &l:statusline = '%!statusline#StatusLine()'

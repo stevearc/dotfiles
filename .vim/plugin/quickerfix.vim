@@ -21,3 +21,8 @@ command! -bar -count QuickFixToggle call quickerfix#QFToggle('c', <count>)
 command! -bar -count LocListToggle call quickerfix#QFToggle('l', <count>)
 command! -bar Cclear call setqflist([])
 command! -bar Lclear call setloclist(0, [])
+
+nnoremap <silent> <C-N> :QuickFixAutoNext<CR>
+nnoremap <silent> <C-P> :QuickFixAutoPrev<CR>
+nnoremap <leader>q :QuickFixToggle<CR>
+nnoremap <leader>l :LocListToggle<CR>

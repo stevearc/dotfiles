@@ -14,7 +14,6 @@ elif [ $MAC ]; then
     alias ls='ls -G'
 fi
 
-# some more ls aliases
 alias ll='ls -lh'
 alias la='ls -A'
 alias lla='ls -Alh'
@@ -37,7 +36,6 @@ alias youtube-dl-mp3='youtube-dl -f bestaudio -x --audio-format mp3 --audio-qual
 alias orphans="ps -elf | head -1; ps -elf | awk '{if (\$5 == 1 && \$3 != \"root\") {print \$0}}' | head"
 alias bp='bluepill'
 alias bpe='bluepill enter'
-alias pip-install-pyls='pip install wheel python-language-server[rope] pyls-mypy pyls-black pyls-isort rope mypy black isort'
 alias mosh='mosh -6'
 ash() {
     autossh -t "$@" 'tmux -2 attach || tmux -2 new'
@@ -50,6 +48,12 @@ export sash
 if command -v nvim > /dev/null; then
   alias vim='nvim'
   alias vi='nvim'
+fi
+if command -v rg > /dev/null; then
+  alias ag='rg'
+  alias ack='rg'
+elif command -v ag > /dev/null; then
+  alias ack='ag'
 fi
 and() {
   [ $? = 0 ] && "$@"

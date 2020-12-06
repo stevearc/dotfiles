@@ -30,7 +30,6 @@ augroup SessionSaveTrigger
   au!
   au BufWrite,BufEnter * :call s:RemapQuickSave()
 augroup END
-call add(g:ctrlp_extensions, 'session_wrapper')
 
 function! s:QuickLoad()
   let names = xolox#session#get_names(0)
