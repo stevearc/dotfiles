@@ -91,12 +91,6 @@ set tw=80
 " CursorHold time default is 4s. Way too long
 set updatetime=100
 
-" Trim trailing whitespace
-function! TrimTrailingWhitespace()
-  :%s/\s\+$//ge
-endfunction
-command! TrimTrailingWhitespace :call TrimTrailingWhitespace()
-
 " Syntax highlighting
 syntax enable
 syntax on
@@ -208,19 +202,6 @@ endif
 " Use my universal clipboard tool to copy with <leader>y
 nnoremap <leader>y :call system('clip', @0)<CR>
 
-" Function to rename the current file
-function! RenameFile()
-    let old_name = expand('%')
-    let new_name = input('New file name: ', expand('%'), 'file')
-    if new_name != '' && new_name != old_name
-        exec ':saveas ' . new_name
-        exec ':silent !rm ' . old_name
-        redraw!
-    endif
-endfunction
-" Replaced by defx
-" map <leader>n :call RenameFile()<cr>
-
 " Function to duplicate the current file
 function! DuplicateFile()
     let old_name = expand('%')
@@ -279,19 +260,6 @@ inoremap <C-e> <C-o>$
 
 nmap <leader>gs :Gstatus<CR>
 nmap <leader>gh :Git! log -- %<CR>
-
-" Cmdr
-function! Cmdr(cmd)
-  call system('nc localhost 8585', a:cmd)
-endfunction
-
-function! ProseMode()
-  setlocal spell noci nosi noai nolist noshowmode noshowcmd nonu
-  setlocal complete+=s
-  setlocal formatoptions+=t
-endfunction
-
-command! ProseMode call ProseMode()
 
 " Fix * and # behavior to respect smartcase
 nnoremap <silent> * :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=1<CR>nzz
