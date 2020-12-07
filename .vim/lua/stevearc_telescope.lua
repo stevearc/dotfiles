@@ -90,7 +90,7 @@ M.select = function(title, items, callback)
         local selection = actions.get_selected_entry()
         actions.close(prompt_bufnr)
         if type(callback) == "string" then
-          vim.cmd(string.format("call %s('%s')", callback, selection.value))
+          vim.call(callback, selection.value)
         else
           callback(selection.value)
         end

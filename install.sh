@@ -433,7 +433,7 @@ install-language-clojure() {
 install-language-go() {
   if [ ! -e /usr/local/go ]; then
     pushd /tmp
-    local pkg="go1.15.2.linux-amd64.tar.gz"
+    local pkg="go1.15.6.linux-amd64.tar.gz"
     if [ ! -e "$pkg" ]; then
       wget -O "$pkg" "https://golang.org/dl/$pkg"
     fi
