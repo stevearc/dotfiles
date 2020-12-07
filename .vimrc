@@ -151,20 +151,35 @@ augroup end
 :cnoremap <Esc>d <S-right><Delete>
 :cnoremap <C-g>  <C-c>
 
-" Keep cursor in the vertical center of the editor
-nnoremap <C-d> <C-d>zz
-nnoremap <C-u> <C-u>zz
-nnoremap G Gzz
-nnoremap <C-o> <C-o>zz
-nnoremap <C-i> <C-i>zz
-nnoremap { {zz
-nnoremap } }zz
+let g:old_centering = 0
 
-" j and k navigate line-wraps in a sane way (also vertical center)
-nnoremap j gjzz
-nnoremap k gkzz
-vnoremap j gjzz
-vnoremap k gkzz
+if g:old_centering
+  " Keep cursor in the vertical center of the editor
+  nnoremap <C-d> <C-d>zz
+  nnoremap <C-u> <C-u>zz
+  nnoremap G Gzz
+  nnoremap <C-o> <C-o>zz
+  nnoremap <C-i> <C-i>zz
+  nnoremap { {zz
+  nnoremap } }zz
+
+  " j and k navigate line-wraps in a sane way (also vertical center)
+  nnoremap j gjzz
+  nnoremap k gkzz
+  vnoremap j gjzz
+  vnoremap k gkzz
+else
+  nnoremap j gj
+  nnoremap k gk
+  vnoremap j gj
+  vnoremap k gk
+
+  augroup VCenterCursor
+    au!
+    au BufEnter,WinEnter,WinNew,VimResized *,*.*
+          \ let &scrolloff=winheight(win_getid())/2
+  augroup END
+end
 
 " Use completion-nvim instead of deoplete
 let g:new_completion = 1
