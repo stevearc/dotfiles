@@ -103,3 +103,12 @@
 [submodule ".vim/bundle/nvim-treesitter-context"]
 	path = .vim/bundle/nvim-treesitter-context
 	url = https://github.com/romgrk/nvim-treesitter-context.git
+[submodule ".vim/bundle/telescope.nvim"]
+	path = .vim/bundle/telescope.nvim
+	url = https://github.com/nvim-telescope/telescope.nvim.git
+[submodule ".vim/bundle/plenary.nvim"]
+	path = .vim/bundle/plenary.nvim
+	url = https://github.com/nvim-lua/plenary.nvim.git
+[submodule ".vim/bundle/popup.nvim"]
+	path = .vim/bundle/popup.nvim
+	url = https://github.com/nvim-lua/popup.nvim.git

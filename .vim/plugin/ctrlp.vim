@@ -1,6 +1,6 @@
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_switch_buffer = 'eTvh'
-let g:ctrlp_map = '<leader>t'
+" let g:ctrlp_map = '<leader>t'
 let g:ctrlp_by_filename = 1
 let g:ctrlp_extensions = ['session_wrapper']
 
@@ -18,5 +18,3 @@ elseif executable('ag')
 elseif executable('ack')
   let g:ctrlp_user_command['fallback'] = 'ack --nocolor -f %s'
 endif
-
-nnoremap <leader>b :CtrlPBuffer<CR>

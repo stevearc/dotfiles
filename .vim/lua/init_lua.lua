@@ -4,6 +4,12 @@ aerial.set_open_automatic{
   ['_'] = false,
 }
 
+require('telescope').setup{
+  defaults = {
+    winblend = 10,
+  }
+}
+
 local mapper = function(mode, key, result)
   vim.fn.nvim_buf_set_keymap(0, mode, key, result, {noremap = true, silent = true})
 end
