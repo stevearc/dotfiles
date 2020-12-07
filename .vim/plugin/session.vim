@@ -38,6 +38,7 @@ function! s:QuickLoad()
       SessionOpen quicksave
       SessionDelete! quicksave
       call session_wrapper#DetachSession()
+      break
     endif
   endfor
 endfunction

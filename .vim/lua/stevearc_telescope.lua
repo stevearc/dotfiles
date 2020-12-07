@@ -1,6 +1,9 @@
 local themes = require('telescope.themes')
 local actions = require('telescope.actions')
 local path = require('telescope.path')
+local pickers = require('telescope.pickers')
+local finders = require('telescope.finders')
+local conf = require('telescope.config').values
 
 local M = {}
 
@@ -60,7 +63,32 @@ M.buffers = function()
     return true
   end
   require('telescope.builtin').buffers(opts)
+end
 
+M.select = function(title, items, callback)
+  local opts = themes.get_dropdown{
+    previewer = false,
+  }
+  pickers.new(opts, {
+    prompt = title,
+    finder = finders.new_table {
+      results = items
+    },
+    sorter = conf.generic_sorter(opts),
+    attach_mappings = function(prompt_bufnr)
+      actions.goto_file_selection_edit:replace(function()
+        local selection = actions.get_selected_entry()
+        actions.close(prompt_bufnr)
+        if type(callback) == "string" then
+          vim.cmd(string.format("call %s('%s')", callback, selection.value))
+        else
+          callback(selection.value)
+        end
+      end)
+
+      return true
+    end
+  }):find()
 end
 
 return M
