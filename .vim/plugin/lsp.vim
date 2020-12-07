@@ -11,6 +11,11 @@ highlight link LspDiagnosticsSignInformation ALEInfoSign
 highlight link LspDiagnosticsDefaultHint ALEVirtualTextInfo
 highlight link LspDiagnosticsSignHint ALEInfoSign
 
+highlight link LspDiagnosticsUnderlineError SpellBad
+highlight link LspDiagnosticsUnderlineWarning SpellBad
+highlight link LspDiagnosticsUnderlineInformation Underlined
+highlight link LspDiagnosticsUnderlineHint Underlined
+
 " solarized8 doesn't support ALEVirtualText
 highlight link ALEVirtualTextError ALEError
 highlight link ALEVirtualTextWarning ALEWarning
