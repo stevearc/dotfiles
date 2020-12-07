@@ -270,6 +270,11 @@ nnoremap <silent> - :Defx `expand('%:p:h')` -search=`expand('%:p')` -vertical-pr
 nnoremap <leader>w :Defx -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
 nnoremap <leader>W :Defx `expand('%:p:h')` -search=`expand('%:p')` -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
 
+" Telescope mappings
+nnoremap <leader>t <cmd>lua require('stevearc_telescope').find_files()<cr>
+nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>b <cmd>lua require('stevearc_telescope').buffers()<cr>
+
 " Netrw
 " detail view
 let g:netrw_liststyle = 1

@@ -49,7 +49,7 @@ local ft_config = {
 
 -- Completion
 if vim.g.new_completion == 1 then
-  vim.cmd[[autocmd BufEnter <buffer> lua require'completion'.on_attach()]]
+  vim.cmd[[autocmd BufEnter * lua require'completion'.on_attach()]]
 end
 vim.g.completion_enable_snippet = 'UltiSnips'
 vim.g.completion_matching_smart_case = 1
@@ -63,8 +63,8 @@ vim.g.completion_chain_complete_list = {
     {mode = '<c-p>'},
 }
 vim.g.completion_auto_change_source = 1
-vim.fn.nvim_buf_set_keymap(0, 'i', '<c-l>', '<Plug>(completion_next_source)', {silent = true})
-vim.fn.nvim_buf_set_keymap(0, 'i', '<c-h>', '<Plug>(completion_prev_source)', {silent = true})
+vim.fn.nvim_set_keymap('i', '<c-l>', '<Plug>(completion_next_source)', {silent = true})
+vim.fn.nvim_set_keymap('i', '<c-h>', '<Plug>(completion_prev_source)', {silent = true})
 
 local M = {}
 
