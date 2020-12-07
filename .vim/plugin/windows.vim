@@ -6,12 +6,12 @@ set splitright
 
 let g:wequality = 1
 function! ResizeWindows()
-    if( g:wequality == 1 )
-        normal! \<C-w>=
+    if g:wequality == 1
+        wincmd =
     endif
 endfunction
 function! ToggleWinEqual()
-    if( g:wequality == 0 )
+    if g:wequality == 0
         let g:wequality = 1
     else
         let g:wequality = 0
