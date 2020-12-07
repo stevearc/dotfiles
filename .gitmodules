@@ -100,3 +100,6 @@
 [submodule ".vim/bundle/nvim-treesitter"]
 	path = .vim/bundle/nvim-treesitter
 	url = https://github.com/nvim-treesitter/nvim-treesitter
+[submodule ".vim/bundle/nvim-treesitter-context"]
+	path = .vim/bundle/nvim-treesitter-context
+	url = https://github.com/romgrk/nvim-treesitter-context.git

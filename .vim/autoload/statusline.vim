@@ -3,10 +3,8 @@ let s:interval = 5
 let s:timer = localtime() - s:interval
 
 function! statusline#StatusLine() abort
-    let l:ts = nvim_treesitter#statusline(60)
-    if l:ts == v:null
-        let l:ts = ''
-    elseif g:debug_treesitter
+    let l:ts = ''
+    if g:debug_treesitter
         let l:ts .= ' ' . luaeval("tostring(require'nvim-treesitter.ts_utils'.get_node_at_cursor(0))")
     endif
     if luaeval('#vim.lsp.buf_get_clients() == 0')
@@ -35,7 +33,7 @@ function! statusline#StatusLine() abort
     else
         let l:sl .= '[LSP off]'
     endif
-    return '%f %h%w%m%r ' . l:sl . ' ' . l:ts . ' %=%(%l,%c%V %= %P%)'
+    return '%f %h%w%m%r ' . l:sl . l:ts . ' %=%(%l,%c%V %= %P%)'
 endfunction
 
 function! s:getStatus(errors, warnings) abort
