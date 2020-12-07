@@ -1,3 +1,3 @@
-if filereadable(expand('~/.local.vimrc'))
-  source ~/.local.vimrc
+if filereadable(expand('~/.local.after.vimrc'))
+  source ~/.local.after.vimrc
 endif
