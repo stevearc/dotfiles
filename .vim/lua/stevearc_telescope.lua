@@ -54,6 +54,16 @@ M.find_files = function()
   })
 end
 
+M.myles_find_files = function()
+  require('myles').find_files({
+    previewer = false,
+    attach_mappings = function(prompt_bufnr, map)
+      map('i', '<C-t>', open_existing_or_new_tab)
+      return true
+    end
+  })
+end
+
 M.buffers = function()
   local opts = themes.get_dropdown{
     previewer = false,
