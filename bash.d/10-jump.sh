@@ -26,7 +26,7 @@ __compress() {
   # Compress the compressed file
   local tmpfile
   tmpfile="${COMPRESSED_LOG_FILE}.tmp"
-  awk '{seen[$2]+=$1}END{for (i in seen) print seen[i], i}' "$COMPRESSED_LOG_FILE" \
+  awk '{seen[$2]+=$1}END{for (i in seen) print seen[i] * 0.9, i}' "$COMPRESSED_LOG_FILE" \
     | sort -rn \
     | head -n "$NUM_COMPRESSED_JUMPLOCS" > "$tmpfile"
   mv "$tmpfile" "$COMPRESSED_LOG_FILE"
