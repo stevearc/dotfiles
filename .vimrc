@@ -185,23 +185,13 @@ end
 let g:new_completion = 1
 
 " Treesitter
-lua <<EOF
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = {
-    "bash", "c", "c_sharp", "cpp", "go", "graphql",
-    "java", "json", "lua", "python", "rst", "rust",
-    "toml", "typescript",
-  },
-  highlight = {
-    enable = true,
-  },
-  indent = {
-    enable = true,
-    disable = {"lua"}
-  },
-}
-EOF
 let g:debug_treesitter = 0
+let g:treesitter_languages = [
+      \ "bash", "c", "c_sharp", "cpp", "go", "graphql",
+      \ "java", "json", "lua", "python", "rst", "rust",
+      \ "toml", "typescript",
+      \]
+
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 " Start with folds open
