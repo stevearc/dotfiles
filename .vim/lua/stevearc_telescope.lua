@@ -19,10 +19,7 @@ function open_existing_or_new_tab(prompt_bufnr)
   local filename = entry.path or entry.filename
   filename = path.normalize(filename, vim.fn.getcwd())
 
-  local tabidx = 1
-  while true do
-    local status, tabnum = pcall(vim.api.nvim_tabpage_get_number, tabidx)
-    if not status then break end
+  for _,tabnum in ipairs(vim.api.nvim_list_tabpages()) do
     local wins = vim.api.nvim_tabpage_list_wins(tabnum)
     for _,winid in ipairs(wins) do
       local bufnr = vim.api.nvim_win_get_buf(winid)
@@ -33,7 +30,6 @@ function open_existing_or_new_tab(prompt_bufnr)
         return
       end
     end
-    tabidx = tabidx + 1
   end
 
   if entry.bufnr then
