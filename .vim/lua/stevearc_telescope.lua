@@ -61,7 +61,7 @@ M.myles_find_files = function()
 end
 
 M.buffers = function()
-  local opts = themes.get_dropdown{
+  local opts = {
     previewer = false,
   }
   opts.attach_mappings = function(prompt_bufnr, map)
