@@ -184,6 +184,50 @@ end
 " Use completion-nvim instead of deoplete
 let g:new_completion = 1
 
+" Smart tab behavior
+let g:ulti_expand_or_jump_res = 0 "default value, just set once
+let g:autocomplete_cmd = "\<C-x>\<C-o>"
+function! CleverTab()
+    call UltiSnips#ExpandSnippetOrJump()
+    if g:ulti_expand_or_jump_res == 0
+      if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
+          return "\<Tab>"
+      elseif &omnifunc == ''
+          return "\<C-p>"
+      else
+          return g:autocomplete_cmd
+      endif
+    else
+      return ''
+    endif
+endfunction
+inoremap <Tab> <C-R>=CleverTab()<CR>
+
+" Ultisnips
+function! ForwardsInInsert() abort
+  call UltiSnips#JumpForwards()
+  if g:ulti_jump_forwards_res == 0
+    lua require'completion'.nextSource()
+  endif
+endfunction
+function! BackwardsInInsert() abort
+  echom 'jumping backwards'
+  call UltiSnips#JumpBackwards()
+  if g:ulti_jump_backwards_res == 0
+    echom 'backwards failed'
+    lua require'completion'.prevSource()
+  endif
+endfunction
+let g:UltiSnipsExpandTrigger="<f12>"
+let g:UltiSnipsJumpForwardTrigger="<f12>"
+let g:UltiSnipsJumpBackwardTrigger="<f12>"
+snoremap <Tab> <Esc>:call UltiSnips#ExpandSnippetOrJump()<cr>
+xnoremap <Tab> :call UltiSnips#SaveLastVisualSelection()<cr>gvs
+snoremap <C-h> <Esc>:call UltiSnips#JumpBackwards()<cr>
+inoremap <C-h> <Esc>:call BackwardsInInsert()<cr>
+snoremap <C-l> <Esc>:call UltiSnips#JumpForwards()<cr>
+inoremap <C-l> <Esc>:call ForwardsInInsert()<cr>
+
 " Treesitter
 let g:debug_treesitter = 0
 let g:treesitter_languages = [

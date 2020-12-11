@@ -59,12 +59,10 @@ vim.g.completion_matching_strategy_list = {'exact', 'substring', 'fuzzy', 'all'}
 vim.g.completion_enable_auto_hover = 0
 vim.g.completion_chain_complete_list = {
     {complete_items = {'lsp'}},
-    {complete_items = {'snippet'}},
     {mode = '<c-p>'},
+    {complete_items = {'snippet'}},
 }
 vim.g.completion_auto_change_source = 1
-vim.fn.nvim_set_keymap('i', '<c-l>', '<Plug>(completion_next_source)', {silent = true})
-vim.fn.nvim_set_keymap('i', '<c-h>', '<Plug>(completion_prev_source)', {silent = true})
 
 local M = {}
 
