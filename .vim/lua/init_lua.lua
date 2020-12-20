@@ -129,7 +129,7 @@ M.on_attach = function(client)
   mapper('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>')
   mapper('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>')
   mapper('n', 'tgd', '<cmd>lua vim.lsp.buf.type_definition()<CR>')
-  mapper('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>')
+  mapper('n', 'gI', '<cmd>lua vim.lsp.buf.implementation()<CR>')
   mapper('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>')
   mapper('n', 'gs', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>')
   if config.help ~= false then
