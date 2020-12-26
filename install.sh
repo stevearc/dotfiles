@@ -14,7 +14,7 @@ declare -r DEFAULT_VIM_BUNDLES="completion-nvim ultisnips vim-solarized8 vim-com
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r XFCE_DOTFILES=".xsessionrc"
-declare -r ALL_LANGUAGES="go python js arduino clojure cs"
+declare -r ALL_LANGUAGES="go python js arduino clojure cs rust"
 declare -r USAGE=\
 "$0 [OPTIONS]
 -h            Print this help menu
@@ -411,9 +411,14 @@ install-language-rust() {
   if ! rustc --version > /dev/null; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
   fi
-  rustup component add rust-analyzer rust-src
+  if ! hascmd rust-analyzer; then
+    curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-linux -o ~/bin/rust-analyzer
+    chmod +x ~/bin/rust-analyzer
+  fi
+  rustup component add rust-src
   if [ ! -e ~/.bash.d/rust.sh ]; then
     echo 'export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"' > ~/.bash.d/rust.sh
+    echo 'source ~/.cargo/env' >> ~/.bash.d/rust.sh
   fi
 }
 

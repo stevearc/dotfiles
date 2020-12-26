@@ -127,6 +127,5 @@ if command -v yarn > /dev/null; then
   export PATH="$(yarn global bin | grep -v "Using globally installed version of Yarn"):$PATH"
   popd > /dev/null
 fi
-export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
 export NVIM_LOG_FILE_PATH="$HOME/.nvimlog"
