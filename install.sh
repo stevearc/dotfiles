@@ -573,7 +573,7 @@ setup-gnome() {
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-3 "['<Shift><Alt>numbersign']"
   gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Shift><Alt>dollar']"
   gsettings set org.gnome.desktop.wm.keybindings close "['<Alt>w']"
-  gsettings set org.gnome.desktop.wm.keybindings maximize "['<Primary>m']"
+  gsettings set org.gnome.desktop.wm.keybindings maximize "['<Super>m']"
   gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
   gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 24
   gsettings set org.gnome.shell.extensions.dash-to-dock preferred-monitor 0

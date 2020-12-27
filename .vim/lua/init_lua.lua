@@ -116,6 +116,7 @@ M.on_attach = function(client)
   vim.lsp.handlers['textDocument/publishDiagnostics'] = new_callback
   vim.cmd [[autocmd InsertLeave <buffer> lua require'init_lua'.on_update_diagnostics()]]
 
+  vim.api.nvim_win_set_option(0, 'signcolumn', 'yes')
   -- Aerial
   vim.api.nvim_set_var('aerial_open_automatic_min_lines', 200)
   vim.api.nvim_set_var('aerial_open_automatic_min_symbols', 10)
