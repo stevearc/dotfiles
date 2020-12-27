@@ -1,5 +1,5 @@
 #!/bin/bash -e
-# Setup script for (X)Ubuntu 18.04
+# Setup script for (X)Ubuntu 20.04
 #
 # If using WSL, first do:
 # Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
@@ -12,7 +12,6 @@ set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
 declare -r DEFAULT_VIM_BUNDLES="completion-nvim ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-sleuth vim-eunuch deoplete.nvim nvim-lspconfig deoplete-lsp vim-surround editorconfig-vim nvim-colorizer.lua nvim-treesitter nvim-treesitter-context plenary.nvim popup.nvim vim-endwise vim-autoswap defx.nvim aerial.nvim targets.vim telescope.nvim quickfix-reflector.vim"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
-declare -r GNOME_DOTFILES=".gconf .xbindkeysrc"
 declare -r XFCE_DOTFILES=".xsessionrc"
 declare -r ALL_LANGUAGES="go python js arduino clojure cs rust"
 declare -r USAGE=\
@@ -254,7 +253,7 @@ install-cli-after() {
   # Let's just always do the things for neovim
   [ -d ~/.envs ] || mkdir ~/.envs
   [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
-  ~/.envs/py3/bin/pip install -q pynvim
+  ~/.envs/py3/bin/pip install -q wheel pynvim
 
   if [ ! -e ~/.nvim_python ]; then
     echo "let g:python3_host_prog = \"$HOME/.envs/py3/bin/python\"" >> ~/.nvim_python
@@ -400,16 +399,16 @@ install-language-python() {
   has-checkpoint python && return
   sudo apt-get install -y -q \
     python-dev \
-    python-pip \
-    ipython
+    python3-pip \
+    ipython3
 
-  sudo pip install --upgrade -q pip autoenv
   checkpoint python
 }
 
 install-language-rust() {
   if ! rustc --version > /dev/null; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    source ~/.cargo/env
   fi
   if ! hascmd rust-analyzer; then
     curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-linux -o ~/bin/rust-analyzer
@@ -417,8 +416,8 @@ install-language-rust() {
   fi
   rustup component add rust-src
   if [ ! -e ~/.bash.d/rust.sh ]; then
-    echo 'export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"' > ~/.bash.d/rust.sh
-    echo 'source ~/.cargo/env' >> ~/.bash.d/rust.sh
+    echo 'source ~/.cargo/env' > ~/.bash.d/rust.sh
+    echo 'export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"' >> ~/.bash.d/rust.sh
   fi
 }
 
@@ -531,14 +530,11 @@ add-apt-key-google() {
 
 setup-desktop() {
   setup-install-progs
-  add-apt-key-google
-  sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
   # Enable multiverse
   sudo sed -i -e 's/# \(.* multiverse$\)/\1/' /etc/apt/sources.list
   sudo apt-get update -qq
 
   sudo apt-get install -q -y \
-    google-chrome-stable \
     gparted \
     ffmpeg \
     mplayer \
@@ -554,23 +550,35 @@ setup-desktop() {
 
 setup-gnome() {
   setup-desktop
-  has-checkpoint gnome && return
   [ ! $LINUX ] && return 1
-  # Get rid of horrible unity scrollbars
-  sudo apt-get purge -y -q \
-    overlay-scrollbar \
-    liboverlay-scrollbar-0.2-0 \
-    liboverlay-scrollbar3-0.2-0
 
-  sudo apt-get install -q -y \
-    gnome \
-    "gnome-do" \
-    vim-gnome \
-    xbindkeys
-  cp -r $GNOME_DOTFILES $HOME
-  sudo cp vim.desktop /usr/share/applications
-  cp mimeapps.list ~/.local/share/applications
-  checkpoint gnome
+  if [ ! -e /usr/share/applications/vim.desktop ]; then
+    sudo cp vim.desktop /usr/share/applications
+  fi
+  if [ $SYMBOLIC ]; then
+    link "$REPO/mimeapps.list" "$HOME/.local/share/applications/mimeapps.list"
+  else
+    cp mimeapps.list ~/.local/share/applications
+  fi
+
+  gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
+  gsettings set org.gnome.settings-daemon.plugins.media-keys search "['<Super>space']"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys terminal "['<Shift><Alt>Return']"
+  gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Alt>1']"
+  gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 "['<Alt>2']"
+  gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Alt>3']"
+  gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Alt>4']"
+  gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-1 "['<Shift><Alt>exclam']"
+  gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-2 "['<Shift><Alt>at']"
+  gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-3 "['<Shift><Alt>numbersign']"
+  gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Shift><Alt>dollar']"
+  gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
+  gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 24
+  gsettings set org.gnome.shell.extensions.dash-to-dock preferred-monitor 0
+  gsettings set org.gnome.desktop.input-sources xkb-options "['ctrl:nocaps']"
+  gsettings set org.gnome.settings-daemon.plugins.power power-button-action 'suspend'
+  gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 3600
+  gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
 }
 
 setup-xfce() {

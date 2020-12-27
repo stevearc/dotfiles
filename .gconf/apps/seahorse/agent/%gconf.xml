@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<gconf>
-	<entry name="cache_ttl" mtime="1375691048" type="int" value="300"/>
-	<entry name="cache_method" mtime="1375691048" type="string">
-		<stringvalue>session</stringvalue>
-	</entry>
-</gconf>

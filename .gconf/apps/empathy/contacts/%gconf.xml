@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<gconf>
-	<entry name="sort_criterium" mtime="1375205608" type="string">
-		<stringvalue>state</stringvalue>
-	</entry>
-</gconf>

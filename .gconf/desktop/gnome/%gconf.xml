@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<gconf>
-	<entry name="gtk-color-palette" mtime="1345835759" type="string">
-		<stringvalue>black:white:gray50:red:purple:blue:light blue:green:yellow:orange:lavender:brown:goldenrod4:dodger blue:pink:light green:gray10:gray30:gray75:gray90</stringvalue>
-	</entry>
-</gconf>

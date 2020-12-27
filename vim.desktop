@@ -1,7 +1,7 @@
 [Desktop Entry]
 Categories=;
 Comment=Edit file in Vim
-Exec=vim %f
+Exec=nvim %f
 GenericName=Process Viewer
 Hidden=false
 Icon=vim

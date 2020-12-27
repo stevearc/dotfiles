@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<gconf>
-	<entry name="nremote" mtime="1345826524" type="bool" value="true"/>
-	<entry name="needs_term" mtime="1345826524" type="bool" value="false"/>
-	<entry name="exec" mtime="1345826524" type="string">
-        <stringvalue>/usr/bin/google-chrome</stringvalue>
-	</entry>
-</gconf>

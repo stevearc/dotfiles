@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<gconf>
-	<entry name="sort_by" mtime="1375690761" type="string">
-		<stringvalue>-label</stringvalue>
-	</entry>
-</gconf>

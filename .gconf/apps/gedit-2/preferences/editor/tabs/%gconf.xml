@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<gconf>
-	<entry name="insert_spaces" mtime="1367044767" type="bool" value="true"/>
-	<entry name="tabs_size" mtime="1367044766" type="int" value="0"/>
-</gconf>
