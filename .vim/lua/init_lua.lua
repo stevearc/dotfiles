@@ -156,10 +156,16 @@ M.on_attach = function(client)
   vim.cmd("setlocal omnifunc=v:lua.vim.lsp.omnifunc")
 
   if config.autoformat then
-    vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)]]
+    vim.cmd [[autocmd BufWritePre <buffer> lua require'init_lua'.autoformat()]]
   end
 
   aerial.on_attach(client)
+end
+
+M.autoformat = function()
+  local pos = vim.fn.getcurpos()
+  vim.lsp.buf.formatting_sync(nil, 1000)
+  vim.fn.setpos('.', pos)
 end
 
 function on_attach_flow(client)

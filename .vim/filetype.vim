@@ -7,3 +7,4 @@ au BufRead,BufNewFile *.go setlocal ft=go
 au BufRead,BufNewFile *.thrift setlocal filetype=thrift
 au BufRead,BufNewFile *.cconf setlocal filetype=python
 au BufRead,BufNewFile *.snippets setlocal filetype=snippets
+au BufRead,BufNewFile *.frag setf glsl

@@ -215,7 +215,7 @@ install-cli() {
       openssh-client \
       rsync \
       shellcheck \
-      silversearcher-ag \
+      ripgrep \
       tmux \
       tree \
       unzip \
