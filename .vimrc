@@ -211,22 +211,20 @@ function! ForwardsInInsert() abort
   endif
 endfunction
 function! BackwardsInInsert() abort
-  echom 'jumping backwards'
   call UltiSnips#JumpBackwards()
   if g:ulti_jump_backwards_res == 0
-    echom 'backwards failed'
     lua require'completion'.prevSource()
   endif
 endfunction
 let g:UltiSnipsExpandTrigger="<f12>"
 let g:UltiSnipsJumpForwardTrigger="<f12>"
 let g:UltiSnipsJumpBackwardTrigger="<f12>"
-snoremap <Tab> <Esc>:call UltiSnips#ExpandSnippetOrJump()<cr>
-xnoremap <Tab> :call UltiSnips#SaveLastVisualSelection()<cr>gvs
-snoremap <C-h> <Esc>:call UltiSnips#JumpBackwards()<cr>
-inoremap <C-h> <Esc>:call BackwardsInInsert()<cr>
-snoremap <C-l> <Esc>:call UltiSnips#JumpForwards()<cr>
-inoremap <C-l> <Esc>:call ForwardsInInsert()<cr>
+smap <Tab> <cmd>call UltiSnips#ExpandSnippetOrJump()<cr>
+xmap <Tab> <cmd>call UltiSnips#SaveLastVisualSelection()<cr>gvs
+smap <C-h> <cmd>call UltiSnips#JumpBackwards()<cr>
+imap <C-h> <cmd>call BackwardsInInsert()<cr>
+smap <C-l> <cmd>call UltiSnips#JumpForwards()<cr>
+imap <C-l> <cmd>call ForwardsInInsert()<cr>
 
 " Treesitter
 let g:debug_treesitter = 0

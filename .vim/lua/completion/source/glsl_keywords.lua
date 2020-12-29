@@ -1,0 +1,172 @@
+local static = require'completion.source.static'
+
+local words = {
+  'gl_FragCoord',
+  'gl_FrontFacing',
+  'gl_ClipDistance',
+  'gl_CullDistance',
+  'gl_PointCoord',
+  'gl_PrimitiveID',
+  'gl_SampleID',
+  'gl_SamplePosition',
+  'gl_SampleMaskIn',
+  'gl_Layer',
+  'gl_ViewportIndex',
+  'gl_HelperInvocation',
+  'gl_FragDepth',
+  'gl_SampleMask',
+
+  -- Compatibility profile vertex shader built-in inputs
+  'gl_Color',
+  'gl_SecondaryColor',
+  'gl_Normal',
+  'gl_Vertex',
+  'gl_MultiTexCoord0',
+  'gl_MultiTexCoord1',
+  'gl_MultiTexCoord2',
+  'gl_MultiTexCoord3',
+  'gl_MultiTexCoord4',
+  'gl_MultiTexCoord5',
+  'gl_MultiTexCoord6',
+  'gl_MultiTexCoord7',
+  'gl_FogCoord',
+
+  -- Trigonometry Functions
+  'radians',
+  'degrees',
+  'sin',
+  'cos',
+  'tan',
+  'asin',
+  'acos',
+  'atan',
+  'sinh',
+  'cosh',
+  'tanh',
+  'asinh',
+  'acosh',
+  'atanh',
+
+  -- Exponential functions
+  'pow',
+  'exp',
+  'log',
+  'exp2',
+  'log2',
+  'sqrt',
+  'inversesqrt',
+
+  -- Common functions
+  'abs',
+  'sign',
+  'floor',
+  'trunc',
+  'round',
+  'roundEven',
+  'ceil',
+  'fract',
+  'mod',
+  'modf',
+  'min',
+  'max',
+  'clamp',
+  'mix',
+  'step',
+  'smoothstep',
+  'isnan',
+  'isinf',
+  'floatBitsToInt',
+  'floatBitsToUint',
+  'intBitsToFloat',
+  'uintBitsToFloat',
+  'fma',
+  'frexp',
+  'ldexp',
+
+  -- Floating point pack and unpack functions
+  'packUnorm2x16',
+  'packSnorm2x16',
+  'packUnorm4x8',
+  'packSnorm4x8',
+  'unpackUnorm2x16',
+  'unpackSnorm2x16',
+  'unpackUnorm4x8',
+  'unpackSnorm4x8',
+  'packHalf2x16',
+  'unpackHalf2x16',
+  'packDouble2x32',
+  'unpackDouble2x32',
+
+  -- Geometric functions
+  'length',
+  'distance',
+  'dot',
+  'cross',
+  'normalize',
+  'ftransform',
+  'faceforward',
+  'reflect',
+  'refract',
+
+  -- Matrix functions
+  'matrixCompMult',
+  'outerProduct',
+  'transpose',
+  'determinant',
+  'inverse',
+
+  -- Vector relational functions
+  'lessThan',
+  'lessThanEqual',
+  'greaterThan',
+  'greaterThanEqual',
+  'equal',
+  'notEqual',
+  'any',
+  'all',
+  'not',
+
+  -- Integer functions
+  'uaddCarry',
+  'usubBorrow',
+  'umulExtended',
+  'imulExtended',
+  'bitfieldExtract',
+  'bitfieldInsert',
+  'bitfieldReverse',
+  'bitCount',
+  'findLSB',
+  'findMSB',
+
+  -- Texture functions
+  'textureSize',
+  'textureQueryLod',
+  'textureQueryLevels',
+  'textureSamples',
+
+  -- Texel lookup functions
+  'texture',
+  'textureProj',
+  'textureLod',
+  'textureOffsettextelFetch',
+  'texelFetchOffset',
+  'textureProjOffset',
+  'textureLodOffset',
+  'textureProjLod',
+  'textureProjLodOffset',
+  'textureGrad',
+  'textureGradOffset',
+  'textureProjGrad',
+  'textureProjGradOffset',
+
+  -- TODO
+
+
+  -- Noise functions
+  'noise1',
+  'noise2',
+  'noise3',
+  'noise4',
+}
+
+return {get_completion_items = static.get_static_source(words)}

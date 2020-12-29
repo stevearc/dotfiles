@@ -1,4 +1,5 @@
 local aerial = require 'aerial'
+local completion = require("completion")
 
 aerial.set_open_automatic{
   ['_'] = false,
@@ -53,14 +54,24 @@ if vim.g.new_completion == 1 then
 end
 vim.g.completion_enable_snippet = 'UltiSnips'
 vim.g.completion_matching_smart_case = 1
-vim.g.completion_matching_strategy_list = {'exact', 'substring', 'fuzzy', 'all'}
+vim.g.completion_matching_strategy_list = {'exact', 'fuzzy'}
 -- Have to disable this because it strangely moves the cursor one column to the
 -- left when going through completion menu
 vim.g.completion_enable_auto_hover = 0
+
+completion.addCompletionSource("glsl", {item = require'completion.source.glsl_keywords'.get_completion_items})
+
 vim.g.completion_chain_complete_list = {
+  glsl = {
+    {complete_items = {'glsl'}},
+    {mode = '<c-p>'},
+    {complete_items = {'snippet'}},
+  },
+  default = {
     {complete_items = {'lsp'}},
     {mode = '<c-p>'},
     {complete_items = {'snippet'}},
+  },
 }
 vim.g.completion_auto_change_source = 1
 
