@@ -326,6 +326,6 @@ if has('win32')
   set shellxquote=
 endif
 
-lua require 'init_lua'
+se stl=%!statusline#StatusLine()
 
-let &l:statusline = '%!statusline#StatusLine()'
+lua require 'init_lua'
