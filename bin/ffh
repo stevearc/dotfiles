@@ -187,7 +187,7 @@ _cmd_clip() {
   local usage="clip <INPUT> <OUTPUT> [<TIME>...]
 
 Notes:
-  TIME     Format is \"hh:mm:ss\"
+  TIME     Format is \"hh:mm:ss-hh:mm:ss\"
 "
   parseargs "$usage" "$@"
   if [ -e "$OUTPUT" ]; then
