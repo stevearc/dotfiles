@@ -205,6 +205,7 @@ install-cli() {
     sudo apt-get install -y -q \
       autossh \
       bsdmainutils \
+      direnv \
       htop \
       inotify-tools \
       iotop \
