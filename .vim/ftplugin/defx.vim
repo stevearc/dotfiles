@@ -70,10 +70,9 @@ nnoremap <silent><buffer><expr> > defx#do_action('resize',
 nnoremap <silent><buffer><expr> < defx#do_action('resize',
 	\ defx#get_context().winwidth - 10)
 
-fun! Subgrep(args) abort
+fun! Subgrep() abort
   let l:path = fnamemodify(defx#get_candidate()['action__path'], ':p:h')
-  exec "vimgrep /" . a:args . "/ " . l:path . '/**'
-  call quickerfix#Open('c')
+  call luaeval("require('telescope.builtin').live_grep(_A)", {'cwd': l:path})
 endf
 
-command! -buffer -bar -nargs=+ Sgrep call Subgrep('<args>')
+nnoremap <buffer> <leader>g <cmd>call Subgrep()<cr>

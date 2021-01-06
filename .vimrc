@@ -288,8 +288,7 @@ endfunc
 inoremap <C-a> <C-o>0
 inoremap <C-e> <C-o>$
 
-nmap <leader>gs :Gstatus<CR>
-nmap <leader>gh :Git! log -- %<CR>
+command! GitHistory Git! log -- %
 
 " Fix * and # behavior to respect smartcase
 nnoremap <silent> * :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=1<CR>nzz
