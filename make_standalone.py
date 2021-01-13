@@ -1,43 +1,13 @@
 #!/usr/bin/env python
 """ Script for building a standalone python package executable """
-from __future__ import print_function
 import argparse
 import os
-import tempfile
-import sys
 import shutil
 import subprocess
+import sys
+import tempfile
+import venv
 from distutils.spawn import find_executable
-
-
-VENV_VERSION = "16.0.0"
-VENV_URL = (
-    "https://pypi.python.org/packages/source/v/"
-    "virtualenv/virtualenv-%s.tar.gz" % VENV_VERSION
-)
-
-
-def make_virtualenv(env):
-    """ Create a virtualenv """
-    if sys.version_info.major == 2:
-        from urllib import urlretrieve
-
-        if find_executable("virtualenv") is not None:
-            cmd = ["virtualenv"] + [env]
-            subprocess.check_call(cmd)
-        else:
-            # Otherwise, download virtualenv from pypi
-            path = urlretrieve(VENV_URL)[0]
-            subprocess.check_call(["tar", "xzf", path])
-            subprocess.check_call(
-                [sys.executable, "virtualenv-%s/virtualenv.py" % VENV_VERSION, env]
-            )
-            os.unlink(path)
-            shutil.rmtree("virtualenv-%s" % VENV_VERSION)
-    else:
-        import venv
-
-        venv.create(env, with_pip=True)
 
 
 def main():
@@ -60,20 +30,18 @@ def main():
 
     venv_dir = tempfile.mkdtemp()
     try:
-        make_virtualenv(venv_dir)
+        venv.create(venv_dir, with_pip=True)
 
         print("Downloading dependencies")
         pip = os.path.join(venv_dir, "bin", "pip")
-        subprocess.check_call([pip, "install", "pex"])
-        subprocess.check_call([pip, "install", "wheel"])
+        subprocess.check_call([pip, "install", "pex", "wheel"])
         subprocess.check_call([pip, "install", args.package])
 
         print("Building executable")
-        python = os.path.join(venv_dir, "bin", "python")
         entry = (
             subprocess.check_output(
                 [
-                    python,
+                    os.path.join(venv_dir, "bin", "python")
                     "-c",
                     "import pkg_resources; e = pkg_resources.get_entry_info('%s', 'console_scripts', '%s'); print(e.module_name + ':' + '.'.join(e.attrs))"
                     % (args.package, args.script),
