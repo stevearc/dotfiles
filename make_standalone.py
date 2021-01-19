@@ -41,14 +41,14 @@ def main():
         entry = (
             subprocess.check_output(
                 [
-                    os.path.join(venv_dir, "bin", "python")
+                    os.path.join(venv_dir, "bin", "python"),
                     "-c",
                     "import pkg_resources; e = pkg_resources.get_entry_info('%s', 'console_scripts', '%s'); print(e.module_name + ':' + '.'.join(e.attrs))"
                     % (args.package, args.script),
                 ]
             )
             .strip()
-            .decode('utf-8')
+            .decode("utf-8")
         )
         pex = os.path.join(venv_dir, "bin", "pex")
         cmd = [pex, args.package, "-m", entry, "-o", args.script] + args.args
