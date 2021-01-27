@@ -184,47 +184,126 @@ end
 " Use completion-nvim instead of deoplete
 let g:new_completion = 1
 
+let g:use_ultisnips = 0
+let g:vsnip_snippet_dirs = [
+      \ $HOME.'/.vim/vsnip',
+      \ $HOME.'/.config/nvim/vsnip',
+      \ ]
+
 " Smart tab behavior
 let g:ulti_expand_or_jump_res = 0 "default value, just set once
 let g:autocomplete_cmd = "\<C-x>\<C-o>"
 function! CleverTab()
+  if g:use_ultisnips
     call UltiSnips#ExpandSnippetOrJump()
     if g:ulti_expand_or_jump_res == 0
       if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
-          return "\<Tab>"
+        return "\<Tab>"
       elseif &omnifunc == ''
-          return "\<C-p>"
+        return "\<C-p>"
       else
-          return g:autocomplete_cmd
+        return g:autocomplete_cmd
       endif
     else
       return ''
     endif
+  else
+    if vsnip#available(1)
+      if pumvisible()
+        call feedkeys("\<C-x>\<C-x>")
+      endif
+      call Vsnip_expand_or_jump()
+      return ''
+    elseif pumvisible()
+      return "\<C-n>"
+    elseif strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
+      return "\<Tab>"
+    elseif &omnifunc == ''
+      return "\<C-p>"
+    else
+      return g:autocomplete_cmd
+    endif
+  endif
 endfunction
 inoremap <Tab> <C-R>=CleverTab()<CR>
 
-" Ultisnips
+function! Vsnip_expand_or_jump()
+  let l:ctx = {}
+  function! l:ctx.callback() abort
+    let l:context = vsnip#get_context()
+    let l:session = vsnip#get_session()
+    if !empty(l:context)
+      call vsnip#expand()
+    elseif !empty(l:session) && l:session.jumpable(1)
+      call l:session.jump(1)
+    endif
+  endfunction
+
+  " This is needed to keep normal-mode during 0ms to prevent CompleteDone handling by LSP Client.
+  let l:maybe_complete_done = !empty(v:completed_item) && !empty(v:completed_item.user_data)
+  if l:maybe_complete_done
+    call timer_start(0, { -> l:ctx.callback() })
+  else
+    call l:ctx.callback()
+  endif
+endfunction
+function! Vsnip_jump(direction) abort
+  let l:session = vsnip#get_session()
+  if !empty(l:session) && l:session.jumpable(a:direction)
+    call l:session.jump(a:direction)
+  endif
+endfunction
 function! ForwardsInInsert() abort
-  call UltiSnips#JumpForwards()
-  if g:ulti_jump_forwards_res == 0
-    lua require'completion'.nextSource()
+  if g:use_ultisnips
+    call UltiSnips#JumpForwards()
+    if g:ulti_jump_forwards_res == 0
+      lua require'completion'.nextSource()
+    endif
+  else
+    if vsnip#jumpable(1)
+      call Vsnip_jump(1)
+    else
+      lua require'completion'.nextSource()
+    endif
   endif
 endfunction
 function! BackwardsInInsert() abort
-  call UltiSnips#JumpBackwards()
-  if g:ulti_jump_backwards_res == 0
-    lua require'completion'.prevSource()
+  if g:use_ultisnips
+    call UltiSnips#JumpBackwards()
+    if g:ulti_jump_backwards_res == 0
+      lua require'completion'.prevSource()
+    endif
+  else
+    if vsnip#jumpable(-1)
+      call Vsnip_jump(-1)
+    else
+      lua require'completion'.prevSource()
+    endif
   endif
 endfunction
+
+" Snippets
 let g:UltiSnipsExpandTrigger="<f12>"
 let g:UltiSnipsJumpForwardTrigger="<f12>"
 let g:UltiSnipsJumpBackwardTrigger="<f12>"
-smap <Tab> <cmd>call UltiSnips#ExpandSnippetOrJump()<cr>
-xmap <Tab> <cmd>call UltiSnips#SaveLastVisualSelection()<cr>gvs
-smap <C-h> <cmd>call UltiSnips#JumpBackwards()<cr>
-imap <C-h> <cmd>call BackwardsInInsert()<cr>
-smap <C-l> <cmd>call UltiSnips#JumpForwards()<cr>
-imap <C-l> <cmd>call ForwardsInInsert()<cr>
+if g:use_ultisnips
+  smap <Tab> <cmd>call UltiSnips#ExpandSnippetOrJump()<cr>
+  xmap <Tab> <cmd>call UltiSnips#SaveLastVisualSelection()<cr>gvs
+  smap <C-h> <cmd>call UltiSnips#JumpBackwards()<cr>
+  imap <C-h> <cmd>call BackwardsInInsert()<cr>
+  smap <C-l> <cmd>call UltiSnips#JumpForwards()<cr>
+  imap <C-l> <cmd>call ForwardsInInsert()<cr>
+else
+  let g:vsnip_filetypes = {}
+  let g:vsnip_filetypes.javascriptreact = ['javascript']
+  let g:vsnip_filetypes.typescriptreact = ['typescript']
+  smap <Tab> <Plug>(vsnip-cut-text)
+  xmap <Tab> <Plug>(vsnip-cut-text)
+  smap <C-h> <Plug>(vsnip-jump-prev)
+  imap <C-h> <cmd>call BackwardsInInsert()<cr>
+  smap <C-l> <Plug>(vsnip-jump-next)
+  imap <C-l> <cmd>call ForwardsInInsert()<cr>
+endif
 
 " Treesitter
 let g:debug_treesitter = 0

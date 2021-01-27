@@ -52,7 +52,11 @@ local ft_config = {
 if vim.g.new_completion == 1 then
   vim.cmd[[autocmd BufEnter * lua require'completion'.on_attach()]]
 end
-vim.g.completion_enable_snippet = 'UltiSnips'
+if vim.g.use_ultisnips ~= 0 then
+  vim.g.completion_enable_snippet = 'UltiSnips'
+else
+  vim.g.completion_enable_snippet = 'vim-vsnip'
+end
 vim.g.completion_matching_smart_case = 1
 vim.g.completion_matching_strategy_list = {'exact', 'fuzzy'}
 
@@ -241,6 +245,9 @@ default_capabilities.workspace.workspaceEdit = {
   };
 };
 default_capabilities.textDocument.rename.prepareSupportDefaultBehavior = 1;
+if vim.g.use_ultisnips == 0 then
+  default_capabilities.textDocument.completion.completionItem.snippetSupport = true
+end
 
 require'lspconfig'.rust_analyzer.setup{
   on_attach = M.on_attach,

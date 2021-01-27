@@ -1,0 +1,14 @@
+{
+  "filename": {
+    "prefix": ["fn"],
+    "body": ["$TM_FILENAME_BASE"]
+  },
+  "filenameWithExtension": {
+    "prefix": ["fnn"],
+    "body": ["$TM_FILENAME"]
+  },
+  "shrug": {
+    "prefix": ["shrug"],
+    "body": ["¯\\\\_(ツ)_/¯"]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "ternary": {
+    "prefix": ["?"],
+    "body": ["$1 ? $2 : $3"]
+  },
+  "oneLineLambda": {
+    "prefix": ["f"],
+    "body": ["($1) => $0"]
+  },
+  "multiLineLambda": {
+    "prefix": ["ff"],
+    "body": ["($1) => {", "  $1", "}"]
+  },
+  "consoleLog": {
+    "prefix": ["log"],
+    "body": ["console.log($1)"]
+  },
+  "MixedElement": {
+    "prefix": ["me"],
+    "body": ["React.MixedElement"]
+  },
+  "NullOrMixedElement": {
+    "prefix": ["nme"],
+    "body": ["null | React.MixedElement"]
+  },
+  "Component": {
+    "prefix": ["comp"],
+    "body": [
+      "function $1(props: ${2:Props}): React.MixedElement {",
+      "  $0",
+      "}"
+    ]
+  },
+  "ReadOnly": {
+    "prefix": ["ro"],
+    "body": ["\\$ReadOnly<${1:$TM_SELECTED_TEXT}>"]
+  },
+  "Props": {
+    "prefix": ["props"],
+    "body": ["type Props = \\$ReadOnly<{$1}>;"]
+  }
+}
