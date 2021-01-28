@@ -43,9 +43,6 @@
 [submodule ".vim/bundle/closetag"]
 	path = .vim/bundle/closetag
 	url = https://github.com/docunext/closetag.vim
-[submodule ".vim/bundle/vim-sleuth"]
-	path = .vim/bundle/vim-sleuth
-	url = https://github.com/tpope/vim-sleuth.git
 [submodule ".vim/bundle/vim-eunuch"]
 	path = .vim/bundle/vim-eunuch
 	url = https://github.com/tpope/vim-eunuch.git
