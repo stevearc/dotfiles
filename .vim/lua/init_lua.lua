@@ -49,7 +49,7 @@ local ft_config = {
 }
 
 -- Completion
-if vim.g.new_completion == 1 then
+if vim.g.completion_plugin == 'completion' then
   vim.cmd[[autocmd BufEnter * lua require'completion'.on_attach()]]
 end
 if vim.g.use_ultisnips ~= 0 then
@@ -75,6 +75,21 @@ vim.g.completion_chain_complete_list = {
   },
 }
 vim.g.completion_auto_change_source = 1
+
+if vim.g.completion_plugin == 'compe' then
+  require'compe'.setup {
+    enabled = true;
+    debug = false;
+    min_length = 1;
+    source = {
+      path = false;
+      buffer = false;
+      vsnip = true;
+      nvim_lsp = true;
+    };
+  }
+end
+
 
 local M = {}
 

@@ -182,7 +182,7 @@ else
 end
 
 " Use completion-nvim instead of deoplete
-let g:new_completion = 1
+let g:completion_plugin = 'completion'
 
 let g:use_ultisnips = 0
 let g:vsnip_snippet_dirs = [
