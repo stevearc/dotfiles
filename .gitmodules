@@ -115,3 +115,6 @@
 [submodule ".vim/bundle/nvim-compe"]
 	path = .vim/bundle/nvim-compe
 	url = https://github.com/hrsh7th/nvim-compe.git
+[submodule ".vim/bundle/vim-vsnip-snippets"]
+	path = .vim/bundle/vim-vsnip-snippets
+	url = https://github.com/stevearc/vim-vsnip-snippets.git
