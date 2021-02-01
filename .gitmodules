@@ -118,3 +118,6 @@
 [submodule ".vim/bundle/vim-vsnip-snippets"]
 	path = .vim/bundle/vim-vsnip-snippets
 	url = https://github.com/stevearc/vim-vsnip-snippets.git
+[submodule ".vim/bundle/completion-buffers"]
+	path = .vim/bundle/completion-buffers
+	url = https://github.com/steelsojka/completion-buffers.git

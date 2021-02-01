@@ -64,13 +64,12 @@ completion.addCompletionSource("glsl", {item = require'completion.source.glsl_ke
 
 vim.g.completion_chain_complete_list = {
   glsl = {
-    {complete_items = {'glsl'}},
-    {mode = '<c-p>'},
+    {complete_items = {'glsl', 'buffers'}},
     {complete_items = {'snippet'}},
   },
   default = {
     {complete_items = {'lsp'}},
-    {mode = '<c-p>'},
+    {complete_items = {'buffers'}},
     {complete_items = {'snippet'}},
   },
 }
