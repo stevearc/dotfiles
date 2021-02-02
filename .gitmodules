@@ -121,3 +121,6 @@
 [submodule ".vim/bundle/completion-buffers"]
 	path = .vim/bundle/completion-buffers
 	url = https://github.com/steelsojka/completion-buffers.git
+[submodule ".vim/bundle/nvim-autopairs"]
+	path = .vim/bundle/nvim-autopairs
+	url = https://github.com/windwp/nvim-autopairs.git
