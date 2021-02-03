@@ -272,8 +272,6 @@ end
 require'lspconfig'.rust_analyzer.setup{
   on_attach = M.on_attach,
   capabilities = default_capabilities,
-  -- Hack until https://github.com/neovim/nvim-lspconfig/pull/710 lands
-  root_dir = require 'lspconfig/util'.root_pattern("Cargo.toml", "rust-project.json", ".git"),
 }
 require'lspconfig'.tsserver.setup{
   on_attach = M.on_attach,
