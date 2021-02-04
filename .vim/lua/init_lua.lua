@@ -123,6 +123,10 @@ M.on_attach = function(client)
   local ft = vim.api.nvim_buf_get_option(0, 'filetype')
   local config = ft_config[ft] or {}
 
+  if client.config.flags then
+    client.config.flags.allow_incremental_sync = config.allow_incremental_sync ~= false
+  end
+
   -- Make all the "jump" commands call zvzz after execution
   local jump_callbacks = {
     'textDocument/declaration',
