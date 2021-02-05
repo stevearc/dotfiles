@@ -11,11 +11,6 @@ require('telescope').setup{
   }
 }
 
-require('nvim-autopairs').setup({
-  disable_filetype  = {'rust'},
-  html_break_line_filetype = {'html', 'vue', 'typescriptreact', 'typescript.jsx', 'svelte', 'javascriptreact', 'javascript.jsx'}
-})
-
 local mapper = function(mode, key, result)
   vim.fn.nvim_buf_set_keymap(0, mode, key, result, {noremap = true, silent = true})
 end

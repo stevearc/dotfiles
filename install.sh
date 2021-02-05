@@ -10,7 +10,7 @@
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
-declare -r DEFAULT_VIM_BUNDLES="completion-nvim ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-eunuch deoplete.nvim nvim-lspconfig deoplete-lsp vim-surround editorconfig-vim nvim-colorizer.lua nvim-treesitter nvim-treesitter-context plenary.nvim popup.nvim vim-endwise vim-autoswap defx.nvim aerial.nvim targets.vim telescope.nvim quickfix-reflector.vim vim-vsnip vim-vsnip-integ nvim-compe vim-vsnip-snippets completion-buffers nvim-autopairs"
+declare -r DEFAULT_VIM_BUNDLES="completion-nvim ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-eunuch deoplete.nvim nvim-lspconfig deoplete-lsp vim-surround editorconfig-vim nvim-colorizer.lua nvim-treesitter nvim-treesitter-context plenary.nvim popup.nvim vim-endwise vim-autoswap defx.nvim aerial.nvim targets.vim telescope.nvim quickfix-reflector.vim vim-vsnip vim-vsnip-integ nvim-compe vim-vsnip-snippets completion-buffers"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r XFCE_DOTFILES=".xsessionrc"
 declare -r ALL_LANGUAGES="go python js arduino clojure cs rust"
