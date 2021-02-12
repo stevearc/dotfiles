@@ -121,3 +121,6 @@
 [submodule ".vim/bundle/completion-buffers"]
 	path = .vim/bundle/completion-buffers
 	url = https://github.com/steelsojka/completion-buffers.git
+[submodule ".vim/bundle/startuptime"]
+	path = .vim/bundle/startuptime
+	url = https://github.com/tweekmonster/startuptime.vim.git
