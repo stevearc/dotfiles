@@ -379,31 +379,19 @@ install-language-python() {
   cp .pylintrc "$HOME"
   hascmd apt-get && sudo apt-get install -y -q \
     python3 \
+    python-is-python3 \
     python3-distutils \
     python3-venv
-  if ! hascmd black; then
-    python3 make_standalone.py black
-    mv black ~/bin
-  fi
-  if ! hascmd pylint; then
-    python3 make_standalone.py pylint
-    mv pylint ~/bin
-  fi
-  if ! hascmd pycodestyle; then
-    python3 make_standalone.py pycodestyle
-    mv pycodestyle ~/bin
-  fi
   # Early return on FB devserver
   if ! hascmd apt-get ; then return; fi
-  install-dotnet
-  nvim --headless +"LspInstall pyls_ms" +qall
-  has-checkpoint python && return
+  if ! hascmd pyright; then
+    install-nvm
+    npm install -g pyright
+  fi
   sudo apt-get install -y -q \
-    python-dev \
+    python3-dev \
     python3-pip \
     ipython3
-
-  checkpoint python
 }
 
 install-language-rust() {
@@ -480,25 +468,31 @@ install-language-arduino() {
 install-language-js() {
   install-nvm
   if ! hascmd yarn; then
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-    sudo apt-get update -qq
-    sudo apt-get install -q -y --no-install-recommends yarn
+    npm install -g yarn
   fi
   hascmd prettier || yarn global add prettier
   hascmd flow || yarn global add flow-bin
+  npm install -g typescript-language-server
   cp-vim-bundle closetag
   cp-vim-bundle flow-coverage.nvim
+}
+
+install-language-common() {
+  install-nvm
+  npm install -g bash-language-server
+  npm install -g vscode-json-languageserver
+  npm install -g vim-language-server
+  npm install -g yaml-language-server
 }
 
 install-language-cs() {
   if [ ! $WSL ]; then
     return
   fi
-  install-dotnet
+  # install-dotnet
+  echo "Installing omnisharp doesn't work right now. I'll fix it next time I need to work with C#"
   nvim --headless +"LspInstall omnisharp" +qall
 }
-
 
 install-nvm() {
   # Early return on FB devserver
@@ -510,7 +504,7 @@ install-nvm() {
   local nvm_dir=$(prompt "NVM install dir:" /usr/local/nvm)
   if [ ! -d "$nvm_dir" ]; then
     pushd /tmp > /dev/null
-    wget -O install.sh https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh
+    wget -O install.sh https://raw.githubusercontent.com/creationix/nvm/v0.37.2/install.sh
     chmod +x install.sh
     sudo bash -c "NVM_DIR=$nvm_dir ./install.sh"
     sudo chown -R "$USER:$USER" "$nvm_dir"

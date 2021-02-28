@@ -222,35 +222,8 @@ require'lspconfig'.jsonls.setup{
 require'lspconfig'.omnisharp.setup{
   on_attach = M.on_attach,
 }
-require'lspconfig'.pyls_ms.setup{
+require'lspconfig'.pyright.setup{
   on_attach = M.on_attach,
-  settings = {
-    python = {
-      analysis = {
-        disabled = {},
-        errors = {
-          'inherit-non-classpath',
-          'no-cls-argument',
-          'no-method-argument',
-          'no-self-argument',
-          'parameter-already-specified',
-          'parameter-missing',
-          'positional-argument-after-keyword',
-          'positional-only-named',
-          'return-in-init',
-          'too-many-function-arguments',
-          'typing-typevar-arguments',
-          'undefined-variable',
-          'unknown-parameter-name',
-          'unknown-parameter-name',
-          'unresolved-import',
-          'variable-not-defined-globally',
-          'variable-not-defined-nonlocal',
-        },
-        info = {}
-      }
-    }
-  }
 }
 
 
