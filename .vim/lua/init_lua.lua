@@ -114,13 +114,19 @@ M.on_update_diagnostics = function(bufnr)
   end
 end
 
-M.on_attach = function(client)
+M.on_init = function(client)
   local ft = vim.api.nvim_buf_get_option(0, 'filetype')
   local config = ft_config[ft] or {}
 
+  client.config.flags = {}
   if client.config.flags then
     client.config.flags.allow_incremental_sync = config.allow_incremental_sync ~= false
   end
+end
+
+M.on_attach = function(client)
+  local ft = vim.api.nvim_buf_get_option(0, 'filetype')
+  local config = ft_config[ft] or {}
 
   -- Make all the "jump" commands call zvzz after execution
   local jump_callbacks = {
@@ -206,24 +212,31 @@ end
 
 require'lspconfig'.bashls.setup{
   on_attach = M.on_attach,
+  on_init = M.on_init,
 }
 require'lspconfig'.gdscript.setup{
   on_attach = M.on_attach,
+  on_init = M.on_init,
 }
 require'lspconfig'.clangd.setup{
   on_attach = M.on_attach,
+  on_init = M.on_init,
 }
 require'lspconfig'.html.setup{
   on_attach = M.on_attach,
+  on_init = M.on_init,
 }
 require'lspconfig'.jsonls.setup{
   on_attach = M.on_attach,
+  on_init = M.on_init,
 }
 require'lspconfig'.omnisharp.setup{
   on_attach = M.on_attach,
+  on_init = M.on_init,
 }
 require'lspconfig'.pyright.setup{
   on_attach = M.on_attach,
+  on_init = M.on_init,
 }
 
 
@@ -243,21 +256,26 @@ end
 
 require'lspconfig'.rust_analyzer.setup{
   on_attach = M.on_attach,
+  on_init = M.on_init,
   capabilities = default_capabilities,
 }
 require'lspconfig'.tsserver.setup{
   on_attach = M.on_attach,
+  on_init = M.on_init,
   filetypes = {"typescript", "typescriptreact", "typescript.tsx"};
   root_dir = require 'lspconfig/util'.root_pattern("tsconfig.json", ".git");
 }
 require'lspconfig'.vimls.setup{
   on_attach = M.on_attach,
+  on_init = M.on_init,
 }
 require'lspconfig'.yamlls.setup{
   on_attach = M.on_attach,
+  on_init = M.on_init,
 }
 require'lspconfig'.flow.setup{
   on_attach = on_attach_flow,
+  on_init = M.on_init,
   cmd = {"flow", "lsp", "--lazy"};
   settings = {
     flow = {
