@@ -254,7 +254,8 @@ install-cli-after() {
   # Let's just always do the things for neovim
   [ -d ~/.envs ] || mkdir ~/.envs
   [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
-  ~/.envs/py3/bin/pip install -q wheel pynvim
+  ~/.envs/py3/bin/pip install -q wheel
+  ~/.envs/py3/bin/pip install -q pynvim
 
   if [ ! -e ~/.nvim_python ]; then
     echo "let g:python3_host_prog = \"$HOME/.envs/py3/bin/python\"" >> ~/.nvim_python
