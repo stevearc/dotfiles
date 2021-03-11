@@ -501,9 +501,11 @@ install-nvm() {
     source ~/.bash.d/nvm.sh || :
   fi
   nvm current && return
-  local nvm_dir=$(prompt "NVM install dir:" /usr/local/nvm)
+  local nvm_dir=$(prompt "NVM install dir:" $HOME/.local/)
   if [ ! -d "$nvm_dir" ]; then
     pushd /tmp > /dev/null
+    sudo mkdir -p "$nvm_dir"
+    rm -f install.sh
     wget -O install.sh https://raw.githubusercontent.com/creationix/nvm/v0.37.2/install.sh
     chmod +x install.sh
     sudo bash -c "NVM_DIR=$nvm_dir ./install.sh"
