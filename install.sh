@@ -342,6 +342,12 @@ install-security() {
     sudo ufw allow 22/tcp
     sudo apt-get install -y -q openssh-server
   fi
+  if confirm "Allow steam connections?" y; then
+    sudo ufw allow 27031/udp
+    sudo ufw allow 27036/udp
+    sudo ufw allow 27036/tcp
+    sudo ufw allow 27037/tcp
+  fi
   sudo ufw enable
   checkpoint security
 }
