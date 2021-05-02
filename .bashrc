@@ -139,3 +139,5 @@ if command -v direnv > /dev/null; then
   export -f show_virtual_env
   PS1=$PS1'$(show_virtual_env)'
 fi
+
+export DOCKER_GUI="--net=host --env=DISPLAY --volume=$HOME/.Xauthority:/root/.Xauthority:rw"
