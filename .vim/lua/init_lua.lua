@@ -68,6 +68,10 @@ vim.g.completion_chain_complete_list = {
     {complete_items = {'glsl', 'buffers'}},
     {complete_items = {'snippet'}},
   },
+  supercollider = {
+    {complete_items = {'buffers'}},
+    {complete_items = {'snippet'}},
+  },
   default = {
     {complete_items = {'lsp'}},
     {complete_items = {'buffers'}},

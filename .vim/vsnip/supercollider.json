@@ -1,0 +1,157 @@
+{
+  "nextbar": {
+    "prefix": ["nextbar", "nb"],
+    "body": ["(", "t.playNextBar({", "  $TM_SELECTED_TEXT$1", "});", ")"]
+  },
+  "playQuant": {
+    "prefix": ["pq"],
+    "body": ["(", "t.playQuant($1, {", "  $TM_SELECTED_TEXT$2", "});", ")"]
+  },
+  "block": {
+    "prefix": ["("],
+    "body": ["(", "  $TM_SELECTED_TEXT$1", ")"]
+  },
+  "brace": {
+    "prefix": ["{"],
+    "body": ["{", "  $TM_SELECTED_TEXT$1", "}"]
+  },
+  "doneAction": {
+    "prefix": ["da"],
+    "body": ["doneAction: Done.freeSelf"]
+  },
+  "DetectSilence": {
+    "prefix": ["ds"],
+    "body": ["DetectSilence.ar(${1:sig}, doneAction: Done.freeSelf);"]
+  },
+  "ProxySpace": {
+    "prefix": ["ps"],
+    "body": ["p = ProxySpace.push(s);"]
+  },
+  "setup": {
+    "prefix": ["setup"],
+    "body": [
+      "(",
+      "SA.setup;",
+      "t = TempoClock.default;",
+      "t.bpm = 120;",
+      "p = currentEnvironment;",
+      ")"
+    ]
+  },
+  "PBjorklund2": {
+    "prefix": ["Pb", "pb"],
+    "body": "Pbjorklund2("
+  },
+  "amen": {
+    "prefix": ["amen"],
+    "body": "\"oox[ X][ X][oo]x[ X]\""
+  },
+  "postln": {
+    "prefix": ["pl"],
+    "body": "\"$1\".postln;"
+  },
+  "New node proxy": {
+    "prefix": "new",
+    "body": ["(", "~$1.playM(${2:0});", "~$1[0] = $0", ")"]
+  },
+  "Filter FX": {
+    "prefix": "fx",
+    "body": [
+      "~$1[$2] = \\filter -> {|sig|",
+      "  $0",
+      "};",
+      "~$1.set(\\wet$2, 0);"
+    ]
+  },
+  "FX Bitcrush": {
+    "prefix": ["fxbitcrush", "fxbc"],
+    "body": [
+      "var bits=\\bits.kr(4, 2); // 1 to 24",
+      "var crush=\\crush.kr(0, 2);",
+      "Decimator.ar(sig, rate: 44100/crush, bits: bits);"
+    ]
+  },
+  "FX Chop": {
+    "prefix": ["fxchop"],
+    "body": ["sig * LFPulse.kr(\\chop.kr(4, 2) * t.tempo, add: 0.01);"]
+  },
+  "FX Delay": {
+    "prefix": ["fxdelay", "fxd"],
+    "body": [
+      "var delay = \\delay.kr(0.25);",
+      "var count = \\delaycount.kr(8);",
+      "sig + CombL.ar(sig,",
+      "  maxdelaytime: delay,",
+      "  delaytime: delay / t.tempo,",
+      "  decaytime: count * delay,",
+      "  mul: \\delaydecay.kr(0.8)",
+      ");"
+    ]
+  },
+  "FX Reverb": {
+    "prefix": ["fxreverb", "fxr"],
+    "body": [
+      "FreeVerb.ar(sig,",
+      "  1, // dry/wet mix (control via wet1/wet2/etc)",
+      "  \\room.kr(0.5), // room size from 0-1",
+      "  \\roomdamp.kr(0.5), // HF dampening from 0-1",
+      ");"
+    ]
+  },
+  "FX Tremolo": {
+    "prefix": ["fxtremolo", "fxt"],
+    "body": ["sig * SinOsc.ar( \\tremolo.kr(16) / t.tempo, mul:0.5, add:0.5);"]
+  },
+  "FX Vibrato": {
+    "prefix": ["fxvibrato", "fxv"],
+    "body": ["Vibrato.ar(sig, \\vibrato.kr(0), \\vibratodepth.kr(0.02));"]
+  },
+  "FX HPF": {
+    "prefix": ["fxhpf"],
+    "body": ["RHPF.ar(sig, \\hpf.kr(1000));"]
+  },
+  "FX LPF": {
+    "prefix": ["fxlpf"],
+    "body": ["RLPF.ar(sig, \\lpf.kr(800));"]
+  },
+  "FX BPF": {
+    "prefix": ["fxbpf"],
+    "body": ["BPF.ar(sig, \\bpf.kr(440), \\bpfrq.kr(1));"]
+  },
+  "FX Formant": {
+    "prefix": ["fxformant"],
+    "body": [
+      "var formant = (\\formant.kr(0, 1) % 8) + 1;",
+      "Formlet.ar(sig, formant * 200, ((formant % 5 + 1)) / 1000, (formant * 1.5) / 600).tanh;"
+    ]
+  },
+  "FX Distortion": {
+    "prefix": ["fxdistortion", "fxdist"],
+    "body": [
+      "var tmp = sig;",
+      "sig = CrossoverDistortion.ar(sig, amp:0.2, smooth:0.01);",
+      "sig = sig + (0.1 * \\dist.kr(0.2,0.1) * DynKlank.ar(`[[60,61,240,3000 + SinOsc.ar(62,mul:100)],nil,[0.1, 0.1, 0.05, 0.01]], sig));",
+      "sig = (sig.cubed * 8).softclip * 0.5;",
+      "sig = SelectX.ar(\\dist.kr(0.2,0.1), [tmp, sig]);"
+    ]
+  },
+  "FX Overdrive Distortion": {
+    "prefix": ["fxoverdrivedistortion", "fxoverdrive", "fxdrive"],
+    "body": ["(sig * (\\drive.kr(1) * 50)).clip(0,0.2).fold2(2);"]
+  },
+  "FX Wa-wa": {
+    "prefix": ["fxwawa", "fxw"],
+    "body": [
+      "var center = \\wacenter.kr(440,1);",
+      "var width = \\wawidth.kr(0.5,0.1);",
+      "var wobble = SinOsc.ar(\\warate.kr(8,0.1)/t.tempo, mul: center * width);",
+      "BPF.ar(sig, center + wobble, \\warq.kr(1));"
+    ]
+  },
+  "FX Pan": {
+    "prefix": "fxpan",
+    "body": [
+      "Balance2.ar(sig[0], sig[1], \\fxpan.kr(0.8) * LFNoise1.ar(\\fxpanrate.kr(10), mul: 2, add: -1));"
+    ]
+  }
+}

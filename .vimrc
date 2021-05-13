@@ -190,10 +190,31 @@ let g:vsnip_snippet_dirs = [
       \ $HOME.'/.config/nvim/vsnip',
       \ ]
 
+function! SmartVisual(visualmode) abort
+  let line = getline('.')
+  let positions = filter([
+        \ stridx(line, '('),
+        \ stridx(line, '['),
+        \ stridx(line, '{'),
+        \ stridx(line, ')'),
+        \ stridx(line, ']'),
+        \ stridx(line, '}'),
+        \ ], 'v:val > -1')
+  if empty(positions)
+    return
+  endif
+  let idx = min(positions)
+  let pos = getpos('.')
+  call setpos('.', [pos[0], pos[1], idx + 1, pos[3]])
+  exec 'normal! ' . a:visualmode . '%'
+endfunction
+nmap <leader>v :call SmartVisual('v')<CR>
+nmap <leader>V :call SmartVisual('V')<CR>
+
 " Smart tab behavior
 let g:ulti_expand_or_jump_res = 0 "default value, just set once
 let g:autocomplete_cmd = "\<C-x>\<C-o>"
-function! CleverTab()
+function! CleverTab() abort
   if g:use_ultisnips
     call UltiSnips#ExpandSnippetOrJump()
     if g:ulti_expand_or_jump_res == 0
@@ -384,6 +405,9 @@ nnoremap <leader>W :Defx `expand('%:p:h')` -search=`expand('%:p')` -split=vertic
 nnoremap <leader>t <cmd>lua require('stevearc_telescope').find_files()<cr>
 nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <leader>b <cmd>lua require('stevearc_telescope').buffers()<cr>
+
+let g:scnvim_no_mappings = 1
+let g:scnvim_eval_flash_repeats = 1
 
 " Netrw
 " detail view

@@ -36,6 +36,7 @@ alias orphans="ps -elf | head -1; ps -elf | awk '{if (\$5 == 1 && \$3 != \"root\
 alias bp='bluepill'
 alias bpe='bluepill enter'
 alias mosh='mosh -6'
+alias dojack='jackd -R -P 95 -d alsa -d hw:$(head -1 /proc/asound/cards | cut -d "[" -f 2 | cut -d " " -f 1) -r 44100 -p 256'
 ash() {
     autossh -t "$@" 'tmux -2 attach || tmux -2 new'
 }

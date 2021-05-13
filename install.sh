@@ -13,7 +13,7 @@ declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfi
 declare -r DEFAULT_VIM_BUNDLES="completion-nvim ultisnips vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-eunuch deoplete.nvim nvim-lspconfig deoplete-lsp vim-surround editorconfig-vim nvim-colorizer.lua nvim-treesitter nvim-treesitter-context plenary.nvim popup.nvim vim-endwise vim-autoswap defx.nvim aerial.nvim targets.vim telescope.nvim quickfix-reflector.vim vim-vsnip vim-vsnip-integ nvim-compe vim-vsnip-snippets completion-buffers"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r XFCE_DOTFILES=".xsessionrc"
-declare -r ALL_LANGUAGES="go python js arduino clojure cs rust"
+declare -r ALL_LANGUAGES="go python js arduino clojure cs rust sc"
 declare -r USAGE=\
 "$0 [OPTIONS]
 -h            Print this help menu
@@ -499,6 +499,13 @@ install-language-cs() {
   # install-dotnet
   echo "Installing omnisharp doesn't work right now. I'll fix it next time I need to work with C#"
   nvim --headless +"LspInstall omnisharp" +qall
+}
+
+install-language-sc() {
+  sudo adduser $USER audio
+  sudo apt-get install -yq supercollider jackd2 sc3-plugins
+  cp-vim-bundle scnvim
+  nvim --headless +"call scnvim#install()" +qall > /dev/null
 }
 
 install-nvm() {

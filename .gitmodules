@@ -124,3 +124,6 @@
 [submodule ".vim/bundle/startuptime"]
 	path = .vim/bundle/startuptime
 	url = https://github.com/tweekmonster/startuptime.vim.git
+[submodule ".vim/bundle/scnvim"]
+	path = .vim/bundle/scnvim
+	url = https://github.com/stevearc/scnvim.git
