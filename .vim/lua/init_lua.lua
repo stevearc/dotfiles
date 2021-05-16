@@ -52,11 +52,7 @@ local ft_config = {
 if vim.g.completion_plugin == 'completion' then
   vim.cmd[[autocmd BufEnter * lua require'completion'.on_attach()]]
 end
-if vim.g.use_ultisnips ~= 0 then
-  vim.g.completion_enable_snippet = 'UltiSnips'
-else
-  vim.g.completion_enable_snippet = 'vim-vsnip'
-end
+vim.g.completion_enable_snippet = 'vim-vsnip'
 vim.g.completion_confirm_key = ""
 vim.g.completion_matching_smart_case = 1
 vim.g.completion_matching_strategy_list = {'exact', 'fuzzy'}

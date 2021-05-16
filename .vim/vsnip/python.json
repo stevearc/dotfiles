@@ -1,0 +1,131 @@
+{
+  "main function": {
+    "prefix": "main",
+    "body": ["if __name__ == '__main__':", "    main()"]
+  },
+  "Main function with arg parser": {
+    "prefix": "argparse",
+    "body": [
+      "def ${1:main}():",
+      "    \"\"\" ${2:Main method} \"\"\"",
+      "    parser = argparse.ArgumentParser(description=$1.__doc__)",
+      "    parser.add_argument('-f', help=\"\")",
+      "    args = parser.parse_args()"
+    ]
+  },
+  "const value": {
+    "prefix": "const",
+    "body": ["$1: Final[Literal[\"$1\"]] = \"$1\""]
+  },
+  "read-only property": {
+    "prefix": ["@p", "propr"],
+    "body": [
+      "@property",
+      "def $1(self):",
+      "    \"\"\" ${2:Getter for $1} \"\"\"",
+      "    ${3:return self._$1}"
+    ]
+  },
+  "read-write property": {
+    "prefix": ["@pp", "proprw"],
+    "body": [
+      "@property",
+      "def $1(self):",
+      "    \"\"\" ${2:Getter for $1} \"\"\"",
+      "    ${3:return self._$1}",
+      "",
+      "@$1.setter",
+      "def $1(self, $1):",
+      "    \"\"\" ${4:Setter for $1} \"\"\"",
+      "    ${5:self._$1 = $1}"
+    ]
+  },
+  "classmethod": {
+    "prefix": "@c",
+    "body": ["@classmethod", "def $1(cls$2):", "  \"\"\" $3 \"\"\"", "  $0"]
+  },
+  "staticmethod": {
+    "prefix": "@s",
+    "body": ["@staticmethod", "def $1($2):", "  \"\"\" $3 \"\"\"", "  $0"]
+  },
+  "Inline docstring": {
+    "prefix": "\"",
+    "body": ["\"\"\" $1 \"\"\""]
+  },
+  "Multiline docstring": {
+    "prefix": "\"\"",
+    "body": ["\"\"\"", "$1", "", "\"\"\""]
+  },
+  "Function definition": {
+    "prefix": "def",
+    "body": ["def $1($2):", "    $0"]
+  },
+  "Method definition": {
+    "prefix": "defm",
+    "body": ["def $1(self$2):", "    $0"]
+  },
+  "UnitTest assertEqual": {
+    "prefix": "ae",
+    "body": ["self.assertEqual($1, $2)"]
+  },
+  "UnitTest assertAlmostEqual": {
+    "prefix": "aae",
+    "body": ["self.assertAlmostEqual($1, $2)"]
+  },
+  "UnitTest assertRaises": {
+    "prefix": "ar",
+    "body": ["with self.assertRaises(${1:Exception}):", "    $0"]
+  },
+  "UnitTest assertIsNone": {
+    "prefix": "ain",
+    "body": ["self.assertIsNone($1)"]
+  },
+  "UnitTest assertIsNotNone": {
+    "prefix": "ainn",
+    "body": ["self.assertIsNotNone($1)"]
+  },
+  "UnitTest assertCountEqual": {
+    "prefix": "ace",
+    "body": ["self.assertCountEqual($1, $2)"]
+  },
+  "UnitTest class": {
+    "prefix": "T_",
+    "body": [
+      "class Test${1:Class}(${2:unittest.TestCase}):",
+      "",
+      "    \"\"\" $3 \"\"\"",
+      "",
+      "    $0"
+    ]
+  },
+  "UnitTest test case": {
+    "prefix": "t_",
+    "body": ["def test_$1(self):", "    \"\"\" $2 \"\"\"", "    $0"]
+  },
+  "UnitTest setUp": {
+    "prefix": "su",
+    "body": ["def setUp(self):", "    super().setUp()", "    $0"]
+  },
+  "UnitTest tearDown": {
+    "prefix": "td",
+    "body": ["def tearDown(self):", "    super().tearDown()", "    $0"]
+  },
+  "UnitTest setUpClass": {
+    "prefix": "suc",
+    "body": [
+      "@classmethod",
+      "def setUpClass(cls):",
+      "    super().setUpClass()",
+      "    $0"
+    ]
+  },
+  "UnitTest tearDownClass": {
+    "prefix": "tdc",
+    "body": [
+      "@classmethod",
+      "def tearDownClass(self):",
+      "    super().tearDownClass()",
+      "    $0"
+    ]
+  }
+}

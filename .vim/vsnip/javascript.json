@@ -15,6 +15,14 @@
     "prefix": ["log"],
     "body": ["console.log($1)"]
   },
+  "import": {
+    "prefix": ["imp", "import"],
+    "body": ["import $1 from '$2';"]
+  },
+  "import type": {
+    "prefix": ["impt"],
+    "body": ["import type {$1} from '$2';"]
+  },
   "MixedElement": {
     "prefix": ["me"],
     "body": ["React.MixedElement"]

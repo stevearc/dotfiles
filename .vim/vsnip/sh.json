@@ -1,0 +1,68 @@
+{
+  "File header": {
+    "prefix": ["new", "sh"],
+    "body": ["#!/bin/bash", "set -Eeuo pipefail"]
+  },
+  "Empty cleanup function": {
+    "prefix": ["trap", "cleanup"],
+    "body": ["cleanup() {", "  $0", "}", "trap cleanup SIGINT SIGTERM EXIT"]
+  },
+  "Cleanup function that kills child pids": {
+    "prefix": ["cleanupkill"],
+    "body": [
+      "cleanup() {",
+      "  $0",
+      "}",
+      "trap cleanup SIGINT SIGTERM EXIT",
+      "endsnippet",
+      "",
+      "snippet cleanup \"trap that kills child pids\" b!",
+      "_kill_tree() {",
+      "  local pid",
+      "  for pid in \\$*; do",
+      "    local subpids=\"$(ps -o pid,ppid | awk '{if (\\$2 == '$pid') {print \\$1}}')\"",
+      "    local subpid",
+      "    for subpid in \\$subpids; do",
+      "      _kill_tree \\$subpid",
+      "    done",
+      "    kill \\$pid || true",
+      "  done",
+      "}",
+      "cleanup() {",
+      "  _kill_tree \\$(jobs -p)",
+      "}",
+      "trap cleanup SIGINT SIGTERM EXIT"
+    ]
+  },
+  "Main function": {
+    "prefix": "main",
+    "body": ["main() {", "  $0", "}", "", "main \"\\$@\""]
+  },
+  "getopts": {
+    "prefix": "getopts",
+    "body": [
+      "local usage=\"$0\"",
+      "while getopts \"h-:\" opt; do",
+      "  case \\$opt in",
+      "    -)",
+      "      case \\$OPTARG in",
+      "        *)",
+      "          echo \"\\$usage\"",
+      "          exit 1",
+      "          ;;",
+      "      esac",
+      "      ;;",
+      "    h)",
+      "      echo \"\\$usage\"",
+      "      exit 0",
+      "      ;;",
+      "    \\?)",
+      "      echo \"\\$usage\"",
+      "      exit 1",
+      "      ;;",
+      "  esac",
+      "done",
+      "shift \\$((\\$OPTIND-1))"
+    ]
+  }
+}

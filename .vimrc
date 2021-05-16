@@ -184,7 +184,6 @@ end
 " Use completion-nvim instead of deoplete
 let g:completion_plugin = 'completion'
 
-let g:use_ultisnips = 0
 let g:vsnip_snippet_dirs = [
       \ $HOME.'/.vim/vsnip',
       \ $HOME.'/.config/nvim/vsnip',
@@ -215,35 +214,20 @@ nmap <leader>V :call SmartVisual('V')<CR>
 let g:ulti_expand_or_jump_res = 0 "default value, just set once
 let g:autocomplete_cmd = "\<C-x>\<C-o>"
 function! CleverTab() abort
-  if g:use_ultisnips
-    call UltiSnips#ExpandSnippetOrJump()
-    if g:ulti_expand_or_jump_res == 0
-      if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
-        return "\<Tab>"
-      elseif &omnifunc == ''
-        return "\<C-p>"
-      else
-        return g:autocomplete_cmd
-      endif
-    else
-      return ''
+  if vsnip#expandable()
+    if pumvisible()
+      call feedkeys("\<C-x>\<C-x>")
     endif
+    call Vsnip_expand_or_jump()
+    return ''
+  elseif pumvisible()
+    return "\<C-n>"
+  elseif strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
+    return "\<Tab>"
+  elseif &omnifunc == ''
+    return "\<C-p>"
   else
-    if vsnip#available(1)
-      if pumvisible()
-        call feedkeys("\<C-x>\<C-x>")
-      endif
-      call Vsnip_expand_or_jump()
-      return ''
-    elseif pumvisible()
-      return "\<C-n>"
-    elseif strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
-      return "\<Tab>"
-    elseif &omnifunc == ''
-      return "\<C-p>"
-    else
-      return g:autocomplete_cmd
-    endif
+    return g:autocomplete_cmd
   endif
 endfunction
 inoremap <Tab> <C-R>=CleverTab()<CR>
@@ -275,56 +259,30 @@ function! Vsnip_jump(direction) abort
   endif
 endfunction
 function! ForwardsInInsert() abort
-  if g:use_ultisnips
-    call UltiSnips#JumpForwards()
-    if g:ulti_jump_forwards_res == 0
-      lua require'completion'.nextSource()
-    endif
+  if vsnip#jumpable(1)
+    call Vsnip_jump(1)
   else
-    if vsnip#jumpable(1)
-      call Vsnip_jump(1)
-    else
-      lua require'completion'.nextSource()
-    endif
+    lua require'completion'.nextSource()
   endif
 endfunction
 function! BackwardsInInsert() abort
-  if g:use_ultisnips
-    call UltiSnips#JumpBackwards()
-    if g:ulti_jump_backwards_res == 0
-      lua require'completion'.prevSource()
-    endif
+  if vsnip#jumpable(-1)
+    call Vsnip_jump(-1)
   else
-    if vsnip#jumpable(-1)
-      call Vsnip_jump(-1)
-    else
-      lua require'completion'.prevSource()
-    endif
+    lua require'completion'.prevSource()
   endif
 endfunction
 
 " Snippets
-let g:UltiSnipsExpandTrigger="<f12>"
-let g:UltiSnipsJumpForwardTrigger="<f12>"
-let g:UltiSnipsJumpBackwardTrigger="<f12>"
-if g:use_ultisnips
-  smap <Tab> <cmd>call UltiSnips#ExpandSnippetOrJump()<cr>
-  xmap <Tab> <cmd>call UltiSnips#SaveLastVisualSelection()<cr>gvs
-  smap <C-h> <cmd>call UltiSnips#JumpBackwards()<cr>
-  imap <C-h> <cmd>call BackwardsInInsert()<cr>
-  smap <C-l> <cmd>call UltiSnips#JumpForwards()<cr>
-  imap <C-l> <cmd>call ForwardsInInsert()<cr>
-else
-  let g:vsnip_filetypes = {}
-  let g:vsnip_filetypes.javascriptreact = ['javascript']
-  let g:vsnip_filetypes.typescriptreact = ['typescript']
-  smap <Tab> <Plug>(vsnip-cut-text)
-  xmap <Tab> <Plug>(vsnip-cut-text)
-  smap <C-h> <Plug>(vsnip-jump-prev)
-  imap <C-h> <cmd>call BackwardsInInsert()<cr>
-  smap <C-l> <Plug>(vsnip-jump-next)
-  imap <C-l> <cmd>call ForwardsInInsert()<cr>
-endif
+let g:vsnip_filetypes = {}
+let g:vsnip_filetypes.javascriptreact = ['javascript']
+let g:vsnip_filetypes.typescriptreact = ['typescript']
+smap <Tab> <Plug>(vsnip-cut-text)
+xmap <Tab> <Plug>(vsnip-cut-text)
+smap <C-h> <Plug>(vsnip-jump-prev)
+imap <C-h> <cmd>call BackwardsInInsert()<cr>
+smap <C-l> <Plug>(vsnip-jump-next)
+imap <C-l> <cmd>call ForwardsInInsert()<cr>
 
 " Treesitter
 let g:debug_treesitter = 0

@@ -1,0 +1,56 @@
+{
+  "Godot print": {
+    "prefix": "gdp",
+    "body": ["GD.Print(\\$\"$1\");"]
+  },
+  "Godot push error": {
+    "prefix": "gdpe",
+    "body": ["GD.PushError(\\$\"$1\");"]
+  },
+  "Godot push warning": {
+    "prefix": "gdpw",
+    "body": ["GD.PushWarning(\\$\"$1\");"]
+  },
+  "Godot cached node property": {
+    "prefix": "gdpropnode",
+    "body": [
+      "private $1? ${3:_myNode};",
+      "private ${1:Node} ${2:MyNode} { get {",
+      " if ($3 == null) {",
+      "   $3 = GetNode<$1>(\"${4:..}\");",
+      " }",
+      " return $3;",
+      "} }"
+    ]
+  },
+  "Godot new class template": {
+    "prefix": "gdnew",
+    "body": [
+      "using System;",
+      "using Godot;",
+      "#nullable enable",
+      "",
+      "namespace Battlegrounds {",
+      "",
+      "public class $TM_FILENAME_BASE : Node {",
+      " public override void _Ready() {",
+      "  $0",
+      " }",
+      "}",
+      "",
+      "}"
+    ]
+  },
+  "Unity Debug.Log": {
+    "prefix": "dl",
+    "body": ["Debug.Log($1);"]
+  },
+  "Unity Debug.LogWarning": {
+    "prefix": "dlw",
+    "body": ["Debug.LogWarning($1);"]
+  },
+  "Unity Debug.LogError": {
+    "prefix": "dle",
+    "body": ["Debug.LogError($1);"]
+  }
+}
