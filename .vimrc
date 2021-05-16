@@ -214,7 +214,7 @@ nmap <leader>V :call SmartVisual('V')<CR>
 let g:ulti_expand_or_jump_res = 0 "default value, just set once
 let g:autocomplete_cmd = "\<C-x>\<C-o>"
 function! CleverTab() abort
-  if vsnip#expandable()
+  if vsnip#available(1)
     if pumvisible()
       call feedkeys("\<C-x>\<C-x>")
     endif
@@ -277,12 +277,18 @@ endfunction
 let g:vsnip_filetypes = {}
 let g:vsnip_filetypes.javascriptreact = ['javascript']
 let g:vsnip_filetypes.typescriptreact = ['typescript']
-smap <Tab> <Plug>(vsnip-cut-text)
+smap <Tab> <Plug>(vsnip-jump-next)
 xmap <Tab> <Plug>(vsnip-cut-text)
 smap <C-h> <Plug>(vsnip-jump-prev)
 imap <C-h> <cmd>call BackwardsInInsert()<cr>
 smap <C-l> <Plug>(vsnip-jump-next)
 imap <C-l> <cmd>call ForwardsInInsert()<cr>
+" Clear Vsnip session when we switch to normal mode.
+aug ClearVsnipSession
+  au!
+  " Can't use InsertLeave here because that fires when we go to select mode
+  au CursorHold * call vsnip#deactivate()
+aug END
 
 " Treesitter
 let g:debug_treesitter = 0
