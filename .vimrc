@@ -2,13 +2,7 @@
 call pathogen#infect()
 call pathogen#helptags()
 
-" Use this file to set neovim python paths so it works with virtualenvs
-" It will look like:
-" let g:python_host_prog="/usr/bin/python"
-" let g:python3_host_prog="/usr/bin/python3"
-if filereadable(expand('~/.nvim_python'))
-  source ~/.nvim_python
-endif
+let g:python3_host_prog = expand("~/.envs/py3/bin/python")
 
 " Use Vim settings, rather than Vi
 set nocompatible

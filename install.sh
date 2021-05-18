@@ -257,10 +257,6 @@ install-cli-after() {
   ~/.envs/py3/bin/pip install -q wheel
   ~/.envs/py3/bin/pip install -q pynvim
 
-  if [ ! -e ~/.nvim_python ]; then
-    echo "let g:python3_host_prog = \"$HOME/.envs/py3/bin/python\"" >> ~/.nvim_python
-  fi
-
   # Probably don't care about clipper anymore
   # if ! nc -z localhost 8377 && confirm "Install clipper?" n; then
   #   install-language-go
