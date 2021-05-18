@@ -50,7 +50,7 @@
   },
   "Inline docstring": {
     "prefix": "\"",
-    "body": ["\"\"\" $1 \"\"\""]
+    "body": ["\"\"\"$1\"\"\""]
   },
   "Multiline docstring": {
     "prefix": "\"\"",
