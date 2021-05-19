@@ -49,9 +49,7 @@ local ft_config = {
 }
 
 -- Completion
-if vim.g.completion_plugin == 'completion' then
-  vim.cmd[[autocmd BufEnter * lua require'completion'.on_attach()]]
-end
+vim.cmd[[autocmd BufEnter * lua require'completion'.on_attach()]]
 vim.g.completion_enable_snippet = 'vim-vsnip'
 vim.g.completion_confirm_key = ""
 vim.g.completion_matching_smart_case = 1
@@ -76,19 +74,6 @@ vim.g.completion_chain_complete_list = {
 }
 vim.g.completion_auto_change_source = 1
 
-if vim.g.completion_plugin == 'compe' then
-  require'compe'.setup {
-    enabled = true;
-    debug = false;
-    min_length = 1;
-    source = {
-      path = false;
-      buffer = false;
-      vsnip = true;
-      nvim_lsp = true;
-    };
-  }
-end
 
 
 local M = {}

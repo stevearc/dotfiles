@@ -46,15 +46,9 @@
 [submodule ".vim/bundle/vim-eunuch"]
 	path = .vim/bundle/vim-eunuch
 	url = https://github.com/tpope/vim-eunuch.git
-[submodule ".vim/bundle/deoplete.nvim"]
-	path = .vim/bundle/deoplete.nvim
-	url = https://github.com/Shougo/deoplete.nvim.git
 [submodule ".vim/bundle/vim-solarized8"]
 	path = .vim/bundle/vim-solarized8
 	url = https://github.com/lifepillar/vim-solarized8
-[submodule ".vim/bundle/deoplete-lsp"]
-	path = .vim/bundle/deoplete-lsp
-	url = https://github.com/Shougo/deoplete-lsp.git
 [submodule ".vim/bundle/vim-surround"]
 	path = .vim/bundle/vim-surround
 	url = https://github.com/tpope/vim-surround.git
@@ -112,9 +106,6 @@
 [submodule ".vim/bundle/vim-vsnip-integ"]
 	path = .vim/bundle/vim-vsnip-integ
 	url = https://github.com/hrsh7th/vim-vsnip-integ.git
-[submodule ".vim/bundle/nvim-compe"]
-	path = .vim/bundle/nvim-compe
-	url = https://github.com/hrsh7th/nvim-compe.git
 [submodule ".vim/bundle/vim-vsnip-snippets"]
 	path = .vim/bundle/vim-vsnip-snippets
 	url = https://github.com/stevearc/vim-vsnip-snippets.git

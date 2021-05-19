@@ -175,9 +175,6 @@ else
   augroup END
 end
 
-" Use completion-nvim instead of deoplete
-let g:completion_plugin = 'completion'
-
 let g:vsnip_snippet_dirs = [
       \ $HOME.'/.vim/vsnip',
       \ $HOME.'/.config/nvim/vsnip',
