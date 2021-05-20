@@ -499,7 +499,32 @@ install-language-cs() {
 
 install-language-sc() {
   sudo adduser $USER audio
-  sudo apt-get install -yq supercollider jackd2 sc3-plugins
+  if ! hascmd scide; then
+    sudo apt-get install -yq jackd2 build-essential cmake g++ libsndfile1-dev libjack-jackd2-dev libfftw3-dev libxt-dev libavahi-client-dev libasound2-dev libicu-dev libreadline6-dev libudev-dev pkg-config libncurses5-dev qt5-default qt5-qmake qttools5-dev qttools5-dev-tools qtdeclarative5-dev qtwebengine5-dev libqt5svg5-dev libqt5websockets5-dev
+    pushd /tmp
+    if [ ! -e SuperCollider ]; then
+      git clone --recurse-submodules https://github.com/SuperCollider/SuperCollider.git
+    fi
+    mkdir -p SuperCollider/build
+    cd SuperCollider/build
+    cmake -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu -DCMAKE_BUILD_TYPE=Release -DNATIVE=ON -DSC_EL=no ..
+    make -j8
+    sudo make install
+    sudo ldconfig
+    popd
+  fi
+  local extensions="/usr/local/share/SuperCollider/Extensions"
+  if [ ! -e "$extensions/SC3plugins" ]; then
+    pushd /tmp
+    if [ ! -e sc3-plugins ]; then
+      git clone --recursive https://github.com/supercollider/sc3-plugins.git
+    fi
+    mkdir -p sc3-plugins/build
+    cd sc3-plugins/build
+    cmake -DSC_PATH=/tmp/SuperCollider -DCMAKE_BUILD_TYPE=Release -DSUPERNOVA=ON ..
+    sudo cmake --build . --config Release --target install
+    popd
+  fi
   cp-vim-bundle scnvim
   nvim --headless +"call scnvim#install()" +qall > /dev/null
 }
