@@ -1,0 +1,28 @@
+#!/bin/bash
+set -Eeo pipefail
+
+main() {
+  local input="$1"
+  local output="$2"
+  local cards="$(grep "^ *[0-9]" /proc/asound/cards)"
+  local device_args
+  if [ -z "$input" ] || [ -z "$output" ]; then
+    if [ $(echo "$cards" | wc -l) -eq 1 ]; then
+      device_args="-d hw:$(echo "$cards" | cut -f 1 -d '[' | tr -d '[:space:]')"
+    else
+      echo "$cards"
+      read -r -p "Select INPUT device: " input
+      read -r -p "Select OUTPUT device: " output
+      device_args="-C hw:$input -P hw:$output"
+    fi
+  else
+    device_args="-C hw:$input -P hw:$output"
+  fi
+  # The -p period must be power of 2. Setting it as low as possible without
+  # getting XRUN callback skips (which cause crackling)
+  local cmd="jackd -R -P 95 -d alsa $device_args -r 44100 -p 512"
+  echo "+$cmd"
+  exec $cmd
+}
+
+main "$@"

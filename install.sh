@@ -498,6 +498,7 @@ install-language-cs() {
 }
 
 install-language-sc() {
+  local SC_VERSION="Version-3.11.2"
   sudo adduser $USER audio
   if ! hascmd scide; then
     sudo apt-get install -yq jackd2 build-essential cmake g++ libsndfile1-dev libjack-jackd2-dev libfftw3-dev libxt-dev libavahi-client-dev libasound2-dev libicu-dev libreadline6-dev libudev-dev pkg-config libncurses5-dev qt5-default qt5-qmake qttools5-dev qttools5-dev-tools qtdeclarative5-dev qtwebengine5-dev libqt5svg5-dev libqt5websockets5-dev
@@ -505,8 +506,11 @@ install-language-sc() {
     if [ ! -e SuperCollider ]; then
       git clone --recurse-submodules https://github.com/SuperCollider/SuperCollider.git
     fi
-    mkdir -p SuperCollider/build
-    cd SuperCollider/build
+    cd SuperCollider
+    git checkout "$SC_VERSION"
+    git submodule update --init --recursive
+    mkdir -p build
+    cd build
     cmake -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu -DCMAKE_BUILD_TYPE=Release -DNATIVE=ON -DSC_EL=no ..
     make -j8
     sudo make install
@@ -525,6 +529,41 @@ install-language-sc() {
     sudo cmake --build . --config Release --target install
     popd
   fi
+  mkdir -p ~/ws/music
+  pushd ~/ws/music
+  if [ ! -e StevearcExperimentalQuark ]; then
+    git clone --recursive git@github.com:stevearc/StevearcExperimentalQuark
+  fi
+  if [ ! -e Beats ]; then
+    git clone --recursive git@github.com:stevearc/Beats
+  fi
+  if [ ! -e Timing ]; then
+    git clone --recursive git@github.com:stevearc/Timing
+  fi
+  cd ..
+  if [ ! -e SCLOrkSynths ]; then
+    git clone --recursive git@github.com:stevearc/SCLOrkSynths
+  fi
+  popd
+  cat >/tmp/scsetup.scd <<EOF
+if (Quarks.isInstalled("Bjorklund").not) {
+  Quarks.install("Bjorklund");
+};
+if (Quarks.isInstalled("SCLOrkSynths").not) {
+  Quarks.install("$HOME/ws/SCLOrkSynths");
+};
+if (Quarks.isInstalled("Beats").not) {
+  Quarks.install("$HOME/ws/music/Beats");
+};
+if (Quarks.isInstalled("Timing").not) {
+  Quarks.install("$HOME/ws/music/Timing");
+};
+if (Quarks.isInstalled("StevearcExperimentalQuark").not) {
+  Quarks.install("$HOME/ws/music/StevearcExperimentalQuark");
+};
+0.exit;
+EOF
+  sclang /tmp/scsetup.scd
   cp-vim-bundle scnvim
   nvim --headless +"call scnvim#install()" +qall > /dev/null
 }

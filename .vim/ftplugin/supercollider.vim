@@ -13,6 +13,9 @@ nmap <buffer> <leader>m <cmd>call scnvim#sclang#send('Master.gui;')<CR>
 
 setlocal stl=%f\ %h%w%m%r\ %{scnvim#statusline#server_status()}\ %=\ %(%l,%c%V\ %=\ %P%)
 
+setlocal fdm=marker
+setlocal fmr={{{,}}}
+
 augroup StartSCNvim
   autocmd! * <buffer>
   autocmd WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&filetype") == "scnvim"|q|endif

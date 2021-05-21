@@ -1,4 +1,8 @@
 {
+  "fold": {
+    "prefix": "fold",
+    "body": ["// {{{ $1", "  $TM_SELECTED_TEXT$0", "// }}}"]
+  },
   "nextbar": {
     "prefix": ["nextbar", "nb"],
     "body": ["(", "t.playNextBar({", "  $TM_SELECTED_TEXT$1", "});", ")"]
@@ -53,6 +57,23 @@
   "New node proxy": {
     "prefix": "new",
     "body": ["(", "~$1.playM(${2:0});", "~$1[0] = $0", ")"]
+  },
+  "SynthDef": {
+    "prefix": "synthdef",
+    "body": [
+      "SynthDef(\\\\$1, {",
+      "  |out=0, amp=0.1, pan=0, freq=440, atk=0.01, decay=0.1, rel=0.2, sustainLevel=0.5, cAtk=(-2), cDec=(-2), cRel=(-4), gate=1|",
+      "  var sig, env;",
+      "  env = EnvGen.kr(",
+      "    Env.adsr(atk, decay, sustainLevel, rel, curve: [cAtk,cDec,cRel]),",
+      "    gate: gate,",
+      "    doneAction: Done.freeSelf);",
+      "  sig = SinOsc.ar(freq);",
+      "  $0",
+      "  sig = env * Pan2.ar(sig, pan);",
+      "  Out.ar(out, sig*amp);",
+      "}).add;"
+    ]
   },
   "Filter FX": {
     "prefix": "fx",
@@ -142,16 +163,73 @@
   "FX Wa-wa": {
     "prefix": ["fxwawa", "fxw"],
     "body": [
-      "var center = \\wacenter.kr(440,1);",
-      "var width = \\wawidth.kr(0.5,0.1);",
-      "var wobble = SinOsc.ar(\\warate.kr(8,0.1)/t.tempo, mul: center * width);",
-      "BPF.ar(sig, center + wobble, \\warq.kr(1));"
+      "var center = \\waCenter.kr(440,1);",
+      "var width = \\waWidth.kr(0.5,0.1);",
+      "var wobble = SinOsc.ar(\\waRate.kr(8,0.1)/t.tempo, mul: center * width);",
+      "BPF.ar(sig, center + wobble, \\waRq.kr(1));"
     ]
   },
   "FX Pan": {
     "prefix": "fxpan",
     "body": [
       "Balance2.ar(sig[0], sig[1], \\fxpan.kr(0.8) * LFNoise1.ar(\\fxpanrate.kr(10), mul: 2, add: -1));"
+    ]
+  },
+  "FX Flanger": {
+    "prefix": ["fxflanger", "fxflange"],
+    "body": [
+      "sig = sig + LocalIn.ar(2);",
+      "sig = DelayN.ar(sig,0.02,SinOsc.kr(\\flangehz.kr(0.1),0,0.005,0.005));",
+      "LocalOut.ar(\\flangefb.kr(0.1)*sig);",
+      "sig;"
+    ]
+  },
+  "FX Greyhole": {
+    "prefix": ["fxgreyhole", "fxgrey"],
+    "body": [
+      "Greyhole.ar(sig,",
+      "  delayTime:\\ghDelay.kr(0.1),",
+      "  feedback:\\ghFB.kr(0.6),",
+      "  diff:\\ghDiff.kr(0.707),",
+      "  damp:\\ghDamp.kr(0.2),",
+      "  modDepth:\\ghMDepth.kr(0.8),",
+      "  modFreq:\\ghMFreq.kr(0.3),",
+      ");"
+    ]
+  },
+  "FX NHHall": {
+    "prefix": ["fxnhhall", "fxhall"],
+    "body": [
+      "NHHall.ar(sig,",
+      "  \\nhDecay.kr(1),",
+      "  \\nhStereo.kr(0.5),",
+      "  \\nhLowFreq.kr(200),",
+      "  \\nhLowRatio.kr(0.5),",
+      "  \\nhHiFreq.kr(4000),",
+      "  \\nhHiRatio.kr(0.5),",
+      "  \\nhEarlyDiffusion.kr(0.5),",
+      "  \\nhLateDiffusion.kr(0.5),",
+      "  \\nhModRate.kr(0.2),",
+      "  \\nhModDepth.kr(0.3),",
+      ");"
+    ]
+  },
+  "FX EQ": {
+    "prefix": ["fxeq"],
+    "body": [
+      "sig = BPeakEQ.ar(sig, \\eqLoHz.kr(200), 1, \\eqLo.kr(0));",
+      "sig = BPeakEQ.ar(sig, \\eqMidHz.kr(600), 1, \\eqMid.kr(0));",
+      "sig = BPeakEQ.ar(sig, \\eqHiHz.kr(1200), 1, \\eqHi.kr(0));"
+    ]
+  },
+  "FX Phaser": {
+    "prefix": ["fxphaser", "fxph"],
+    "body": [
+      "var maxDelay = \\phMaxdelay.kr(0.01);",
+      "var minDelay = \\phMindelay.kr(0.001);",
+      "AllpassC.ar(sig, maxDelay,",
+      "  SinOsc.ar(\\phRate.kr(1), 0, (maxDelay * 0.5) - minDelay, (maxDelay * 0.5) + minDelay),",
+      "  \\phDecay.kr(1));"
     ]
   }
 }
