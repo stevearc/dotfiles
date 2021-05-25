@@ -23,7 +23,7 @@ set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb,.html,.jinja2,.js,.jsx,.less,.css,.st
 " Make tab completion for files/buffers act like bash
 set wildmenu
 set wildmode=longest,list,full
-set wildignore+=*.png,*.jpg,*.jpeg,*.gif,*.wav,*.dll,*.pdb,*.mdb,*.so,*.swp,*.zip,*.gz,*.bz2,*.meta,*.cache,*/\.git/*
+set wildignore+=*.png,*.jpg,*.jpeg,*.gif,*.wav,*.aiff,*.dll,*.pdb,*.mdb,*.so,*.swp,*.zip,*.gz,*.bz2,*.meta,*.cache,*/\.git/*
 
 " Make backspace work properly
 set backspace=indent,eol,start

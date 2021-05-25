@@ -42,12 +42,21 @@ function open_existing_or_new_tab(prompt_bufnr)
 end
 
 M.find_files = function()
-  require('telescope.builtin').find_files({
+  local opts = {
     attach_mappings = function(prompt_bufnr, map)
       map('i', '<C-t>', open_existing_or_new_tab)
       return true
     end
-  })
+  }
+  -- Make the find command respect wildignore
+  if 1 == vim.fn.executable("rg") and vim.o.wildignore ~= "" then
+    opts.find_command = { 'rg', '--files'}
+    for glob in string.gmatch(vim.o.wildignore, "[^,]+") do
+      table.insert(opts.find_command, '--iglob')
+      table.insert(opts.find_command, "!"..glob)
+    end
+  end
+  require('telescope.builtin').find_files(opts)
 end
 
 M.myles_find_files = function()
