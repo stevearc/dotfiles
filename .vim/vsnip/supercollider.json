@@ -1,7 +1,7 @@
 {
   "fold": {
     "prefix": "fold",
-    "body": ["// {{{ $1", "  $TM_SELECTED_TEXT$0", "// }}}"]
+    "body": ["// {{{ $1", "$TM_SELECTED_TEXT$0", "// }}}"]
   },
   "nextbar": {
     "prefix": ["nextbar", "nb"],
@@ -10,6 +10,18 @@
   "playQuant": {
     "prefix": ["pq"],
     "body": ["(", "t.playQuant($1, {", "  $TM_SELECTED_TEXT$2", "});", ")"]
+  },
+  "playQuant No block": {
+    "prefix": ["pqq"],
+    "body": ["t.playQuant($1, {", "  $TM_SELECTED_TEXT$2", "});"]
+  },
+  "playSeq": {
+    "prefix": ["ps"],
+    "body": ["(", "t.playSeq($1, $2, {", "  $TM_SELECTED_TEXT$3", "}$0);", ")"]
+  },
+  "playSeq No block": {
+    "prefix": ["pss"],
+    "body": ["t.playSeq($1, $2, {", "  $TM_SELECTED_TEXT$3", "}$0);"]
   },
   "block": {
     "prefix": ["("],
@@ -28,7 +40,7 @@
     "body": ["DetectSilence.ar(${1:sig}, doneAction: Done.freeSelf);"]
   },
   "ProxySpace": {
-    "prefix": ["ps"],
+    "prefix": ["proxyspace", "proxy"],
     "body": ["p = ProxySpace.push(s);"]
   },
   "setup": {
@@ -70,8 +82,8 @@
       "    doneAction: Done.freeSelf);",
       "  sig = SinOsc.ar(freq);",
       "  $0",
-      "  sig = env * Pan2.ar(sig, pan);",
-      "  Out.ar(out, sig*amp);",
+      "  sig = env * Pan2.ar(sig, pan, amp);",
+      "  Out.ar(out, sig);",
       "}).add;"
     ]
   },
@@ -81,7 +93,7 @@
       "~$1[$2] = \\filter -> {|sig|",
       "  $0",
       "};",
-      "~$1.set(\\wet$2, 0);"
+      "~$1.set(\\wet$2, 1);"
     ]
   },
   "FX Bitcrush": {

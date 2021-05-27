@@ -531,11 +531,20 @@ install-language-sc() {
   fi
   mkdir -p ~/ws/music
   pushd ~/ws/music
+  if hascmd rclone; then
+    rclone sync -v drive:/Dropbox/samples/ ./samples
+  fi
   if [ ! -e StevearcExperimentalQuark ]; then
     git clone --recursive git@github.com:stevearc/StevearcExperimentalQuark
   fi
   if [ ! -e Beats ]; then
     git clone --recursive git@github.com:stevearc/Beats
+  fi
+  if [ ! -e Looper ]; then
+    git clone --recursive git@github.com:stevearc/Looper
+  fi
+  if [ ! -e Sampler ]; then
+    git clone --recursive git@github.com:stevearc/Sampler
   fi
   if [ ! -e Timing ]; then
     git clone --recursive git@github.com:stevearc/Timing
@@ -554,6 +563,12 @@ if (Quarks.isInstalled("SCLOrkSynths").not) {
 };
 if (Quarks.isInstalled("Beats").not) {
   Quarks.install("$HOME/ws/music/Beats");
+};
+if (Quarks.isInstalled("Looper").not) {
+  Quarks.install("$HOME/ws/music/Looper");
+};
+if (Quarks.isInstalled("Sampler").not) {
+  Quarks.install("$HOME/ws/music/Sampler");
 };
 if (Quarks.isInstalled("Timing").not) {
   Quarks.install("$HOME/ws/music/Timing");

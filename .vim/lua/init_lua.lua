@@ -8,7 +8,7 @@ aerial.set_open_automatic{
 require('telescope').setup{
   defaults = {
     winblend = 10,
-  }
+  },
 }
 
 local mapper = function(mode, key, result)
