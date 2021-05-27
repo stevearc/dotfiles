@@ -118,3 +118,6 @@
 [submodule ".vim/bundle/scnvim"]
 	path = .vim/bundle/scnvim
 	url = https://github.com/stevearc/scnvim.git
+[submodule ".vim/bundle/cheat.sh-vim"]
+	path = .vim/bundle/cheat.sh-vim
+	url = https://github.com/dbeniamine/cheat.sh-vim.git
