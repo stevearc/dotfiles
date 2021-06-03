@@ -252,14 +252,14 @@ endfunction
 function! ForwardsInInsert() abort
   if vsnip#jumpable(1)
     call Vsnip_jump(1)
-  else
+  elseif g:completion_plugin == 'completion-nvim'
     lua require'completion'.nextSource()
   endif
 endfunction
 function! BackwardsInInsert() abort
   if vsnip#jumpable(-1)
     call Vsnip_jump(-1)
-  else
+  elseif g:completion_plugin == 'completion-nvim'
     lua require'completion'.prevSource()
   endif
 endfunction
@@ -385,4 +385,5 @@ endif
 
 se stl=%!statusline#StatusLine()
 
+let g:completion_plugin = 'compe'
 lua require 'init_lua'

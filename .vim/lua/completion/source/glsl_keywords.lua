@@ -159,9 +159,6 @@ local words = {
   'textureProjGrad',
   'textureProjGradOffset',
 
-  -- TODO
-
-
   -- Noise functions
   'noise1',
   'noise2',

@@ -124,3 +124,9 @@
 [submodule ".vim/bundle/lspsaga.nvim"]
 	path = .vim/bundle/lspsaga.nvim
 	url = https://github.com/glepnir/lspsaga.nvim.git
+[submodule ".vim/bundle/nvim-compe"]
+	path = .vim/bundle/nvim-compe
+	url = https://github.com/hrsh7th/nvim-compe.git
+[submodule ".vim/bundle/lsp_signature.nvim"]
+	path = .vim/bundle/lsp_signature.nvim
+	url = https://github.com/ray-x/lsp_signature.nvim.git
