@@ -10,7 +10,7 @@
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
-declare -r DEFAULT_VIM_BUNDLES="cheat.sh-vim completion-nvim vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-eunuch nvim-lspconfig vim-surround editorconfig-vim nvim-colorizer.lua nvim-treesitter nvim-treesitter-context plenary.nvim popup.nvim vim-endwise vim-autoswap defx.nvim aerial.nvim targets.vim telescope.nvim quickfix-reflector.vim vim-vsnip vim-vsnip-integ vim-vsnip-snippets completion-buffers"
+declare -r DEFAULT_VIM_BUNDLES="cheat.sh-vim completion-nvim vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-eunuch nvim-lspconfig vim-surround editorconfig-vim nvim-colorizer.lua nvim-treesitter nvim-treesitter-context plenary.nvim popup.nvim vim-endwise vim-autoswap defx.nvim aerial.nvim targets.vim telescope.nvim quickfix-reflector.vim vim-vsnip vim-vsnip-integ vim-vsnip-snippets completion-buffers lspsaga-nvim"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r XFCE_DOTFILES=".xsessionrc"
 declare -r ALL_LANGUAGES="go python js arduino clojure cs rust sc"
@@ -500,6 +500,8 @@ install-language-cs() {
 install-language-sc() {
   local SC_VERSION="Version-3.11.2"
   sudo adduser $USER audio
+  # Allow local network traffic to supercollider
+  sudo ufw allow proto udp from 192.168.0.0/16 to any port 57120
   if ! hascmd scide; then
     sudo apt-get install -yq jackd2 build-essential cmake g++ libsndfile1-dev libjack-jackd2-dev libfftw3-dev libxt-dev libavahi-client-dev libasound2-dev libicu-dev libreadline6-dev libudev-dev pkg-config libncurses5-dev qt5-default qt5-qmake qttools5-dev qttools5-dev-tools qtdeclarative5-dev qtwebengine5-dev libqt5svg5-dev libqt5websockets5-dev
     pushd /tmp

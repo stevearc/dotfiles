@@ -43,6 +43,20 @@
     "prefix": ["proxyspace", "proxy"],
     "body": ["p = ProxySpace.push(s);"]
   },
+  "OSC debug": {
+    "prefix": ["oscdebug"],
+    "body": [
+      "(",
+      "f = { |msg, time, addr|",
+      "    if(msg[0] != '/status.reply') {",
+      "        \"time: % sender: %\nmessage: %\n\".postf(time, addr, msg);",
+      "    }",
+      "};",
+      "thisProcess.addOSCRecvFunc(f);",
+      ");",
+      "thisProcess.removeOSCRecvFunc(f);"
+    ]
+  },
   "setup": {
     "prefix": ["setup"],
     "body": [
@@ -242,6 +256,42 @@
       "AllpassC.ar(sig, maxDelay,",
       "  SinOsc.ar(\\phRate.kr(1), 0, (maxDelay * 0.5) - minDelay, (maxDelay * 0.5) + minDelay),",
       "  \\phDecay.kr(1));"
+    ]
+  },
+  "FX Chorus": {
+    "prefix": ["fxchorus"],
+    "body": [
+      "var numDelays = 8;",
+      "var numOutChan = 2;",
+      "var mods = { |i|",
+      "    FSinOsc.kr(\\chSpeed.kr(1) * rrand(0.9, 1.1),",
+      "      \\chPhase.kr(0) * i,",
+      "      \\chDepth.kr(0.001),",
+      "      \\chPredelay.kr(0.001));",
+      "} ! (numDelays * numOutChan);",
+      "sig = DelayL.ar(sig, 0.5, mods);",
+      "Mix(sig.clump(numOutChan)) / numDelays;"
+    ]
+  },
+  "FX Filtered Chorus": {
+    "prefix": ["fxfchorus", "fxchorusfilter", "fxchorusf"],
+    "body": [
+      "var lo, hi, mods, indexBase;",
+      "var numDelays = 8;",
+      "var numOutChan = 2;",
+      "lo = LPF.ar(sig, \\chfCrossover.kr(100));",
+      "hi = HPF.ar(sig, \\chfCrossover.kr(100));",
+      "mods = { |i|",
+      "   SinOsc.kr(\\chfSpeed.kr(1) * rrand(0.9, 1.1),",
+      "     \\chfPhase.kr(0) * i,",
+      "     \\chfDepth.kr(0.001),",
+      "     \\chfPredelay.kr(0.001));",
+      "} ! (numDelays * numOutChan);",
+      "sig = DelayL.ar(hi, 0.5, mods) / numDelays;",
+      "indexBase = (0, numOutChan .. mods.size-1);",
+      "hi = { |i| Mix(sig[indexBase + i]) } ! numOutChan;",
+      "lo = lo + hi;",
+      "XFade2.ar(sig, lo, \\chfXfade.kr(0))"
     ]
   }
 }

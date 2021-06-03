@@ -11,6 +11,8 @@ require('telescope').setup{
   },
 }
 
+require('lspsaga').init_lsp_saga()
+
 local mapper = function(mode, key, result)
   vim.api.nvim_buf_set_keymap(0, mode, key, result, {noremap = true, silent = true})
 end
@@ -156,18 +158,23 @@ M.on_attach = function(client)
   mapper('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>')
   mapper('n', 'gs', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>')
   if config.help ~= false then
-    mapper('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>')
+    mapper('n', 'K', '<cmd>lua require("lspsaga.hover").render_hover_doc()<CR>')
+    mapper('n', '<C-j>', '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(1)<CR>')
+    mapper('n', '<C-k>', '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(-1)<CR>')
   end
-  mapper('n', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
-  mapper('i', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
+  mapper('n', '<c-k>', '<cmd>lua require("lspsaga.signaturehelp").signature_help()<CR>')
+  mapper('i', '<c-k>', '<cmd>lua require("lspsaga.signaturehelp").signature_help()<CR>')
   if config.code_action ~= false then
-    mapper('n', '<leader><space>', '<cmd>lua vim.lsp.buf.code_action()<CR>')
+    mapper('n', '<leader><space>', '<cmd>lua require("lspsaga.codeaction").code_action()<CR>')
+    mapper('v', '<leader><space>', ':<C-U>lua require("lspsaga.codeaction").range_code_action()<CR>')
   end
   mapper('n', '=', '<cmd>lua vim.lsp.buf.formatting()<CR>')
   mapper('v', '=', '<cmd>lua vim.lsp.buf.range_formatting()<CR>')
   mapper('n', '<leader>r', '<cmd>lua vim.lsp.buf.rename()<CR>')
+  -- Getting E523 on second rename attempt in a file.
+  -- mapper('n', '<leader>r', '<cmd>lua require("lspsaga.rename").rename()<CR>')
 
-  mapper('n', '<space>', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>')
+  mapper('n', '<space>', '<cmd>lua require"lspsaga.diagnostic".show_line_diagnostics()<CR>')
 
   if config.cursor_highlight == true then
     vim.cmd [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]

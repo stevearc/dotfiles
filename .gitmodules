@@ -121,3 +121,6 @@
 [submodule ".vim/bundle/cheat.sh-vim"]
 	path = .vim/bundle/cheat.sh-vim
 	url = https://github.com/dbeniamine/cheat.sh-vim.git
+[submodule ".vim/bundle/lspsaga.nvim"]
+	path = .vim/bundle/lspsaga.nvim
+	url = https://github.com/glepnir/lspsaga.nvim.git
