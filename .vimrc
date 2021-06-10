@@ -289,10 +289,9 @@ let g:treesitter_languages = [
       \ "toml", "typescript",
       \]
 
-set foldmethod=expr
-set foldexpr=nvim_treesitter#foldexpr()
 " Start with folds open
 se foldlevelstart=99
+se foldlevel=99
 " Disable fold column
 se foldcolumn=0
 
