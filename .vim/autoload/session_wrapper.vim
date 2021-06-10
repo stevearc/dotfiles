@@ -16,7 +16,7 @@ function! session_wrapper#QuickOpen(detach)
   if luaeval("pcall(require, 'telescope')")
     let s:detach_after_open = a:detach
     let l:sessions = xolox#session#get_names(0)
-    call luaeval("require('stevearc_telescope').select('Open Session', _A, 'session_wrapper#OnChooseSession')", l:sessions)
+    call luaeval("require('stevearc.telescope').select('Open Session', _A, 'session_wrapper#OnChooseSession')", l:sessions)
   else
     OpenSession
     if a:detach
@@ -36,7 +36,7 @@ function! session_wrapper#SafeDelete()
   let l:names = xolox#session#get_names(0)
   if len(l:names) > 1
     if luaeval("pcall(require, 'telescope')")
-      call luaeval("require('stevearc_telescope').select('Delete Session', _A, 'session_wrapper#OnChooseDeleteSession')", l:names)
+      call luaeval("require('stevearc.telescope').select('Delete Session', _A, 'session_wrapper#OnChooseDeleteSession')", l:names)
     else
       DeleteSession
     endif

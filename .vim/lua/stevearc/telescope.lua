@@ -43,6 +43,7 @@ end
 
 M.find_files = function()
   local opts = {
+    previewer = false,
     attach_mappings = function(prompt_bufnr, map)
       map('i', '<C-t>', open_existing_or_new_tab)
       return true
