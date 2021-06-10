@@ -284,9 +284,8 @@ aug END
 " Treesitter
 let g:debug_treesitter = 0
 let g:treesitter_languages = [
-      \ "bash", "c", "c_sharp", "cpp", "go", "graphql",
-      \ "java", "json", "lua", "python", "rst", "rust",
-      \ "toml", "typescript",
+      \ "bash", "c", "c_sharp", "cpp", "go", "graphql", "java", "json",
+      \ "kotlin", "latex", "lua", "python", "rst", "ruby", "rust", "toml",
       \]
 
 " Start with folds open
