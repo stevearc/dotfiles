@@ -35,6 +35,7 @@ alias youtube-dl-mp3='youtube-dl -f bestaudio -x --audio-format mp3 --audio-qual
 alias orphans="ps -elf | head -1; ps -elf | awk '{if (\$5 == 1 && \$3 != \"root\") {print \$0}}' | head"
 alias bp='bluepill'
 alias bpe='bluepill enter'
+zlibd() (printf "\x1f\x8b\x08\x00\x00\x00\x00\x00" |cat - $@ |gzip -dc)
 alias mosh='mosh -6'
 ash() {
     autossh -t "$@" 'tmux -2 attach || tmux -2 new'
