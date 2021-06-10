@@ -10,7 +10,7 @@
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
-declare -r DEFAULT_VIM_BUNDLES="cheat.sh-vim completion-nvim vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-eunuch nvim-lspconfig vim-surround editorconfig-vim nvim-colorizer.lua nvim-treesitter nvim-treesitter-context plenary.nvim popup.nvim vim-endwise vim-autoswap defx.nvim aerial.nvim targets.vim telescope.nvim quickfix-reflector.vim vim-vsnip vim-vsnip-integ vim-vsnip-snippets completion-buffers lspsaga-nvim nvim-compe lsp_signature.nvim"
+declare -r DEFAULT_VIM_BUNDLES="cheat.sh-vim completion-nvim vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-eunuch nvim-lspconfig vim-surround editorconfig-vim nvim-colorizer.lua nvim-treesitter nvim-treesitter-context plenary.nvim popup.nvim vim-endwise vim-autoswap defx.nvim defx-icons aerial.nvim targets.vim telescope.nvim quickfix-reflector.vim vim-vsnip vim-vsnip-integ vim-vsnip-snippets completion-buffers lspsaga-nvim nvim-compe lsp_signature.nvim nvim-web-devicons lualine.nvim"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r XFCE_DOTFILES=".xsessionrc"
 declare -r ALL_LANGUAGES="go python js arduino clojure cs rust sc"
@@ -256,6 +256,16 @@ install-cli-after() {
   [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
   ~/.envs/py3/bin/pip install -q wheel
   ~/.envs/py3/bin/pip install -q pynvim
+
+  if [ $LINUX ]; then
+    mkdir -p ~/.local/share/fonts
+    pushd ~/.local/share/fonts
+    if [ ! -e UbuntuMono.zip ]; then
+      wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/UbuntuMono.zip
+      unzip UbuntuMono.zip
+    fi
+    popd
+  fi
 
   # Probably don't care about clipper anymore
   # if ! nc -z localhost 8377 && confirm "Install clipper?" n; then

@@ -6,6 +6,12 @@ set termguicolors
 
 lua <<END
 require 'colorizer'.setup()
+
+if vim.g.devicons ~= false then
+  require'nvim-web-devicons'.setup {
+   default = true;
+  }
+end
 END
 
 set background=dark

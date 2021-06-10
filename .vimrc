@@ -350,9 +350,9 @@ nnoremap <silent> g* :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR
 nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>nzz
 
 " Defx mappings
-nnoremap <silent> - :Defx `expand('%:p:h')` -search=`expand('%:p')` -vertical-preview -preview-height=100 -preview-width=80<CR>
-nnoremap <leader>w :Defx -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
-nnoremap <leader>W :Defx `expand('%:p:h')` -search=`expand('%:p')` -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
+nnoremap <silent> - :Defx -columns=indent:icons:filename:type `expand('%:p:h')` -search=`expand('%:p')` -vertical-preview -new -preview-height=100 -preview-width=100<CR>
+nnoremap <leader>w :Defx -columns=indent:icons:filename:type -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
+nnoremap <leader>W :Defx -columns=indent:icons:filename:type `expand('%:p:h')` -search=`expand('%:p')` -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
 
 " Telescope mappings
 nnoremap <leader>t <cmd>lua require('stevearc.telescope').find_files()<cr>
@@ -380,8 +380,6 @@ if has('win32')
   set shellquote=\"
   set shellxquote=
 endif
-
-se stl=%!statusline#StatusLine()
 
 let g:completion_plugin = 'compe'
 lua require 'init_lua'

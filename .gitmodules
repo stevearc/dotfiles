@@ -130,3 +130,12 @@
 [submodule ".vim/bundle/lsp_signature.nvim"]
 	path = .vim/bundle/lsp_signature.nvim
 	url = https://github.com/ray-x/lsp_signature.nvim.git
+[submodule ".vim/bundle/nvim-web-devicons"]
+	path = .vim/bundle/nvim-web-devicons
+	url = https://github.com/kyazdani42/nvim-web-devicons.git
+[submodule ".vim/bundle/lualine.nvim"]
+	path = .vim/bundle/lualine.nvim
+	url = https://github.com/hoob3rt/lualine.nvim.git
+[submodule ".vim/bundle/defx-icons"]
+	path = .vim/bundle/defx-icons
+	url = https://github.com/kristijanhusak/defx-icons.git

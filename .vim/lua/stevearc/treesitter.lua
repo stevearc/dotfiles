@@ -1,5 +1,6 @@
 local queries = require'nvim-treesitter.query'
 local parsers = require'nvim-treesitter.parsers'
+local utils = require'nvim-treesitter.ts_utils'
 local M = {}
 
 M.setup = function()
@@ -23,6 +24,14 @@ M.set_win_defaults = function()
   if vim.wo.foldexpr == 'nvim_treesitter#foldexpr()' then
     vim.wo.foldmethod = 'manual'
     vim.wo.foldexpr = '0'
+  end
+end
+
+M.debug_node = function()
+  if vim.g.debug_treesitter and vim.g.debug_treesitter ~= 0 then
+    return tostring(utils.get_node_at_cursor(0))
+  else
+    return ""
   end
 end
 
