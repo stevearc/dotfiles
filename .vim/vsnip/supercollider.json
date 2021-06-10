@@ -172,8 +172,8 @@
       "Formlet.ar(sig, formant * 200, ((formant % 5 + 1)) / 1000, (formant * 1.5) / 600).tanh;"
     ]
   },
-  "FX Distortion": {
-    "prefix": ["fxdistortion", "fxdist"],
+  "FX Distortion 2": {
+    "prefix": ["fxdistortion2", "fxdist2"],
     "body": [
       "var tmp = sig;",
       "sig = CrossoverDistortion.ar(sig, amp:0.2, smooth:0.01);",
@@ -182,9 +182,22 @@
       "sig = SelectX.ar(\\dist.kr(0.2,0.1), [tmp, sig]);"
     ]
   },
-  "FX Overdrive Distortion": {
-    "prefix": ["fxoverdrivedistortion", "fxoverdrive", "fxdrive"],
-    "body": ["(sig * (\\drive.kr(1) * 50)).clip(0,0.2).fold2(2);"]
+  "FX Distortion": {
+    "prefix": ["fxdistortion", "fxdist"],
+    "body": [
+      "var gain = \\gain.kr(0).linlin(0,1,1,0.01);",
+      "var distortion = \\distortion.kr(0).linlin(0,1,-0.9,1);",
+      "sig = Select.ar(distortion > 0,",
+      "  // Bring the clipping plane closer to 0 as distortion approaches -1",
+      "  [sig.clip2(max(gain+distortion*gain, 0.01)),",
+      "  // For distortion > 0, only affect the negative side of the signal",
+      "  Select.ar(sig > 0, [",
+      "    // Gradually map negative signal values to abs value",
+      "    sig.linlin(-1,0,distortion.linlin(0,1,-1,1),0).clip2(gain),",
+      "    sig,",
+      "  ])",
+      "]);"
+    ]
   },
   "FX Wa-wa": {
     "prefix": ["fxwawa", "fxw"],
@@ -279,19 +292,19 @@
       "var lo, hi, mods, indexBase;",
       "var numDelays = 8;",
       "var numOutChan = 2;",
-      "lo = LPF.ar(sig, \\chfCrossover.kr(100));",
-      "hi = HPF.ar(sig, \\chfCrossover.kr(100));",
+      "lo = LPF.ar(sig, \\chCrossover.kr(100));",
+      "hi = HPF.ar(sig, \\chCrossover.kr(100));",
       "mods = { |i|",
-      "   SinOsc.kr(\\chfSpeed.kr(1) * rrand(0.9, 1.1),",
-      "     \\chfPhase.kr(0) * i,",
-      "     \\chfDepth.kr(0.001),",
-      "     \\chfPredelay.kr(0.001));",
+      "   SinOsc.kr(\\chSpeed.kr(1) * rrand(0.9, 1.1),",
+      "     \\chPhase.kr(0) * i,",
+      "     \\chDepth.kr(0.001),",
+      "     \\chPredelay.kr(0.001));",
       "} ! (numDelays * numOutChan);",
       "sig = DelayL.ar(hi, 0.5, mods) / numDelays;",
       "indexBase = (0, numOutChan .. mods.size-1);",
       "hi = { |i| Mix(sig[indexBase + i]) } ! numOutChan;",
       "lo = lo + hi;",
-      "XFade2.ar(sig, lo, \\chfXfade.kr(0))"
+      "XFade2.ar(sig, lo, \\chXfade.kr(0))"
     ]
   }
 }

@@ -502,6 +502,8 @@ install-language-sc() {
   sudo adduser $USER audio
   # Allow local network traffic to supercollider
   sudo ufw allow proto udp from 192.168.0.0/16 to any port 57120
+  # Allow local network traffic for TouchOSC editor
+  sudo ufw allow from 192.168.0.0/16 to any port 6666
   if ! hascmd scide; then
     sudo apt-get install -yq jackd2 build-essential cmake g++ libsndfile1-dev libjack-jackd2-dev libfftw3-dev libxt-dev libavahi-client-dev libasound2-dev libicu-dev libreadline6-dev libudev-dev pkg-config libncurses5-dev qt5-default qt5-qmake qttools5-dev qttools5-dev-tools qtdeclarative5-dev qtwebengine5-dev libqt5svg5-dev libqt5websockets5-dev
     pushd /tmp
