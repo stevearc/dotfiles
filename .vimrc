@@ -333,13 +333,13 @@ nnoremap <silent> g* :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR
 nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>nzz
 
 " Telescope mappings
-nnoremap <leader>t <cmd>lua require('stevearc.telescope').find_files()<cr>
-tnoremap \t <C-\><C-N><cmd>lua require('stevearc.telescope').find_files()<cr>
-nnoremap <leader>b <cmd>lua require('stevearc.telescope').buffers()<cr>
-tnoremap \b <C-\><C-N><cmd>lua require('stevearc.telescope').buffers()<cr>
+nnoremap <leader>t <cmd>lua require('stevearc.telescope').find_files({previewer=false})<cr>
+tnoremap \t <C-\><C-N><cmd>lua require('stevearc.telescope').find_files({previewer=false})<cr>
+nnoremap <leader>b <cmd>lua require('stevearc.telescope').buffers({previewer=false})<cr>
+tnoremap \b <C-\><C-N><cmd>lua require('stevearc.telescope').buffers({previewer=false})<cr>
 nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
-nnoremap <leader>fd <cmd>lua require('stevearc.telescope').find_files({cwd='/home/stevearc/.vim/', follow=true, hidden=true, ignore={'bundle'}})<cr>
+nnoremap <leader>fd <cmd>lua require('stevearc.telescope').find_files({cwd='/home/stevearc/.vim/', follow=true, hidden=true, ignore={'bundle'}, previewer=false})<cr>
 nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<CR>
 nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>
 
@@ -366,5 +366,6 @@ if has('win32')
 endif
 
 let g:use_barbar = v:true
+let g:nerd_font = v:true
 let g:completion_plugin = 'compe'
 lua require 'init_lua'

@@ -43,7 +43,6 @@ end
 
 M.find_files = function(opts)
   opts = vim.tbl_extend('keep', opts or {}, {
-    previewer = false,
     attach_mappings = function(prompt_bufnr, map)
       map('i', '<C-t>', open_existing_or_new_tab)
       return true
@@ -76,14 +75,13 @@ M.myles_find_files = function()
   })
 end
 
-M.buffers = function()
-  local opts = {
-    previewer = false,
-  }
-  opts.attach_mappings = function(prompt_bufnr, map)
-    map('i', '<C-t>', open_existing_or_new_tab)
-    return true
-  end
+M.buffers = function(opts)
+  opts = vim.tbl_extend('keep', opts or {}, {
+    attach_mappings = function(prompt_bufnr, map)
+      map('i', '<C-t>', open_existing_or_new_tab)
+      return true
+    end
+  })
   require('telescope.builtin').buffers(opts)
 end
 

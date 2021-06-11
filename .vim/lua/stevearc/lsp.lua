@@ -44,17 +44,17 @@ local ft_config = {
   ['javascript.jsx'] = js_lsp_config,
 }
 
-M.on_update_diagnostics = function(bufnr)
-  local mode = vim.api.nvim_get_mode()
-  if string.sub(mode.mode, 1, 1) == 'i' then return end
-
-  local errors = vim.lsp.diagnostic.get_count(bufnr, "Error")
-  local warnings = vim.lsp.diagnostic.get_count(bufnr, "Warning")
+M.on_update_diagnostics = function()
+  local errors = vim.lsp.diagnostic.get_count(0, "Error")
+  local warnings = vim.lsp.diagnostic.get_count(0, "Warning")
   if warnings + errors == 0 then
     vim.lsp.util.set_loclist({})
     vim.cmd('lclose')
   else
-    vim.lsp.diagnostic.set_loclist({open_loclist = false})
+    vim.lsp.diagnostic.set_loclist{
+      open_loclist = false,
+      severity_limit = "Warning",
+    }
     -- Resize the loclist
     if is_loclist_visible() then
       local winid = vim.fn.win_getid()
@@ -79,7 +79,7 @@ local on_attach = function(client)
   local ft = vim.api.nvim_buf_get_option(0, 'filetype')
   local config = ft_config[ft] or {}
 
-  -- Make all the "jump" commands call zvzz after execution
+  -- Make all the "jump" commands call zv after execution
   local jump_callbacks = {
     'textDocument/declaration',
     'textDocument/definition',
@@ -90,21 +90,20 @@ local on_attach = function(client)
     local orig_callback = vim.lsp.handlers[cb]
     local new_callback = function(idk, method, result)
       orig_callback(idk, method, result)
-      vim.cmd('normal! zvzz')
+      vim.cmd('normal! zv')
     end
     vim.lsp.handlers[cb] = new_callback
   end
 
-  -- Update loclist when diagnostics change
-  local orig_callback = vim.lsp.handlers['textDocument/publishDiagnostics']
-  local new_callback = function(a1, a2, params, client_id, bufnr, config)
-    orig_callback(a1, a2, params, client_id, bufnr, config)
-    M.on_update_diagnostics(bufnr)
-  end
-  vim.lsp.handlers['textDocument/publishDiagnostics'] = new_callback
-  vim.cmd [[autocmd InsertLeave <buffer> lua require'stevearc.lsp'.on_update_diagnostics()]]
+  vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
+    vim.lsp.diagnostic.on_publish_diagnostics, {
+      update_in_insert = false,
+      severity_sort = true,
+    }
+  )
+  vim.cmd [[autocmd User LspDiagnosticsChanged lua require'stevearc.lsp'.on_update_diagnostics()]]
 
-  vim.api.nvim_win_set_option(0, 'signcolumn', 'yes')
+  vim.api.nvim_win_set_option(0, 'signcolumn', 'number')
   -- Aerial
   vim.api.nvim_set_var('aerial_open_automatic_min_lines', 200)
   vim.api.nvim_set_var('aerial_open_automatic_min_symbols', 10)
@@ -132,11 +131,11 @@ local on_attach = function(client)
     mapper('n', '<leader><space>', '<cmd>lua require("lspsaga.codeaction").code_action()<CR>')
     mapper('v', '<leader><space>', ':<C-U>lua require("lspsaga.codeaction").range_code_action()<CR>')
   end
+  mapper('n', '<C-f>', '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(1)<CR>')
+  mapper('n', '<C-b>', '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(-1)<CR>')
   mapper('n', '=', '<cmd>lua vim.lsp.buf.formatting()<CR>')
   mapper('v', '=', '<cmd>lua vim.lsp.buf.range_formatting()<CR>')
-  mapper('n', '<leader>r', '<cmd>lua vim.lsp.buf.rename()<CR>')
-  -- Getting E523 on second rename attempt in a file.
-  -- mapper('n', '<leader>r', '<cmd>lua require("lspsaga.rename").rename()<CR>')
+  mapper('n', '<leader>r', '<cmd>lua require("lspsaga.rename").rename()<CR>')
 
   mapper('n', '<CR>', '<cmd>lua require"lspsaga.diagnostic".show_line_diagnostics()<CR>')
 

@@ -1,6 +1,12 @@
-nnoremap <silent> - <cmd>Defx -columns=indent:icons:filename:type `expand('%:p:h')` -search=`expand('%:p')` -vertical-preview -new -preview-width=100<CR>
-nnoremap <leader>w <cmd>Defx -columns=indent:icons:filename:type -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
-nnoremap <leader>W <cmd>Defx -columns=indent:icons:filename:type `expand('%:p:h')` -search=`expand('%:p')` -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
+if g:nerd_font
+  let g:defx_columns = 'indent:icons:filename:type'
+else
+  let g:defx_columns = 'mark:indent:icon:filename:type'
+endif
+
+nnoremap <silent> - <cmd>Defx -columns=`g:defx_columns` `expand('%:p:h')` -search=`expand('%:p')` -vertical-preview -new -preview-width=100<CR>
+nnoremap <leader>w <cmd>Defx -columns=`g:defx_columns` -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
+nnoremap <leader>W <cmd>Defx -columns=`g:defx_columns` `expand('%:p:h')` -search=`expand('%:p')` -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
 
 function! s:OpenDefxIfDirectory() abort
   try
@@ -10,7 +16,7 @@ function! s:OpenDefxIfDirectory() abort
   endtry
   if isdirectory(l:full_path)
     let l:bn = bufnr()
-    Defx -columns=indent:icons:filename:type `expand('%:p')` -vertical-preview -new -preview-width=100
+    Defx -columns=`g:defx_columns` `expand('%:p')` -vertical-preview -new -preview-width=100
     execute "bd " . l:bn
   endif
 endfunction
