@@ -335,12 +335,11 @@ nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR
 " Telescope mappings
 nnoremap <leader>t <cmd>lua require('stevearc.telescope').find_files()<cr>
 tnoremap \t <C-\><C-N><cmd>lua require('stevearc.telescope').find_files()<cr>
-nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
-tnoremap \fg <C-\><C-N><cmd>lua require('telescope.builtin').live_grep()<cr>
-nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
-tnoremap \fh <C-\><C-N><cmd>lua require('telescope.builtin').help_tags()<cr>
 nnoremap <leader>b <cmd>lua require('stevearc.telescope').buffers()<cr>
 tnoremap \b <C-\><C-N><cmd>lua require('stevearc.telescope').buffers()<cr>
+nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
+nnoremap <leader>fd <cmd>lua require('stevearc.telescope').find_files({cwd='/home/stevearc/.vim/', follow=true, hidden=true, ignore={'bundle'}})<cr>
 
 let g:scnvim_no_mappings = 1
 let g:scnvim_eval_flash_repeats = 1
