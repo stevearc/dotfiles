@@ -1,13 +1,13 @@
-fun! Subgrep(args) abort
+fun! s:Sgrep(args) abort
   exec "vimgrep /" . a:args . "/ " . b:netrw_curdir . '/**'
   call quickerfix#Open('c')
 endf
 
-command! -buffer -bar -nargs=+ Sgrep call Subgrep('<args>')
+command! -buffer -bar -nargs=+ Sgrep call <sid>Sgrep('<args>')
 
 setlocal noswapfile
 
-nnoremap <buffer> <leader>c :exec 'Explore ' . getcwd()<CR>
+nnoremap <buffer> <leader>C :exec 'Explore ' . getcwd()<CR>
 
 " If tree view
 if w:netrw_liststyle == 3

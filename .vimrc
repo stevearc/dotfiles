@@ -332,11 +332,6 @@ nnoremap <silent> # :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=
 nnoremap <silent> g* :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR>nzz
 nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>nzz
 
-" Defx mappings
-nnoremap <silent> - <cmd>Defx -columns=indent:icons:filename:type `expand('%:p:h')` -search=`expand('%:p')` -vertical-preview -new -preview-height=100 -preview-width=100<CR>
-nnoremap <leader>w <cmd>Defx -columns=indent:icons:filename:type -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
-nnoremap <leader>W <cmd>Defx -columns=indent:icons:filename:type `expand('%:p:h')` -search=`expand('%:p')` -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
-
 " Telescope mappings
 nnoremap <leader>t <cmd>lua require('stevearc.telescope').find_files()<cr>
 tnoremap \t <C-\><C-N><cmd>lua require('stevearc.telescope').find_files()<cr>

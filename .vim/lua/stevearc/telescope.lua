@@ -52,6 +52,9 @@ M.find_files = function(opts)
   -- Make the find command respect wildignore
   if 1 == vim.fn.executable("rg") and vim.o.wildignore ~= "" then
     opts.find_command = { 'rg', '--files'}
+    if opts.hidden then
+      table.insert(opts.find_command, '--hidden')
+    end
     for glob in string.gmatch(vim.o.wildignore, "[^,]+") do
       table.insert(opts.find_command, '--iglob')
       table.insert(opts.find_command, "!"..glob)
