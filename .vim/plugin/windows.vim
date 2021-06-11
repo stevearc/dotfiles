@@ -14,6 +14,14 @@ function! s:ToggleWinEqual() abort
   let g:wequality = !g:wequality
 endfunction
 function! s:SetSize() abort
+  " Ignore prompt & quickfix windows
+  if &buftype == "prompt" || &buftype == "quickfix"
+    return
+  endif
+  " Ignore floating windows
+  if nvim_win_get_config(0)['relative'] != ''
+    return
+  endif
   if &winfixwidth
     let &winwidth=winwidth(0)
   else
