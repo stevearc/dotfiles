@@ -139,3 +139,6 @@
 [submodule ".vim/bundle/defx-icons"]
 	path = .vim/bundle/defx-icons
 	url = https://github.com/kristijanhusak/defx-icons.git
+[submodule ".vim/bundle/barbar.nvim"]
+	path = .vim/bundle/barbar.nvim
+	url = https://github.com/romgrk/barbar.nvim.git

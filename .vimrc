@@ -369,5 +369,6 @@ if has('win32')
   set shellxquote=
 endif
 
+let g:use_barbar = v:true
 let g:completion_plugin = 'compe'
 lua require 'init_lua'
