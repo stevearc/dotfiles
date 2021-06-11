@@ -6,10 +6,15 @@ elseif executable('ag')
   set grepformat=%f:%l:%c:%m
 elseif executable('ack')
   set grepprg=ack\ --nogroup\ --nocolor
+elseif !empty(fugitive#extract_git_dir(expand('%:p')))
+  set grepprg=git\ --no-pager\ grep\ --no-color\ -n\ $*
+  set grepformat=%f:%l:%m,%m\ %f\ match%ts,%f
 else
+  set grepprg=grep\ -nIR\ $*\ .
 endif
 
 function! BufGrep(text) abort
+  cclose
   %argd
   let buf = bufnr('%')
   bufdo argadd %
@@ -18,6 +23,6 @@ function! BufGrep(text) abort
   call quickerfix#Open('c')
 endfunction
 
-nnoremap <leader>g :call smartgrep#grep(expand('<cword>'))<CR>
+nnoremap <leader>g <cmd>cclose \| silent grep! <cword> \| call quickerfix#Open('c')<CR>
 command! -nargs=+ Bufgrep call BufGrep('<args>')
 nnoremap gR :call BufGrep(expand('<cword>'))<CR>
