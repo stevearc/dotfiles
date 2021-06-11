@@ -102,8 +102,8 @@ augroup END
 
 " Search mappings: These will make it so that going to the next one in a
 " search will center on the line it's found in.
-map N Nzvzz
-map n nzvzz
+map N Nzv
+map n nzv
 
 " Set fileformat to Unix
 set ff=unix
@@ -147,35 +147,16 @@ augroup end
 :cnoremap <Esc>d <S-right><Delete>
 :cnoremap <C-g>  <C-c>
 
-let g:old_centering = 0
+nnoremap j gj
+nnoremap k gk
+vnoremap j gj
+vnoremap k gk
 
-if g:old_centering
-  " Keep cursor in the vertical center of the editor
-  nnoremap <C-d> <C-d>zz
-  nnoremap <C-u> <C-u>zz
-  nnoremap G Gzz
-  nnoremap <C-o> <C-o>zz
-  nnoremap <C-i> <C-i>zz
-  nnoremap { {zz
-  nnoremap } }zz
-
-  " j and k navigate line-wraps in a sane way (also vertical center)
-  nnoremap j gjzz
-  nnoremap k gkzz
-  vnoremap j gjzz
-  vnoremap k gkzz
-else
-  nnoremap j gj
-  nnoremap k gk
-  vnoremap j gj
-  vnoremap k gk
-
-  augroup VCenterCursor
-    au!
-    au BufEnter,WinEnter,WinNew,VimResized *,*.*
-          \ let &scrolloff=1+winheight(win_getid())/2
-  augroup END
-end
+augroup VCenterCursor
+  au!
+  au BufEnter,WinEnter,WinNew,VimResized *,*.*
+        \ let &scrolloff=1+winheight(win_getid())/2
+augroup END
 
 let g:vsnip_snippet_dirs = [
       \ $HOME.'/.vim/vsnip',
@@ -352,9 +333,9 @@ nnoremap <silent> g* :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR
 nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>nzz
 
 " Defx mappings
-nnoremap <silent> - :Defx -columns=indent:icons:filename:type `expand('%:p:h')` -search=`expand('%:p')` -vertical-preview -new -preview-height=100 -preview-width=100<CR>
-nnoremap <leader>w :Defx -columns=indent:icons:filename:type -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
-nnoremap <leader>W :Defx -columns=indent:icons:filename:type `expand('%:p:h')` -search=`expand('%:p')` -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
+nnoremap <silent> - <cmd>Defx -columns=indent:icons:filename:type `expand('%:p:h')` -search=`expand('%:p')` -vertical-preview -new -preview-height=100 -preview-width=100<CR>
+nnoremap <leader>w <cmd>Defx -columns=indent:icons:filename:type -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
+nnoremap <leader>W <cmd>Defx -columns=indent:icons:filename:type `expand('%:p:h')` -search=`expand('%:p')` -split=vertical -winwidth=50 -direction=topleft -toggle<CR>
 
 " Telescope mappings
 nnoremap <leader>t <cmd>lua require('stevearc.telescope').find_files()<cr>
