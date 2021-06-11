@@ -67,6 +67,7 @@
 [submodule ".vim/bundle/nvim-colorizer.lua"]
 	path = .vim/bundle/nvim-colorizer.lua
 	url = https://github.com/norcalli/nvim-colorizer.lua.git
+	ignore = untracked
 [submodule ".vim/bundle/aerial.nvim"]
 	path = .vim/bundle/aerial.nvim
 	url = https://github.com/stevearc/aerial.nvim.git
@@ -79,6 +80,7 @@
 [submodule ".vim/bundle/nvim-lspconfig"]
 	path = .vim/bundle/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig
+	ignore = untracked
 [submodule ".vim/bundle/completion-nvim"]
 	path = .vim/bundle/completion-nvim
 	url = https://github.com/nvim-lua/completion-nvim.git
@@ -127,6 +129,7 @@
 [submodule ".vim/bundle/nvim-compe"]
 	path = .vim/bundle/nvim-compe
 	url = https://github.com/hrsh7th/nvim-compe.git
+	ignore = untracked
 [submodule ".vim/bundle/lsp_signature.nvim"]
 	path = .vim/bundle/lsp_signature.nvim
 	url = https://github.com/ray-x/lsp_signature.nvim.git
@@ -142,9 +145,11 @@
 [submodule ".vim/bundle/barbar.nvim"]
 	path = .vim/bundle/barbar.nvim
 	url = https://github.com/romgrk/barbar.nvim.git
+	ignore = untracked
 [submodule ".vim/bundle/vim-dadbod"]
 	path = .vim/bundle/vim-dadbod
 	url = https://github.com/tpope/vim-dadbod.git
 [submodule ".vim/bundle/vim-dadbod-ui"]
 	path = .vim/bundle/vim-dadbod-ui
 	url = https://github.com/kristijanhusak/vim-dadbod-ui.git
+	ignore = untracked
