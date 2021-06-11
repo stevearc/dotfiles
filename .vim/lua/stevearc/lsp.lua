@@ -138,7 +138,7 @@ local on_attach = function(client)
   -- Getting E523 on second rename attempt in a file.
   -- mapper('n', '<leader>r', '<cmd>lua require("lspsaga.rename").rename()<CR>')
 
-  mapper('n', '<space>', '<cmd>lua require"lspsaga.diagnostic".show_line_diagnostics()<CR>')
+  mapper('n', '<CR>', '<cmd>lua require"lspsaga.diagnostic".show_line_diagnostics()<CR>')
 
   if config.cursor_highlight == true then
     vim.cmd [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]

@@ -7,6 +7,8 @@ let g:python3_host_prog = expand("~/.envs/py3/bin/python")
 " Use Vim settings, rather than Vi
 set nocompatible
 
+let mapleader = " "
+
 " Allow backgrounding buffers without writing them, and remember marks/undo
 " for backgrounded buffers
 set hidden
