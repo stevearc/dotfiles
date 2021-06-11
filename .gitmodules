@@ -142,3 +142,9 @@
 [submodule ".vim/bundle/barbar.nvim"]
 	path = .vim/bundle/barbar.nvim
 	url = https://github.com/romgrk/barbar.nvim.git
+[submodule ".vim/bundle/vim-dadbod"]
+	path = .vim/bundle/vim-dadbod
+	url = https://github.com/tpope/vim-dadbod.git
+[submodule ".vim/bundle/vim-dadbod-ui"]
+	path = .vim/bundle/vim-dadbod-ui
+	url = https://github.com/kristijanhusak/vim-dadbod-ui.git
