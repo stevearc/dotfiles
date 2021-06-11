@@ -356,8 +356,13 @@ nnoremap <leader>W :Defx -columns=indent:icons:filename:type `expand('%:p:h')` -
 
 " Telescope mappings
 nnoremap <leader>t <cmd>lua require('stevearc.telescope').find_files()<cr>
+tnoremap <leader>t <C-\><C-N><cmd>lua require('stevearc.telescope').find_files()<cr>
 nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+tnoremap <leader>fg <C-\><C-N><cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
+tnoremap <leader>fh <C-\><C-N><cmd>lua require('telescope.builtin').help_tags()<cr>
 nnoremap <leader>b <cmd>lua require('stevearc.telescope').buffers()<cr>
+tnoremap <leader>b <C-\><C-N><cmd>lua require('stevearc.telescope').buffers()<cr>
 
 let g:scnvim_no_mappings = 1
 let g:scnvim_eval_flash_repeats = 1

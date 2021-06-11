@@ -41,14 +41,14 @@ function open_existing_or_new_tab(prompt_bufnr)
   end
 end
 
-M.find_files = function()
-  local opts = {
+M.find_files = function(opts)
+  opts = vim.tbl_extend('keep', opts or {}, {
     previewer = false,
     attach_mappings = function(prompt_bufnr, map)
       map('i', '<C-t>', open_existing_or_new_tab)
       return true
     end
-  }
+  })
   -- Make the find command respect wildignore
   if 1 == vim.fn.executable("rg") and vim.o.wildignore ~= "" then
     opts.find_command = { 'rg', '--files'}

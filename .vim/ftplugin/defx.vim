@@ -34,18 +34,43 @@ nnoremap <silent><buffer><expr> <C-l> defx#do_action('redraw')
 nnoremap <silent><buffer><expr> <C-g> defx#do_action('print')
 nnoremap <silent><buffer><expr> > defx#do_action('resize', defx#get_context().winwidth + 10)
 nnoremap <silent><buffer><expr> < defx#do_action('resize', defx#get_context().winwidth - 10)
+nnoremap <silent><buffer> t <cmd>call <sid>OpenTerm()<CR>
+nnoremap <silent><buffer> <leader>t <cmd>call <sid>FindDirFiles()<CR>
 
-fun! Livegrep() abort
-  let l:path = fnamemodify(defx#get_candidate()['action__path'], ':p:h')
+fun! s:GetDefxDir() abort
+  let l:candidate = defx#get_candidate()
+  if l:candidate['is_directory']
+    let l:mod = ':p:h:h'
+  else
+    let l:mod = ':p:h'
+  endif
+  return fnamemodify(l:candidate['action__path'], l:mod)
+endfun
+
+fun! s:FindDirFiles() abort
+  let l:path = s:GetDefxDir()
+  call luaeval("require('stevearc.telescope').find_files({cwd = _A})", l:path)
+endfun
+
+fun! s:OpenTerm() abort
+  let l:path = s:GetDefxDir()
+  let l:cwd = getcwd()
+  exec "lcd " . l:path
+  terminal
+  exec "lcd " . l:cwd
+endfun
+
+fun! s:Livegrep() abort
+  let l:path = s:GetDefxDir()
   call luaeval("require('telescope.builtin').live_grep(_A)", {'cwd': l:path})
 endf
 
-nnoremap <buffer> <leader>g <cmd>call Livegrep()<cr>
+nnoremap <buffer> <leader>g <cmd>call <sid>Livegrep()<cr>
 
-fun! Subgrep(args) abort
-  let l:path = fnamemodify(defx#get_candidate()['action__path'], ':p:h')
+fun! s:Subgrep(args) abort
+  let l:path = s:GetDefxDir()
   exec "grep '" . a:args . "' '" . l:path . "'"
   call quickerfix#Open('c')
 endf
 
-command! -buffer -bar -nargs=+ Sgrep call Subgrep('<args>')
+command! -buffer -bar -nargs=+ Sgrep call <sid>Subgrep('<args>')
