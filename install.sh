@@ -207,6 +207,7 @@ install-cli() {
       bsdmainutils \
       direnv \
       htop \
+      glances \
       inotify-tools \
       iotop \
       jq \
