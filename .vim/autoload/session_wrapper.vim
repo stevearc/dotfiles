@@ -30,6 +30,19 @@ function! session_wrapper#OnChooseSession(session)
   if s:detach_after_open
     call session_wrapper#DetachSession()
   endif
+  if g:use_barbar
+    " Close all empty buffers
+    let [i, n; empty] = [1, bufnr('$')]
+    while i <= n
+      if bufexists(i) && bufname(i) == ''
+        call add(empty, i)
+      endif
+      let i += 1
+    endwhile
+    if len(empty) > 0
+      exe 'bdelete' join(empty)
+    endif
+  endif
 endfunction
 
 function! session_wrapper#SafeDelete()
@@ -38,7 +51,7 @@ function! session_wrapper#SafeDelete()
     if luaeval("pcall(require, 'telescope')")
       call luaeval("require('stevearc.telescope').select('Delete Session', _A, 'session_wrapper#OnChooseDeleteSession')", l:names)
     else
-      DeleteSession
+      call s:DeleteSession()
     endif
   elseif len(l:names) == 1
     call session_wrapper#OnChooseDeleteSession(l:names[0])
@@ -49,7 +62,25 @@ endfunction
 
 function! session_wrapper#OnChooseDeleteSession(session)
   if confirm("Delete " . a:session . "? ", "&Yes\n&No\n") == 1
-    exec 'DeleteSession ' . a:session
+    call s:DeleteSession(a:session)
+  endif
+endfunction
+
+function! s:DeleteSession(...)
+  let l:session = ''
+  let l:detach = v:true
+  if a:0 > 0
+    let l:session = a:1
+    let l:session_path = xolox#session#name_to_path(l:session)
+    if xolox#session#is_tab_scoped()
+      let l:detach = t:this_session == l:session_path
+    else
+      let l:detach = v:this_session == l:session_path
+    endif
+  endif
+  exec 'DeleteSession ' . l:session
+  if l:detach
+    call session_wrapper#DetachSession()
   endif
 endfunction
 

@@ -10,6 +10,7 @@ if g:use_barbar
   tnoremap <silent> <leader>6 <C-\><C-N>:BufferGoto 6<CR>
   tnoremap <silent> <leader>7 <C-\><C-N>:BufferGoto 7<CR>
   tnoremap <silent> <leader>8 <C-\><C-N>:BufferGoto 8<CR>
+  tnoremap <silent> <leader>9 <C-\><C-N>:BufferGoto 9<CR>
   tnoremap <silent> <leader>` <C-\><C-N>:BufferLast<CR>
   tnoremap <silent> <leader>c <C-\><C-N>:BufferClose<CR>
 else
