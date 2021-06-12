@@ -1,6 +1,6 @@
 fun! s:Sgrep(args) abort
-  exec "vimgrep /" . a:args . "/ " . b:netrw_curdir . '/**'
-  call quickerfix#Open('c')
+  exec "silent vimgrep /" . a:args . "/ " . b:netrw_curdir . '/**'
+  lua require'qf_helper'.open('c', {enter=true})
 endf
 
 command! -buffer -bar -nargs=+ Sgrep call <sid>Sgrep('<args>')

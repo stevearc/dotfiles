@@ -2,25 +2,6 @@
 
 " lua vim.lsp.set_log_level('trace')
 
-highlight link LspDiagnosticsDefaultError ALEVirtualTextError
-highlight link LspDiagnosticsSignError ALEErrorSign
-highlight link LspDiagnosticsDefaultWarning ALEVirtualTextWarning
-highlight link LspDiagnosticsSignWarning ALEWarningSign
-highlight link LspDiagnosticsDefaultInformation ALEVirtualTextInfo
-highlight link LspDiagnosticsSignInformation ALEInfoSign
-highlight link LspDiagnosticsDefaultHint ALEVirtualTextInfo
-highlight link LspDiagnosticsSignHint ALEInfoSign
-
-highlight link LspDiagnosticsUnderlineError SpellBad
-highlight link LspDiagnosticsUnderlineWarning SpellBad
-highlight link LspDiagnosticsUnderlineInformation Underlined
-highlight link LspDiagnosticsUnderlineHint Underlined
-
-" solarized8 doesn't support ALEVirtualText
-highlight link ALEVirtualTextError ALEError
-highlight link ALEVirtualTextWarning ALEWarning
-highlight link ALEVirtualTextInfo ALEInfo
-
 if g:nerd_font
   sign define LspDiagnosticsSignError text=  numhl=LspDiagnosticsSignError texthl=LspDiagnosticsSignError
   sign define LspDiagnosticsSignWarning text=  numhl=LspDiagnosticsSignWarning texthl=LspDiagnosticsSignWarning

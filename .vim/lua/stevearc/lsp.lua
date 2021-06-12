@@ -95,15 +95,22 @@ local on_attach = function(client)
     vim.lsp.handlers[cb] = new_callback
   end
 
-  vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
-    vim.lsp.diagnostic.on_publish_diagnostics, {
-      update_in_insert = false,
-      severity_sort = true,
-    }
-  )
+  -- Sort diagnostics properly so our qf_helper cursor position works
+  local diagnostics_handler = vim.lsp.handlers['textDocument/publishDiagnostics']
+  vim.lsp.handlers['textDocument/publishDiagnostics'] = function(a, b, params, client_id, c, config)
+    table.sort(params.diagnostics, function(a, b)
+      if a.range.start.line == b.range.start.line then
+        return a.range.start.character < b.range.start.character
+      else
+        return a.range.start.line < b.range.start.line
+      end
+    end)
+    return diagnostics_handler(a, b, params, client_id, c, config)
+  end
+
   vim.cmd [[autocmd User LspDiagnosticsChanged lua require'stevearc.lsp'.on_update_diagnostics()]]
 
-  vim.api.nvim_win_set_option(0, 'signcolumn', 'number')
+  vim.api.nvim_win_set_option(0, 'signcolumn', 'yes')
   -- Aerial
   vim.api.nvim_set_var('aerial_open_automatic_min_lines', 200)
   vim.api.nvim_set_var('aerial_open_automatic_min_symbols', 10)

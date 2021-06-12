@@ -69,8 +69,8 @@ nnoremap <buffer> <leader>g <cmd>call <sid>Livegrep()<cr>
 
 fun! s:Subgrep(args) abort
   let l:path = s:GetDefxDir()
-  exec "grep '" . a:args . "' '" . l:path . "'"
-  call quickerfix#Open('c')
+  exec "silent grep '" . a:args . "' '" . l:path . "'"
+  lua require'qf_helper'.open('c', {enter=true})
 endf
 
 command! -buffer -bar -nargs=+ Sgrep call <sid>Subgrep('<args>')

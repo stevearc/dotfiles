@@ -8,6 +8,7 @@ require('telescope').setup{
 
 require('stevearc.lsp').setup()
 require('stevearc.treesitter').setup()
+require('qf_helper').setup()
 
 require('lualine').setup{
   options = {
