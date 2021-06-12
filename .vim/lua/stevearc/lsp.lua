@@ -232,6 +232,33 @@ M.setup = function()
       }
     }
   }
+  local home = vim.fn.expand('$HOME')
+  local sumneko_root_path = home .. '/.local/share/nvim/language-servers/lua-language-server'
+  local sumneko_binary = sumneko_root_path.."/bin/Linux/lua-language-server"
+  require'lspconfig'.sumneko_lua.setup({
+    cmd = {sumneko_binary, "-E", sumneko_root_path .. "/main.lua"};
+    settings = {
+      Lua = {
+        runtime = {
+          version = 'LuaJIT',
+          path = vim.split(package.path, ';'),
+        },
+        diagnostics = {
+          globals = {'vim'},
+        },
+        workspace = {
+          -- Make the server aware of Neovim runtime files
+          library = {
+            [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+            [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
+          },
+        },
+      }
+    },
+
+    on_attach = on_attach,
+    on_init = on_init,
+  })
 
   -- Since we missed the FileType event when this runs on vim start, we should
   -- manually make sure that LSP starts on the first file opened.

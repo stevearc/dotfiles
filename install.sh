@@ -13,7 +13,7 @@ declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfi
 declare -r DEFAULT_VIM_BUNDLES="cheat.sh-vim completion-nvim vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-eunuch nvim-lspconfig vim-surround editorconfig-vim nvim-colorizer.lua nvim-treesitter nvim-treesitter-context plenary.nvim popup.nvim vim-endwise vim-autoswap defx.nvim defx-icons aerial.nvim targets.vim telescope.nvim quickfix-reflector.vim vim-vsnip vim-vsnip-integ vim-vsnip-snippets completion-buffers lspsaga.nvim nvim-compe lsp_signature.nvim nvim-web-devicons lualine.nvim barbar.nvim vim-dadbod vim-dadbod-ui"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r XFCE_DOTFILES=".xsessionrc"
-declare -r ALL_LANGUAGES="go python js arduino clojure cs rust sc"
+declare -r ALL_LANGUAGES="go python js arduino clojure cs rust sc common"
 declare -r USAGE=\
 "$0 [OPTIONS]
 -h            Print this help menu
@@ -400,7 +400,7 @@ install-language-python() {
   if ! hascmd apt-get ; then return; fi
   if ! hascmd pyright; then
     install-nvm
-    npm install -g pyright
+    yarn global add pyright
   fi
   sudo apt-get install -y -q \
     python3-dev \
@@ -481,22 +481,32 @@ install-language-arduino() {
 
 install-language-js() {
   install-nvm
-  if ! hascmd yarn; then
-    npm install -g yarn
-  fi
   hascmd prettier || yarn global add prettier
   hascmd flow || yarn global add flow-bin
-  npm install -g typescript-language-server
+  yarn global add typescript-language-server
   cp-vim-bundle closetag
   cp-vim-bundle flow-coverage.nvim
 }
 
 install-language-common() {
   install-nvm
-  npm install -g bash-language-server
-  npm install -g vscode-json-languageserver
-  npm install -g vim-language-server
-  npm install -g yaml-language-server
+  yarn global add bash-language-server
+  yarn global add vscode-json-languageserver
+  yarn global add vim-language-server
+  yarn global add yaml-language-server
+  mkdir -p ~/.local/share/nvim/language-servers/
+  pushd ~/.local/share/nvim/language-servers/
+  if [ ! -d lua-language-server ]; then
+    sudo apt install -qy ninja-build
+    git clone https://github.com/sumneko/lua-language-server
+    cd lua-language-server
+    git submodule update --init --recursive
+    cd 3rd/luamake
+    ninja -f compile/ninja/linux.ninja
+    cd ../..
+    ./3rd/luamake/luamake rebuild
+  fi
+  popd
 }
 
 install-language-cs() {
@@ -622,6 +632,9 @@ install-nvm() {
   nvm ls $node_version || nvm install $node_version
   nvm ls default | grep $node_version || nvm alias default $node_version
   nvm current | grep $node_version || nvm use $node_version
+  if ! hascmd yarn; then
+    npm install -g yarn
+  fi
 }
 
 add-apt-key-google() {
