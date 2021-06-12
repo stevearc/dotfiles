@@ -10,6 +10,22 @@ require('stevearc.lsp').setup()
 require('stevearc.treesitter').setup()
 require('qf_helper').setup()
 
+local arduino_status = function()
+  local ft = vim.api.nvim_buf_get_option(0, 'ft')
+  if ft ~= 'arduino' then
+    return ''
+  end
+  local port = vim.fn['arduino#GetPort']()
+  local line = string.format('[%s]', vim.g.arduino_board)
+  if vim.g.arduino_programmer ~= '' then
+    line = line .. string.format(' [%s]', vim.g.arduino_programmer)
+  end
+  if port ~= 0 then
+    line = line .. string.format(' (%s:)', port, vim.g.arduino_serial_baud)
+  end
+  return line
+end
+
 require('lualine').setup{
   options = {
     icons_enabled = vim.g.devicons ~= false,
@@ -28,7 +44,8 @@ require('lualine').setup{
         sources = {'nvim_lsp'},
         sections = {'error', 'warn'},
       },
-      "require'stevearc.treesitter'.debug_node()"
+      "require'stevearc.treesitter'.debug_node()",
+      arduino_status,
     },
     lualine_x = {'diff', 'filetype'},
     lualine_y = {'progress'},
