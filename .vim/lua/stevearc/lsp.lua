@@ -1,11 +1,22 @@
-local aerial = require 'aerial'
 require('lspsaga').init_lsp_saga()
 
 local M = {}
 
-aerial.set_open_automatic{
-  ['_'] = false,
+-- Make all the "jump" commands call zv after execution
+local jump_callbacks = {
+  'textDocument/declaration',
+  'textDocument/definition',
+  'textDocument/typeDefinition',
+  'textDocument/implementation',
 }
+for _,cb in pairs(jump_callbacks) do
+  local orig_callback = vim.lsp.handlers[cb]
+  local new_callback = function(idk, method, result)
+    orig_callback(idk, method, result)
+    vim.cmd('normal! zv')
+  end
+  vim.lsp.handlers[cb] = new_callback
+end
 
 local mapper = function(mode, key, result)
   vim.api.nvim_buf_set_keymap(0, mode, key, result, {noremap = true, silent = true})
@@ -79,35 +90,6 @@ local on_attach = function(client)
   local ft = vim.api.nvim_buf_get_option(0, 'filetype')
   local config = ft_config[ft] or {}
 
-  -- Make all the "jump" commands call zv after execution
-  local jump_callbacks = {
-    'textDocument/declaration',
-    'textDocument/definition',
-    'textDocument/typeDefinition',
-    'textDocument/implementation',
-  }
-  for _,cb in pairs(jump_callbacks) do
-    local orig_callback = vim.lsp.handlers[cb]
-    local new_callback = function(idk, method, result)
-      orig_callback(idk, method, result)
-      vim.cmd('normal! zv')
-    end
-    vim.lsp.handlers[cb] = new_callback
-  end
-
-  -- Sort diagnostics properly so our qf_helper cursor position works
-  local diagnostics_handler = vim.lsp.handlers['textDocument/publishDiagnostics']
-  vim.lsp.handlers['textDocument/publishDiagnostics'] = function(a, b, params, client_id, c, config)
-    table.sort(params.diagnostics, function(a, b)
-      if a.range.start.line == b.range.start.line then
-        return a.range.start.character < b.range.start.character
-      else
-        return a.range.start.line < b.range.start.line
-      end
-    end)
-    return diagnostics_handler(a, b, params, client_id, c, config)
-  end
-
   vim.cmd [[autocmd User LspDiagnosticsChanged lua require'stevearc.lsp'.on_update_diagnostics()]]
 
   vim.api.nvim_win_set_option(0, 'signcolumn', 'yes')
@@ -115,10 +97,10 @@ local on_attach = function(client)
   vim.api.nvim_set_var('aerial_open_automatic_min_lines', 200)
   vim.api.nvim_set_var('aerial_open_automatic_min_symbols', 10)
   mapper('n', '<leader>a', '<cmd>lua require"aerial".toggle()<CR>')
-  mapper('n', '{', '<cmd>lua require"aerial".prev_item()<CR>zvzz')
-  mapper('v', '{', '<cmd>lua require"aerial".prev_item()<CR>zvzz')
-  mapper('n', '}', '<cmd>lua require"aerial".next_item()<CR>zvzz')
-  mapper('v', '}', '<cmd>lua require"aerial".next_item()<CR>zvzz')
+  mapper('n', '{', '<cmd>lua require"aerial".prev_item()<CR>zv')
+  mapper('v', '{', '<cmd>lua require"aerial".prev_item()<CR>zv')
+  mapper('n', '}', '<cmd>lua require"aerial".next_item()<CR>zv')
+  mapper('v', '}', '<cmd>lua require"aerial".next_item()<CR>zv')
 
   -- Standard LSP
   mapper('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>')
@@ -161,7 +143,7 @@ local on_attach = function(client)
   require'lsp_signature'.on_attach({
     use_lspsaga = true,
   })
-  aerial.on_attach(client)
+  require 'aerial'.on_attach(client)
 end
 
 M.autoformat = function()

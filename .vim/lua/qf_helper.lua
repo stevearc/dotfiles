@@ -4,6 +4,7 @@ local default_opts = {
   autoclose = true,
   prefer_loclist = true,
   update_location = true,
+  sort_lsp_diagnostics = true,
   quickfix = {
     min_height = 1,
     max_height = 10,
@@ -25,11 +26,11 @@ end
 M._set_qf_defaults = function()
   local qftype = M.get_win_type()
   local conf = M.opts[expand_type(qftype)]
-  if conf.min_height then
-    local height = vim.api.nvim_win_get_height(0)
-    if height < conf.min_height then
-      vim.api.nvim_win_set_height(0, conf.min_height)
-    end
+  local height = vim.api.nvim_win_get_height(0)
+  if conf.min_height and height < conf.min_height then
+    vim.api.nvim_win_set_height(0, conf.min_height)
+  elseif conf.max_height and height > conf.max_height then
+    vim.api.nvim_win_set_height(0, conf.max_height)
   end
   vim.api.nvim_buf_set_option(0, 'buflisted', false)
   vim.api.nvim_win_set_option(0, 'relativenumber', false)
@@ -57,6 +58,21 @@ end
 M.setup = function(opts)
   opts = vim.tbl_deep_extend('keep', opts or {}, default_opts)
   M.opts = opts
+
+  if opts.sort_lsp_diagnostics then
+    -- Sort diagnostics properly so our qf_helper cursor position works
+    local diagnostics_handler = vim.lsp.handlers['textDocument/publishDiagnostics']
+    vim.lsp.handlers['textDocument/publishDiagnostics'] = function(a, b, params, client_id, c, config)
+      table.sort(params.diagnostics, function(a, b)
+        if a.range.start.line == b.range.start.line then
+          return a.range.start.character < b.range.start.character
+        else
+          return a.range.start.line < b.range.start.line
+        end
+      end)
+      return diagnostics_handler(a, b, params, client_id, c, config)
+    end
+  end
 
   local autocmd = [[augroup QFHelper
     autocmd!
@@ -238,7 +254,17 @@ M.close = function(qftype)
 end
 
 -- pos is 1-indexed, like nr in the quickfix
+M._debounce_idx = 0
 M.set_pos = function(qftype, pos)
+  M._debounce_idx = M._debounce_idx + 1
+  local idx = M._debounce_idx
+  vim.defer_fn(function()
+    if idx == M._debounce_idx then
+      M._set_pos(qftype, pos)
+    end
+  end, 10)
+end
+M._set_pos = function(qftype, pos)
   if pos < 1 then
     return
   end
@@ -257,12 +283,13 @@ M.set_pos = function(qftype, pos)
   vim.api.nvim_set_current_buf(bufnr)
   vim.fn.winrestview(prev)
   if start_in_qf then
-    M.open(qftype, {enter = true})
+    vim.cmd(qftype .. 'open')
   end
 end
 
 M.navigate = function(direction, opts)
   opts = vim.tbl_extend('keep', opts or {}, {
+    qftype = nil,
     wrap = true,
     by_file = false,
   })
