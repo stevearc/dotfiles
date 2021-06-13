@@ -258,6 +258,13 @@ install-cli-after() {
   ~/.envs/py3/bin/pip install -q wheel
   ~/.envs/py3/bin/pip install -q pynvim
 
+  if ! hascmd nvr; then
+    mkdir -p ~/bin
+    pushd ~/bin
+    $REPO/make_standalone.py -s nvr neovim
+    popd
+  fi
+
   if [ $LINUX ]; then
     mkdir -p ~/.local/share/fonts
     pushd ~/.local/share/fonts

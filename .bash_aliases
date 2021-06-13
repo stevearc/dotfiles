@@ -46,8 +46,12 @@ sash() {
 }
 export sash
 if command -v nvim > /dev/null; then
-  alias vim='nvim'
-  alias vi='nvim'
+  if [ -n "$NVIM_LISTEN_ADDRESS" ] && command -v nvr > /dev/null; then
+    alias vim="nvr -cc edit"
+  else
+    alias vim="nvim"
+  fi
+  alias vi="vim"
 fi
 if command -v rg > /dev/null; then
   alias ag='rg'
