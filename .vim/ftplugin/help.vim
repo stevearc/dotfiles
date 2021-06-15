@@ -2,9 +2,11 @@
 nnoremap <buffer> <CR> <C-]>
 " Backspace to go back
 nnoremap <buffer> <BS> <C-T>
-" o and O to find next/prev option
-nnoremap <buffer> o /'\l\{2,\}'<CR>
-nnoremap <buffer> O ?'\l\{2,\}'<CR>
-" s and S to find next/prev subject
-nnoremap <buffer> s /\|\zs\S\+\ze\|<CR>
-nnoremap <buffer> S ?\|\zs\S\+\ze\|<CR>
+" find next/prev option
+nnoremap <buffer> <C-o> /'\l\{2,\}'<CR>
+nnoremap <buffer> <C-O> ?'\l\{2,\}'<CR>
+" find next/prev subject
+nnoremap <buffer> <C-s> /\|\zs\S\+\ze\|<CR>
+nnoremap <buffer> <C-S> ?\|\zs\S\+\ze\|<CR>
+
+setlocal bufhidden=wipe
