@@ -155,7 +155,7 @@ vnoremap k gk
 augroup VCenterCursor
   au!
   au BufEnter,WinEnter,WinNew,VimResized *,*.*
-        \ let &scrolloff=1+winheight(win_getid())/2
+        \ let &l:scrolloff=1+winheight(win_getid())/2
 augroup END
 
 let g:vsnip_snippet_dirs = [
