@@ -21,7 +21,7 @@
 	url = https://github.com/xolox/vim-misc.git
 [submodule ".vim/bundle/vim-session"]
 	path = .vim/bundle/vim-session
-	url = https://github.com/xolox/vim-session.git
+	url = https://github.com/romgrk/vim-session.git
 [submodule "parseargs"]
 	path = parseargs
 	url = https://github.com/stevearc/parseargs.git

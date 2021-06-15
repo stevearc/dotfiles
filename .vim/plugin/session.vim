@@ -2,6 +2,7 @@
 
 set sessionoptions=buffers,curdir,tabpages,winsize
 
+let g:session_directory = expand('~/.local/share/nvim/sessions')
 " Don't autoload sessions on startup
 let g:session_autoload = 'no'
 " Don't prompt to save on exit
@@ -16,9 +17,6 @@ let g:session_name_suggestion_function = "session_wrapper#vcs_feature_branch"
 
 function! s:GetSaveCmd() abort
   let name = xolox#session#find_current_session()
-  if g:use_barbar
-    tabonly
-  endif
   if empty(name)
     call feedkeys(":SaveSession ")
   else
@@ -47,9 +45,6 @@ aug END
 
 function! s:QuickSave()
   wa
-  if g:use_barbar
-    tabonly
-  endif
   SaveSession! __quicksave__
   qa
 endfunction
