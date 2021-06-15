@@ -68,7 +68,7 @@ augroup END
 set formatoptions=rqnlj
 
 " Don't reopen buffers
-set switchbuf=useopen
+set switchbuf=useopen,uselast
 
 " Always show tab line
 set showtabline=2
