@@ -157,3 +157,6 @@
 [submodule ".vim/bundle/qf_helper.nvim"]
 	path = .vim/bundle/qf_helper.nvim
 	url = git@github.com:stevearc/qf_helper.nvim.git
+[submodule ".vim/bundle/tabular"]
+	path = .vim/bundle/tabular
+	url = https://github.com/godlygeek/tabular.git
