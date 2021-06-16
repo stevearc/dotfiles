@@ -16,25 +16,32 @@ end
 END
 
 set background=dark
-colorscheme solarized8
+
+let g:tokyonight_style = "night"
+let g:tokyonight_italic_comments = v:true
+let g:tokyonight_italic_keywords = v:false
+let g:tokyonight_sidebars = ["qf", "aerial", "terminal"]
+colorscheme tokyonight
+
+" colorscheme solarized8
 
 " solarized8 is missing some colors for LSP
-highlight link LspDiagnosticsDefaultError ALEError
-highlight link LspDiagnosticsSignError ALEErrorSign
-highlight link LspDiagnosticsDefaultWarning ALEWarning
-highlight link LspDiagnosticsSignWarning ALEWarningSign
-highlight link LspDiagnosticsDefaultInformation ALEInfo
-highlight link LspDiagnosticsSignInformation ALEInfoSign
-highlight link LspDiagnosticsDefaultHint ALEInfo
-highlight link LspDiagnosticsSignHint ALEInfoSign
+" highlight link LspDiagnosticsDefaultError ALEError
+" highlight link LspDiagnosticsSignError ALEErrorSign
+" highlight link LspDiagnosticsDefaultWarning ALEWarning
+" highlight link LspDiagnosticsSignWarning ALEWarningSign
+" highlight link LspDiagnosticsDefaultInformation ALEInfo
+" highlight link LspDiagnosticsSignInformation ALEInfoSign
+" highlight link LspDiagnosticsDefaultHint ALEInfo
+" highlight link LspDiagnosticsSignHint ALEInfoSign
 
-hi JustUnderline gui=undercurl cterm=undercurl
-highlight link LspDiagnosticsUnderlineError JustUnderline
-highlight link LspDiagnosticsUnderlineWarning JustUnderline
-highlight link LspDiagnosticsUnderlineInformation JustUnderline
-highlight link LspDiagnosticsUnderlineHint JustUnderline
+" hi JustUnderline gui=undercurl cterm=undercurl
+" highlight link LspDiagnosticsUnderlineError JustUnderline
+" highlight link LspDiagnosticsUnderlineWarning JustUnderline
+" highlight link LspDiagnosticsUnderlineInformation JustUnderline
+" highlight link LspDiagnosticsUnderlineHint JustUnderline
 
-" I don't like the underlined virtual text
-hi ALEError gui=NONE cterm=NONE
-hi ALEInfo gui=NONE cterm=NONE
-hi ALEWarning gui=NONE cterm=NONE
+" " I don't like the underlined virtual text
+" hi ALEError gui=NONE cterm=NONE
+" hi ALEInfo gui=NONE cterm=NONE
+" hi ALEWarning gui=NONE cterm=NONE

@@ -29,7 +29,8 @@ end
 require('lualine').setup{
   options = {
     icons_enabled = vim.g.devicons ~= false,
-    theme = 'solarized_dark',
+    -- theme = 'solarized_dark',
+    theme = 'tokyonight',
     section_separators = "",
   },
   sections = {

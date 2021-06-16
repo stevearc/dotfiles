@@ -160,3 +160,6 @@
 [submodule ".vim/bundle/tabular"]
 	path = .vim/bundle/tabular
 	url = https://github.com/godlygeek/tabular.git
+[submodule ".vim/bundle/tokyonight.nvim"]
+	path = .vim/bundle/tokyonight.nvim
+	url = https://github.com/folke/tokyonight.nvim.git
