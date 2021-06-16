@@ -154,3 +154,6 @@
 	path = .vim/bundle/vim-dadbod-ui
 	url = https://github.com/kristijanhusak/vim-dadbod-ui.git
 	ignore = untracked
+[submodule ".vim/bundle/qf_helper.nvim"]
+	path = .vim/bundle/qf_helper.nvim
+	url = git@github.com:stevearc/qf_helper.nvim.git

@@ -8,7 +8,7 @@ require('telescope').setup{
 
 require('stevearc.lsp').setup()
 require('stevearc.treesitter').setup()
-require('qf_helper').setup()
+require('qf_helper').setup({})
 
 local arduino_status = function()
   local ft = vim.api.nvim_buf_get_option(0, 'ft')
