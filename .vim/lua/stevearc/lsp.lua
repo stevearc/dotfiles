@@ -2,6 +2,14 @@ require('lspsaga').init_lsp_saga()
 
 local M = {}
 
+vim.g.aerial = {
+  default_direction = 'prefer_left',
+  highlight_on_jump = 200,
+  -- filter_kind = false,
+  link_folds_to_tree = true,
+  manage_folds = true,
+}
+
 -- Make all the "jump" commands call zv after execution
 local jump_callbacks = {
   'textDocument/declaration',
@@ -93,14 +101,17 @@ local on_attach = function(client)
   vim.cmd [[autocmd User LspDiagnosticsChanged lua require'stevearc.lsp'.on_update_diagnostics()]]
 
   vim.api.nvim_win_set_option(0, 'signcolumn', 'yes')
+
   -- Aerial
-  vim.api.nvim_set_var('aerial_open_automatic_min_lines', 200)
-  vim.api.nvim_set_var('aerial_open_automatic_min_symbols', 10)
-  mapper('n', '<leader>a', '<cmd>lua require"aerial".toggle()<CR>')
-  mapper('n', '{', '<cmd>lua require"aerial".prev_item()<CR>zv')
-  mapper('v', '{', '<cmd>lua require"aerial".prev_item()<CR>zv')
-  mapper('n', '}', '<cmd>lua require"aerial".next_item()<CR>zv')
-  mapper('v', '}', '<cmd>lua require"aerial".next_item()<CR>zv')
+  mapper('n', '<leader>a', '<cmd>AerialToggle!<CR>')
+  mapper('n', '{', '<cmd>AerialPrev<CR>')
+  mapper('v', '{', '<cmd>AerialPrev<CR>')
+  mapper('n', '}', '<cmd>AerialNext<CR>')
+  mapper('v', '}', '<cmd>AerialNext<CR>')
+  mapper('n', '[[', '<cmd>AerialPrevUp<CR>')
+  mapper('v', '[[', '<cmd>AerialPrevUp<CR>')
+  mapper('n', ']]', '<cmd>AerialNextUp<CR>')
+  mapper('v', ']]', '<cmd>AerialNextUp<CR>')
 
   -- Standard LSP
   mapper('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>')
@@ -212,6 +223,10 @@ M.setup = function()
     on_attach = on_attach,
     on_init = on_init,
   }
+  require'lspconfig'.gopls.setup{
+    on_attach = on_attach,
+    on_init = on_init,
+  }
   require'lspconfig'.yamlls.setup{
     on_attach = on_attach,
     on_init = on_init,
@@ -265,6 +280,14 @@ M.setup = function()
   vim.defer_fn(function()
     vim.api.nvim_command("LspStart")
   end, 10)
+end
+
+M.debug_aerial_fold = function()
+  if vim.g.aerial_debug_fold then
+    return require'aerial.fold'.foldexpr(vim.api.nvim_win_get_cursor(0)[1], true)
+  else
+    return ''
+  end
 end
 
 return M

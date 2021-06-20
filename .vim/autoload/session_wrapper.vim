@@ -27,21 +27,8 @@ endfunction
 
 function! session_wrapper#OnChooseSession(session)
   exe ':OpenSession ' . a:session
-  if s:detach_after_open
+  if s:detach_after_open || a:session == 'last'
     call session_wrapper#DetachSession()
-  endif
-  if g:use_barbar
-    " Close all empty buffers
-    let [i, n; empty] = [1, bufnr('$')]
-    while i <= n
-      if bufexists(i) && bufname(i) == ''
-        call add(empty, i)
-      endif
-      let i += 1
-    endwhile
-    if len(empty) > 0
-      exe 'bdelete' join(empty)
-    endif
   endif
 endfunction
 

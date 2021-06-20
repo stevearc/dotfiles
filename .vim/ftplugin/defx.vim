@@ -1,5 +1,7 @@
 " Define mappings
 
+se bufhidden=wipe
+
 nnoremap <silent><buffer><expr> <CR> defx#do_action('open')
 nnoremap <silent><buffer><expr> c defx#do_action('copy')
 nnoremap <silent><buffer><expr> m defx#do_action('move')

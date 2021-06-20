@@ -95,7 +95,7 @@ syntax on
 augroup SmartOpen
   au!
   autocmd BufReadPost *
-       \ if line("'\"") > 0 && line("'\"") <= line("$") |
+       \ if line("'\"") > 0 && line("'\"") <= line("$") && expand('%:t') != 'COMMIT_EDITMSG' |
        \   exe "normal! g`\"" |
        \ endif
 augroup END
@@ -335,7 +335,7 @@ nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR
 " Telescope mappings
 nnoremap <leader>t <cmd>lua require('stevearc.telescope').find_files({previewer=false})<cr>
 tnoremap \t <C-\><C-N><cmd>lua require('stevearc.telescope').find_files({previewer=false})<cr>
-nnoremap <leader>b <cmd>lua require('stevearc.telescope').buffers({previewer=false})<cr>
+nnoremap <leader>bb <cmd>lua require('stevearc.telescope').buffers({previewer=false})<cr>
 tnoremap \b <C-\><C-N><cmd>lua require('stevearc.telescope').buffers({previewer=false})<cr>
 nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
@@ -368,4 +368,6 @@ endif
 let g:use_barbar = v:true
 let g:nerd_font = v:true
 let g:completion_plugin = 'compe'
+
+let g:aerial_nerd_font = g:nerd_font
 lua require 'init_lua'

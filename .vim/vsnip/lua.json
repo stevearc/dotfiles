@@ -1,0 +1,6 @@
+{
+  "Print string": {
+    "prefix": "ps",
+    "body": ["print(string.format(\"$1\", $2))"]
+  }
+}

@@ -10,6 +10,48 @@ require('stevearc.lsp').setup()
 require('stevearc.treesitter').setup()
 require('qf_helper').setup({})
 
+local function barbar_highlights()
+  local config = require("tokyonight.config")
+  local colors = require("tokyonight.colors").setup(config)
+  local util = require("tokyonight.util")
+  local barbar_theme = {
+    Current = {
+      base = { bg = colors.fg_gutter, fg = colors.fg },
+      Index = { bg = colors.fg_gutter, fg = colors.blue1 },
+      Mod = { bg = colors.fg_gutter, fg = colors.warning },
+      Sign = { bg = colors.fg_gutter, fg = colors.blue1 },
+      Target = { bg = colors.fg_gutter, fg = colors.red },
+    },
+    Visible = {
+      base = { bg = colors.none, fg = colors.fg },
+      Index = { bg = colors.none, fg = colors.blue1 },
+      Mod = { bg = colors.none, fg = colors.warning },
+      Sign = { bg = colors.none, fg = colors.blue1 },
+      Target = { bg = colors.none, fg = colors.red },
+    },
+    Inactive = {
+      base = { bg = colors.none, fg = colors.dark5 },
+      Index = { bg = colors.none, fg = colors.dark5 },
+      Mod = { bg = colors.none, fg = util.darken(colors.warning, 0.7) },
+      Sign = { bg = colors.none, fg = colors.border_highlight },
+      Target = { bg = colors.none, fg = colors.red },
+    },
+    Tabpages = {
+      base = { bg = colors.none, fg = colors.none },
+    },
+    Tabpage = {
+      Fill = { bg = colors.none, fg = colors.border_highlight },
+    }
+  }
+  for mode,pieces in pairs(barbar_theme) do
+    for piece,hl in pairs(pieces) do
+      local group = string.format('Buffer%s%s', mode, piece == 'base' and '' or piece)
+      util.highlight(group, hl)
+    end
+  end
+end
+vim.defer_fn(barbar_highlights, 1)
+
 local arduino_status = function()
   local ft = vim.api.nvim_buf_get_option(0, 'ft')
   if ft ~= 'arduino' then
@@ -46,6 +88,7 @@ require('lualine').setup{
         sections = {'error', 'warn'},
       },
       "require'stevearc.treesitter'.debug_node()",
+      "require'stevearc.lsp'.debug_aerial_fold()",
       arduino_status,
     },
     lualine_x = {'diff', 'filetype'},

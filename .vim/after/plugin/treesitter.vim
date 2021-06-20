@@ -2,7 +2,8 @@ lua <<EOF
 require'nvim-treesitter.configs'.setup {
   ensure_installed = vim.g.treesitter_languages,
   highlight = {
-    enable = true,
+    -- I found this caused lag in some files
+    enable = false,
   },
   incremental_selection = {
     enable = true,
@@ -12,7 +13,8 @@ require'nvim-treesitter.configs'.setup {
     },
   },
   indent = {
-    enable = true,
+    -- This is causing problems in lua
+    enable = false,
   },
 }
 EOF
