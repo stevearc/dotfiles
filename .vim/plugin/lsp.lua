@@ -1,11 +1,24 @@
+local stevearc = require'stevearc'
+
+-- vim.lsp.set_log_level('trace')
+
 require('lspsaga').init_lsp_saga()
 
-local M = {}
+if vim.g.nerd_font then
+  vim.cmd[[sign define LspDiagnosticsSignError text=   numhl=LspDiagnosticsSignError texthl=LspDiagnosticsSignError]]
+  vim.cmd[[sign define LspDiagnosticsSignWarning text=  numhl=LspDiagnosticsSignWarning texthl=LspDiagnosticsSignWarning]]
+  vim.cmd[[sign define LspDiagnosticsSignInformation text=• numhl=LspDiagnosticsSignInformation texthl=LspDiagnosticsSignInformation]]
+  vim.cmd[[sign define LspDiagnosticsSignHint text=• numhl=LspDiagnosticsSignHint texthl=LspDiagnosticsSignHint]]
+else
+  vim.cmd[[sign define LspDiagnosticsSignError text=• numhl=LspDiagnosticsSignError texthl=LspDiagnosticsSignError]]
+  vim.cmd[[sign define LspDiagnosticsSignWarning text=• numhl=LspDiagnosticsSignWarning texthl=LspDiagnosticsSignWarning]]
+  vim.cmd[[sign define LspDiagnosticsSignInformation text=. numhl=LspDiagnosticsSignInformation texthl=LspDiagnosticsSignInformation]]
+  vim.cmd[[sign define LspDiagnosticsSignHint text=. numhl=LspDiagnosticsSignHint texthl=LspDiagnosticsSignHint]]
+end
 
 vim.g.aerial = {
   default_direction = 'prefer_left',
   highlight_on_jump = 200,
-  -- filter_kind = false,
   link_folds_to_tree = true,
   manage_folds = true,
 }
@@ -63,7 +76,7 @@ local ft_config = {
   ['javascript.jsx'] = js_lsp_config,
 }
 
-M.on_update_diagnostics = function()
+function stevearc:on_update_diagnostics()
   local errors = vim.lsp.diagnostic.get_count(0, "Error")
   local warnings = vim.lsp.diagnostic.get_count(0, "Warning")
   if warnings + errors == 0 then
@@ -84,6 +97,12 @@ M.on_update_diagnostics = function()
   end
 end
 
+function stevearc:autoformat()
+  local pos = vim.fn.getcurpos()
+  vim.lsp.buf.formatting_sync(nil, 1000)
+  vim.fn.setpos('.', pos)
+end
+
 local on_init = function(client)
   local ft = vim.api.nvim_buf_get_option(0, 'filetype')
   local config = ft_config[ft] or {}
@@ -98,7 +117,7 @@ local on_attach = function(client)
   local ft = vim.api.nvim_buf_get_option(0, 'filetype')
   local config = ft_config[ft] or {}
 
-  vim.cmd [[autocmd User LspDiagnosticsChanged lua require'stevearc.lsp'.on_update_diagnostics()]]
+  vim.cmd [[autocmd User LspDiagnosticsChanged lua require'stevearc'.on_update_diagnostics()]]
 
   vim.api.nvim_win_set_option(0, 'signcolumn', 'yes')
 
@@ -148,7 +167,7 @@ local on_attach = function(client)
   vim.cmd("setlocal omnifunc=v:lua.vim.lsp.omnifunc")
 
   if config.autoformat then
-    vim.cmd [[autocmd BufWritePre <buffer> lua require'stevearc.lsp'.autoformat()]]
+    vim.cmd [[autocmd BufWritePre <buffer> lua require'stevearc'.autoformat()]]
   end
 
   require'lsp_signature'.on_attach({
@@ -157,137 +176,120 @@ local on_attach = function(client)
   require 'aerial'.on_attach(client)
 end
 
-M.autoformat = function()
-  local pos = vim.fn.getcurpos()
-  vim.lsp.buf.formatting_sync(nil, 1000)
-  vim.fn.setpos('.', pos)
+-- Configure the LSP servers
+require'lspconfig'.bashls.setup{
+  on_attach = on_attach,
+  on_init = on_init,
+}
+require'lspconfig'.gdscript.setup{
+  on_attach = on_attach,
+  on_init = on_init,
+}
+require'lspconfig'.clangd.setup{
+  on_attach = on_attach,
+  on_init = on_init,
+}
+require'lspconfig'.html.setup{
+  on_attach = on_attach,
+  on_init = on_init,
+}
+require'lspconfig'.jsonls.setup{
+  on_attach = on_attach,
+  on_init = on_init,
+}
+require'lspconfig'.omnisharp.setup{
+  on_attach = on_attach,
+  on_init = on_init,
+}
+require'lspconfig'.pyright.setup{
+  on_attach = on_attach,
+  on_init = on_init,
+}
+
+
+-- neovim doesn't support the full 3.16 spec, but latest rust-analyzer requires the following capabilities. 
+-- Remove once implemented.
+local default_capabilities = vim.lsp.protocol.make_client_capabilities()
+default_capabilities.workspace.workspaceEdit = {
+  normalizesLineEndings = true;
+  changeAnnotationSupport = {
+    groupsOnLabel = true;
+  };
+};
+default_capabilities.textDocument.rename.prepareSupportDefaultBehavior = 1;
+if vim.g.use_ultisnips == 0 then
+  default_capabilities.textDocument.completion.completionItem.snippetSupport = true
 end
 
-M.setup = function()
-  require'lspconfig'.bashls.setup{
-    on_attach = on_attach,
-    on_init = on_init,
-  }
-  require'lspconfig'.gdscript.setup{
-    on_attach = on_attach,
-    on_init = on_init,
-  }
-  require'lspconfig'.clangd.setup{
-    on_attach = on_attach,
-    on_init = on_init,
-  }
-  require'lspconfig'.html.setup{
-    on_attach = on_attach,
-    on_init = on_init,
-  }
-  require'lspconfig'.jsonls.setup{
-    on_attach = on_attach,
-    on_init = on_init,
-  }
-  require'lspconfig'.omnisharp.setup{
-    on_attach = on_attach,
-    on_init = on_init,
-  }
-  require'lspconfig'.pyright.setup{
-    on_attach = on_attach,
-    on_init = on_init,
-  }
-
-
-  -- neovim doesn't support the full 3.16 spec, but latest rust-analyzer requires the following capabilities. 
-  -- Remove once implemented.
-  local default_capabilities = vim.lsp.protocol.make_client_capabilities()
-  default_capabilities.workspace.workspaceEdit = {
-    normalizesLineEndings = true;
-    changeAnnotationSupport = {
-      groupsOnLabel = true;
-    };
-  };
-  default_capabilities.textDocument.rename.prepareSupportDefaultBehavior = 1;
-  if vim.g.use_ultisnips == 0 then
-    default_capabilities.textDocument.completion.completionItem.snippetSupport = true
-  end
-
-  require'lspconfig'.rust_analyzer.setup{
-    on_attach = on_attach,
-    on_init = on_init,
-    capabilities = default_capabilities,
-  }
-  require'lspconfig'.tsserver.setup{
-    on_attach = on_attach,
-    on_init = on_init,
-    filetypes = {"typescript", "typescriptreact", "typescript.tsx"};
-    root_dir = require 'lspconfig/util'.root_pattern("tsconfig.json", ".git");
-  }
-  require'lspconfig'.vimls.setup{
-    on_attach = on_attach,
-    on_init = on_init,
-  }
-  require'lspconfig'.gopls.setup{
-    on_attach = on_attach,
-    on_init = on_init,
-  }
-  require'lspconfig'.yamlls.setup{
-    on_attach = on_attach,
-    on_init = on_init,
-  }
-  require'lspconfig'.flow.setup{
-    on_attach = function (client)
-      require'flow'.on_attach(client)
-      on_attach(client)
-    end,
-    on_init = on_init,
-    cmd = {"flow", "lsp", "--lazy"};
-    settings = {
-      flow = {
-        coverageSeverity = "warn";
-        showUncovered = true;
-        stopFlowOnExit = false;
-        useBundledFlow = false;
-      }
+require'lspconfig'.rust_analyzer.setup{
+  on_attach = on_attach,
+  on_init = on_init,
+  capabilities = default_capabilities,
+}
+require'lspconfig'.tsserver.setup{
+  on_attach = on_attach,
+  on_init = on_init,
+  filetypes = {"typescript", "typescriptreact", "typescript.tsx"};
+  root_dir = require 'lspconfig/util'.root_pattern("tsconfig.json", ".git");
+}
+require'lspconfig'.vimls.setup{
+  on_attach = on_attach,
+  on_init = on_init,
+}
+require'lspconfig'.gopls.setup{
+  on_attach = on_attach,
+  on_init = on_init,
+}
+require'lspconfig'.yamlls.setup{
+  on_attach = on_attach,
+  on_init = on_init,
+}
+require'lspconfig'.flow.setup{
+  on_attach = function (client)
+    require'flow'.on_attach(client)
+    on_attach(client)
+  end,
+  on_init = on_init,
+  cmd = {"flow", "lsp", "--lazy"};
+  settings = {
+    flow = {
+      coverageSeverity = "warn";
+      showUncovered = true;
+      stopFlowOnExit = false;
+      useBundledFlow = false;
     }
   }
-  local home = vim.fn.expand('$HOME')
-  local sumneko_root_path = home .. '/.local/share/nvim/language-servers/lua-language-server'
-  local sumneko_binary = sumneko_root_path.."/bin/Linux/lua-language-server"
-  require'lspconfig'.sumneko_lua.setup({
-    cmd = {sumneko_binary, "-E", sumneko_root_path .. "/main.lua"};
-    settings = {
-      Lua = {
-        runtime = {
-          version = 'LuaJIT',
-          path = vim.split(package.path, ';'),
+}
+local home = vim.fn.expand('$HOME')
+local sumneko_root_path = home .. '/.local/share/nvim/language-servers/lua-language-server'
+local sumneko_binary = sumneko_root_path.."/bin/Linux/lua-language-server"
+require'lspconfig'.sumneko_lua.setup({
+  cmd = {sumneko_binary, "-E", sumneko_root_path .. "/main.lua"};
+  settings = {
+    Lua = {
+      runtime = {
+        version = 'LuaJIT',
+        path = vim.split(package.path, ';'),
+      },
+      diagnostics = {
+        globals = {'vim'},
+      },
+      workspace = {
+        -- Make the server aware of Neovim runtime files
+        library = {
+          [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+          [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
         },
-        diagnostics = {
-          globals = {'vim'},
-        },
-        workspace = {
-          -- Make the server aware of Neovim runtime files
-          library = {
-            [vim.fn.expand('$VIMRUNTIME/lua')] = true,
-            [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
-          },
-        },
-      }
-    },
+      },
+    }
+  },
 
-    on_attach = on_attach,
-    on_init = on_init,
-  })
+  on_attach = on_attach,
+  on_init = on_init,
+})
 
-  -- Since we missed the FileType event when this runs on vim start, we should
-  -- manually make sure that LSP starts on the first file opened.
-  vim.defer_fn(function()
-    vim.api.nvim_command("LspStart")
-  end, 10)
-end
-
-M.debug_aerial_fold = function()
-  if vim.g.aerial_debug_fold then
-    return require'aerial.fold'.foldexpr(vim.api.nvim_win_get_cursor(0)[1], true)
-  else
-    return ''
-  end
-end
-
-return M
+-- Since we missed the FileType event when this runs on vim start, we should
+-- manually make sure that LSP starts on the first file opened.
+vim.defer_fn(function()
+  vim.api.nvim_command("LspStart")
+end, 10)

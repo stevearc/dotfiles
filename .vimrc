@@ -158,113 +158,6 @@ augroup VCenterCursor
         \ let &l:scrolloff=1+winheight(win_getid())/2
 augroup END
 
-let g:vsnip_snippet_dirs = [
-      \ $HOME.'/.vim/vsnip',
-      \ $HOME.'/.config/nvim/vsnip',
-      \ ]
-
-function! SmartVisual(visualmode) abort
-  let line = getline('.')
-  let positions = filter([
-        \ stridx(line, '('),
-        \ stridx(line, '['),
-        \ stridx(line, '{'),
-        \ stridx(line, ')'),
-        \ stridx(line, ']'),
-        \ stridx(line, '}'),
-        \ ], 'v:val > -1')
-  if empty(positions)
-    return
-  endif
-  let idx = min(positions)
-  let pos = getpos('.')
-  call setpos('.', [pos[0], pos[1], idx + 1, pos[3]])
-  exec 'normal! ' . a:visualmode . '%'
-endfunction
-nmap <leader>v :call SmartVisual('v')<CR>
-nmap <leader>V :call SmartVisual('V')<CR>
-
-" Smart tab behavior
-let g:ulti_expand_or_jump_res = 0 "default value, just set once
-let g:autocomplete_cmd = "\<C-x>\<C-o>"
-function! CleverTab() abort
-  if vsnip#available(1)
-    if pumvisible()
-      call feedkeys("\<C-x>\<C-x>")
-    endif
-    call Vsnip_expand_or_jump()
-    return ''
-  elseif pumvisible()
-    return "\<C-n>"
-  elseif strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
-    return "\<Tab>"
-  elseif &omnifunc == ''
-    return "\<C-p>"
-  else
-    return g:autocomplete_cmd
-  endif
-endfunction
-inoremap <Tab> <C-R>=CleverTab()<CR>
-
-function! Vsnip_expand_or_jump()
-  let l:ctx = {}
-  function! l:ctx.callback() abort
-    let l:context = vsnip#get_context()
-    let l:session = vsnip#get_session()
-    if !empty(l:context)
-      call vsnip#expand()
-    elseif !empty(l:session) && l:session.jumpable(1)
-      call l:session.jump(1)
-    endif
-  endfunction
-
-  " This is needed to keep normal-mode during 0ms to prevent CompleteDone handling by LSP Client.
-  let l:maybe_complete_done = !empty(v:completed_item) && !empty(v:completed_item.user_data)
-  if l:maybe_complete_done
-    call timer_start(0, { -> l:ctx.callback() })
-  else
-    call l:ctx.callback()
-  endif
-endfunction
-function! Vsnip_jump(direction) abort
-  let l:session = vsnip#get_session()
-  if !empty(l:session) && l:session.jumpable(a:direction)
-    call l:session.jump(a:direction)
-  endif
-endfunction
-function! ForwardsInInsert() abort
-  if vsnip#jumpable(1)
-    call Vsnip_jump(1)
-  elseif g:completion_plugin == 'completion-nvim'
-    lua require'completion'.nextSource()
-  endif
-endfunction
-function! BackwardsInInsert() abort
-  if vsnip#jumpable(-1)
-    call Vsnip_jump(-1)
-  elseif g:completion_plugin == 'completion-nvim'
-    lua require'completion'.prevSource()
-  endif
-endfunction
-
-" Snippets
-let g:vsnip_filetypes = {}
-let g:vsnip_filetypes.javascriptreact = ['javascript']
-let g:vsnip_filetypes.typescriptreact = ['typescript']
-smap <Tab> <Plug>(vsnip-jump-next)
-xmap <Tab> <Plug>(vsnip-cut-text)
-smap <C-h> <Plug>(vsnip-jump-prev)
-imap <C-h> <cmd>call BackwardsInInsert()<cr>
-smap <C-l> <Plug>(vsnip-jump-next)
-imap <C-l> <cmd>call ForwardsInInsert()<cr>
-" Clear Vsnip session when we switch to normal mode.
-aug ClearVsnipSession
-  au!
-  " Can't use InsertLeave here because that fires when we go to select mode
-  au CursorHold * call vsnip#deactivate()
-aug END
-
-" Treesitter
 let g:debug_treesitter = 0
 let g:treesitter_languages = [
       \ "bash", "c", "c_sharp", "cpp", "go", "graphql", "java", "json",
@@ -286,15 +179,6 @@ nmap <leader>r :%s/<C-R>=expand("<cword>")<CR>/<C-R>=expand("<cword>")<CR>
 " Expand %% to current directory in command mode
 cabbr <expr> %% expand('%:p:h')
 
-" Map F5 to reload buffers from disk
-nnoremap <F5> :silent checktime<CR>
-
-" Helpful delete/change into blackhole buffer
-nnoremap <leader>d "_d
-nnoremap <leader>c "_c
-vnoremap <leader>d "_d
-vnoremap <leader>c "_c
-
 aug Checkt
   au!
   au FocusGained * checktime
@@ -314,12 +198,6 @@ augroup CloseScratch
   autocmd CursorMovedI,InsertLeave * if pumvisible() == 0 && !&pvw|pclose|endif
 augroup END
 
-" Useful for removing whitespace after abbreviations
-function! Eatchar(pat)
-  let c = nr2char(getchar(0))
-  return (c =~ a:pat) ? '' : c
-endfunc
-
 " BASH-style movement in insert mode
 inoremap <C-a> <C-o>0
 inoremap <C-e> <C-o>$
@@ -327,21 +205,10 @@ inoremap <C-e> <C-o>$
 command! GitHistory Git! log -- %
 
 " Fix * and # behavior to respect smartcase
-nnoremap <silent> * :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=1<CR>nzz
-nnoremap <silent> # :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=0<CR>nzz
-nnoremap <silent> g* :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR>nzz
-nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>nzz
-
-" Telescope mappings
-nnoremap <leader>t <cmd>lua require('stevearc.telescope').find_files({previewer=false})<cr>
-tnoremap \t <C-\><C-N><cmd>lua require('stevearc.telescope').find_files({previewer=false})<cr>
-nnoremap <leader>bb <cmd>lua require('stevearc.telescope').buffers({previewer=false})<cr>
-tnoremap \b <C-\><C-N><cmd>lua require('stevearc.telescope').buffers({previewer=false})<cr>
-nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
-nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
-nnoremap <leader>fd <cmd>lua require('stevearc.telescope').find_files({cwd='/home/stevearc/.vim/', follow=true, hidden=true, ignore={'bundle'}, previewer=false})<cr>
-nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<CR>
-nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>
+nnoremap <silent> * :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=1<CR>nzv
+nnoremap <silent> # :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=0<CR>nzv
+nnoremap <silent> g* :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR>nzv
+nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>nzv
 
 let g:scnvim_no_mappings = 1
 let g:scnvim_eval_flash_repeats = 1
@@ -370,4 +237,3 @@ let g:nerd_font = v:true
 let g:completion_plugin = 'compe'
 
 let g:aerial_nerd_font = g:nerd_font
-lua require 'init_lua'

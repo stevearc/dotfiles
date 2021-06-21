@@ -1,17 +1,34 @@
+local stevearc = require'stevearc'
 local queries = require'nvim-treesitter.query'
 local parsers = require'nvim-treesitter.parsers'
-local utils = require'nvim-treesitter.ts_utils'
-local M = {}
 
-M.setup = function()
-  require'treesitter-context.config'.setup{
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = vim.g.treesitter_languages,
+  highlight = {
+    -- I found this caused lag in some files
+    enable = false,
+  },
+  incremental_selection = {
     enable = true,
-  }
-  vim.cmd("autocmd WinEnter * lua require'stevearc.treesitter'.set_win_defaults()")
-  vim.cmd("autocmd BufWinEnter * lua require'stevearc.treesitter'.set_win_defaults()")
-end
+    keymaps = {
+      init_selection = "<leader>v",
+      node_incremental = "<leader>v",
+    },
+  },
+  indent = {
+    enable = true,
+    disable = { "lua" },
+  },
+}
 
-M.set_win_defaults = function()
+require'treesitter-context.config'.setup{
+  -- Kind of laggy and messes with my barbar highlighting
+  enable = false,
+}
+vim.cmd("autocmd WinEnter * lua require'stevearc'.set_ts_win_defaults()")
+vim.cmd("autocmd BufWinEnter * lua require'stevearc'.set_ts_win_defaults()")
+
+function stevearc:set_ts_win_defaults()
   local parser_name = parsers.get_buf_lang()
   if parsers.has_parser(parser_name) then
     local ok, has_folds = pcall(queries.get_query, parser_name, 'folds')
@@ -38,13 +55,3 @@ M.set_win_defaults = function()
     end
   end
 end
-
-M.debug_node = function()
-  if vim.g.debug_treesitter and vim.g.debug_treesitter ~= 0 then
-    return tostring(utils.get_node_at_cursor(0))
-  else
-    return ""
-  end
-end
-
-return M
