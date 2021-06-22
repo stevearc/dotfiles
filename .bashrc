@@ -1,3 +1,11 @@
+PROFILE_STARTUP=
+if [ -n "$PROFILE_STARTUP" ]; then
+  PS4='+ $(date "+%s.%N")\011 '
+  prof_file=/tmp/bashstart.$$.log
+  exec 3>&2 2>$prof_file
+  set -x
+fi
+
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 OSNAME=$(uname -s)
@@ -71,7 +79,9 @@ function __timestamp {
   echo "`date +%H:%M:%S` "
 }
 PS1='$(__timestamp)'"$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)$(hg_branch)'"$__nvm_color"'$(__nvm_version)'"$__prompt_tail$__last_color "
-export PS4='+$0.$LINENO: '
+if [ -n "$PROFILE_STARTUP" ]; then
+  export PS4='+$0.$LINENO: '
+fi
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -145,3 +155,9 @@ if command -v direnv > /dev/null; then
 fi
 
 export DOCKER_GUI="--net=host --env=DISPLAY --volume=$HOME/.Xauthority:/root/.Xauthority:rw"
+
+if [ -n "$PROFILE_STARTUP" ]; then
+  set +x
+  exec 2>&3 3>&-
+  echo "Profile written to $prof_file"
+fi
