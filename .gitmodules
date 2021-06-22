@@ -1,171 +1,162 @@
-[submodule ".vim/bundle/vim-fugitive"]
-	path = .vim/bundle/vim-fugitive
+[submodule "vimplugins/vim-fugitive"]
+	path = vimplugins/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive.git
-[submodule ".vim/bundle/ultisnips"]
-	path = .vim/bundle/ultisnips
+[submodule "vimplugins/ultisnips"]
+	path = vimplugins/ultisnips
 	url = https://github.com/SirVer/ultisnips.git
-[submodule ".vim/bundle/vim-commentary"]
-	path = .vim/bundle/vim-commentary
+[submodule "vimplugins/vim-commentary"]
+	path = vimplugins/vim-commentary
 	url = https://github.com/tpope/vim-commentary.git
-[submodule ".vim/bundle/vim-repeat"]
-	path = .vim/bundle/vim-repeat
+[submodule "vimplugins/vim-repeat"]
+	path = vimplugins/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
-[submodule ".vim/bundle/vim-snippets"]
-	path = .vim/bundle/vim-snippets
+[submodule "vimplugins/vim-snippets"]
+	path = vimplugins/vim-snippets
 	url = https://github.com/honza/vim-snippets.git
-[submodule ".vim/bundle/vim-arduino"]
-	path = .vim/bundle/vim-arduino
+[submodule "vimplugins/vim-arduino"]
+	path = vimplugins/vim-arduino
 	url = https://github.com/stevearc/vim-arduino.git
-[submodule ".vim/bundle/vim-misc"]
-	path = .vim/bundle/vim-misc
+[submodule "vimplugins/vim-misc"]
+	path = vimplugins/vim-misc
 	url = https://github.com/xolox/vim-misc.git
-[submodule ".vim/bundle/vim-session"]
-	path = .vim/bundle/vim-session
+[submodule "vimplugins/vim-session"]
+	path = vimplugins/vim-session
 	url = https://github.com/romgrk/vim-session.git
 [submodule "parseargs"]
 	path = parseargs
 	url = https://github.com/stevearc/parseargs.git
-[submodule ".vim/bundle/rainbow_parentheses"]
-	path = .vim/bundle/rainbow_parentheses
-	url = https://github.com/kien/rainbow_parentheses.vim.git
-[submodule ".vim/bundle/vim-classpath"]
-	path = .vim/bundle/vim-classpath
-	url = https://github.com/tpope/vim-classpath.git
-[submodule ".vim/bundle/vim-fireplace"]
-	path = .vim/bundle/vim-fireplace
-	url = https://github.com/tpope/vim-fireplace.git
-[submodule ".vim/bundle/neoformat"]
-	path = .vim/bundle/neoformat
+[submodule "vimplugins/neoformat"]
+	path = vimplugins/neoformat
 	url = https://github.com/sbdchd/neoformat.git
-[submodule ".vim/bundle/vim-polyglot"]
-	path = .vim/bundle/vim-polyglot
+[submodule "vimplugins/vim-polyglot"]
+	path = vimplugins/vim-polyglot
 	url = https://github.com/sheerun/vim-polyglot
-[submodule ".vim/bundle/closetag"]
-	path = .vim/bundle/closetag
+[submodule "vimplugins/closetag"]
+	path = vimplugins/closetag
 	url = https://github.com/docunext/closetag.vim
-[submodule ".vim/bundle/vim-eunuch"]
-	path = .vim/bundle/vim-eunuch
+[submodule "vimplugins/vim-eunuch"]
+	path = vimplugins/vim-eunuch
 	url = https://github.com/tpope/vim-eunuch.git
-[submodule ".vim/bundle/vim-solarized8"]
-	path = .vim/bundle/vim-solarized8
+[submodule "vimplugins/vim-solarized8"]
+	path = vimplugins/vim-solarized8
 	url = https://github.com/lifepillar/vim-solarized8
-[submodule ".vim/bundle/vim-surround"]
-	path = .vim/bundle/vim-surround
+[submodule "vimplugins/vim-surround"]
+	path = vimplugins/vim-surround
 	url = https://github.com/tpope/vim-surround.git
-[submodule ".vim/bundle/editorconfig-vim"]
-	path = .vim/bundle/editorconfig-vim
+[submodule "vimplugins/editorconfig-vim"]
+	path = vimplugins/editorconfig-vim
 	url = https://github.com/editorconfig/editorconfig-vim.git
-[submodule ".vim/bundle/vim-endwise"]
-	path = .vim/bundle/vim-endwise
+[submodule "vimplugins/vim-endwise"]
+	path = vimplugins/vim-endwise
 	url = https://github.com/tpope/vim-endwise
-[submodule ".vim/bundle/vim-autoswap"]
-	path = .vim/bundle/vim-autoswap
+[submodule "vimplugins/vim-autoswap"]
+	path = vimplugins/vim-autoswap
 	url = https://github.com/gioele/vim-autoswap.git
-[submodule ".vim/bundle/defx.nvim"]
-	path = .vim/bundle/defx.nvim
+[submodule "vimplugins/defx.nvim"]
+	path = vimplugins/defx.nvim
 	url = https://github.com/Shougo/defx.nvim.git
-[submodule ".vim/bundle/nvim-colorizer.lua"]
-	path = .vim/bundle/nvim-colorizer.lua
+[submodule "vimplugins/nvim-colorizer.lua"]
+	path = vimplugins/nvim-colorizer.lua
 	url = https://github.com/norcalli/nvim-colorizer.lua.git
 	ignore = untracked
-[submodule ".vim/bundle/aerial.nvim"]
-	path = .vim/bundle/aerial.nvim
+[submodule "vimplugins/aerial.nvim"]
+	path = vimplugins/aerial.nvim
 	url = https://github.com/stevearc/aerial.nvim.git
-[submodule ".vim/bundle/targets.vim"]
-	path = .vim/bundle/targets.vim
+[submodule "vimplugins/targets.vim"]
+	path = vimplugins/targets.vim
 	url = https://github.com/wellle/targets.vim.git
-[submodule ".vim/bundle/quickfix-reflector.vim"]
-	path = .vim/bundle/quickfix-reflector.vim
+[submodule "vimplugins/quickfix-reflector.vim"]
+	path = vimplugins/quickfix-reflector.vim
 	url = https://github.com/stefandtw/quickfix-reflector.vim.git
-[submodule ".vim/bundle/nvim-lspconfig"]
-	path = .vim/bundle/nvim-lspconfig
+[submodule "vimplugins/nvim-lspconfig"]
+	path = vimplugins/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig
 	ignore = untracked
-[submodule ".vim/bundle/completion-nvim"]
-	path = .vim/bundle/completion-nvim
+[submodule "vimplugins/completion-nvim"]
+	path = vimplugins/completion-nvim
 	url = https://github.com/nvim-lua/completion-nvim.git
-[submodule ".vim/bundle/flow-coverage.nvim"]
-	path = .vim/bundle/flow-coverage.nvim
+[submodule "vimplugins/flow-coverage.nvim"]
+	path = vimplugins/flow-coverage.nvim
 	url = https://github.com/stevearc/flow-coverage.nvim.git
-[submodule ".vim/bundle/nvim-treesitter"]
-	path = .vim/bundle/nvim-treesitter
+[submodule "vimplugins/nvim-treesitter"]
+	path = vimplugins/nvim-treesitter
 	url = https://github.com/nvim-treesitter/nvim-treesitter
-[submodule ".vim/bundle/nvim-treesitter-context"]
-	path = .vim/bundle/nvim-treesitter-context
+[submodule "vimplugins/nvim-treesitter-context"]
+	path = vimplugins/nvim-treesitter-context
 	url = https://github.com/romgrk/nvim-treesitter-context.git
-[submodule ".vim/bundle/telescope.nvim"]
-	path = .vim/bundle/telescope.nvim
+[submodule "vimplugins/telescope.nvim"]
+	path = vimplugins/telescope.nvim
 	url = https://github.com/nvim-telescope/telescope.nvim.git
-[submodule ".vim/bundle/plenary.nvim"]
-	path = .vim/bundle/plenary.nvim
+[submodule "vimplugins/plenary.nvim"]
+	path = vimplugins/plenary.nvim
 	url = https://github.com/nvim-lua/plenary.nvim.git
-[submodule ".vim/bundle/popup.nvim"]
-	path = .vim/bundle/popup.nvim
+[submodule "vimplugins/popup.nvim"]
+	path = vimplugins/popup.nvim
 	url = https://github.com/nvim-lua/popup.nvim.git
-[submodule ".vim/bundle/vim-vsnip"]
-	path = .vim/bundle/vim-vsnip
+[submodule "vimplugins/vim-vsnip"]
+	path = vimplugins/vim-vsnip
 	url = https://github.com/hrsh7th/vim-vsnip.git
-[submodule ".vim/bundle/vim-vsnip-integ"]
-	path = .vim/bundle/vim-vsnip-integ
+[submodule "vimplugins/vim-vsnip-integ"]
+	path = vimplugins/vim-vsnip-integ
 	url = https://github.com/hrsh7th/vim-vsnip-integ.git
-[submodule ".vim/bundle/vim-vsnip-snippets"]
-	path = .vim/bundle/vim-vsnip-snippets
+[submodule "vimplugins/vim-vsnip-snippets"]
+	path = vimplugins/vim-vsnip-snippets
 	url = https://github.com/stevearc/vim-vsnip-snippets.git
-[submodule ".vim/bundle/completion-buffers"]
-	path = .vim/bundle/completion-buffers
+[submodule "vimplugins/completion-buffers"]
+	path = vimplugins/completion-buffers
 	url = https://github.com/steelsojka/completion-buffers.git
-[submodule ".vim/bundle/startuptime"]
-	path = .vim/bundle/startuptime
+[submodule "vimplugins/startuptime"]
+	path = vimplugins/startuptime
 	url = https://github.com/tweekmonster/startuptime.vim.git
-[submodule ".vim/bundle/scnvim"]
-	path = .vim/bundle/scnvim
+[submodule "vimplugins/scnvim"]
+	path = vimplugins/scnvim
 	url = https://github.com/stevearc/scnvim.git
-[submodule ".vim/bundle/cheat.sh-vim"]
-	path = .vim/bundle/cheat.sh-vim
+[submodule "vimplugins/cheat.sh-vim"]
+	path = vimplugins/cheat.sh-vim
 	url = https://github.com/dbeniamine/cheat.sh-vim.git
-[submodule ".vim/bundle/lspsaga.nvim"]
-	path = .vim/bundle/lspsaga.nvim
+[submodule "vimplugins/lspsaga.nvim"]
+	path = vimplugins/lspsaga.nvim
 	url = https://github.com/glepnir/lspsaga.nvim.git
-[submodule ".vim/bundle/nvim-compe"]
-	path = .vim/bundle/nvim-compe
+[submodule "vimplugins/nvim-compe"]
+	path = vimplugins/nvim-compe
 	url = https://github.com/hrsh7th/nvim-compe.git
 	ignore = untracked
-[submodule ".vim/bundle/lsp_signature.nvim"]
-	path = .vim/bundle/lsp_signature.nvim
+[submodule "vimplugins/lsp_signature.nvim"]
+	path = vimplugins/lsp_signature.nvim
 	url = https://github.com/ray-x/lsp_signature.nvim.git
-[submodule ".vim/bundle/nvim-web-devicons"]
-	path = .vim/bundle/nvim-web-devicons
+[submodule "vimplugins/nvim-web-devicons"]
+	path = vimplugins/nvim-web-devicons
 	url = https://github.com/kyazdani42/nvim-web-devicons.git
-[submodule ".vim/bundle/lualine.nvim"]
-	path = .vim/bundle/lualine.nvim
+[submodule "vimplugins/lualine.nvim"]
+	path = vimplugins/lualine.nvim
 	url = https://github.com/hoob3rt/lualine.nvim.git
-[submodule ".vim/bundle/defx-icons"]
-	path = .vim/bundle/defx-icons
+[submodule "vimplugins/defx-icons"]
+	path = vimplugins/defx-icons
 	url = https://github.com/kristijanhusak/defx-icons.git
 	ignore = untracked
-[submodule ".vim/bundle/barbar.nvim"]
-	path = .vim/bundle/barbar.nvim
+[submodule "vimplugins/barbar.nvim"]
+	path = vimplugins/barbar.nvim
 	url = https://github.com/romgrk/barbar.nvim.git
 	ignore = untracked
-[submodule ".vim/bundle/vim-dadbod"]
-	path = .vim/bundle/vim-dadbod
+[submodule "vimplugins/vim-dadbod"]
+	path = vimplugins/vim-dadbod
 	url = https://github.com/tpope/vim-dadbod.git
-[submodule ".vim/bundle/vim-dadbod-ui"]
-	path = .vim/bundle/vim-dadbod-ui
+[submodule "vimplugins/vim-dadbod-ui"]
+	path = vimplugins/vim-dadbod-ui
 	url = https://github.com/kristijanhusak/vim-dadbod-ui.git
 	ignore = untracked
-[submodule ".vim/bundle/qf_helper.nvim"]
-	path = .vim/bundle/qf_helper.nvim
+[submodule "vimplugins/qf_helper.nvim"]
+	path = vimplugins/qf_helper.nvim
 	url = git@github.com:stevearc/qf_helper.nvim.git
-[submodule ".vim/bundle/tabular"]
-	path = .vim/bundle/tabular
+[submodule "vimplugins/tabular"]
+	path = vimplugins/tabular
 	url = https://github.com/godlygeek/tabular.git
-[submodule ".vim/bundle/tokyonight.nvim"]
-	path = .vim/bundle/tokyonight.nvim
+[submodule "vimplugins/tokyonight.nvim"]
+	path = vimplugins/tokyonight.nvim
 	url = https://github.com/folke/tokyonight.nvim.git
-[submodule ".vim/bundle/lightspeed.nvim"]
-	path = .vim/bundle/lightspeed.nvim
+[submodule "vimplugins/lightspeed.nvim"]
+	path = vimplugins/lightspeed.nvim
 	url = https://github.com/ggandor/lightspeed.nvim.git
-[submodule ".vim/bundle/nvim-toggleterm.lua"]
-	path = .vim/bundle/nvim-toggleterm.lua
+[submodule "vimplugins/nvim-toggleterm.lua"]
+	path = vimplugins/nvim-toggleterm.lua
 	url = https://github.com/akinsho/nvim-toggleterm.lua.git

@@ -9,11 +9,10 @@
 # Start-Process -FilePath https://www.microsoft.com/en-gb/p/windows-terminal/9n0dx20hk701
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 set -e
-declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .vimrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
-declare -r DEFAULT_VIM_BUNDLES="cheat.sh-vim completion-nvim vim-solarized8 vim-commentary vim-fugitive vim-repeat vim-snippets vim-misc vim-session neoformat vim-polyglot vim-eunuch nvim-lspconfig vim-surround editorconfig-vim nvim-colorizer.lua nvim-treesitter nvim-treesitter-context plenary.nvim popup.nvim vim-endwise vim-autoswap defx.nvim defx-icons aerial.nvim targets.vim telescope.nvim quickfix-reflector.vim vim-vsnip vim-vsnip-integ vim-vsnip-snippets completion-buffers lspsaga.nvim nvim-compe lsp_signature.nvim nvim-web-devicons lualine.nvim barbar.nvim vim-dadbod vim-dadbod-ui qf-helper.nvim tabular tokyonight.nvim lightspeed.nvim nvim-toggleterm.lua"
+declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r XFCE_DOTFILES=".xsessionrc"
-declare -r ALL_LANGUAGES="go python js arduino clojure cs rust sc common"
+declare -r ALL_LANGUAGES="go python js arduino cs rust sc common"
 declare -r USAGE=\
 "$0 [OPTIONS]
 -h            Print this help menu
@@ -180,16 +179,18 @@ winsudo() {
   powershell.exe -command "start-process -verb runas powershell" "'-command $*'"
 }
 
-cp-vim-bundle() {
-  local bundle=${1?Must specify a vim bundle}
+cp-vim-plugin() {
+  local plugin=${1?Must specify a vim plugin}
+  local parent="$HOME/.local/share/nvim/site/pack/$plugin/start"
+  local dest="$parent/$plugin"
+  mkdir -p "$parent"
   if [ $SYMBOLIC ]; then
-    local dest="$HOME/.vim/bundle/$bundle"
     if [ -e "$dest" ] && [ ! -L "$dest" ]; then
       rm -rf "$dest"
     fi
-    link "$REPO/.vim/bundle/$bundle" "$dest"
+    link "$REPO/vimplugins/$plugin" "$dest"
   else
-    rsync -lrp --delete --exclude .git ".vim/bundle/$bundle" "$HOME/.vim/bundle/"
+    rsync -lrp --delete --exclude .git "$REPO/vimplugins/$plugin" "$dest"
   fi
 }
 
@@ -314,15 +315,8 @@ install-dotfiles() {
     for dotfile in $CLI_DOTFILES; do
       link "$REPO/$dotfile" "$HOME/$dotfile"
     done
-    mkdir -p ~/.vim
-    for vimfile in .vim/*; do
-      [ "$vimfile" = ".vim/bundle" ] && continue
-      rm -rf "${HOME:?}/$vimfile"
-      link "$REPO/$vimfile" "$HOME/$vimfile"
-    done
   else
     rsync -lrp $CLI_DOTFILES "$HOME"
-    rsync -lrp --delete --exclude bundle --exclude .git .vim "$HOME"
   fi
 
   mkdir -p ~/bin
@@ -339,9 +333,9 @@ install-dotfiles() {
   rsync -lrp .docker "$HOME"
   mkdir -p ~/.config
   rsync -lrp .config/nvim ~/.config/
-  mkdir -p ~/.vim/bundle
-  for bundle in $DEFAULT_VIM_BUNDLES; do
-    cp-vim-bundle "$bundle"
+  rm -rf ~/.local/share/nvim/site/pack
+  for plugin in $REPO/vimplugins/*; do
+    cp-vim-plugin "$(basename $plugin)"
   done
 
   mkdir -p ~/.bash.d
@@ -445,19 +439,6 @@ install-language-rust() {
   fi
 }
 
-install-language-clojure() {
-  has-checkpoint clojure && return
-  pushd ~/bin
-  wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
-  chmod a+x lein
-  ./lein
-  popd
-  cp-vim-bundle rainbow_parentheses
-  cp-vim-bundle vim-classpath
-  cp-vim-bundle vim-fireplace
-  checkpoint clojure
-}
-
 install-language-go() {
   if [ ! -e /usr/local/go ]; then
     pushd /tmp
@@ -501,7 +482,6 @@ install-language-arduino() {
     sudo udevadm control --reload-rules
     sudo udevadm trigger
   fi
-  cp-vim-bundle vim-arduino
 }
 
 install-language-js() {
@@ -509,8 +489,6 @@ install-language-js() {
   hascmd prettier || yarn global add prettier
   hascmd flow || yarn global add flow-bin
   yarn global add typescript-language-server
-  cp-vim-bundle closetag
-  cp-vim-bundle flow-coverage.nvim
 }
 
 install-language-common() {
@@ -629,7 +607,6 @@ if (Quarks.isInstalled("StevearcExperimentalQuark").not) {
 0.exit;
 EOF
   sclang /tmp/scsetup.scd
-  cp-vim-bundle scnvim
   nvim --headless +"call scnvim#install()" +qall > /dev/null
 }
 
@@ -691,9 +668,6 @@ setup-gnome() {
   setup-desktop
   [ ! $LINUX ] && return 1
 
-  if [ ! -e /usr/share/applications/vim.desktop ]; then
-    sudo cp vim.desktop /usr/share/applications
-  fi
   if [ $SYMBOLIC ]; then
     link "$REPO/mimeapps.list" "$HOME/.local/share/applications/mimeapps.list"
   else
@@ -876,7 +850,9 @@ main() {
   languages=${languages# } # trim leading whitespace
 
   hascmd git || sudo apt-get install -y -q git
-  git submodule update --init --recursive
+  if [ "$(git status --porcelain | wc -l)" == "0" ]; then
+    git submodule update --init --recursive
+  fi
   if [ $commandline ]; then
     install-cli
   fi
