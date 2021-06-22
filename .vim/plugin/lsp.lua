@@ -1,6 +1,6 @@
 local stevearc = require'stevearc'
 
--- vim.lsp.set_log_level('trace')
+-- vim.lsp.set_log_level('debug')
 
 require('lspsaga').init_lsp_saga()
 
@@ -21,6 +21,7 @@ vim.g.aerial = {
   highlight_on_jump = 200,
   link_folds_to_tree = true,
   manage_folds = true,
+  -- filter_kind = {},
 }
 
 -- Make all the "jump" commands call zv after execution
@@ -41,16 +42,6 @@ end
 
 local mapper = function(mode, key, result)
   vim.api.nvim_buf_set_keymap(0, mode, key, result, {noremap = true, silent = true})
-end
-
-local is_loclist_visible = function()
-  local win_info = vim.fn.getwininfo()
-  for _,info in ipairs(win_info) do
-    if info.loclist == 1 then
-      return true
-    end
-  end
-  return false
 end
 
 local ts_lsp_config = {
@@ -77,6 +68,7 @@ local ft_config = {
 }
 
 function stevearc:on_update_diagnostics()
+  local util = require 'qf_helper.util'
   local errors = vim.lsp.diagnostic.get_count(0, "Error")
   local warnings = vim.lsp.diagnostic.get_count(0, "Warning")
   if warnings + errors == 0 then
@@ -88,7 +80,7 @@ function stevearc:on_update_diagnostics()
       severity_limit = "Warning",
     }
     -- Resize the loclist
-    if is_loclist_visible() then
+    if util.is_open('l') then
       local winid = vim.fn.win_getid()
       local height = math.max(vim.g.qf_min_height, math.min(vim.g.qf_max_height, errors + warnings))
       vim.cmd('lopen '..height)
@@ -147,8 +139,8 @@ local on_attach = function(client)
   mapper('n', '<c-k>', '<cmd>lua require("lspsaga.signaturehelp").signature_help()<CR>')
   mapper('i', '<c-k>', '<cmd>lua require("lspsaga.signaturehelp").signature_help()<CR>')
   if config.code_action ~= false then
-    mapper('n', '<leader><space>', '<cmd>lua require("lspsaga.codeaction").code_action()<CR>')
-    mapper('v', '<leader><space>', ':<C-U>lua require("lspsaga.codeaction").range_code_action()<CR>')
+    mapper('n', '<leader>p', '<cmd>lua require("lspsaga.codeaction").code_action()<CR>')
+    mapper('v', '<leader>p', ':<C-U>lua require("lspsaga.codeaction").range_code_action()<CR>')
   end
   mapper('n', '<C-f>', '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(1)<CR>')
   mapper('n', '<C-b>', '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(-1)<CR>')
@@ -164,7 +156,7 @@ local on_attach = function(client)
     vim.cmd [[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]]
   end
 
-  vim.cmd("setlocal omnifunc=v:lua.vim.lsp.omnifunc")
+  vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
 
   if config.autoformat then
     vim.cmd [[autocmd BufWritePre <buffer> lua require'stevearc'.autoformat()]]
