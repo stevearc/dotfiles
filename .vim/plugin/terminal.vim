@@ -44,3 +44,21 @@ aug TerminalInsert
   au TermOpen * setlocal nonumber norelativenumber signcolumn=no | :startinsert
   au BufEnter * :call <sid>MaybeFocus()
 aug END
+
+
+lua <<EOF
+require("toggleterm").setup{
+  open_mapping = [[<c-\>]],
+  hide_numbers = true,
+  shade_terminals = false,
+  start_in_insert = true,
+  insert_mappings = true,
+  persist_size = false,
+  direction = 'float',
+  close_on_exit = true,
+  float_opts = {
+    border = 'single',
+    winblend = 3,
+  }
+}
+EOF

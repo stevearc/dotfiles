@@ -163,3 +163,9 @@
 [submodule ".vim/bundle/tokyonight.nvim"]
 	path = .vim/bundle/tokyonight.nvim
 	url = https://github.com/folke/tokyonight.nvim.git
+[submodule ".vim/bundle/lightspeed.nvim"]
+	path = .vim/bundle/lightspeed.nvim
+	url = https://github.com/ggandor/lightspeed.nvim.git
+[submodule ".vim/bundle/nvim-toggleterm.lua"]
+	path = .vim/bundle/nvim-toggleterm.lua
+	url = https://github.com/akinsho/nvim-toggleterm.lua.git
