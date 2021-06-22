@@ -11,6 +11,6 @@ nnoremap <leader>bb <cmd>lua require('stevearc.telescope').buffers({previewer=fa
 tnoremap \b <C-\><C-N><cmd>lua require('stevearc.telescope').buffers({previewer=false})<cr>
 nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
-nnoremap <leader>fd <cmd>lua require('stevearc.telescope').find_files({cwd='/home/stevearc/.config/nvim/', follow=true, hidden=true, ignore={'bundle'}, previewer=false})<cr>
+nnoremap <leader>fd <cmd>lua require('stevearc.telescope').find_files({cwd='/home/stevearc/dotfiles/.config/nvim/', follow=true, hidden=true, previewer=false})<cr>
 nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<CR>
 nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>

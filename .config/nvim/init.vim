@@ -1,8 +1,15 @@
 let g:python3_host_prog = expand("~/.envs/py3/bin/python")
 
+let g:use_barbar = v:true
+let g:nerd_font = v:true
+let g:completion_plugin = 'compe'
+let g:debug_treesitter = 0
+let g:debug_aerial_fold = 0
+
 " Use Vim settings, rather than Vi
 set nocompatible
 
+" Space is leader
 let mapleader = " "
 
 " Allow backgrounding buffers without writing them, and remember marks/undo
@@ -154,7 +161,6 @@ augroup VCenterCursor
         \ let &l:scrolloff=1+winheight(win_getid())/2
 augroup END
 
-let g:debug_treesitter = 0
 let g:treesitter_languages = [
       \ "bash", "c", "c_sharp", "cpp", "go", "graphql", "java", "json",
       \ "kotlin", "latex", "lua", "python", "rst", "ruby", "rust", "toml",
@@ -231,13 +237,8 @@ if has('win32')
   set shellxquote=
 endif
 
+" This lets our bash aliases know to use nvr instead of nvim
 let $INSIDE_NVIM=1
-
-let g:use_barbar = v:true
-let g:nerd_font = v:true
-let g:completion_plugin = 'compe'
-
-let g:aerial_nerd_font = g:nerd_font
 
 if filereadable(expand('~/.local.vimrc'))
   source ~/.local.vimrc

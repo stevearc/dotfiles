@@ -332,7 +332,11 @@ install-dotfiles() {
 
   rsync -lrp .docker "$HOME"
   mkdir -p ~/.config
-  rsync -lrp .config/nvim ~/.config/
+  if [ $SYMBOLIC ]; then
+    link "$REPO/.config/nvim" "$HOME/.config/nvim"
+  else
+    rsync -lrp .config/nvim ~/.config/
+  fi
   rm -rf ~/.local/share/nvim/site/pack
   for plugin in $REPO/vimplugins/*; do
     cp-vim-plugin "$(basename $plugin)"

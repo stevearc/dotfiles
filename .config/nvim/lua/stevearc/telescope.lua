@@ -7,7 +7,7 @@ local conf = require('telescope.config').values
 
 local M = {}
 
-function open_existing_or_new_tab(prompt_bufnr)
+local function open_existing_or_new_tab(prompt_bufnr)
   local entry = actions.get_selected_entry()
   actions.close(prompt_bufnr)
 

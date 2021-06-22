@@ -21,6 +21,7 @@ vim.g.aerial = {
   highlight_on_jump = 200,
   link_folds_to_tree = true,
   manage_folds = true,
+  nerd_font = vim.g.nerd_font,
   -- filter_kind = {},
 }
 
@@ -44,11 +45,14 @@ local mapper = function(mode, key, result)
   vim.api.nvim_buf_set_keymap(0, mode, key, result, {noremap = true, silent = true})
 end
 
-local ts_lsp_config = {
-  autoformat = true
-}
-local js_lsp_config = { }
-local ft_config = {
+local _ft_config = {
+  ['_'] = {
+    allow_incremental_sync = true,
+    autoformat = false,
+    code_action = true,
+    cursor_highlight = true,
+    help = true,
+  },
   vim = {
     help = false
   },
@@ -59,13 +63,24 @@ local ft_config = {
   rust = {
     autoformat = true
   },
-  typescript = ts_lsp_config,
-  typescriptreact = ts_lsp_config,
-  ['typescript.jsx'] = ts_lsp_config,
-  javascript = js_lsp_config,
-  javascriptreact = js_lsp_config,
-  ['javascript.jsx'] = js_lsp_config,
+  typescript = {
+    autoformat = true,
+  },
 }
+local ft_config = setmetatable({}, {
+  __index = function(_, key)
+    if key == 'javascriptreact' or key == 'javascript.jsx' then
+      key = 'javascript'
+    end
+    if key == 'typescriptreact' or key == 'typescript.jsx' then
+      key = 'typescript'
+    end
+    local ret = _ft_config[key] or {}
+    return setmetatable(ret, {
+      __index = _ft_config['_']
+    })
+  end
+})
 
 function stevearc:on_update_diagnostics()
   local util = require 'qf_helper.util'
@@ -101,7 +116,7 @@ local on_init = function(client)
 
   client.config.flags = {}
   if client.config.flags then
-    client.config.flags.allow_incremental_sync = config.allow_incremental_sync ~= false
+    client.config.flags.allow_incremental_sync = config.allow_incremental_sync
   end
 end
 
@@ -131,14 +146,14 @@ local on_attach = function(client)
   mapper('n', 'gI', '<cmd>lua vim.lsp.buf.implementation()<CR>')
   mapper('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>')
   mapper('n', 'gs', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>')
-  if config.help ~= false then
+  if config.help then
     mapper('n', 'K', '<cmd>lua require("lspsaga.hover").render_hover_doc()<CR>')
     mapper('n', '<C-j>', '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(1)<CR>')
     mapper('n', '<C-k>', '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(-1)<CR>')
   end
   mapper('n', '<c-k>', '<cmd>lua require("lspsaga.signaturehelp").signature_help()<CR>')
   mapper('i', '<c-k>', '<cmd>lua require("lspsaga.signaturehelp").signature_help()<CR>')
-  if config.code_action ~= false then
+  if config.code_action then
     mapper('n', '<leader>p', '<cmd>lua require("lspsaga.codeaction").code_action()<CR>')
     mapper('v', '<leader>p', ':<C-U>lua require("lspsaga.codeaction").range_code_action()<CR>')
   end
@@ -150,7 +165,7 @@ local on_attach = function(client)
 
   mapper('n', '<CR>', '<cmd>lua require"lspsaga.diagnostic".show_line_diagnostics()<CR>')
 
-  if config.cursor_highlight == true then
+  if config.cursor_highlight then
     vim.cmd [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]
     vim.cmd [[autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]]
     vim.cmd [[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]]
