@@ -213,6 +213,9 @@ nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR
 let g:scnvim_no_mappings = 1
 let g:scnvim_eval_flash_repeats = 1
 
+let g:CheatSheetDoNotMap=1
+let g:CheatDoNotReplaceKeywordPrg=1
+
 " Netrw
 " detail view
 let g:netrw_liststyle = 1
