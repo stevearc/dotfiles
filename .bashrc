@@ -92,7 +92,11 @@ fi
 
 # Default applications
 if command -v nvim > /dev/null; then
-  export EDITOR=nvim
+  if [ -n "$INSIDE_NVIM" ] && command -v nvr > /dev/null; then
+    export EDITOR="nvr --remote-wait -cc '0wincmd w'"
+  else
+    export EDITOR=nvim
+  fi
 else
   export EDITOR=vim
 fi

@@ -46,8 +46,8 @@ sash() {
 }
 export sash
 if command -v nvim > /dev/null; then
-  if [ -n "$NVIM_LISTEN_ADDRESS" ] && command -v nvr > /dev/null; then
-    alias vim="nvr -cc edit"
+  if [ -n "$INSIDE_NVIM" ] && command -v nvr > /dev/null; then
+    alias vim="nvr -cc '0wincmd w'"
   else
     alias vim="nvim"
   fi

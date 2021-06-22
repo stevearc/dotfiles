@@ -232,6 +232,8 @@ if has('win32')
   set shellxquote=
 endif
 
+let $INSIDE_NVIM=1
+
 let g:use_barbar = v:true
 let g:nerd_font = v:true
 let g:completion_plugin = 'compe'
