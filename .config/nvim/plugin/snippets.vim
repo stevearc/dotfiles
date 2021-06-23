@@ -34,8 +34,10 @@ imap <C-h> <cmd>call BackwardsInInsert()<cr>
 smap <C-l> <Plug>(vsnip-jump-next)
 imap <C-l> <cmd>call ForwardsInInsert()<cr>
 " Clear Vsnip session when we switch to normal mode.
-aug ClearVsnipSession
-  au!
-  " Can't use InsertLeave here because that fires when we go to select mode
-  au CursorHold * call vsnip#deactivate()
-aug END
+if exists('*vsnip#deactivate')
+  aug ClearVsnipSession
+    au!
+    " Can't use InsertLeave here because that fires when we go to select mode
+    au CursorHold * call vsnip#deactivate()
+  aug END
+endif

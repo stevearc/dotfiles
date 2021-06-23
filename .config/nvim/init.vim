@@ -6,6 +6,9 @@ let g:completion_plugin = 'compe'
 let g:debug_treesitter = 0
 let g:debug_aerial_fold = 0
 
+" The syntax plugin was causing lag with multiple windows visible
+let g:polyglot_disabled = ['sh']
+
 " Use Vim settings, rather than Vi
 set nocompatible
 
