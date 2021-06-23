@@ -20,6 +20,7 @@ vim.g.aerial = {
   default_direction = 'prefer_left',
   highlight_on_jump = 200,
   link_folds_to_tree = true,
+  link_tree_to_folds = true,
   manage_folds = true,
   nerd_font = vim.g.nerd_font,
   -- filter_kind = {},
@@ -60,6 +61,9 @@ local _ft_config = {
     autoformat = true,
     code_action = false, -- TODO: this borks the omnisharp server
   },
+  json = {
+    cursor_highlight = false,
+  },
   rust = {
     autoformat = true
   },
@@ -84,6 +88,7 @@ local ft_config = setmetatable({}, {
 
 function stevearc:on_update_diagnostics()
   local util = require 'qf_helper.util'
+  local config = require 'qf_helper.config'
   local errors = vim.lsp.diagnostic.get_count(0, "Error")
   local warnings = vim.lsp.diagnostic.get_count(0, "Warning")
   if warnings + errors == 0 then
@@ -97,7 +102,7 @@ function stevearc:on_update_diagnostics()
     -- Resize the loclist
     if util.is_open('l') then
       local winid = vim.fn.win_getid()
-      local height = math.max(vim.g.qf_min_height, math.min(vim.g.qf_max_height, errors + warnings))
+      local height = math.max(config.l.min_height, math.min(config.l.max_height, errors + warnings))
       vim.cmd('lopen '..height)
       vim.fn.win_gotoid(winid)
     end
@@ -166,9 +171,8 @@ local on_attach = function(client)
   mapper('n', '<CR>', '<cmd>lua require"lspsaga.diagnostic".show_line_diagnostics()<CR>')
 
   if config.cursor_highlight then
-    vim.cmd [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]
-    vim.cmd [[autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]]
-    vim.cmd [[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]]
+    vim.cmd [[autocmd CursorHold,CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]]
+    vim.cmd [[autocmd CursorMoved,WinLeave <buffer> lua vim.lsp.buf.clear_references()]]
   end
 
   vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
