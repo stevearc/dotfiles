@@ -27,7 +27,7 @@ nnoremap <silent><buffer><expr> - defx#do_action('cd', ['..'])
 nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
 nnoremap <silent><buffer><expr> ` defx#do_action('cd', getcwd())
 nnoremap <silent><buffer><expr> q defx#do_action('quit')
-nnoremap <silent><buffer><expr> M defx#do_action('toggle_select') . 'j'
+nnoremap <silent><buffer><expr> s defx#do_action('toggle_select') . 'j'
 nnoremap <silent><buffer><expr> * defx#do_action('toggle_select_all')
 nnoremap <silent><buffer><expr> # defx#do_action('clear_select_all')
 nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'

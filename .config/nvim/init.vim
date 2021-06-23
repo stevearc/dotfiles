@@ -1,6 +1,12 @@
 let g:python3_host_prog = expand("~/.envs/py3/bin/python")
 let &rtp = &rtp . ',' . stdpath('data') . '-local'
 
+" Profiling
+" lua require('profile').instrument_autocmds()
+nmap <f1> <cmd>lua if require'profile'.is_recording() then require'profile'.stop('profile.json') else require'profile'.start('*') end<cr>
+nmap <f2> <cmd>lua require'plenary.profile'.start("profile.log", {flame = true})<cr>
+nmap <f3> <cmd>lua require'plenary.profile'.stop()<cr>
+
 let g:use_barbar = v:true
 let g:nerd_font = v:true
 let g:debug_treesitter = 0
