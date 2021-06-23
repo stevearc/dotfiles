@@ -71,20 +71,6 @@ prompt() {
   done
 }
 
-mk-lazy-load() {
-  local alias="$1"
-  local source="$2"
-  local filename="$3"
-cat >~/.bash.d/$filename <<EOF
-_wrap_$alias() {
-  unalias '$alias'
-  source $source
-  $alias "$@"
-}
-alias $alias='_wrap_$alias'
-EOF
-}
-
 link() {
   local source="${1?missing source}"
   local dest="${2?missing dest}"
@@ -633,7 +619,7 @@ install-nvm() {
     popd > /dev/null
   fi
   source $nvm_dir/nvm.sh
-  mk-lazy-load nvm $nvm_dir/nvm.sh nvm.sh
+  echo "source $nvm_dir/nvm.sh" > ~/.bash.d/nvm.sh
   local node_version=$(prompt "Install node version:" v12.17.0)
   nvm ls $node_version || nvm install $node_version
   nvm ls default | grep $node_version || nvm alias default $node_version
