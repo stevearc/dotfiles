@@ -1,4 +1,14 @@
 let g:python3_host_prog = expand("~/.envs/py3/bin/python")
+lua <<EOF
+profile = require 'profile'
+profile.instrument('*')
+profile.start_recording()
+vim.defer_fn(function()
+  profile.stop_recording()
+  print("Recording done")
+  profile.export("profile.json")
+end, 4000)
+EOF
 
 let g:use_barbar = v:true
 let g:nerd_font = v:true
@@ -262,6 +272,24 @@ endif
 
 " This lets our bash aliases know to use nvr instead of nvim
 let $INSIDE_NVIM=1
+
+function! s:TestProfile() abort
+  lua <<EOF
+  profile = require 'profile'
+  profile.instrument('*')
+  -- profile.instrument('aerial*')
+  -- profile.instrument('vim*')
+  -- profile.print_wrapped_functions()
+  profile.start_recording()
+  vim.defer_fn(function()
+    profile.stop_recording()
+    print("Recording done")
+    profile.export("profile.json")
+  end, 4000)
+EOF
+endfunction
+
+command! TP call <sid>TestProfile()
 
 if filereadable(expand('~/.local.vimrc'))
   source ~/.local.vimrc
