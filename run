@@ -465,7 +465,7 @@ setup-gnome() {
   gsettings set org.gnome.mutter dynamic-workspaces false
   gsettings set org.gnome.mutter workspaces-only-on-primary false
   gsettings set org.gnome.desktop.wm.preferences num-workspaces 4
-  gsettings set org.gnome.mutter edge-tiling false
+  gsettings set org.gnome.mutter edge-tiling true
   gsettings set org.gnome.desktop.interface show-battery-percentage true
   gsettings set org.gnome.desktop.interface clock-show-weekday true
 
