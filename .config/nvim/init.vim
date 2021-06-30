@@ -186,7 +186,7 @@ cabbr <expr> %% expand('%:p:h')
 
 aug Checkt
   au!
-  au FocusGained * checktime
+  au FocusGained * if getcmdwintype() == '' | checktime | endif
 aug END
 
 " Enter paste mode with <C-v> in insert mode

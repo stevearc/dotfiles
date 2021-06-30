@@ -93,7 +93,9 @@ function stevearc:on_update_diagnostics()
   local warnings = vim.lsp.diagnostic.get_count(0, "Warning")
   if warnings + errors == 0 then
     vim.lsp.util.set_loclist({})
-    vim.cmd('lclose')
+    if vim.fn.win_gettype() == '' then
+      vim.cmd('lclose')
+    end
   else
     vim.lsp.diagnostic.set_loclist{
       open_loclist = false,
