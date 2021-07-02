@@ -222,7 +222,6 @@ install-cli() {
       tmux \
       tree \
       unzip \
-      vim-nox \
       wmctrl \
       xsel
   fi
