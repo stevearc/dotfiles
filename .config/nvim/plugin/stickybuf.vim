@@ -54,7 +54,7 @@ function! s:RestoreBufHidden(winid) abort
   " We've closed the last window for this buffer. If bufhidden was 'unload',
   " 'delete', or 'wipe', manually do that to the buffer.
   if !empty(l:prev_bufhidden) && l:prev_bufhidden != 'hide'
-    exec 'b' . l:prev_bufhidden . ' ' . l:bufnr
+    exec 'b' . l:prev_bufhidden . '! ' . l:bufnr
   endif
 endfunction
 
