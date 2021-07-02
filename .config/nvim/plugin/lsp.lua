@@ -51,7 +51,6 @@ local _ft_config = {
     allow_incremental_sync = true,
     autoformat = false,
     code_action = true,
-    cursor_highlight = true,
     help = true,
   },
   vim = {
@@ -60,9 +59,6 @@ local _ft_config = {
   cs = {
     autoformat = true,
     code_action = false, -- TODO: this borks the omnisharp server
-  },
-  json = {
-    cursor_highlight = false,
   },
   rust = {
     autoformat = true
@@ -172,7 +168,7 @@ local on_attach = function(client)
 
   mapper('n', '<CR>', '<cmd>lua require"lspsaga.diagnostic".show_line_diagnostics()<CR>')
 
-  if config.cursor_highlight then
+  if client.supports_method('textDocument/documentHighlight') then
     vim.cmd [[autocmd CursorHold,CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]]
     vim.cmd [[autocmd CursorMoved,WinLeave <buffer> lua vim.lsp.buf.clear_references()]]
   end
@@ -300,6 +296,12 @@ require'lspconfig'.sumneko_lua.setup({
   on_attach = on_attach,
   on_init = on_init,
 })
+
+require'lspconfig'.sorbet.setup{
+  cmd = {"bundle", "exec", "srb", "tc", "--lsp" },
+  on_attach = on_attach,
+  on_init = on_init,
+}
 
 -- Since we missed the FileType event when this runs on vim start, we should
 -- manually make sure that LSP starts on the first file opened.
