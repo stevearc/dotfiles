@@ -4,7 +4,6 @@ function! s:ShouldMakeSticky()
 endfunction
 
 function! s:MakeStickyBuf()
-  echomsg bufnr()
   let l:sticky_buf = get(w:, 'sticky_buf')
   if s:ShouldMakeSticky()
     if l:sticky_buf == 0

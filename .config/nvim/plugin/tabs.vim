@@ -1,43 +1,46 @@
 if g:use_barbar
-  function! s:CloseBufferOrPane() abort
-    if &bufhidden == 'unload' || &bufhidden == 'delete' || &bufhidden == 'wipe'
-      quit
-      return
-    endif
-    " if we're in a non-normal or floating window: quit
-    if win_gettype(0) != '' || nvim_win_get_config(0)['relative'] != ''
-      quit
+  function! s:CloseBufferOrWin() abort
+    " if we're in a non-normal or floating window: close
+    if win_gettype() != '' || s:IsFloatingWin(winnr())
+      close
       return
     endif
 
     let i = 1
-    let last_window = winnr('$')
-    let count = 0
-    let in_main_window = v:false
-    while i <= last_window
-      " Ignore non-normal (e.g. popup/preview) windows
-      if empty(win_gettype(i)) && !getwinvar(i, 'treesitter_context')
-        let bufnr = winbufnr(i)
-        let ft = getbufvar(bufnr, '&filetype')
-        let bt = getbufvar(bufnr, '&buftype')
-        " Ignore prompt & quickfix buffer windows
-        if bt != 'quickfix' && bt != 'prompt' && bt != 'help' && ft != 'aerial'
-          let count += 1
-          if i == winnr()
-            let in_main_window = v:true
-          endif
+    let num_normal_wins = 0
+    let in_normal_window = v:false
+    while i <= winnr('$')
+      if s:IsNormalWin(i)
+        let num_normal_wins += 1
+        if i == winnr()
+          let in_normal_window = v:true
         endif
       endif
       let i += 1
     endwhile
 
-    if count > 1 || !in_main_window
-      quit
+    if num_normal_wins > 1 || !in_normal_window
+      close
     else
-      " Close other windows (e.g. treesitter-context floating window) so we don't get the 'only floating window would remain' error
-      silent wincmd o
       BufferClose
     endif
+  endfunction
+
+  function! s:IsFloatingWin(winnr) abort
+    return nvim_win_get_config(win_getid(a:winnr)).relative != ''
+  endfunction
+
+  function! s:IsNormalWin(winnr) abort
+    " Check for non-normal (e.g. popup/preview) windows
+    if !empty(win_gettype(a:winnr)) || s:IsFloatingWin(a:winnr)
+      return v:false
+    endif
+    let bufnr = winbufnr(a:winnr)
+    let ft = getbufvar(bufnr, '&filetype')
+    let bt = getbufvar(bufnr, '&buftype')
+
+    " Ignore quickfix, prompt, help, and aerial buffer windows
+    return bt != 'quickfix' && bt != 'prompt' && bt != 'help' && ft != 'aerial'
   endfunction
 
   let bufferline = get(g:, 'bufferline', {})
@@ -62,7 +65,7 @@ if g:use_barbar
   nnoremap <silent> <leader>8 <cmd>BufferGoto 8<CR>
   nnoremap <silent> <leader>9 <cmd>BufferGoto 9<CR>
   nnoremap <silent> <leader>` <cmd>BufferLast<CR>
-  nnoremap <silent> <leader>c <cmd>call <sid>CloseBufferOrPane()<CR>
+  nnoremap <silent> <leader>c <cmd>call <sid>CloseBufferOrWin()<CR>
   nnoremap <silent> <leader>C <cmd>BufferClose<CR>
   nnoremap <C-w><C-b> <cmd>tab split<CR>
   nnoremap <A-h> gT
