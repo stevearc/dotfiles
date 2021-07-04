@@ -161,3 +161,6 @@
 [submodule "vimplugins/nvim-toggleterm.lua"]
 	path = vimplugins/nvim-toggleterm.lua
 	url = https://github.com/akinsho/nvim-toggleterm.lua.git
+[submodule "vimplugins/playground"]
+	path = vimplugins/playground
+	url = https://github.com/nvim-treesitter/playground.git
