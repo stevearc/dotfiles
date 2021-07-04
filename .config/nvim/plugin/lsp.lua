@@ -56,6 +56,9 @@ local _ft_config = {
   vim = {
     help = false
   },
+  lua = {
+    help = false
+  },
   cs = {
     autoformat = true,
     code_action = false, -- TODO: this borks the omnisharp server
