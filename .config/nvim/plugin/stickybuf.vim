@@ -1,6 +1,6 @@
 " This is what determines which windows/buffers to make sticky.
 function! s:ShouldMakeSticky()
-  return &buftype != '' || win_gettype() != '' || nvim_win_get_config(0).relative != ''
+  return (&buftype != '' || win_gettype() != '' || nvim_win_get_config(0).relative != '') && line('$') > 1
 endfunction
 
 function! s:MakeStickyBuf()
