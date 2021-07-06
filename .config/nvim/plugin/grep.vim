@@ -20,9 +20,9 @@ function! BufGrep(text) abort
   bufdo argadd %
   exec 'b' buf
   exec 'vimgrep /' . a:text . '/ ##'
-  lua require'qf_helper'.open('c')
+  QFOpen!
 endfunction
 
-nnoremap <leader>g <cmd>cclose \| silent grep! <cword> \| lua require'qf_helper'.open('c')<CR>
+nnoremap <leader>g <cmd>cclose \| silent grep! <cword> \| QFOpen!<CR>
 command! -nargs=+ Bufgrep call BufGrep('<args>')
 nnoremap gR :call BufGrep(expand('<cword>'))<CR>
