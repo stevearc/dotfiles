@@ -12,7 +12,7 @@ set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r XFCE_DOTFILES=".xsessionrc"
-declare -r ALL_LANGUAGES="go python js arduino cs rust sc common"
+declare -r ALL_LANGUAGES="go lua python js arduino cs rust sc common"
 declare -r USAGE=\
 "$0 [OPTIONS]
 -h            Print this help menu
@@ -219,6 +219,7 @@ install-cli() {
       rsync \
       shellcheck \
       ripgrep \
+      shellcheck \
       tmux \
       tree \
       unzip \
@@ -409,7 +410,8 @@ install-language-python() {
   sudo apt-get install -y -q \
     python3-dev \
     python3-pip \
-    ipython3
+    ipython3 \
+    python3-restructuredtext-lint
 }
 
 install-language-rust() {
@@ -481,11 +483,29 @@ install-language-js() {
 }
 
 install-language-common() {
+  sudo apt-get install -yq pandoc yamllint
   install-nvm
   yarn global add bash-language-server
   yarn global add vscode-json-languageserver
   yarn global add vim-language-server
   yarn global add yaml-language-server
+  yarn global add yaml-language-server
+  install-language-python
+  pushd ~/bin
+  $REPO/make_standalone.py -s vint vim-vint
+  popd
+  install-language-go
+  go get github.com/mattn/efm-langserver
+  GO111MODULE=on go get mvdan.cc/sh/v3/cmd/shfmt
+}
+
+install-language-lua() {
+  sudo apt-get install -qy lua-check
+  if hascmd cargo; then
+    cargo install stylua
+  fi
+
+  # Install lua language server
   mkdir -p ~/.local/share/nvim/language-servers/
   pushd ~/.local/share/nvim/language-servers/
   if [ ! -d lua-language-server ]; then

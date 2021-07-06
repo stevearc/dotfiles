@@ -25,11 +25,3 @@ augroup ClostPostWindowIfLast
   autocmd!
   autocmd WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&filetype") == "scnvim"|q|endif
 augroup END
-
-let b:neoformat_run_all_formatters = 1
-let b:neoformat_basic_format_retab = 1
-let b:neoformat_basic_format_trim = 1
-augroup scfmt
-  autocmd! * <buffer>
-  autocmd BufWritePre <buffer> Neoformat
-augroup END

@@ -25,9 +25,6 @@
 [submodule "parseargs"]
 	path = parseargs
 	url = https://github.com/stevearc/parseargs.git
-[submodule "vimplugins/neoformat"]
-	path = vimplugins/neoformat
-	url = https://github.com/sbdchd/neoformat.git
 [submodule "vimplugins/vim-polyglot"]
 	path = vimplugins/vim-polyglot
 	url = https://github.com/sheerun/vim-polyglot

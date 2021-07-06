@@ -9,6 +9,9 @@ let g:debug_aerial_fold = 0
 " The syntax plugin was causing lag with multiple windows visible
 let g:polyglot_disabled = ['sh']
 
+" vim-javascript flow syntax highlighting
+let g:javascript_plugin_flow = 1
+
 " Use Vim settings, rather than Vi
 set nocompatible
 

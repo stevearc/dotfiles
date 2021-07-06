@@ -51,7 +51,7 @@ def main():
             .decode("utf-8")
         )
         pex = os.path.join(venv_dir, "bin", "pex")
-        cmd = [pex, args.package, "-m", entry, "-o", args.script] + args.args
+        cmd = [pex, 'setuptools', args.package, "-m", entry, "-o", args.script] + args.args
         print(" ".join(cmd))
         subprocess.check_call(cmd)
 

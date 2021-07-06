@@ -1,0 +1,62 @@
+local stevearc = require("stevearc")
+
+local AUTOFORMAT_THRESHOLD = 10000
+
+vim.g.smartformat_enabled = true
+vim.cmd([[command! FormatDisable let g:smartformat_enabled = v:false]])
+vim.cmd([[command! FormatEnable let g:smartformat_enabled = v:true]])
+
+local function php_has_format()
+  for i = 2, vim.api.nvim_buf_line_count(0) do
+    local line = vim.api.nvim_buf_get_lines(0, i, i + 1, true)[1]
+    if string.find(line, "^%s//%s*@format%s*$") then
+      return true
+    elseif not string.find(line, "^%s*//") then
+      return false
+    end
+  end
+  return false
+end
+
+local function js_has_format()
+  for i = 1, vim.api.nvim_buf_line_count(0) do
+    local line = vim.api.nvim_buf_get_lines(0, i, i + 1, true)[1]
+    if string.find(line, "@format") then
+      return true
+    elseif not string.find(line, "^%s*//") and not string.find(line, "^%s*/?%*") then
+      return false
+    end
+  end
+  return false
+end
+
+local function has_format_directive()
+  local ft = vim.api.nvim_buf_get_option(0, "filetype")
+  if ft == "php" then
+    return php_has_format()
+  elseif ft == "javascript" or ft == "javascriptreact" or ft == "javascript.jsx" then
+    return js_has_format()
+  end
+  return true
+end
+
+function stevearc.autoformat()
+  if
+    not vim.g.smartformat_enabled
+    or vim.g.smartformat_enabled == 0
+    or vim.api.nvim_buf_line_count(0) > AUTOFORMAT_THRESHOLD
+    or not has_format_directive()
+  then
+    return
+  end
+  local no_format_dirs = vim.g.no_format_dirs or {}
+  local filename = vim.fn.expand("%:p")
+  for _, dir in ipairs(no_format_dirs) do
+    if string.find(filename, dir) == 1 then
+      return
+    end
+  end
+  local pos = vim.api.nvim_win_get_cursor(0)
+  vim.lsp.buf.formatting_sync(nil, 1000)
+  vim.api.nvim_win_set_cursor(0, pos)
+end
