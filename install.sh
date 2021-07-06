@@ -9,15 +9,15 @@
 # Start-Process -FilePath https://www.microsoft.com/en-gb/p/windows-terminal/9n0dx20hk701
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 set -e
-declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore"
+declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore .shellcheckrc"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r XFCE_DOTFILES=".xsessionrc"
 declare -r ALL_LANGUAGES="go lua python js arduino cs rust sc common"
-declare -r USAGE=\
-"$0 [OPTIONS]
+declare -r USAGE="$0 [OPTIONS]
 -h            Print this help menu
 -d            Install dotfiles
--s            Install dotfiles as symbolic links to this repo
+-s            Install dotfiles as symbolic links to this repo (default)
+-S            Install dotfiles by copying (no symbolic links)
 -c            Install command line tools
 -u            Set up ufw
 -l            Install language support (may be specified multiple times)
@@ -29,14 +29,14 @@ declare -r USAGE=\
 -v            Verbose
 --languages   List all languages that are supported and exit
 "
-SYMBOLIC=
+SYMBOLIC=1
 
 OSNAME=$(uname -s)
 if [ "$OSNAME" = "Darwin" ]; then
   MAC=1
 elif [ "$OSNAME" = "Linux" ]; then
   LINUX=1
-  if grep -q Microsoft /proc/version 2> /dev/null; then
+  if grep -q Microsoft /proc/version 2>/dev/null; then
     WSL=1
     C_DRIVE="/mnt/c"
   fi
@@ -44,12 +44,12 @@ else
   WINDOWS=1
 fi
 
-command -v realpath > /dev/null 2>&1 || realpath() {
-  if ! readlink -f "$1" 2> /dev/null; then
-    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+command -v realpath >/dev/null 2>&1 || realpath() {
+  if ! readlink -f "$1" 2>/dev/null; then
+    [[ $1 == /* ]] && echo "$1" || echo "$PWD/${1#./}"
   fi
 }
-REPO=$(dirname $(realpath "$0"))
+REPO=$(dirname "$(realpath "$0")")
 
 prompt() {
   # $1 [str] - Prompt string
@@ -103,10 +103,10 @@ confirm() {
   while true; do
     read -r -p "$prompt" response
     case $response in
-      [yY][eE][sS]|[yY])
+      [yY][eE][sS] | [yY])
         return 0
         ;;
-      [nN][oO]|[nN])
+      [nN][oO] | [nN])
         return 1
         ;;
       *)
@@ -150,7 +150,7 @@ installed() {
 }
 
 hascmd() {
-  if command -v "$1" > /dev/null 2>&1; then
+  if command -v "$1" >/dev/null 2>&1; then
     return 0
   else
     return 1
@@ -341,7 +341,7 @@ install-dotfiles() {
     rsync -lrp win/ "$HOME"
   fi
   if [ -e ~/.bash_profile ]; then
-    grep "source ~/.bashrc" ~/.bash_profile > /dev/null 2>&1 || echo "source ~/.bashrc" >> ~/.bash_profile
+    grep "source ~/.bashrc" ~/.bash_profile >/dev/null 2>&1 || echo "source ~/.bashrc" >>~/.bash_profile
   fi
 }
 
@@ -384,7 +384,7 @@ install-dotnet() {
   fi
   # From https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
   pushd /tmp
-  wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+  wget "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" -O packages-microsoft-prod.deb
   sudo dpkg -i packages-microsoft-prod.deb
 
   sudo apt-get update
@@ -402,7 +402,7 @@ install-language-python() {
     python3-distutils \
     python3-venv
   # Early return on FB devserver
-  if ! hascmd apt-get ; then return; fi
+  if ! hascmd apt-get; then return; fi
   if ! hascmd pyright; then
     install-nvm
     yarn global add pyright
@@ -415,7 +415,7 @@ install-language-python() {
 }
 
 install-language-rust() {
-  if ! rustc --version > /dev/null; then
+  if ! rustc --version >/dev/null; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     source ~/.cargo/env
   fi
@@ -425,8 +425,8 @@ install-language-rust() {
   fi
   rustup component add rust-src
   if [ ! -e ~/.bash.d/rust.sh ]; then
-    echo 'source ~/.cargo/env' > ~/.bash.d/rust.sh
-    echo 'export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"' >> ~/.bash.d/rust.sh
+    echo 'source ~/.cargo/env' >~/.bash.d/rust.sh
+    echo 'export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"' >>~/.bash.d/rust.sh
   fi
 }
 
@@ -443,7 +443,7 @@ install-language-go() {
   fi
 
   PATH="/usr/local/go/bin:$PATH"
-  GOPATH="$HOME/go"
+  export GOPATH="$HOME/go"
   if ! hascmd gopls; then
     GO111MODULE=on go get golang.org/x/tools/gopls
     GO111MODULE=on go clean -modcache
@@ -452,17 +452,20 @@ install-language-go() {
 
 install-language-arduino() {
   if ! hascmd arduino; then
-    local default_version=$(curl https://github.com/arduino/Arduino/releases/latest | sed 's|^.*tag/\([^"]*\).*$|\1|')
-    local version=$(prompt "Arduino IDE version?" "$default_version")
-    local install_dir=$(prompt "Arduino IDE install dir?" /usr/local/share)
+    local default_version
+    default_version=$(curl https://github.com/arduino/Arduino/releases/latest | sed 's|^.*tag/\([^"]*\).*$|\1|')
+    local version
+    version=$(prompt "Arduino IDE version?" "$default_version")
+    local install_dir
+    install_dir=$(prompt "Arduino IDE install dir?" /usr/local/share)
     local zipfile="arduino-${version}-linux64.tar.xz"
-    pushd /tmp > /dev/null
+    pushd /tmp >/dev/null
     wget -O "$zipfile" "http://downloads.arduino.cc/$zipfile"
     tar -Jxf "$zipfile"
     sudo mv "arduino-${version}" "$install_dir"
     sudo ln -sfT "arduino-${version}" "$install_dir/arduino"
     sudo ln -sf "$install_dir/arduino/arduino" /usr/local/bin/arduino
-    popd > /dev/null
+    popd >/dev/null
   fi
 
   hascmd picocom || sudo apt-get install -q -y picocom
@@ -616,41 +619,43 @@ if (Quarks.isInstalled("StevearcExperimentalQuark").not) {
 0.exit;
 EOF
   sclang /tmp/scsetup.scd
-  nvim --headless +"call scnvim#install()" +qall > /dev/null
+  nvim --headless +"call scnvim#install()" +qall >/dev/null
 }
 
 install-nvm() {
   # Early return on FB devserver
-  if ! hascmd apt-get ; then return; fi
+  if ! hascmd apt-get; then return; fi
   if [ -e ~/.bash.d/nvm.sh ]; then
     source ~/.bash.d/nvm.sh || :
   fi
   nvm current && return
-  local nvm_dir=$(prompt "NVM install dir:" $HOME/.local/)
+  local nvm_dir
+  nvm_dir=$(prompt "NVM install dir:" "$HOME/.local/")
   if [ ! -d "$nvm_dir" ]; then
-    pushd /tmp > /dev/null
+    pushd /tmp >/dev/null
     sudo mkdir -p "$nvm_dir"
     rm -f install.sh
     wget -O install.sh https://raw.githubusercontent.com/creationix/nvm/v0.37.2/install.sh
     chmod +x install.sh
     sudo bash -c "NVM_DIR=$nvm_dir ./install.sh"
     sudo chown -R "$USER:$USER" "$nvm_dir"
-    popd > /dev/null
+    popd >/dev/null
   fi
-  source $nvm_dir/nvm.sh
-  echo "source $nvm_dir/nvm.sh" > ~/.bash.d/nvm.sh
-  local node_version=$(prompt "Install node version:" v12.17.0)
-  nvm ls $node_version || nvm install $node_version
-  nvm ls default | grep $node_version || nvm alias default $node_version
-  nvm current | grep $node_version || nvm use $node_version
+  source "$nvm_dir/nvm.sh"
+  echo "source $nvm_dir/nvm.sh" >~/.bash.d/nvm.sh
+  local node_version
+  node_version=$(prompt "Install node version:" v12.17.0)
+  nvm ls "$node_version" || nvm install "$node_version"
+  nvm ls default | grep "$node_version" || nvm alias default "$node_version"
+  nvm current | grep "$node_version" || nvm use "$node_version"
   if ! hascmd yarn; then
     npm install -g yarn
   fi
 }
 
 add-apt-key-google() {
-  apt-key list | grep -q linux-packages-keymaster@google.com || \
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+  apt-key list | grep -q linux-packages-keymaster@google.com \
+    || wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 }
 
 setup-desktop() {
@@ -708,7 +713,7 @@ setup-gnome() {
 setup-xfce() {
   setup-desktop
   # Remap caps lock to control
-  if ! grep  "XKBOPTIONS.*ctrl:nocaps" /etc/default/keyboard > /dev/null; then
+  if ! grep "XKBOPTIONS.*ctrl:nocaps" /etc/default/keyboard >/dev/null; then
     sudo sed -ie 's/XKBOPTIONS=.*/XKBOPTIONS="ctrl:nocaps"/' /etc/default/keyboard
     sudo dpkg-reconfigure keyboard-configuration
   fi
@@ -760,7 +765,7 @@ setup-custom-packages() {
       software-properties-common
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo add-apt-repository \
-     "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+      "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
      $(lsb_release -cs) \
      stable"
     sudo apt-get update -qq
@@ -773,7 +778,8 @@ setup-custom-packages() {
   fi
   if ! hascmd docker-compose && hascmd docker; then
     if confirm "Install docker-compose?" y; then
-      local latest="$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .name)"
+      local latest
+      latest="$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .name)"
       sudo curl -L "https://github.com/docker/compose/releases/download/${latest}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
       sudo chmod +x /usr/local/bin/docker-compose
       sudo curl -L "https://raw.githubusercontent.com/docker/compose/${latest}/contrib/completion/bash/docker-compose" -o /etc/bash_completion.d/docker-compose
@@ -781,10 +787,10 @@ setup-custom-packages() {
   fi
   sudo apt-get install -y -q gthumb
   if [[ -e ~/bin ]] && [[ ! -e ~/bin/youtube-dl ]]; then
-    pushd ~/bin > /dev/null
+    pushd ~/bin >/dev/null
     wget -O youtube-dl https://yt-dl.org/latest/youtube-dl
     chmod +x youtube-dl
-    popd > /dev/null
+    popd >/dev/null
   fi
 }
 
@@ -801,7 +807,7 @@ main() {
   local commandline=
   local dotfiles=
   local ufw=
-  while getopts "hfgxcpndsuvl:-:" opt; do
+  while getopts "hfgxcpdsSuvl:-:" opt; do
     case $opt in
       -)
         case $OPTARG in
@@ -836,6 +842,9 @@ main() {
       s)
         SYMBOLIC=1
         ;;
+      S)
+        SYMBOLIC=
+        ;;
       h)
         echo "$USAGE"
         exit
@@ -855,7 +864,7 @@ main() {
         ;;
     esac
   done
-  shift $((OPTIND-1))
+  shift $((OPTIND - 1))
   languages=${languages# } # trim leading whitespace
 
   hascmd git || sudo apt-get install -y -q git
