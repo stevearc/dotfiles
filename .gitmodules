@@ -161,3 +161,6 @@
 [submodule "vimplugins/playground"]
 	path = vimplugins/playground
 	url = https://github.com/nvim-treesitter/playground.git
+[submodule "vimplugins/stickybuf.nvim"]
+	path = vimplugins/stickybuf.nvim
+	url = https://github.com/stevearc/stickybuf.nvim.git
