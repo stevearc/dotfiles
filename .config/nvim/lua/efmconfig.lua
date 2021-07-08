@@ -37,6 +37,20 @@ config.python = {
     },
   },
   {
+    lintCommand = "pylint -s n -f parseable --msg-template '{path}:{line}:{column}:{C}:{msg}' '${INPUT}'",
+    lintStdin = false,
+    lintFormats = { "%f:%l:%c:%t:%m" },
+    lintOffsetColumns = 1,
+    lintCategoryMap = {
+      I = "H",
+      R = "I",
+      C = "I",
+      W = "W",
+      E = "E",
+      F = "E",
+    },
+  },
+  {
     formatCommand = "isort - --quiet",
     formatStdin = true,
   },
