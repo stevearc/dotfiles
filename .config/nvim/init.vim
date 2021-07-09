@@ -4,7 +4,6 @@ let g:use_barbar = v:true
 let g:nerd_font = v:true
 let g:completion_plugin = 'compe'
 let g:debug_treesitter = 0
-let g:debug_aerial_fold = 0
 
 " The syntax plugin was causing lag with multiple windows visible
 let g:polyglot_disabled = ['sh']
@@ -29,7 +28,7 @@ set history=1000
 set path=**
 
 " When :find-ing, search for files with this suffix
-set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb,.html,.jinja2,.js,.jsx,.less,.css,.styl
+set suffixesadd=.py,.pyx,.java,.c,.cpp,.rb,.html,.jinja2,.js,.jsx,.less,.css,.styl,.ts,.tsx,.go,.rs
 
 " Make tab completion for files/buffers act like bash
 set wildmenu
@@ -54,9 +53,7 @@ set ruler
 set showcmd
 
 " When a bracket is inserted, briefly jump to the matching one
-" Disabling this for now b/c causing hang & crash in WSL
-" set showmatch
-set noshowmatch
+set showmatch
 
 " Begin searching as soon as you start typing
 set incsearch
@@ -177,12 +174,28 @@ se foldlevelstart=99
 se foldlevel=99
 " Disable fold column
 se foldcolumn=0
+function! CustomFold() abort
+  let l:line = getline(v:foldstart)
+  let l:idx = v:foldstart + 1
+  while l:line =~ '^\s*@' || l:line =~ '^\s*$'
+    let l:line = getline(l:idx)
+    let l:idx += 1
+  endwhile
+  let l:icon = '▼'
+  if g:nerd_font
+    let l:icon = ''
+  endif
+  let l:padding = len(matchlist(l:line, '^\(\s*\)')[1])
+  return printf('%s%s  %s   %d', repeat(' ', l:padding), l:icon, l:line, v:foldend - v:foldstart + 1)
+endfunction
+set fillchars=fold:\ 
+set foldtext=CustomFold()
 
 " Use my universal clipboard tool to copy with <leader>y
-nnoremap <leader>y :call system('clip', @0)<CR>
+nnoremap <leader>y <cmd>call system('clip', @0)<CR>
 
 " Map leader-r to do a global replace of a word
-nmap <leader>r :%s/<C-R>=expand("<cword>")<CR>/<C-R>=expand("<cword>")<CR>
+nnoremap <leader>r <cmd>%s/<C-R>=expand("<cword>")<CR>/<C-R>=expand("<cword>")<CR>
 
 " Expand %% to current directory in command mode
 cabbr <expr> %% expand('%:p:h')
