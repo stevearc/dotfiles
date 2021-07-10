@@ -9,7 +9,7 @@
 # Start-Process -FilePath https://www.microsoft.com/en-gb/p/windows-terminal/9n0dx20hk701
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 set -e
-declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore .shellcheckrc"
+declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore .shellcheckrc .sqliterc"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r XFCE_DOTFILES=".xsessionrc"
 declare -r ALL_LANGUAGES="go lua python js arduino cs rust sc common"
