@@ -90,6 +90,30 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = function(...)
   end
 end
 
+vim.lsp.handlers["window/showMessage"] = function(_, _, result, client_id)
+  local toast = require("toast")
+  local message_type = result.type
+  local message = result.message
+  local client = vim.lsp.get_client_by_id(client_id)
+  local client_name = client and client.name or string.format("id=%d", client_id)
+  if not client then
+    toast("LSP[" .. client_name .. "] client has shut down after sending the message", { type = "error" })
+  end
+  if message_type == vim.lsp.protocol.MessageType.Error then
+    toast("LSP[" .. client_name .. "] " .. message, { type = "error" })
+  else
+    local message_type_name = vim.lsp.protocol.MessageType[message_type]
+    local map = {
+      Error = "error",
+      Warning = "warn",
+      Info = "info",
+      Log = "info",
+    }
+    toast(string.format("LSP[%s] %s\n", client_name, message), { type = map[message_type_name] })
+  end
+  return result
+end
+
 function stevearc.on_update_diagnostics()
   local util = require("qf_helper.util")
   local config = require("qf_helper.config")
