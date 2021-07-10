@@ -6,7 +6,7 @@ if [ "$OSNAME" = "Darwin" ]; then
   MAC=1
 fi
 
-main(){
+main() {
   local usage="$0 [VERSION]
 
 Options:
@@ -52,11 +52,11 @@ Options:
         ;;
     esac
   done
-  shift $((OPTIND-1))
+  shift $((OPTIND - 1))
   VERSION="$1"
 
   if [ -n "$LIST" ]; then
-    curl -s https://api.github.com/repos/neovim/neovim/releases | jq ".[].tag_name" | tr -d '"'
+    curl -s https://api.github.com/repos/neovim/neovim/releases | jq -r ".[].tag_name"
   elif [ -n "$VERSION" ]; then
     echo "Installing NVIM $VERSION"
     if [ -n "$MAC" ]; then
@@ -64,7 +64,7 @@ Options:
     else
       _install_linux
     fi
-    ~/bin/nvim --headless +UpdateRemotePlugins +qall > /dev/null
+    ~/bin/nvim --headless +UpdateRemotePlugins +qall >/dev/null
     echo -n "Installed "
     ~/bin/nvim --version | head -n 1
   else
@@ -88,11 +88,11 @@ _install_linux() {
   [ -n "$SILENT" ] && silent="-s"
   curl $silent -L "https://github.com/neovim/neovim/releases/download/$VERSION/nvim.appimage" -o nvim.appimage
   chmod +x nvim.appimage
-  if ! ./nvim.appimage --headless +qall > /dev/null 2>&1; then
+  if ! ./nvim.appimage --headless +qall >/dev/null 2>&1; then
     mkdir -p ~/.appimages
     mv nvim.appimage ~/.appimages
     pushd ~/.appimages
-    ./nvim.appimage --appimage-extract > /dev/null
+    ./nvim.appimage --appimage-extract >/dev/null
     rm -rf nvim-appimage
     mv squashfs-root nvim-appimage
     ln -s -f ~/.appimages/nvim-appimage/AppRun ~/bin/nvim

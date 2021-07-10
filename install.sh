@@ -480,9 +480,8 @@ install-language-arduino() {
 
 install-language-js() {
   install-nvm
-  hascmd prettier || yarn global add prettier
   hascmd flow || yarn global add flow-bin
-  yarn global add typescript-language-server
+  hascmd typescript-language-server || yarn global add typescript-language-server
 }
 
 install-language-common() {
@@ -494,9 +493,11 @@ install-language-common() {
   yarn global add yaml-language-server
   yarn global add yaml-language-server
   install-language-python
-  pushd ~/bin
-  $REPO/make_standalone.py -s vint vim-vint
-  popd
+  if ! hascmd vint; then
+    pushd ~/bin
+    $REPO/make_standalone.py -s vint vim-vint
+    popd
+  fi
   install-language-go
   go get github.com/mattn/efm-langserver
   GO111MODULE=on go get mvdan.cc/sh/v3/cmd/shfmt
@@ -628,26 +629,28 @@ install-nvm() {
   if [ -e ~/.bash.d/nvm.sh ]; then
     source ~/.bash.d/nvm.sh || :
   fi
-  nvm current && return
+  hascmd nvm && nvm current && return
   local nvm_dir
-  nvm_dir=$(prompt "NVM install dir:" "$HOME/.local/")
+  nvm_dir=$(prompt "NVM install dir:" "${XDG_CONFIG_HOME-$HOME/.config}/nvm")
   if [ ! -d "$nvm_dir" ]; then
-    pushd /tmp >/dev/null
-    sudo mkdir -p "$nvm_dir"
-    rm -f install.sh
-    wget -O install.sh https://raw.githubusercontent.com/creationix/nvm/v0.37.2/install.sh
-    chmod +x install.sh
-    sudo bash -c "NVM_DIR=$nvm_dir ./install.sh"
-    sudo chown -R "$USER:$USER" "$nvm_dir"
-    popd >/dev/null
+    mkdir -p "$nvm_dir"
+    local latest
+    latest=$(
+      curl -s https://api.github.com/repos/nvm-sh/nvm/releases \
+        | jq -r ".[].tag_name" \
+        | sort -rV \
+        | head -n 1
+    )
+    curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/$latest/install.sh" \
+      | NVM_DIR="$nvm_dir" PROFILE=/dev/null bash
   fi
   source "$nvm_dir/nvm.sh"
-  echo "source $nvm_dir/nvm.sh" >~/.bash.d/nvm.sh
+  echo -e "source $nvm_dir/nvm.sh\nsource $nvm_dir/bash_completion" >~/.bash.d/nvm.sh
   local node_version
-  node_version=$(prompt "Install node version:" v12.17.0)
-  nvm ls "$node_version" || nvm install "$node_version"
-  nvm ls default | grep "$node_version" || nvm alias default "$node_version"
-  nvm current | grep "$node_version" || nvm use "$node_version"
+  node_version=$(nvm ls-remote | tail -n 1 | awk '{print $1}')
+  node_version=$(prompt "Install node version:" "$node_version")
+  nvm ls "$node_version" || nvm install --default "$node_version"
+  nvm use default
   if ! hascmd yarn; then
     npm install -g yarn
   fi

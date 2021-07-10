@@ -44,18 +44,18 @@ export PATH=$HOME/bin:$GOROOT/bin:$GOPATH/bin:$PATH
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
+  debian_chroot=$(cat /etc/debian_chroot)
 fi
 
 function git_branch {
   [ -n "$NO_SHOW_GIT_BRANCH" ] && return
-    __cur_ref=`git log --abbrev-commit -1 --decorate=short --pretty="tformat:%h{%D" 2> /dev/null | sed -e 's/{.*\(tag: [^ ,]*\).*$/}\1/' -e 's/{.*//' -e 's/ //' -e 's/}/ /' 2> /dev/null`
-    __git_branch=`git branch --no-color 2> /dev/null | grep -e ^* | sed -E s/^\\\*\ \(.*\)$/\\\1/ | sed -E s/^\\\\\(.*\\\\\)$/"$__cur_ref"/`
-    echo `echo $__git_branch | sed -E s/\(.+\)/\[\\\1\]/`
+  __cur_ref=$(git log --abbrev-commit -1 --decorate=short --pretty="tformat:%h{%D" 2>/dev/null | sed -e 's/{.*\(tag: [^ ,]*\).*$/}\1/' -e 's/{.*//' -e 's/ //' -e 's/}/ /' 2>/dev/null)
+  __git_branch=$(git branch --no-color 2>/dev/null | grep -e ^* | sed -E s/^\\*\ \(.*\)$/\\1/ | sed -E s/^\\\(.*\\\)$/"$__cur_ref"/)
+  echo $(echo $__git_branch | sed -E s/\(.+\)/\[\\1\]/)
 }
 function hg_branch {
   [ -n "$NO_SHOW_HG_BRANCH" ] && return
-  local branch=$(hg id -B -t 2> /dev/null)
+  local branch=$(hg id -B -t 2>/dev/null)
   if [ -n "$branch" ]; then
     echo "[$branch]"
   fi
@@ -69,14 +69,14 @@ __git_branch_color="\[\033[0;32m\]"
 __nvm_color="\[\033[0;37m\]"
 __prompt_tail="\[\033[00m\]$"
 function __nvm_version {
-  command -v nvm > /dev/null || return
-  local root=`git rev-parse --show-toplevel 2> /dev/null`
+  command -v nvm >/dev/null || return
+  local root=$(git rev-parse --show-toplevel 2>/dev/null)
   [ -n "$root" ] || return
   [ -e "$root/package.json" ] || return
-  echo "[`nvm current`]"
+  echo "[$(nvm current)]"
 }
 function __timestamp {
-  echo "`date +%H:%M:%S` "
+  echo "$(date +%H:%M:%S) "
 }
 PS1='$(__timestamp)'"$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)$(hg_branch)'"$__nvm_color"'$(__nvm_version)'"$__prompt_tail$__last_color "
 if [ -n "$PROFILE_STARTUP" ]; then
@@ -96,13 +96,13 @@ fi
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
   . /etc/bash_completion
 fi
-if [ $MAC ] && command -v brew > /dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
+if [ $MAC ] && command -v brew >/dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
   . $(brew --prefix)/etc/bash_completion
 fi
 
 # Default applications
-if command -v nvim > /dev/null; then
-  if [ -n "$INSIDE_NVIM" ] && command -v nvr > /dev/null; then
+if command -v nvim >/dev/null; then
+  if [ -n "$INSIDE_NVIM" ] && command -v nvr >/dev/null; then
     export EDITOR="nvr --remote-wait -cc '0wincmd w'"
   else
     export EDITOR=nvim
@@ -114,7 +114,7 @@ export GIT_EDITOR="$EDITOR"
 export SVN_EDITOR="$EDITOR"
 export BROWSER=google-chrome-stable
 
-command -v sourcedir > /dev/null 2>&1 || sourcedir() {
+command -v sourcedir >/dev/null 2>&1 || sourcedir() {
   if [ -d "$1" ]; then
     for filename in $1/*.sh; do
       if [ -e "$filename" ]; then
@@ -131,22 +131,22 @@ sourcedir ~/.bash.d
 sourcedir ~/.bash.completion
 
 # Autoenv
-if command -v activate.sh > /dev/null; then
+if command -v activate.sh >/dev/null; then
   source activate.sh
   autoenv_init
 fi
 
-if command -v yarn > /dev/null; then
-  pushd $HOME > /dev/null
+if command -v yarn >/dev/null; then
+  pushd $HOME >/dev/null
   export PATH="$(yarn global bin | grep -v "Using globally installed version of Yarn"):$PATH"
-  popd > /dev/null
+  popd >/dev/null
 fi
 export PATH="/usr/local/sbin:$PATH"
 export NVIM_LOG_FILE_PATH="$HOME/.nvimlog"
-if command -v direnv > /dev/null; then
+if command -v direnv >/dev/null; then
   eval "$(direnv hook bash)"
   show_virtual_env() {
-    if [[ -n "$VIRTUAL_ENV" && -n "$DIRENV_DIR" ]]; then
+    if [[ -n $VIRTUAL_ENV && -n $DIRENV_DIR ]]; then
       echo "($(basename $VIRTUAL_ENV)) "
     fi
   }
