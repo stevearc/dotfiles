@@ -17,3 +17,8 @@ let g:db_ui_table_helpers = {
 \     'Count': 'select count(*) from "{table}"',
 \   },
 \ }
+
+aug DBUI
+  au!
+  au BufEnter * if !empty(get(b:, 'db')) | se nobuflisted | endif
+aug END
