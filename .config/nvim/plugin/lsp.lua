@@ -80,6 +80,16 @@ local ft_config = setmetatable({}, {
   end,
 })
 
+local diagnostics_handler = vim.lsp.handlers["textDocument/publishDiagnostics"]
+vim.lsp.handlers["textDocument/publishDiagnostics"] = function(...)
+  local args = { ... }
+  local client_id = args[4]
+  local client = vim.lsp.get_client_by_id(client_id)
+  if client.config.diagnostics ~= false then
+    diagnostics_handler(...)
+  end
+end
+
 function stevearc.on_update_diagnostics()
   local util = require("qf_helper.util")
   local config = require("qf_helper.config")
@@ -186,7 +196,6 @@ local lspservers = {
   "html",
   "jsonls",
   "omnisharp",
-  "pyright",
   "vimls",
   "yamlls",
 }
@@ -195,11 +204,16 @@ for _, server in ipairs(lspservers) do
     on_attach = on_attach,
   })
 end
+require("lspconfig").pyright.setup({
+  on_attach = on_attach,
+  diagnostics = false,
+})
 require("lspconfig").efm.setup({
   on_attach = on_attach,
   init_options = { documentFormatting = true },
   cmd = { "efm-langserver", "-logfile", "/tmp/efm.log", "-loglevel", "4" },
   filetypes = vim.tbl_keys(require("efmconfig")),
+  root_dir = require("lspconfig").util.root_pattern(".git", "setup.py", "setup.cfg", "pyproject.toml", "package.json"),
   settings = {
     languages = require("efmconfig"),
   },
