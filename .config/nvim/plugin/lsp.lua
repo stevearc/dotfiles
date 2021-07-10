@@ -204,9 +204,23 @@ for _, server in ipairs(lspservers) do
     on_attach = on_attach,
   })
 end
+local function is_using_sqlalchemy()
+  local util = require("lspconfig").util
+  local path = util.path
+  local setup = util.root_pattern("setup.cfg")(vim.fn.getcwd())
+  if not setup then
+    return false
+  end
+  for line in io.lines(path.join(setup, "setup.cfg")) do
+    if string.find(line, "sqlalchemy.ext.mypy.plugin") or string.find(line, "sqlmypy") then
+      return true
+    end
+  end
+  return false
+end
 require("lspconfig").pyright.setup({
   on_attach = on_attach,
-  diagnostics = false,
+  diagnostics = not is_using_sqlalchemy(),
 })
 require("lspconfig").efm.setup({
   on_attach = on_attach,
