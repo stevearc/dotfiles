@@ -17,7 +17,7 @@ nnoremap <silent><buffer><expr> M defx#do_action('new_multiple_files')
 nnoremap <silent><buffer><expr> C defx#do_action('toggle_columns', 'indent:icons:filename:type:size:time')
 nnoremap <silent><buffer><expr> S defx#do_action('toggle_sort', 'time')
 nnoremap <silent><buffer><expr> D defx#do_action('remove')
-nnoremap <silent><buffer><expr> <leader>n defx#do_action('rename')
+nnoremap <silent><buffer><expr> r defx#do_action('rename')
 nnoremap <silent><buffer><expr> ! defx#do_action('execute_command')
 nnoremap <silent><buffer><expr> x defx#do_action('execute_system')
 nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
@@ -38,6 +38,7 @@ nnoremap <silent><buffer><expr> > defx#do_action('resize', defx#get_context().wi
 nnoremap <silent><buffer><expr> < defx#do_action('resize', defx#get_context().winwidth - 10)
 nnoremap <silent><buffer> t <cmd>call <sid>OpenTerm()<CR>
 nnoremap <silent><buffer> <leader>t <cmd>call <sid>FindDirFiles()<CR>
+nnoremap <silent><buffer> H <cmd>call nvim_set_current_dir(<sid>GetDefxDir())<CR>
 
 fun! s:GetDefxDir() abort
   let l:candidate = defx#get_candidate()
