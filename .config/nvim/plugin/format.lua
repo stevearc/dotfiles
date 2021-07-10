@@ -1,6 +1,5 @@
 local stevearc = require("stevearc")
-
-local AUTOFORMAT_THRESHOLD = 10000
+local projects = require("projects")
 
 vim.g.smartformat_enabled = true
 vim.cmd([[command! FormatDisable let g:smartformat_enabled = v:false]])
@@ -20,7 +19,7 @@ end
 
 local function js_has_format()
   for i = 1, vim.api.nvim_buf_line_count(0) do
-    local line = vim.api.nvim_buf_get_lines(0, i, i + 1, true)[1]
+    local line = vim.api.nvim_buf_get_lines(0, i - 1, i, true)[1]
     if string.find(line, "@format") then
       return true
     elseif not string.find(line, "^%s*//") and not string.find(line, "^%s*/?%*") then
@@ -41,20 +40,17 @@ local function has_format_directive()
 end
 
 function stevearc.autoformat()
+  local project = projects[0]
   if
     not vim.g.smartformat_enabled
     or vim.g.smartformat_enabled == 0
-    or vim.api.nvim_buf_line_count(0) > AUTOFORMAT_THRESHOLD
-    or not has_format_directive()
+    or not project.autoformat
+    or vim.api.nvim_buf_line_count(0) > project.autoformat_threshold
   then
     return
   end
-  local no_format_dirs = vim.g.no_format_dirs or {}
-  local filename = vim.fn.expand("%:p")
-  for _, dir in ipairs(no_format_dirs) do
-    if string.find(filename, dir) == 1 then
-      return
-    end
+  if project.autoformat == "directive" and not has_format_directive() then
+    return
   end
   local pos = vim.api.nvim_win_get_cursor(0)
   vim.lsp.buf.formatting_sync(nil, 1000)

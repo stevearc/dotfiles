@@ -190,7 +190,11 @@ local on_attach = function(client)
   mapper("n", "<C-f>", '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(1)<CR>')
   mapper("n", "<C-b>", '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(-1)<CR>')
   if client.supports_method("textDocument/formatting") then
-    vim.cmd([[autocmd BufWritePre <buffer> lua require'stevearc'.autoformat()]])
+    vim.cmd([[aug LspAutoformat
+      au! * <buffer>
+      autocmd BufWritePre <buffer> lua require'stevearc'.autoformat()
+      aug END
+    ]])
     mapper("n", "=", "<cmd>lua vim.lsp.buf.formatting()<CR>")
   end
   safemap("textDocument/rangeFormatting", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")

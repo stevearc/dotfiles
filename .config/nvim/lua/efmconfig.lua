@@ -1,8 +1,9 @@
+local projects = require("projects")
 local config = {}
 
 local function prettier(parser)
   local parsearg = parser and string.format("--parser %s", parser) or ""
-  local cmd = string.format("prettier %s --stdin-filepath '${INPUT}'", parsearg)
+  local cmd = string.format("%sprettier %s --stdin-filepath '${INPUT}'", projects[0].prettier_prefix, parsearg)
   return {
     formatCommand = cmd,
     formatStdin = true,
