@@ -828,6 +828,20 @@ Opts:
 }
 
 # shellcheck disable=SC2034
+DOTCMD_UPGRADE_VIM_PLUGINS_DOC="Upgrade vim plugin submodules"
+dotcmd-upgrade-vim-plugins() {
+  for plugdir in vimplugins/*; do
+    echo "    $plugdir"
+    cd "$plugdir"
+    local branchname
+    branchname=$(git remote show origin | grep HEAD | cut -f 2 -d: | tr -d '[:space:]')
+    git checkout -q "$branchname"
+    git pull --rebase
+    cd -
+  done
+}
+
+# shellcheck disable=SC2034
 DOTCMD_DESKTOP_DOC="Install config and settings for desktop environment"
 # shellcheck disable=SC2120
 dotcmd-desktop() {
