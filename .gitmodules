@@ -69,9 +69,6 @@
 	path = vimplugins/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig
 	ignore = untracked
-[submodule "vimplugins/completion-nvim"]
-	path = vimplugins/completion-nvim
-	url = https://github.com/nvim-lua/completion-nvim.git
 [submodule "vimplugins/flow-coverage.nvim"]
 	path = vimplugins/flow-coverage.nvim
 	url = https://github.com/stevearc/flow-coverage.nvim.git
@@ -99,9 +96,6 @@
 [submodule "vimplugins/vim-vsnip-snippets"]
 	path = vimplugins/vim-vsnip-snippets
 	url = https://github.com/stevearc/vim-vsnip-snippets.git
-[submodule "vimplugins/completion-buffers"]
-	path = vimplugins/completion-buffers
-	url = https://github.com/steelsojka/completion-buffers.git
 [submodule "vimplugins/startuptime"]
 	path = vimplugins/startuptime
 	url = https://github.com/tweekmonster/startuptime.vim.git

@@ -2,7 +2,6 @@ let g:python3_host_prog = expand("~/.envs/py3/bin/python")
 
 let g:use_barbar = v:true
 let g:nerd_font = v:true
-let g:completion_plugin = 'compe'
 let g:debug_treesitter = 0
 
 " The syntax plugin was causing lag with multiple windows visible
