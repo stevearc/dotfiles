@@ -11,4 +11,11 @@ end
 
 neogit.setup(opts)
 
-vim.api.nvim_set_keymap("n", "<leader>n", "<cmd>Neogit<CR>", { silent = true })
+vim.cmd([[
+aug NeoGitMaps
+  au! * <buffer>
+  au FileType NeogitStatus nmap <buffer> <leader>c q
+aug END
+]])
+
+vim.api.nvim_set_keymap("n", "<leader>gs", "<cmd>Neogit<CR>", { silent = true })

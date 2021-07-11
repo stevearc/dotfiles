@@ -158,6 +158,10 @@ nnoremap k gk
 vnoremap j gj
 vnoremap k gk
 
+" Paste last text that was yanked, not deleted
+nnoremap <leader>p "0p
+nnoremap <leader>P "0P
+
 augroup VCenterCursor
   au!
   au BufEnter,WinEnter,WinNew,VimResized *,*.*

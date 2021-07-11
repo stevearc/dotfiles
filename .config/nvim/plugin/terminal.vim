@@ -1,5 +1,4 @@
 " Customizations for terminal mode
-" tnoremap \\ <C-\><C-N>
 tnoremap \\ <C-\><C-N>
 
 if g:use_barbar

@@ -13,16 +13,16 @@ else
   set grepprg=grep\ -nIR\ $*\ .
 endif
 
-function! BufGrep(text) abort
+function! s:Bufgrep(text) abort
   cclose
   %argd
-  let buf = bufnr('%')
+  let l:buf = nvim_get_current_buf()
   bufdo argadd %
-  exec 'b' buf
-  exec 'vimgrep /' . a:text . '/ ##'
+  call nvim_set_current_buf(l:buf)
+  exec 'silent! vimgrep /' . a:text . '/gj ##'
   QFOpen!
 endfunction
 
-nnoremap <leader>g <cmd>cclose \| silent grep! <cword> \| QFOpen!<CR>
-command! -nargs=+ Bufgrep call BufGrep('<args>')
-nnoremap gR :call BufGrep(expand('<cword>'))<CR>
+nnoremap gw <cmd>cclose \| silent grep! <cword> \| QFOpen!<CR>
+command! -nargs=+ Bufgrep call <sid>Bufgrep('<args>')
+nnoremap gbw <cmd>call <sid>Bufgrep(expand('<cword>'))<CR>

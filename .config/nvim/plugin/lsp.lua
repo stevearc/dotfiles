@@ -176,7 +176,6 @@ local on_attach = function(client)
   safemap("type_definition", "n", "gtd", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
   safemap("implementation", "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
   safemap("find_references", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
-  safemap("workspace_symbol", "n", "gs", "<cmd>lua vim.lsp.buf.workspace_symbol()<CR>")
   if config.help then
     safemap("hover", "n", "K", '<cmd>lua require("lspsaga.hover").render_hover_doc()<CR>')
   end
@@ -185,8 +184,8 @@ local on_attach = function(client)
     mapper("i", "<c-k>", '<cmd>lua require("lspsaga.signaturehelp").signature_help()<CR>')
   end
   if config.code_action then
-    mapper("n", "<leader>p", '<cmd>lua require("lspsaga.codeaction").code_action()<CR>')
-    mapper("v", "<leader>p", ':<C-U>lua require("lspsaga.codeaction").range_code_action()<CR>')
+    mapper("n", "<leader>fa", '<cmd>lua require("lspsaga.codeaction").code_action()<CR>')
+    mapper("v", "<leader>fa", ':<C-U>lua require("lspsaga.codeaction").range_code_action()<CR>')
   end
   mapper("n", "<C-f>", '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(1)<CR>')
   mapper("n", "<C-b>", '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(-1)<CR>')

@@ -26,6 +26,7 @@ nnoremap <silent><buffer><expr> ; defx#do_action('repeat')
 nnoremap <silent><buffer><expr> h defx#do_action('cd', ['..'])
 nnoremap <silent><buffer><expr> - defx#do_action('cd', ['..'])
 nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
+nnoremap <silent><buffer><expr> ` defx#do_action('cd', getcwd())
 nnoremap <silent><buffer><expr> q defx#do_action('quit')
 nnoremap <silent><buffer><expr> <Space> defx#do_action('toggle_select') . 'j'
 nnoremap <silent><buffer><expr> * defx#do_action('toggle_select_all')
