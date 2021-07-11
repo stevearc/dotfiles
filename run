@@ -12,25 +12,8 @@ set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore .shellcheckrc .sqliterc"
 declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r XFCE_DOTFILES=".xsessionrc"
-declare -r ALL_LANGUAGES="go lua python js arduino cs rust sc common"
-declare -r USAGE="$0 [OPTIONS]
--h            Print this help menu
--d            Install dotfiles
--s            Install dotfiles as symbolic links to this repo (default)
--S            Install dotfiles by copying (no symbolic links)
--c            Install command line tools
--u            Set up ufw
--l            Install language support (may be specified multiple times)
-              Use 'all' to install all support for all languages.
--g            Set up a typical gnome environment
--x            Set up a typical xfce environment
--p            Install some of my custom desktop packages
--f            Force reinstallation of all programs
--v            Verbose
---languages   List all languages that are supported and exit
-"
-SYMBOLIC=1
 
+HERE=$(dirname "$(realpath "$0")")
 OSNAME=$(uname -s)
 if [ "$OSNAME" = "Darwin" ]; then
   MAC=1
@@ -49,7 +32,6 @@ command -v realpath >/dev/null 2>&1 || realpath() {
     [[ $1 == /* ]] && echo "$1" || echo "$PWD/${1#./}"
   fi
 }
-REPO=$(dirname "$(realpath "$0")")
 
 prompt() {
   # $1 [str] - Prompt string
@@ -143,12 +125,6 @@ clear-checkpoints() {
   rm -rf "$CHECKPOINT_DIR"
 }
 
-installed() {
-  # Assume everything is already installed on mac/windows
-  [ ! $LINUX ] && return
-  dpkg --get-selections | grep "^${1}\s*install$" >/dev/null
-}
-
 hascmd() {
   if command -v "$1" >/dev/null 2>&1; then
     return 0
@@ -163,21 +139,6 @@ winsudo() {
     return
   fi
   powershell.exe -command "start-process -verb runas powershell" "'-command $*'"
-}
-
-cp-vim-plugin() {
-  local plugin=${1?Must specify a vim plugin}
-  local parent="$HOME/.local/share/nvim/site/pack/$plugin/start"
-  local dest="$parent/$plugin"
-  mkdir -p "$parent"
-  if [ $SYMBOLIC ]; then
-    if [ -e "$dest" ] && [ ! -L "$dest" ]; then
-      rm -rf "$dest"
-    fi
-    link "$REPO/vimplugins/$plugin" "$dest"
-  else
-    rsync -lrp --delete --exclude .git "$REPO/vimplugins/$plugin" "$dest"
-  fi
 }
 
 setup-install-progs() {
@@ -196,202 +157,37 @@ setup-install-progs() {
   checkpoint setup-progs
 }
 
-install-cli() {
-  has-checkpoint cli && return
-  if [ $WINDOWS ]; then
-    pacman -Sy --noconfirm rsync tmux
-  elif [ $MAC ]; then
-    hascmd tmux || install_tmux.sh
-  else
-    sudo apt-get install -y -q \
-      autossh \
-      bsdmainutils \
-      direnv \
-      htop \
-      glances \
-      inotify-tools \
-      iotop \
-      jq \
-      lsof \
-      mercurial \
-      netcat \
-      openssh-client \
-      rsync \
-      shellcheck \
-      ripgrep \
-      shellcheck \
-      tmux \
-      tree \
-      unzip \
-      wmctrl \
-      xsel
-  fi
-
-  checkpoint cli
+print-command-help() {
+  local prefix="$1"
+  local commands
+  commands="$(declare -F | grep "\\b$prefix" | awk '{print $3}')"
+  (for cmd in $commands; do
+    local docvar
+    docvar="$(echo "$cmd" | tr '-' '_' | tr '[:lower:]' '[:upper:]')_DOC"
+    local doc
+    doc=$(eval 'echo $'"$docvar")
+    echo "  ${cmd#$prefix}{$doc"
+  done) | column -s '{' -t
 }
 
-install-cli-after() {
-  [ ! $LINUX ] && [ ! $MAC ] && return
-  if ! hascmd nvim; then
-    if confirm "From github appimage?" y; then
-      local version
-      install_neovim.sh --list
-      version=$(prompt "Version?" nightly)
-      install_neovim.sh "$version"
-    elif confirm "From source?" n; then
-      sudo apt-get install -y libtool autoconf automake cmake g++ gettext pkg-config \
-        unzip python3 python3-dev python3-venv ruby-dev
-      sudo apt-get install -y libtool-bin
-      pushd /tmp
-      test -d neovim || git clone https://github.com/neovim/neovim.git
-      cd neovim
-      make CMAKE_BUILD_TYPE=Release
-      sudo make install
-      popd
-    else
-      sudo apt-get install -y neovim
-    fi
-  fi
+# shellcheck disable=SC2034
+DOTCMD_LANGUAGE_DOC="Install support for programming languages"
+dotcmd-language() {
+  if [ "$1" == "-h" ] || [ -z "$1" ]; then
+    echo "$0 language [<language>...]
 
-  # Let's just always do the things for neovim
-  [ -d ~/.envs ] || mkdir ~/.envs
-  [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
-  ~/.envs/py3/bin/pip install -q wheel
-  ~/.envs/py3/bin/pip install -q pynvim
-
-  if ! hascmd nvr; then
-    mkdir -p ~/bin
-    pushd ~/bin
-    $REPO/make_standalone.py -s nvr neovim
-    popd
-  fi
-
-  if [ $LINUX ]; then
-    mkdir -p ~/.local/share/fonts
-    pushd ~/.local/share/fonts
-    if [ ! -e UbuntuMono.zip ]; then
-      wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/UbuntuMono.zip
-      unzip UbuntuMono.zip
-    fi
-    popd
-  fi
-
-  # Probably don't care about clipper anymore
-  # if ! nc -z localhost 8377 && confirm "Install clipper?" n; then
-  #   install-language-go
-  #   go get github.com/wincent/clipper
-  #   go build github.com/wincent/clipper
-  #   sudo cp "$GOPATH/bin/clipper" /usr/local/bin
-  #   if hascmd systemctl; then
-  #     mkdir -p ~/.config/systemd/user
-  #     cp "$GOPATH/src/github.com/wincent/clipper/contrib/linux/systemd-service/clipper.service" ~/.config/systemd/user
-  #     sed -ie 's|^ExecStart.*|ExecStart=/usr/local/bin/clipper -l /var/log/clipper.log -e xsel -f "-bi"|' ~/.config/systemd/user/clipper.service
-  #     systemctl --user daemon-reload
-  #     systemctl --user enable clipper.service
-  #     systemctl --user start clipper.service
-  #   else
-  #     sudo cp clipper.conf /etc/init
-  #     sudo service clipper start
-  #   fi
-  # fi
-}
-
-install-dotfiles() {
-  if [ $SYMBOLIC ]; then
-    for dotfile in $CLI_DOTFILES; do
-      link "$REPO/$dotfile" "$HOME/$dotfile"
-    done
-  else
-    rsync -lrp $CLI_DOTFILES "$HOME"
-  fi
-
-  mkdir -p ~/bin
-  if [ $SYMBOLIC ]; then
-    for executable in bin/*; do
-      link "$REPO/$executable" "$HOME/$executable"
-    done
-    link "$REPO/parseargs/parseargs.sh" "$HOME/bin/parseargs.sh"
-  else
-    rsync -lrp bin "$HOME/bin"
-    cp "$REPO/parseargs/parseargs.sh" "$HOME/bin/"
-  fi
-
-  rsync -lrp .docker "$HOME"
-  mkdir -p ~/.config
-  if [ $SYMBOLIC ]; then
-    link "$REPO/.config/nvim" "$HOME/.config/nvim"
-  else
-    rsync -lrp .config/nvim ~/.config/
-  fi
-  rm -rf ~/.local/share/nvim/site/pack
-  for plugin in $REPO/vimplugins/*; do
-    cp-vim-plugin "$(basename $plugin)"
-  done
-
-  mkdir -p ~/.bash.d
-  if [ $SYMBOLIC ]; then
-    for file in bash.d/*; do
-      link "$REPO/$file" "$HOME/.$file"
-    done
-  else
-    rsync -lrp bash.d "$HOME/.bash.d"
-  fi
-
-  if [ $WINDOWS ]; then
-    rsync -lrp win/ "$HOME"
-  fi
-  if [ -e ~/.bash_profile ]; then
-    grep "source ~/.bashrc" ~/.bash_profile >/dev/null 2>&1 || echo "source ~/.bashrc" >>~/.bash_profile
-  fi
-}
-
-install-security() {
-  has-checkpoint security && return
-  installed ufw || sudo apt-get install -y -q ufw
-  sudo ufw default deny incoming
-  sudo ufw default allow outgoing
-  if confirm "Allow ssh connections?" y; then
-    sudo ufw allow 22/tcp
-    sudo apt-get install -y -q openssh-server
-  fi
-  if confirm "Allow steam connections?" y; then
-    sudo ufw allow 27031/udp
-    sudo ufw allow 27036/udp
-    sudo ufw allow 27036/tcp
-    sudo ufw allow 27037/tcp
-  fi
-  sudo ufw enable
-  checkpoint security
-}
-
-install-languages() {
-  local languages="$1"
-  if [ -z "$languages" ]; then
+Languages:"
+    print-command-help install-language-
     return
   fi
-  if [ "$languages" == "all" ]; then
-    languages="$ALL_LANGUAGES"
-  fi
-  setup-install-progs
-  for language in $languages; do
-    install-language-$language
+  local language="$1"
+  shift
+  while [ -n "$language" ]; do
+    local cmd="install-language-$language"
+    $cmd
+    language="$1"
+    shift
   done
-}
-
-install-dotnet() {
-  if hascmd dotnet || ! hascmd apt-get; then
-    return
-  fi
-  # From https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
-  pushd /tmp
-  wget "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" -O packages-microsoft-prod.deb
-  sudo dpkg -i packages-microsoft-prod.deb
-
-  sudo apt-get update
-  sudo apt-get install -y apt-transport-https
-  sudo apt-get update
-  sudo apt-get install -y dotnet-sdk-3.1
-  popd
 }
 
 install-language-python() {
@@ -404,14 +200,24 @@ install-language-python() {
   # Early return on FB devserver
   if ! hascmd apt-get; then return; fi
   if ! hascmd pyright; then
-    install-nvm
-    yarn global add pyright
+    dc-install-nvm
+    yarn global add -s pyright
   fi
   sudo apt-get install -y -q \
     python3-dev \
     python3-pip \
     ipython3 \
     python3-restructuredtext-lint
+}
+
+install-language-vim() {
+  yarn global add -s vim-language-server
+  install-language-python
+  if ! hascmd vint; then
+    pushd ~/bin
+    "$HERE/make_standalone.py" -s vint vim-vint
+    popd
+  fi
 }
 
 install-language-rust() {
@@ -479,28 +285,35 @@ install-language-arduino() {
 }
 
 install-language-js() {
-  install-nvm
-  hascmd flow || yarn global add flow-bin
-  hascmd typescript-language-server || yarn global add typescript-language-server
+  dc-install-nvm
+  yarn global add -s flow-bin typescript-language-server
 }
 
+# shellcheck disable=SC2034
+INSTALL_LANGUAGE_COMMON_DOC="Languages that I commonly use"
 install-language-common() {
-  sudo apt-get install -yq pandoc yamllint
-  install-nvm
-  yarn global add bash-language-server
-  yarn global add vscode-json-languageserver
-  yarn global add vim-language-server
-  yarn global add yaml-language-server
-  yarn global add yaml-language-server
   install-language-python
-  if ! hascmd vint; then
-    pushd ~/bin
-    $REPO/make_standalone.py -s vint vim-vint
-    popd
-  fi
+  install-language-js
   install-language-go
-  go get github.com/mattn/efm-langserver
-  GO111MODULE=on go get mvdan.cc/sh/v3/cmd/shfmt
+  install-language-rust
+  install-language-lua
+  install-language-vim
+  install-language-misc
+}
+
+# shellcheck disable=SC2034
+INSTALL_LANGUAGE_MISC_DOC="Random small languages like json & yaml"
+install-language-misc() {
+  sudo apt-get install -yq pandoc yamllint
+  dc-install-nvm
+  yarn global add -s bash-language-server vscode-json-languageserver yaml-language-server
+  install-language-go
+  if ! hascmd efm-langserver; then
+    go get github.com/mattn/efm-langserver
+  fi
+  if ! hascmd shfmt; then
+    GO111MODULE=on go get mvdan.cc/sh/v3/cmd/shfmt
+  fi
 }
 
 install-language-lua() {
@@ -526,21 +339,19 @@ install-language-lua() {
 }
 
 install-language-cs() {
-  if [ ! $WSL ]; then
-    return
-  fi
   # install-dotnet
   echo "Installing omnisharp doesn't work right now. I'll fix it next time I need to work with C#"
-  nvim --headless +"LspInstall omnisharp" +qall
 }
 
 install-language-sc() {
   local SC_VERSION="Version-3.11.2"
-  sudo adduser $USER audio
-  # Allow local network traffic to supercollider
-  sudo ufw allow proto udp from 192.168.0.0/16 to any port 57120
-  # Allow local network traffic for TouchOSC editor
-  sudo ufw allow from 192.168.0.0/16 to any port 6666
+  sudo adduser "$USER" audio
+  if hascmd ufw; then
+    # Allow local network traffic to supercollider
+    sudo ufw allow proto udp from 192.168.0.0/16 to any port 57120
+    # Allow local network traffic for TouchOSC editor
+    sudo ufw allow from 192.168.0.0/16 to any port 6666
+  fi
   if ! hascmd scide; then
     sudo apt-get install -yq jackd2 build-essential cmake g++ libsndfile1-dev libjack-jackd2-dev libfftw3-dev libxt-dev libavahi-client-dev libasound2-dev libicu-dev libreadline6-dev libudev-dev pkg-config libncurses5-dev qt5-default qt5-qmake qttools5-dev qttools5-dev-tools qtdeclarative5-dev qtwebengine5-dev libqt5svg5-dev libqt5websockets5-dev
     pushd /tmp
@@ -623,73 +434,10 @@ EOF
   nvim --headless +"call scnvim#install()" +qall >/dev/null
 }
 
-install-nvm() {
-  # Early return on FB devserver
-  if ! hascmd apt-get; then return; fi
-  if [ -e ~/.bash.d/nvm.sh ]; then
-    source ~/.bash.d/nvm.sh || :
-  fi
-  hascmd nvm && nvm current && return
-  local nvm_dir
-  nvm_dir=$(prompt "NVM install dir:" "${XDG_CONFIG_HOME-$HOME/.config}/nvm")
-  if [ ! -d "$nvm_dir" ]; then
-    mkdir -p "$nvm_dir"
-    local latest
-    latest=$(
-      curl -s https://api.github.com/repos/nvm-sh/nvm/releases \
-        | jq -r ".[].tag_name" \
-        | sort -rV \
-        | head -n 1
-    )
-    curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/$latest/install.sh" \
-      | NVM_DIR="$nvm_dir" PROFILE=/dev/null bash
-  fi
-  source "$nvm_dir/nvm.sh"
-  echo -e "source $nvm_dir/nvm.sh\nsource $nvm_dir/bash_completion" >~/.bash.d/nvm.sh
-  local node_version
-  node_version=$(nvm ls-remote | tail -n 1 | awk '{print $1}')
-  node_version=$(prompt "Install node version:" "$node_version")
-  nvm ls "$node_version" || nvm install --default "$node_version"
-  nvm use default
-  if ! hascmd yarn; then
-    npm install -g yarn
-  fi
-}
-
-add-apt-key-google() {
-  apt-key list | grep -q linux-packages-keymaster@google.com \
-    || wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-}
-
-setup-desktop() {
-  setup-install-progs
-  # Enable multiverse
-  sudo sed -i -e 's/# \(.* multiverse$\)/\1/' /etc/apt/sources.list
-  sudo apt-get update -qq
-
-  sudo apt-get install -q -y \
-    gparted \
-    ffmpeg \
-    mplayer \
-    vlc
-
-  if ! grep -q "GRUB_TIMEOUT=4" /etc/default/grub; then
-    sudo sed -ie 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=4/' /etc/default/grub
-    sudo update-grub
-  fi
-
-  sudo cp static/reloadaudio.sh /usr/bin/
-}
-
 setup-gnome() {
-  setup-desktop
   [ ! $LINUX ] && return 1
 
-  if [ $SYMBOLIC ]; then
-    link "$REPO/mimeapps.list" "$HOME/.local/share/applications/mimeapps.list"
-  else
-    cp mimeapps.list ~/.local/share/applications
-  fi
+  cp mimeapps.list ~/.local/share/applications
 
   gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
   gsettings set org.gnome.settings-daemon.plugins.media-keys search "['<Super>space']"
@@ -714,20 +462,23 @@ setup-gnome() {
 }
 
 setup-xfce() {
-  setup-desktop
   # Remap caps lock to control
   if ! grep "XKBOPTIONS.*ctrl:nocaps" /etc/default/keyboard >/dev/null; then
     sudo sed -ie 's/XKBOPTIONS=.*/XKBOPTIONS="ctrl:nocaps"/' /etc/default/keyboard
     sudo dpkg-reconfigure keyboard-configuration
   fi
 
-  cp -r $XFCE_DOTFILES $HOME
+  cp -r "$XFCE_DOTFILES" "$HOME"
   mkdir -p ~/.config
   rsync -lrp .config/xfce4 ~/.config/
   rsync -lrp .config/autostart ~/.config/
 }
 
 setup-wsl() {
+  [ $WSL ] || return
+  if [ -e "$C_DRIVE/tmp" ]; then
+    rm -rf "$C_DRIVE/tmp"
+  fi
   if [ ! -e "$C_DRIVE/Windows/System32/win32yank.exe" ]; then
     pushd /tmp
     wget https://github.com/equalsraf/win32yank/releases/download/v0.0.4/win32yank-x64.zip
@@ -742,7 +493,47 @@ setup-wsl() {
   fi
 }
 
-install-wsl-packages() {
+# shellcheck disable=SC2034
+DOTCMD_SETUP_DOC="Set up everything I need for a new ubuntu install"
+dotcmd-setup() {
+  if [ "$1" == "-h" ]; then
+    echo "$DOTCMD_SETUP_DOC"
+    return
+  fi
+
+  setup-wsl
+  dc-install-common
+  dc-install-neovim
+  dotcmd-dotfiles
+  install-language-common
+  dc-install-ufw
+  dotcmd-desktop
+  echo "Done"
+}
+
+# shellcheck disable=SC2034
+DOTCMD_INSTALL_DOC="Install a program"
+dotcmd-install() {
+  if [ "$1" == "-h" ] || [ -z "$1" ]; then
+    echo "$0 install [<program>...]
+
+Programs:"
+    print-command-help dc-install-
+    return
+  fi
+  local prog="$1"
+  shift
+  while [ -n "$prog" ]; do
+    local cmd="dc-install-$prog"
+    $cmd
+    prog="$1"
+    shift
+  done
+}
+
+# shellcheck disable=SC2034
+DC_INSTALL_WSL_PACKAGES_DOC="Windows packages (steam, chrome, slack, etc)"
+dc-install-wsl-packages() {
   winsudo choco install -y chocolatey vlc skype googlechrome discord slack steam dropbox calibre dolphin mupen64plus geforce-experience sharpkeys
   if [ ! -e "$C_DRIVE/Program Files/Unity Hub" ]; then
     pushd /tmp
@@ -754,13 +545,40 @@ install-wsl-packages() {
   fi
 }
 
-setup-custom-packages() {
-  if [ $WSL ]; then
-    install-wsl-packages
-    return
+dc-install-nvm() {
+  # Early return on FB devserver
+  if ! hascmd apt-get; then return; fi
+  if [ -e ~/.bash.d/nvm.sh ]; then
+    source ~/.bash.d/nvm.sh || :
   fi
-  setup-install-progs
-  if ! hascmd docker && confirm "Install docker?" n; then
+  hascmd nvm && nvm current && return
+  local nvm_dir
+  nvm_dir=$(prompt "NVM install dir:" "${XDG_CONFIG_HOME-$HOME/.config}/nvm")
+  if [ ! -d "$nvm_dir" ]; then
+    mkdir -p "$nvm_dir"
+    local latest
+    latest=$(
+      curl -s https://api.github.com/repos/nvm-sh/nvm/releases/latest | jq -r .name
+    )
+    curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/$latest/install.sh" \
+      | NVM_DIR="$nvm_dir" PROFILE=/dev/null bash
+  fi
+  source "$nvm_dir/nvm.sh"
+  echo -e "source $nvm_dir/nvm.sh\nsource $nvm_dir/bash_completion" >~/.bash.d/nvm.sh
+  local node_version
+  node_version=$(nvm ls-remote | tail -n 1 | awk '{print $1}')
+  node_version=$(prompt "Install node version:" "$node_version")
+  nvm ls "$node_version" || nvm install --default "$node_version"
+  nvm use default
+  if ! hascmd yarn; then
+    npm install -g yarn
+  fi
+}
+
+# shellcheck disable=SC2034
+DC_INSTALL_DOCKER_DOC="Docker and docker-compose"
+dc-install-docker() {
+  if ! hascmd docker; then
     sudo apt-get install -yq \
       apt-transport-https \
       ca-certificates \
@@ -779,21 +597,312 @@ setup-custom-packages() {
       sudo ln -sfT "$HOME/.docker" /var/lib/docker
     fi
   fi
-  if ! hascmd docker-compose && hascmd docker; then
-    if confirm "Install docker-compose?" y; then
-      local latest
-      latest="$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .name)"
-      sudo curl -L "https://github.com/docker/compose/releases/download/${latest}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-      sudo chmod +x /usr/local/bin/docker-compose
-      sudo curl -L "https://raw.githubusercontent.com/docker/compose/${latest}/contrib/completion/bash/docker-compose" -o /etc/bash_completion.d/docker-compose
+  if ! hascmd docker-compose; then
+    local latest
+    latest=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .name)
+    sudo curl -L "https://github.com/docker/compose/releases/download/${latest}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    sudo curl -L "https://raw.githubusercontent.com/docker/compose/${latest}/contrib/completion/bash/docker-compose" -o /etc/bash_completion.d/docker-compose
+  fi
+}
+
+# shellcheck disable=SC2034
+DC_INSTALL_CLIPPER_DOC="Clipper (networked clipboard sharing)"
+dc-install-clipper() {
+  if ! nc -z localhost 8377 && confirm "Install clipper?" n; then
+    install-language-go
+    go get github.com/wincent/clipper
+    go build github.com/wincent/clipper
+    sudo cp "$GOPATH/bin/clipper" /usr/local/bin
+    if hascmd systemctl; then
+      mkdir -p ~/.config/systemd/user
+      cp "$GOPATH/src/github.com/wincent/clipper/contrib/linux/systemd-service/clipper.service" ~/.config/systemd/user
+      sed -ie 's|^ExecStart.*|ExecStart=/usr/local/bin/clipper -l /var/log/clipper.log -e xsel -f "-bi"|' ~/.config/systemd/user/clipper.service
+      systemctl --user daemon-reload
+      systemctl --user enable clipper.service
+      systemctl --user start clipper.service
+    else
+      sudo cp clipper.conf /etc/init
+      sudo service clipper start
     fi
   fi
-  sudo apt-get install -y -q gthumb
-  if [[ -e ~/bin ]] && [[ ! -e ~/bin/youtube-dl ]]; then
+}
+
+# shellcheck disable=SC2034
+DC_INSTALL_NEOVIM_DOC="<3"
+dc-install-neovim() {
+  if ! hascmd nvim; then
+    if confirm "From github appimage?" y; then
+      local version
+      install_neovim.sh --list
+      version=$(prompt "Version?" nightly)
+      install_neovim.sh "$version"
+    elif confirm "From source?" n; then
+      sudo apt-get install -y libtool autoconf automake cmake g++ gettext pkg-config \
+        unzip python3 python3-dev python3-venv ruby-dev
+      sudo apt-get install -y libtool-bin
+      pushd /tmp
+      test -d neovim || git clone https://github.com/neovim/neovim.git
+      cd neovim
+      make CMAKE_BUILD_TYPE=Release
+      sudo make install
+      popd
+    else
+      sudo apt-get install -y neovim
+    fi
+  fi
+
+  # Let's just always do the things for neovim
+  [ -d ~/.envs ] || mkdir ~/.envs
+  [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
+  ~/.envs/py3/bin/pip install -q wheel
+  ~/.envs/py3/bin/pip install -q pynvim
+
+  if ! hascmd nvr; then
+    mkdir -p ~/bin
+    pushd ~/bin
+    "$HERE/make_standalone.py" -s nvr neovim
+    popd
+  fi
+}
+
+dc-install-dotnet() {
+  if hascmd dotnet || ! hascmd apt-get; then
+    return
+  fi
+  # From https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
+  pushd /tmp
+  wget "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" -O packages-microsoft-prod.deb
+  sudo dpkg -i packages-microsoft-prod.deb
+
+  sudo apt-get update
+  sudo apt-get install -y apt-transport-https
+  sudo apt-get update
+  sudo apt-get install -y dotnet-sdk-3.1
+  popd
+}
+
+# shellcheck disable=SC2034
+DC_INSTALL_COMMON_DOC="Common unix utilities like tmux, netcat, etc"
+dc-install-common() {
+  has-checkpoint cli && return
+  if [ $WINDOWS ]; then
+    pacman -Sy --noconfirm rsync tmux
+  elif [ $MAC ]; then
+    hascmd tmux || install_tmux.sh
+  else
+    sudo apt-get install -y -q \
+      autossh \
+      bsdmainutils \
+      direnv \
+      htop \
+      glances \
+      inotify-tools \
+      iotop \
+      jq \
+      lsof \
+      mercurial \
+      netcat \
+      openssh-client \
+      rsync \
+      shellcheck \
+      ripgrep \
+      shellcheck \
+      tmux \
+      tree \
+      unzip \
+      wmctrl \
+      xsel
+  fi
+
+  checkpoint cli
+}
+
+# shellcheck disable=SC2034
+DC_INSTALL_UFW_DOC="Uncomplicated FireWall with default config"
+dc-install-ufw() {
+  hascmd ufw && return
+  sudo apt-get install -y -q ufw
+  sudo ufw default deny incoming
+  sudo ufw default allow outgoing
+  if confirm "Allow ssh connections?" y; then
+    sudo ufw allow 22/tcp
+    sudo apt-get install -y -q openssh-server
+  fi
+  if confirm "Allow steam connections?" y; then
+    sudo ufw allow 27031/udp
+    sudo ufw allow 27036/udp
+    sudo ufw allow 27036/tcp
+    sudo ufw allow 27037/tcp
+  fi
+  sudo ufw enable
+}
+
+cp-vim-plugin() {
+  local plugin=${1?Must specify a vim plugin}
+  local symbolic=$2
+  local parent="$HOME/.local/share/nvim/site/pack/$plugin/start"
+  local dest="$parent/$plugin"
+  mkdir -p "$parent"
+  if [ -n "$symbolic" ]; then
+    if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+      rm -rf "$dest"
+    fi
+    link "$HERE/vimplugins/$plugin" "$dest"
+  else
+    rsync -lrp --delete --exclude .git "$HERE/vimplugins/$plugin" "$dest"
+  fi
+}
+
+# shellcheck disable=SC2034
+DOTCMD_DOTFILES_DOC="Install dotfiles"
+dotcmd-dotfiles() {
+  local symbolic=1
+  local usage="Usage: $0 dotfiles [opts]
+
+Opts:
+  -c      Copy files instead of symbolic linking"
+  while getopts "hc" opt; do
+    case $opt in
+      c)
+        symbolic=
+        ;;
+      h)
+        echo "$usage"
+        exit
+        ;;
+      \?)
+        echo "$usage"
+        exit 1
+        ;;
+    esac
+  done
+  shift $((OPTIND - 1))
+
+  if [ $symbolic ]; then
+    for dotfile in $CLI_DOTFILES; do
+      link "$HERE/$dotfile" "$HOME/$dotfile"
+    done
+  else
+    rsync -lrp $CLI_DOTFILES "$HOME"
+  fi
+
+  mkdir -p ~/bin
+  if [ $symbolic ]; then
+    for executable in bin/*; do
+      link "$HERE/$executable" "$HOME/$executable"
+    done
+    link "$HERE/parseargs/parseargs.sh" "$HOME/bin/parseargs.sh"
+  else
+    rsync -lrp bin "$HOME/bin"
+    cp "$HERE/parseargs/parseargs.sh" "$HOME/bin/"
+  fi
+
+  rsync -lrp .docker "$HOME"
+  mkdir -p ~/.config
+  if [ $symbolic ]; then
+    link "$HERE/.config/nvim" "$HOME/.config/nvim"
+  else
+    rsync -lrp .config/nvim ~/.config/
+  fi
+  rm -rf ~/.local/share/nvim/site/pack
+  for plugin in $HERE/vimplugins/*; do
+    cp-vim-plugin "$(basename "$plugin")" "$symbolic"
+  done
+
+  mkdir -p ~/.bash.d
+  if [ $symbolic ]; then
+    for file in bash.d/*; do
+      link "$HERE/$file" "$HOME/.$file"
+    done
+  else
+    rsync -lrp bash.d "$HOME/.bash.d"
+  fi
+
+  if [ $WINDOWS ]; then
+    rsync -lrp win/ "$HOME"
+  fi
+  if [ -e ~/.bash_profile ]; then
+    grep "source ~/.bashrc" ~/.bash_profile >/dev/null 2>&1 || echo "source ~/.bashrc" >>~/.bash_profile
+  fi
+}
+
+# shellcheck disable=SC2034
+DOTCMD_DESKTOP_DOC="Install config and settings for desktop environment"
+# shellcheck disable=SC2120
+dotcmd-desktop() {
+  if [ "$1" == "-h" ]; then
+    echo $DOTCMD_DESKTOP_DOC
+    return
+  fi
+  if [ $LINUX ]; then
+    mkdir -p ~/.local/share/fonts
+    pushd ~/.local/share/fonts
+    if [ ! -e UbuntuMono.zip ]; then
+      wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/UbuntuMono.zip
+      unzip UbuntuMono.zip
+    fi
+    popd
+  fi
+
+  # Enable multiverse
+  sudo sed -i -e 's/# \(.* multiverse$\)/\1/' /etc/apt/sources.list
+  sudo apt-get update -qq
+
+  sudo apt-get install -q -y \
+    gparted \
+    ffmpeg \
+    mplayer \
+    vlc
+  if ! hascmd youtube-dl; then
     pushd ~/bin >/dev/null
     wget -O youtube-dl https://yt-dl.org/latest/youtube-dl
     chmod +x youtube-dl
     popd >/dev/null
+  fi
+
+  if ! grep -q "GRUB_TIMEOUT=4" /etc/default/grub; then
+    sudo sed -ie 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=4/' /etc/default/grub
+    sudo update-grub
+  fi
+
+  sudo cp static/reloadaudio.sh /usr/bin/
+
+  if hascmd gsettings; then
+    setup-gnome
+  else
+    echo "ERROR: Not sure what desktop environment this is."
+    # setup-xfce
+  fi
+}
+
+DOTCMD_UPGRADE_LSP_DOC="Upgrade installed LSP servers"
+dotcmd-upgrade-lsp() {
+  if [ "$1" == "-h" ]; then
+    echo "$DOTCMD_UPGRADE_LSP_DOC"
+    return
+  fi
+  hascmd bash-language-server && yarn global upgrade -s bash-language-server
+  hascmd vscode-json-languageserver && yarn global upgrade -s vscode-json-languageserver
+  hascmd vim-language-server && yarn global upgrade -s vim-language-server
+  hascmd yaml-language-server && yarn global upgrade -s yaml-language-server
+  hascmd efm-langserver && go get -u github.com/mattn/efm-langserver
+  hascmd shfmt && GO111MODULE=on go get -u mvdan.cc/sh/v3/cmd/shfmt
+  hascmd pyright && yarn global upgrade -s pyright
+  hascmd flow && yarn global upgrade -s flow-bin
+  hascmd typescript-language-server && yarn global upgrade -s typescript-language-server
+}
+
+# shellcheck disable=SC2034
+DOTCMD_HELP_DOC="Print this help or help for a specific command"
+dotcmd-help() {
+  if [ -n "$1" ] && [ "$1" != "help" ]; then
+    "dotcmd-$1" -h
+  else
+    echo "USAGE: $0 COMMAND
+
+Commands:"
+    print-command-help dotcmd-
   fi
 }
 
@@ -802,58 +911,11 @@ main() {
     echo "Do not run this script with sudo!"
     exit 1
   fi
-
-  local languages=""
-  local gnome=
-  local xfce=
-  local custom_packages=
-  local commandline=
-  local dotfiles=
-  local ufw=
-  while getopts "hfgxcpdsSuvl:-:" opt; do
+  while getopts "hfv" opt; do
     case $opt in
-      -)
-        case $OPTARG in
-          languages)
-            echo "$ALL_LANGUAGES"
-            exit 0
-            ;;
-          *)
-            echo "$USAGE"
-            exit 1
-            ;;
-        esac
-        ;;
-      p)
-        custom_packages=1
-        ;;
-      c)
-        commandline=1
-        ;;
-      d)
-        dotfiles=1
-        ;;
-      g)
-        gnome=1
-        ;;
-      x)
-        xfce=1
-        ;;
-      u)
-        ufw=1
-        ;;
-      s)
-        SYMBOLIC=1
-        ;;
-      S)
-        SYMBOLIC=
-        ;;
       h)
-        echo "$USAGE"
+        dotcmd-help
         exit
-        ;;
-      l)
-        languages="$languages $OPTARG"
         ;;
       f)
         clear-checkpoints
@@ -862,47 +924,30 @@ main() {
         set -x
         ;;
       \?)
-        echo "$USAGE"
+        dotcmd-help
         exit 1
         ;;
     esac
   done
   shift $((OPTIND - 1))
-  languages=${languages# } # trim leading whitespace
-
-  hascmd git || sudo apt-get install -y -q git
+  hascmd git || sudo apt install -y -q git
   if [ "$(git status --porcelain | wc -l)" == "0" ]; then
     git submodule update --init --recursive
   fi
-  if [ $commandline ]; then
-    install-cli
-  fi
-  if [ $WSL ]; then
-    if [ -e "$C_DRIVE/tmp" ]; then
-      rm -rf "$C_DRIVE/tmp"
+  setup-install-progs
+  if [ -z "$1" ]; then
+    dotcmd-help
+    exit 1
+  else
+    local cmd="dotcmd-$1"
+    if command -v "$cmd" >/dev/null; then
+      shift
+      $cmd "$@"
+    else
+      dotcmd-help "$@"
+      exit 1
     fi
-    setup-wsl
   fi
-  if [ $dotfiles ]; then
-    install-dotfiles
-  fi
-  if [ $ufw ]; then
-    install-security
-  fi
-  install-languages "$languages"
-  if [ $commandline ]; then
-    install-cli-after
-  fi
-  if [ $gnome ]; then
-    setup-gnome
-  fi
-  if [ $xfce ]; then
-    setup-xfce
-  fi
-  if [ $custom_packages ]; then
-    setup-custom-packages
-  fi
-  echo "Done"
 }
 
 main "$@"
