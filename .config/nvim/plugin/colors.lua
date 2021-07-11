@@ -14,7 +14,7 @@ end
 vim.g.tokyonight_style = "night"
 vim.g.tokyonight_italic_comments = true
 vim.g.tokyonight_italic_keywords = false
-vim.g.tokyonight_sidebars = { "qf", "aerial", "terminal" }
+vim.g.tokyonight_sidebars = { "qf", "aerial", "terminal", "GoogleKeepList", "GoogleKeepMenu" }
 
 function stevearc:tokyonight()
   local config = require("tokyonight.config")
