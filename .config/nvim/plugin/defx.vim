@@ -1,5 +1,5 @@
 if g:nerd_font
-  let g:defx_columns = 'indent:icons:filename:type'
+  let g:defx_columns = 'indent:icons:space:filename:type'
 else
   let g:defx_columns = 'mark:indent:icon:filename:type'
 endif
