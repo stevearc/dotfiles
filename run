@@ -215,7 +215,7 @@ install-language-vim() {
   install-language-python
   if ! hascmd vint; then
     pushd ~/bin
-    "$HERE/make_standalone.py" -s vint vim-vint
+    "$HERE/scripts/make_standalone.py" -s vint vim-vint
     popd
   fi
 }
@@ -437,7 +437,7 @@ EOF
 setup-gnome() {
   [ ! $LINUX ] && return 1
 
-  cp mimeapps.list ~/.local/share/applications
+  cp "$HERE/static/mimeapps.list" ~/.local/share/applications
 
   gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
   gsettings set org.gnome.settings-daemon.plugins.media-keys search "['<Super>space']"
@@ -609,7 +609,7 @@ dc-install-docker() {
 # shellcheck disable=SC2034
 DC_INSTALL_CLIPPER_DOC="Clipper (networked clipboard sharing)"
 dc-install-clipper() {
-  if ! nc -z localhost 8377 && confirm "Install clipper?" n; then
+  if ! nc -z localhost 8377; then
     install-language-go
     go get github.com/wincent/clipper
     go build github.com/wincent/clipper
@@ -634,9 +634,9 @@ dc-install-neovim() {
   if ! hascmd nvim; then
     if confirm "From github appimage?" y; then
       local version
-      install_neovim.sh --list
+      "$HERE/scripts/install_neovim.sh" --list
       version=$(prompt "Version?" nightly)
-      install_neovim.sh "$version"
+      "$HERE/scripts/install_neovim.sh" "$version"
     elif confirm "From source?" n; then
       sudo apt-get install -y libtool autoconf automake cmake g++ gettext pkg-config \
         unzip python3 python3-dev python3-venv ruby-dev
@@ -661,7 +661,7 @@ dc-install-neovim() {
   if ! hascmd nvr; then
     mkdir -p ~/bin
     pushd ~/bin
-    "$HERE/make_standalone.py" -s nvr neovim
+    "$HERE/scripts/make_standalone.py" -s nvr neovim
     popd
   fi
 }
@@ -689,7 +689,7 @@ dc-install-common() {
   if [ $WINDOWS ]; then
     pacman -Sy --noconfirm rsync tmux
   elif [ $MAC ]; then
-    hascmd tmux || install_tmux.sh
+    hascmd tmux || "$HERE/scripts/mac_install_tmux.sh"
   else
     sudo apt-get install -y -q \
       autossh \
