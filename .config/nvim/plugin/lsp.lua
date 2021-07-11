@@ -1,4 +1,5 @@
 local stevearc = require("stevearc")
+local projects = require("projects")
 
 -- vim.lsp.set_log_level("debug")
 
@@ -144,7 +145,7 @@ local on_attach = function(client)
   local config = ft_config[ft] or {}
 
   local function safemap(method, mode, key, result)
-    if client.supports_method(method) then
+    if client.resolved_capabilities[method] then
       mapper(mode, key, result)
     end
   end
@@ -157,7 +158,7 @@ local on_attach = function(client)
   vim.api.nvim_win_set_option(0, "signcolumn", "yes")
 
   -- Aerial
-  if client.supports_method("textDocument/documentSymbol") then
+  if client.resolved_capabilities.document_symbol then
     mapper("n", "<leader>a", "<cmd>AerialToggle!<CR>")
     mapper("n", "{", "<cmd>AerialPrev<CR>")
     mapper("v", "{", "<cmd>AerialPrev<CR>")
@@ -170,14 +171,14 @@ local on_attach = function(client)
   end
 
   -- Standard LSP
-  safemap("textDocument/definition", "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
-  safemap("textDocument/declaration", "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
-  safemap("textDocument/typeDefinition", "n", "gtd", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
-  safemap("textDocument/implementation", "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
-  safemap("textDocument/references", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
-  safemap("workspace/symbol", "n", "gs", "<cmd>lua vim.lsp.buf.workspace_symbol()<CR>")
+  safemap("goto_definition", "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
+  safemap("declaration", "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
+  safemap("type_definition", "n", "gtd", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
+  safemap("implementation", "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
+  safemap("find_references", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
+  safemap("workspace_symbol", "n", "gs", "<cmd>lua vim.lsp.buf.workspace_symbol()<CR>")
   if config.help then
-    safemap("textDocument/hover", "n", "K", '<cmd>lua require("lspsaga.hover").render_hover_doc()<CR>')
+    safemap("hover", "n", "K", '<cmd>lua require("lspsaga.hover").render_hover_doc()<CR>')
   end
   if client.resolved_capabilities.signature_help then
     mapper("n", "<c-k>", '<cmd>lua require("lspsaga.signaturehelp").signature_help()<CR>')
@@ -189,7 +190,7 @@ local on_attach = function(client)
   end
   mapper("n", "<C-f>", '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(1)<CR>')
   mapper("n", "<C-b>", '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(-1)<CR>')
-  if client.supports_method("textDocument/formatting") then
+  if client.resolved_capabilities.document_formatting then
     vim.cmd([[aug LspAutoformat
       au! * <buffer>
       autocmd BufWritePre <buffer> lua require'stevearc'.autoformat()
@@ -197,12 +198,12 @@ local on_attach = function(client)
     ]])
     mapper("n", "=", "<cmd>lua vim.lsp.buf.formatting()<CR>")
   end
-  safemap("textDocument/rangeFormatting", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
-  safemap("textDocument/rename", "n", "<leader>r", '<cmd>lua require("lspsaga.rename").rename()<CR>')
+  safemap("document_range_formatting", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
+  safemap("rename", "n", "<leader>r", '<cmd>lua require("lspsaga.rename").rename()<CR>')
 
   mapper("n", "<CR>", '<cmd>lua require"lspsaga.diagnostic".show_line_diagnostics()<CR>')
 
-  if client.supports_method("textDocument/documentHighlight") then
+  if client.resolved_capabilities.document_highlight then
     vim.cmd([[autocmd CursorHold,CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]])
     vim.cmd([[autocmd CursorMoved,WinLeave <buffer> lua vim.lsp.buf.clear_references()]])
   end
@@ -257,6 +258,7 @@ require("lspconfig").efm.setup({
   filetypes = vim.tbl_keys(require("efmconfig")),
   root_dir = require("lspconfig").util.root_pattern(".git", "setup.py", "setup.cfg", "pyproject.toml", "package.json"),
   settings = {
+    lintDebounce = 1000000000,
     languages = require("efmconfig"),
   },
 })
@@ -278,9 +280,13 @@ require("lspconfig").rust_analyzer.setup({
   capabilities = default_capabilities,
 })
 require("lspconfig").tsserver.setup({
-  on_attach = on_attach,
+  on_attach = function(client)
+    local format = not projects[0].ts_prettier_format
+    client.resolved_capabilities.document_formatting = format
+    client.resolved_capabilities.document_range_formatting = format
+    on_attach(client)
+  end,
   filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
-  root_dir = require("lspconfig/util").root_pattern("tsconfig.json", ".git"),
 })
 require("lspconfig").flow.setup({
   on_attach = function(client)

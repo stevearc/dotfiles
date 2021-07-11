@@ -116,10 +116,17 @@ config.lua = {
 config.css = { prettier("css") }
 config.html = { prettier("html") }
 config.json = { prettier("json") }
+config.jsonc = config.json
 
 config.javascript = { prettier() }
 config.javascriptreact = config.javascript
 config["javascript.jsx"] = config.javascript
+
+if projects[0].ts_prettier_format then
+  config.typescript = { prettier() }
+  config.typescriptreact = config.typescript
+  config["typescript.jsx"] = config.typescript
+end
 
 config.php = { {
   formatCmd = "hackfmt",
