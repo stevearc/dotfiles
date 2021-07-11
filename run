@@ -306,7 +306,7 @@ INSTALL_LANGUAGE_MISC_DOC="Random small languages like json & yaml"
 install-language-misc() {
   sudo apt-get install -yq pandoc yamllint
   dc-install-nvm
-  yarn global add -s bash-language-server vscode-json-languageserver yaml-language-server
+  yarn global add -s bash-language-server vscode-langservers-extracted yaml-language-server
   install-language-go
   if ! hascmd efm-langserver; then
     go get github.com/mattn/efm-langserver
@@ -897,7 +897,7 @@ dotcmd-upgrade-lsp() {
     return
   fi
   hascmd bash-language-server && yarn global upgrade -s bash-language-server
-  hascmd vscode-json-languageserver && yarn global upgrade -s vscode-json-languageserver
+  hascmd vscode-json-language-server && yarn global upgrade -s vscode-langservers-extracted
   hascmd vim-language-server && yarn global upgrade -s vim-language-server
   hascmd yaml-language-server && yarn global upgrade -s yaml-language-server
   hascmd efm-langserver && go get -u github.com/mattn/efm-langserver
