@@ -1,13 +1,13 @@
-local stevearc = require'stevearc'
+local stevearc = require("stevearc")
 vim.o.termguicolors = true
-vim.o.background = 'dark'
+vim.o.background = "dark"
 
-require 'colorizer'.setup()
+require("colorizer").setup()
 
 if vim.g.nerd_font ~= false then
-  require'nvim-web-devicons'.setup {
-   default = true;
-  }
+  require("nvim-web-devicons").setup({
+    default = true,
+  })
 end
 
 -- Tokyo Night
@@ -47,11 +47,11 @@ function stevearc:tokyonight()
     },
     Tabpage = {
       Fill = { bg = colors.none, fg = colors.border_highlight },
-    }
+    },
   }
-  for mode,pieces in pairs(barbar_theme) do
-    for piece,hl in pairs(pieces) do
-      local group = string.format('Buffer%s%s', mode, piece == 'base' and '' or piece)
+  for mode, pieces in pairs(barbar_theme) do
+    for piece, hl in pairs(pieces) do
+      local group = string.format("Buffer%s%s", mode, piece == "base" and "" or piece)
       util.highlight(group, hl)
     end
   end
@@ -59,32 +59,32 @@ end
 
 -- Solarized
 vim.g.solarized_extra_hi_groups = true
-vim.g.solarized_statusline = 'flat'
+vim.g.solarized_statusline = "flat"
 
 function stevearc:solarized8()
   -- solarized8 is missing some colors for LSP
-  vim.cmd[[hi link LspDiagnosticsDefaultError ALEError]]
-  vim.cmd[[hi link LspDiagnosticsSignError ALEErrorSign]]
-  vim.cmd[[hi link LspDiagnosticsDefaultWarning ALEWarning]]
-  vim.cmd[[hi link LspDiagnosticsSignWarning ALEWarningSign]]
-  vim.cmd[[hi link LspDiagnosticsDefaultInformation ALEInfo]]
-  vim.cmd[[hi link LspDiagnosticsSignInformation ALEInfoSign]]
-  vim.cmd[[hi link LspDiagnosticsDefaultHint ALEInfo]]
-  vim.cmd[[hi link LspDiagnosticsSignHint ALEInfoSign]]
+  vim.cmd([[hi link LspDiagnosticsDefaultError ALEError]])
+  vim.cmd([[hi link LspDiagnosticsSignError ALEErrorSign]])
+  vim.cmd([[hi link LspDiagnosticsDefaultWarning ALEWarning]])
+  vim.cmd([[hi link LspDiagnosticsSignWarning ALEWarningSign]])
+  vim.cmd([[hi link LspDiagnosticsDefaultInformation ALEInfo]])
+  vim.cmd([[hi link LspDiagnosticsSignInformation ALEInfoSign]])
+  vim.cmd([[hi link LspDiagnosticsDefaultHint ALEInfo]])
+  vim.cmd([[hi link LspDiagnosticsSignHint ALEInfoSign]])
 
-  vim.cmd[[hi JustUnderline gui=undercurl cterm=undercurl]]
-  vim.cmd[[hi link LspDiagnosticsUnderlineError JustUnderline]]
-  vim.cmd[[hi link LspDiagnosticsUnderlineWarning JustUnderline]]
-  vim.cmd[[hi link LspDiagnosticsUnderlineInformation JustUnderline]]
-  vim.cmd[[hi link LspDiagnosticsUnderlineHint JustUnderline]]
+  vim.cmd([[hi JustUnderline gui=undercurl cterm=undercurl]])
+  vim.cmd([[hi link LspDiagnosticsUnderlineError JustUnderline]])
+  vim.cmd([[hi link LspDiagnosticsUnderlineWarning JustUnderline]])
+  vim.cmd([[hi link LspDiagnosticsUnderlineInformation JustUnderline]])
+  vim.cmd([[hi link LspDiagnosticsUnderlineHint JustUnderline]])
 
   -- I don't like the underlined virtual text
-  vim.cmd[[hi ALEError gui=NONE cterm=NONE]]
-  vim.cmd[[hi ALEInfo gui=NONE cterm=NONE]]
-  vim.cmd[[hi ALEWarning gui=NONE cterm=NONE]]
+  vim.cmd([[hi ALEError gui=NONE cterm=NONE]])
+  vim.cmd([[hi ALEInfo gui=NONE cterm=NONE]])
+  vim.cmd([[hi ALEWarning gui=NONE cterm=NONE]])
 end
 
-vim.cmd[[autocmd ColorScheme tokyonight lua require'stevearc'.tokyonight()]]
-vim.cmd[[autocmd ColorScheme solarized8 lua require'stevearc'.solarized8()]]
+vim.cmd([[autocmd ColorScheme tokyonight lua require'stevearc'.tokyonight()]])
+vim.cmd([[autocmd ColorScheme solarized8 lua require'stevearc'.solarized8()]])
 
-vim.cmd('colorscheme tokyonight')
+vim.cmd("colorscheme tokyonight")
