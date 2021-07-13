@@ -19,7 +19,12 @@ if g:use_barbar
       let i += 1
     endwhile
 
-    if num_normal_wins > 1 || !in_normal_window
+    if get(w:, 'is_remote')
+      BufferClose
+      if num_normal_wins == 1 && tabpagenr('$') > 1
+        tabclose
+      endif
+    elseif num_normal_wins > 1 || !in_normal_window
       close
     else
       BufferClose
@@ -42,6 +47,11 @@ if g:use_barbar
     " Ignore quickfix, prompt, help, and aerial buffer windows
     return bt != 'quickfix' && bt != 'prompt' && bt != 'help' && ft != 'aerial'
   endfunction
+
+  aug StickyRemote
+    au!
+    au BufEnter * if get(w:, 'is_remote') | silent! PinBuffer | endif
+  aug END
 
   let bufferline = get(g:, 'bufferline', {})
   let bufferline.closable = v:false

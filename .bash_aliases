@@ -48,7 +48,7 @@ sash() {
 export sash
 if command -v nvim >/dev/null; then
   if [ -n "$INSIDE_NVIM" ] && command -v nvr >/dev/null; then
-    alias vim="nvr -cc '0wincmd w'"
+    alias vim="nvr -cc 'tabnew | let w:is_remote = v:true'"
   else
     alias vim="nvim"
   fi

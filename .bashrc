@@ -103,7 +103,7 @@ fi
 # Default applications
 if command -v nvim >/dev/null; then
   if [ -n "$INSIDE_NVIM" ] && command -v nvr >/dev/null; then
-    export EDITOR="nvr --remote-wait -cc '0wincmd w'"
+    export EDITOR="nvr --remote-wait -cc 'tabnew | let w:is_remote = v:true'"
   else
     export EDITOR=nvim
   fi
