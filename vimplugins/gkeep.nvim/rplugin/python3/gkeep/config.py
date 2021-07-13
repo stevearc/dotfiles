@@ -1,8 +1,9 @@
 import json
 import os
+from typing import Any, Union
 
 import gkeep.globals as g
-from gkeepapi import Keep
+from gkeep.util import run_in_background
 
 
 class Config:
@@ -58,5 +59,18 @@ class Config:
         with open(self._cache_file, "w") as ofile:
             json.dump({"email": self.email}, ofile)
 
-    async def save_state(self, keep: Keep) -> None:
-        pass
+    def save_state(self, state: Any) -> None:
+        run_in_background(self._save_state, state)
+
+    def _save_state(self, state: Any) -> None:
+        with open(self._state_file, "w") as ofile:
+            json.dump(state, ofile)
+
+    def load_state(self) -> Union[Any, None]:
+        return run_in_background(self._load_state)
+
+    def _load_state(self) -> Union[Any, None]:
+        if not os.path.isfile(self._state_file):
+            return None
+        with open(self._state_file, "r") as ifile:
+            return json.load(ifile)

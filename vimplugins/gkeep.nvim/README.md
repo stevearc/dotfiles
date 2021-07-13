@@ -2,9 +2,6 @@ Create and use app password https://support.google.com/accounts/answer/185833
 
 
 ## TODO
-* Do the slow work in the background
-* Show status when doing work
-* cache & resume with https://gkeepapi.readthedocs.io/en/latest/#caching-notes
 * Editing
   * checkboxes
   * don't want bufhidden=wipe. We need to separate "previewing" from "editing"
@@ -30,6 +27,7 @@ Create and use app password https://support.google.com/accounts/answer/185833
   * new label
   * change sort (diff timestamps? reverse?)
   * undo/redo
+* Show status when doing work
 * Organization
   * Search by text, labels, type, archive/pinned
   * Sort by name, timestamp

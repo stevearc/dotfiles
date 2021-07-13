@@ -1,11 +1,12 @@
 import inspect
 from functools import wraps
-from typing import Any, List
+from typing import Any, List, Union
 
 import gkeep.globals as g
 import pynvim
 from gkeep.menu import Position
-from gkeep.util import BufUrl
+from gkeep.status import get_status, status
+from gkeep.util import BufUrl, run_in_background, shutdown
 
 Args = List[Any]
 
@@ -22,10 +23,14 @@ def unwrap_args(f):
 class GkeepPlugin:
     def __init__(self, vim: pynvim.Nvim) -> None:
         g.init(vim)
-        g.vim.funcs.timer_start(10000, "_gkeep_sync", {"repeat": -1})
+        vim.funcs.timer_start(10000, "_gkeep_sync", {"repeat": -1})
 
     def is_keep_buffer(self, bufnr: int) -> bool:
         return BufUrl.parse(g.vim.api.buf_get_name(bufnr)) is not None
+
+    @pynvim.shutdown_hook
+    def on_shutdown(self):
+        shutdown()
 
     @pynvim.command(
         "Gkeep", nargs="*", complete="customlist,_gkeep_command_complete", sync=True
@@ -51,26 +56,36 @@ class GkeepPlugin:
 
     @pynvim.function("_gkeep_preload")
     @unwrap_args
-    def preload(self, email: str = None) -> None:
-        if email is None:
-            last_email = g.config.email
-            if last_email is not None:
-                email = last_email
-        if email is None:
-            g.vim.err_write("Gkeep cannot preload, missing email. Call :Gkeep login\n")
-        else:
+    @status("Loading notes")
+    def preload(self) -> None:
+        run_in_background(self._preload)
+
+    def _preload(self) -> None:
+        email = g.config.email
+        if email is not None:
             token = g.api.keyring.get_password("google-keep-token", email)
             if token:
-                g.api.keep.resume(email, token)
+                state = g.config.load_state()
+                g.api.keep.resume(email, token, state=state)
+                g.vim.async_call(g.menu.refresh)
 
     @pynvim.function("_gkeep_sync")
     @unwrap_args
-    def sync(self, *args) -> None:
+    @status("Syncing changes")
+    def sync(self) -> None:
         labels_updated = any((i.dirty for i in g.api.keep._labels.values()))
         dirty = labels_updated or bool(g.api.keep._findDirtyNodes())
         if dirty:
             g.api.keep.sync()
             g.menu.refresh()
+            g.config.save_state(g.api.keep.dump())
+
+    def _thread_test(self):
+        g.vim.out_write("Start thread test\n")
+        import time
+
+        time.sleep(2)
+        g.vim.out_write("Finish thread test\n")
 
     @pynvim.function("_gkeep_list_action", sync=True)
     @unwrap_args
@@ -81,6 +96,14 @@ class GkeepPlugin:
     @unwrap_args
     def menu_action(self, action: str, *args) -> None:
         g.menu.action(action, *args)
+
+    @pynvim.function("_gkeep_status", sync=True)
+    @unwrap_args
+    def get_status(self) -> Union[str, None]:
+        s = get_status()
+        if s is None:
+            s = ""
+        return s
 
     @pynvim.autocmd("BufReadCmd", "gkeep://*", eval='expand("<amatch>")', sync=True)
     def _load_note(self, address: str):
@@ -107,7 +130,13 @@ class GkeepPlugin:
         g.api.keep.sync()
         g.menu.refresh()
 
-    def cmd_login(self, email: str = None, password: str = None) -> None:
+    def cmd_logout(self) -> None:
+        email = g.config.email
+        if email is not None:
+            g.api.keyring.delete_password("google-keep-token", email)
+        g.api.logout()
+
+    def cmd_login(self, email: str = None) -> None:
         if email is None:
             last_email = g.config.email
             if last_email is not None:
@@ -115,12 +144,13 @@ class GkeepPlugin:
         if email is None:
             email = g.vim.funcs.input("Email:")
         token = g.api.keyring.get_password("google-keep-token", email)
-        if token and password is None:
-            g.api.keep.resume(email, token)
+        if token:
+            with status("Loading notes"):
+                g.api.keep.resume(email, token, state=g.config.load_state())
         else:
-            if password is None:
-                password = g.vim.funcs.input("Password:")
-            g.api.keep.login(email, password)
+            password = g.vim.funcs.input("Password:")
+            with status("Loading notes"):
+                g.api.keep.login(email, password)
             token = g.api.keep.getMasterToken()
             g.api.keyring.set_password("google-keep-token", email, token)
         g.config.email = email

@@ -68,6 +68,9 @@ class KeepApi:
             **flags,
         }
 
+    def logout(self):
+        self._keep = None
+
     @property
     def keep(self) -> "Keep":
         if self._keep is None:
