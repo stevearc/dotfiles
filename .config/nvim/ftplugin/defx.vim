@@ -69,7 +69,7 @@ fun! s:Livegrep() abort
   call luaeval("require('telescope.builtin').live_grep(_A)", {'cwd': l:path})
 endf
 
-nnoremap <buffer> <leader>g <cmd>call <sid>Livegrep()<cr>
+nnoremap <buffer> <leader>fg <cmd>call <sid>Livegrep()<cr>
 
 fun! s:Subgrep(args) abort
   let l:path = s:GetDefxDir()
