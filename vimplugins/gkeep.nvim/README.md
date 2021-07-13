@@ -1,10 +1,8 @@
-Create and use app password https://support.google.com/accounts/answer/185833
-
-
 ## TODO
+* Extract the serialization logic into a package?
 * Editing
-  * checkboxes
   * don't want bufhidden=wipe. We need to separate "previewing" from "editing"
+  * better syntax for labels
   * bullets
   * syntax file
   * read-only
@@ -27,6 +25,7 @@ Create and use app password https://support.google.com/accounts/answer/185833
   * new label
   * change sort (diff timestamps? reverse?)
   * undo/redo
+  * the current sort movement is janky
 * Show status when doing work
 * Organization
   * Search by text, labels, type, archive/pinned
@@ -39,3 +38,7 @@ Create and use app password https://support.google.com/accounts/answer/185833
   * barbar integration trim buffer name
   * can I change vanilla nvim buffer names in tab bar?
 * Show shortcut help in float?
+
+
+# Docs
+Create and use app password https://support.google.com/accounts/answer/185833

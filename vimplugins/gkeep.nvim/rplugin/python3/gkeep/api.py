@@ -3,6 +3,8 @@ import subprocess
 import sys
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
+from gkeep.status import status
+
 if TYPE_CHECKING:
     from gkeepapi import Keep
 
@@ -22,6 +24,7 @@ class KeepApi:
         self._keep = None
         self._keyring = None
 
+    @status("Installing gkeepapi")
     def load(self):
         try:
             # pylint: disable=W0611

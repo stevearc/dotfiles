@@ -34,9 +34,13 @@ class Config:
 
     def checkbox(self, checked: bool) -> str:
         if checked:
-            return "☑ "
+            return "[x] "
         else:
-            return "☐ "
+            return "[ ] "
+        # if checked:
+        #     return "☑ "
+        # else:
+        #     return "☐ "
 
     @property
     def email(self):

@@ -1,5 +1,6 @@
 import inspect
 from functools import wraps
+from threading import Lock
 from typing import Any, List, Union
 
 import gkeep.globals as g
@@ -24,6 +25,7 @@ class GkeepPlugin:
     def __init__(self, vim: pynvim.Nvim) -> None:
         g.init(vim)
         vim.funcs.timer_start(10000, "_gkeep_sync", {"repeat": -1})
+        self._sync_lock = Lock()
 
     def is_keep_buffer(self, bufnr: int) -> bool:
         return BufUrl.parse(g.vim.api.buf_get_name(bufnr)) is not None
@@ -71,21 +73,23 @@ class GkeepPlugin:
 
     @pynvim.function("_gkeep_sync")
     @unwrap_args
-    @status("Syncing changes")
-    def sync(self) -> None:
+    def sync_func(self, *args) -> None:
+        if len(args) > 0:
+            g.vim.err_write(f"Got unexpected args in sync: {args}\n")
         labels_updated = any((i.dirty for i in g.api.keep._labels.values()))
         dirty = labels_updated or bool(g.api.keep._findDirtyNodes())
         if dirty:
+            self.sync()
+
+    @status("Syncing changes")
+    def sync(self) -> None:
+        run_in_background(self._sync)
+
+    def _sync(self) -> None:
+        with self._sync_lock:
             g.api.keep.sync()
-            g.menu.refresh()
+            g.vim.async_call(g.menu.refresh)
             g.config.save_state(g.api.keep.dump())
-
-    def _thread_test(self):
-        g.vim.out_write("Start thread test\n")
-        import time
-
-        time.sleep(2)
-        g.vim.out_write("Finish thread test\n")
 
     @pynvim.function("_gkeep_list_action", sync=True)
     @unwrap_args
@@ -126,9 +130,8 @@ class GkeepPlugin:
         g.vim.command(f"silent doau BufWritePre {url}")
         g.vim.api.buf_set_option(bufnr, "modified", False)
         g.vim.command(f"silent doau BufWritePost {url}")
-        g.vim.funcs._gkeep_sync()
-        g.api.keep.sync()
         g.menu.refresh()
+        self.sync()
 
     def cmd_logout(self) -> None:
         email = g.config.email

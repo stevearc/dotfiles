@@ -205,10 +205,10 @@ class NoteList(View):
             return
         if newidx == 0:
             low = int(self.notes[newidx].sort)
-            hi = 9999999999
+            hi = max(9999999999, low + 1000000)
         elif newidx == len(self.notes) - 1:
-            low = 0
             hi = int(self.notes[newidx - 1].sort)
+            low = min(0, hi - 1000000)
         else:
             offset = 0 if steps < 0 else 1
             n_hi = self.notes[newidx - 1 + offset]
@@ -221,9 +221,9 @@ class NoteList(View):
                 return
             elif n_hi.pinned != n_low.pinned:
                 if note.pinned:
-                    low = 0
+                    low = min(0, hi - 1000000)
                 else:
-                    hi = 9999999999
+                    hi = max(9999999999, low + 1000000)
         note.sort = random.randint(low, hi)
         self.notes.pop(idx)
         self.notes.insert(newidx, note)

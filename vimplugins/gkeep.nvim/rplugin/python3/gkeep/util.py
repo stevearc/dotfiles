@@ -1,3 +1,4 @@
+from functools import partial
 from threading import Thread
 from typing import TYPE_CHECKING, Union
 
@@ -46,6 +47,10 @@ def _wrap_greenlet(func):
             ret = func(*args, **kwargs)
         except Exception as e:
             if _vim_running:
+                import traceback
+
+                g.vim.err_write(traceback.format_exc())
+                g.vim.err_write("\n")
                 g.vim.async_call(glet.throw, e)
         else:
             if _vim_running:
@@ -56,7 +61,7 @@ def _wrap_greenlet(func):
 
 def run_in_background(func, *args, **kwargs):
     current = greenlet.getcurrent()
-    if current.parent is None:
+    if g.vim._thread_invalid() or current.parent is None:
         return g.vim.async_call(run_in_background, func, *args, **kwargs)
     thread = Thread(target=_wrap_greenlet(func), args=args, kwargs=kwargs, daemon=True)
     thread.start()
