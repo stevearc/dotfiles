@@ -22,123 +22,130 @@ SUBJECT="%s"
 FORMAT="$HASH}$RELATIVE_TIME}$AUTHOR}$REFS $SUBJECT"
 
 pretty_git_log() {
-    git log --graph --abbrev-commit --date=relative --color=always --pretty="tformat:${FORMAT}" $* |
-        # Replace (2 years ago) with (2 years)
-        sed -Ee 's/(^[^<]*) ago\)/\1)/' |
-        # Replace (2 years, 5 months) with (2 years)
-        sed -Ee 's/(^[^<]*), [[:digit:]]+ .*months?\)/\1)/' |
-        # Line columns up based on } delimiter
-        column -s '}' -t |
-        # Page only if we need to
-        less -FXRS
+  git log --graph --abbrev-commit --date=relative --color=always --pretty="tformat:${FORMAT}" "$@" \
+    |
+    
+
+    # Replace (2 years ago) with (2 years)
+    sed -Ee 's/(^[^<]*) ago\)/\1)/' \
+    |
+    
+
+    # Replace (2 years, 5 months) with (2 years)
+    sed -Ee 's/(^[^<]*), [[:digit:]]+ .*months?\)/\1)/' \
+    |
+    
+
+    # Line columns up based on } delimiter
+    column -s '}' -t
+}
+
+pretty_git_log_paged() {
+  pretty_git_log "$@" \
+    |
+    
+
+    # Page only if we need to
+    less -FXRS
 }
 
 update_master() {
-    local changes=$(git status --porcelain 2>/dev/null| egrep "^(M| M)" | wc -l)
-    if [ "$changes" != "0" ]; then
-        git stash
-    fi
+  local changes=$(git status --porcelain 2>/dev/null | egrep "^(M| M)" | wc -l)
+  if [ "$changes" != "0" ]; then
+    git stash
+  fi
 
-    local branch=$(_get_branch)
-    if [ "$branch" != "master" ]; then
-        git checkout master
-    fi
-    git fetch -p
-    git rebase origin/master
-    if [ "$branch" != "master" ]; then
-        git checkout $branch
-    fi
+  local branch=$(_get_branch)
+  if [ "$branch" != "master" ]; then
+    git checkout master
+  fi
+  git fetch -p
+  git rebase origin/master
+  if [ "$branch" != "master" ]; then
+    git checkout $branch
+  fi
 
-    if [ "$changes" != "0" ]; then
-        git stash pop
-    fi
-}
-
-push_current_branch() {
-    local branch=$(_get_branch)
-    if [ "$branch" == "master" ]; then
-        echo "DON'T FORCE PUSH MASTER"
-        exit 1
-    fi
-    git push -u origin $branch $@
+  if [ "$changes" != "0" ]; then
+    git stash pop
+  fi
 }
 
 _github() {
-    local uri=$1
-    if [ ! $GITHUB_TOKEN ]; then
-        echo "WARNING: No GITHUB_TOKEN specified" >&2
-    fi
-    curl -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/$uri" 2> /dev/null
+  local uri=$1
+  if [ ! $GITHUB_TOKEN ]; then
+    echo "WARNING: No GITHUB_TOKEN specified" >&2
+  fi
+  curl -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/$uri" 2>/dev/null
 }
 
 _get_repo() {
-    local repo=`git remote -v | grep push | cut -f 2 | cut -f 2 -d : | cut -f 1 -d ' '`
-    # Strip the .git off the end, if present.
-    echo "${repo%.git}"
+  local repo=$(git remote -v | grep push | cut -f 2 | cut -f 2 -d : | cut -f 1 -d ' ')
+  # Strip the .git off the end, if present.
+  echo "${repo%.git}"
 }
 
 _get_branch() {
-    git branch | cut -d ' ' -f 2 | tr -d '\n'
+  git branch | cut -d ' ' -f 2 | tr -d '\n'
 }
 
 _get_browser() {
-    if [ "$(uname -s)" = "Darwin" ]; then
-        echo "open"
-    elif [ -n "$BROWSER" ]; then
-        echo "$BROWSER"
-    else
-        echo "google-chrome"
-    fi
+  if [ "$(uname -s)" = "Darwin" ]; then
+    echo "open"
+  elif [ -n "$BROWSER" ]; then
+    echo "$BROWSER"
+  else
+    echo "google-chrome"
+  fi
 }
 
 create_pull_request() {
-    local usage="$0 [-f ####]"
-    local fix=
-    while getopts "f:" opt; do
-        case $opt in
-            f)
-                fix=$OPTARG
-                ;;
-            \?)
-                echo "$usage"
-                exit 1
-                ;;
-        esac
-    done
-    shift $(($OPTIND-1))
+  local usage="$0 [-f ####]"
+  local fix=
+  while getopts "f:" opt; do
+    case $opt in
+      f)
+        fix=$OPTARG
+        ;;
+      \?)
+        echo "$usage"
+        exit 1
+        ;;
+    esac
+  done
+  shift $((OPTIND - 1))
 
-    local repo=$(_get_repo)
-    local branch=$(_get_branch)
+  local repo=$(_get_repo)
+  local branch=$(_get_branch)
 
-    local browser=$(_get_browser)
-    local url="https://github.com/$repo/compare/$branch?expand=1"
-    if [ -n "$fix" ]; then
-        local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \" | head -n 1)
-        local body="Fix #$fix: $issue_title"
-        body="$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$body")"
-        url="$url&body=$body"
-    fi
-    $browser $url
+  local browser=$(_get_browser)
+  local url="https://github.com/$repo/compare/$branch?expand=1"
+  if [ -n "$fix" ]; then
+    local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \" | head -n 1)
+    local body="Fix #$fix: $issue_title"
+    body="$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$body")"
+    url="$url&body=$body"
+  fi
+  $browser $url
 }
 
 commit_fix() {
-    local fix="${1?Must specify an issue number}"
-    if [ -z "$fix" ]; then
-        echo "Usage: git fix ISSUE" >&2
-        exit 1
-    fi
-    local repo=$(_get_repo)
-    local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \" | head -n 1)
-    git commit -m "Fix #$fix: $issue_title"
-    git log -n 1
+  local fix="${1?Must specify an issue number}"
+  if [ -z "$fix" ]; then
+    echo "Usage: git fix ISSUE" >&2
+    exit 1
+  fi
+  local repo=$(_get_repo)
+  local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \" | head -n 1)
+  git commit -m "Fix #$fix: $issue_title"
+  git log -n 1
 }
 
 find_pull_request() {
-    local commit="$1"
-    local repo=$(_get_repo)
-    local url="https://github.com/$repo/search?q=$commit&type=Issues"
-    local browser=$(_get_browser)
-    $browser $url
+  local commit="$1"
+  local repo=$(_get_repo)
+  local url="https://github.com/$repo/search?q=$commit&type=Issues"
+  local browser=$(_get_browser)
+  $browser $url
 }
 
 show_modified_files() {
@@ -146,21 +153,23 @@ show_modified_files() {
   local root=
   root=$(git rev-parse --show-toplevel)
   if [ -n "$commit" ]; then
-    git diff-tree --no-commit-id --name-status -r "$commit" | \
-      grep "^[AM]" | \
-      awk '{print $2}' | \
-      while read -r filename
-        do echo "$root/$filename"
+    git diff-tree --no-commit-id --name-status -r "$commit" \
+      | grep "^[AM]" \
+      | awk '{print $2}' \
+      | while read -r filename; do
+        echo "$root/$filename"
       done
   else
-    git status --porcelain | \
-      sed '/\/$/d' | \
-      sed '/^ *D /d' | \
-      awk '{print $2}' | \
-      while read -r filename
-        do echo "$root/$filename"
+    git status --porcelain \
+      | sed '/\/$/d' \
+      | sed '/^ *D /d' \
+      | awk '{print $2}' \
+      | while read -r filename; do
+        echo "$root/$filename"
       done
   fi
 }
 
-$*
+cmd=$1
+shift
+"$cmd" "$@"

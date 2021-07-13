@@ -33,7 +33,6 @@
     div = divergence
     f = fetch -p
     fa = fetch --all
-    pom = push origin master
     b = branch
     ba = branch -a
     ds = diff --stat=160,120
@@ -48,17 +47,19 @@
     res = !vim -p `git status --porcelain | grep "^UU " | cut -d ' ' -f 2`
     wip = commit --no-verify -m WIP
     undo = reset HEAD^
-    po = !bash ~/.githelpers push_current_branch
-    pof = !bash ~/.githelpers push_current_branch --force
+    po = push -u origin
+    pof = push -u origin --force-with-lease
     dopr = !bash ~/.githelpers create_pull_request
     popr = !git po && sleep 1 && git dopr
     findpr = !bash ~/.githelpers find_pull_request
     fix = !bash ~/.githelpers commit_fix
     uu = !bash ~/.githelpers update_master
-    l = !bash ~/.githelpers pretty_git_log
+    l = !bash ~/.githelpers pretty_git_log_paged
     r = !git l -20
     ra = !git r --all
     la = !git l --all
+    rp = !bash ~/.githelpers pretty_git_log -20
+    rpa = !git rp --all
     patch = format-patch --stdout
     root = rev-parse --show-toplevel
     sm = !bash ~/.githelpers show_modified_files
