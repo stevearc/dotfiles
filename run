@@ -439,6 +439,7 @@ setup-gnome() {
 
   cp "$HERE/static/mimeapps.list" ~/.local/share/applications
 
+  # Find schema with 'dconf watch /' and then changing the settings
   gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
   gsettings set org.gnome.settings-daemon.plugins.media-keys search "['<Super>space']"
   gsettings set org.gnome.settings-daemon.plugins.media-keys terminal "['<Shift><Alt>Return']"
@@ -459,6 +460,21 @@ setup-gnome() {
   gsettings set org.gnome.settings-daemon.plugins.power power-button-action 'suspend'
   gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 3600
   gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+  gsettings set org.gnome.desktop.session idle-delay 900
+  gsettings set org.gnome.mutter dynamic-workspaces false
+  gsettings set org.gnome.mutter workspaces-only-on-primary false
+  gsettings set org.gnome.desktop.wm.preferences num-workspaces 4
+  gsettings set org.gnome.mutter edge-tiling false
+  gsettings set org.gnome.desktop.interface show-battery-percentage true
+  gsettings set org.gnome.desktop.interface clock-show-weekday true
+
+  dconf write /org/gnome/terminal/legacy/new-terminal-mode '"window"'
+  local term_profile
+  term_profile=$(dconf read /org/gnome/terminal/legacy/profiles:/list | tr "'" '"' | jq -r '.[0]')
+  dconf write "/org/gnome/terminal/legacy/profiles:/:$term_profile/use-system-font" false
+  dconf write "/org/gnome/terminal/legacy/profiles:/:$term_profile/audible-bell" false
+  dconf write "/org/gnome/terminal/legacy/profiles:/:$term_profile/text-blink-mode" '"never"'
+  dconf write "/org/gnome/terminal/legacy/profiles:/:$term_profile/font" '"UbuntuMono Nerd Font 12"'
 }
 
 setup-xfce() {
@@ -738,6 +754,18 @@ dc-install-ufw() {
   sudo ufw enable
 }
 
+# shellcheck disable=SC2034
+DC_INSTALL_NERD_FONT_DOC="Font with icons"
+dc-install-nerd-font() {
+  mkdir -p ~/.local/share/fonts
+  pushd ~/.local/share/fonts
+  if [ ! -e UbuntuMono.zip ]; then
+    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/UbuntuMono.zip
+    unzip UbuntuMono.zip
+  fi
+  popd
+}
+
 cp-vim-plugin() {
   local plugin=${1?Must specify a vim plugin}
   local symbolic=$2
@@ -849,15 +877,7 @@ dotcmd-desktop() {
     echo $DOTCMD_DESKTOP_DOC
     return
   fi
-  if [ $LINUX ]; then
-    mkdir -p ~/.local/share/fonts
-    pushd ~/.local/share/fonts
-    if [ ! -e UbuntuMono.zip ]; then
-      wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/UbuntuMono.zip
-      unzip UbuntuMono.zip
-    fi
-    popd
-  fi
+  dc-install-nerd-font
 
   # Enable multiverse
   sudo sed -i -e 's/# \(.* multiverse$\)/\1/' /etc/apt/sources.list
