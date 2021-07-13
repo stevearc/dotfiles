@@ -67,10 +67,13 @@ if g:use_barbar
   nnoremap <silent> <leader>` <cmd>BufferLast<CR>
   nnoremap <silent> <leader>c <cmd>call <sid>CloseBufferOrWin()<CR>
   nnoremap <silent> <leader>C <cmd>BufferClose<CR>
-  nnoremap <C-w><C-b> <cmd>tab split<CR>
-  nnoremap <A-h> gT
-  nnoremap <A-l> gt
-  nnoremap <A-c> <cmd>tabclose<CR>
+  nnoremap <silent> <C-w><C-b> <cmd>tab split<CR>
+  nnoremap <silent> <A-h> gT
+  nnoremap <silent> <A-l> gt
+  nnoremap <silent> <A-c> <cmd>tabclose<CR>
+  tnoremap <silent> <A-h> <cmd>tabprev<CR>
+  tnoremap <silent> <A-l> <cmd>tabnext<CR>
+  tnoremap <silent> <A-c> <cmd>tabclose<CR>
 else
   " Fast tab navigation
   nnoremap <leader>1 1gt

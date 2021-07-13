@@ -16,7 +16,7 @@
 HASH="%C(yellow)%h%Creset"
 RELATIVE_TIME="%Cgreen(%ar)%Creset"
 AUTHOR="%C(bold blue)<%an>%Creset"
-REFS="%C(red)%d%Creset"
+REFS="%C(auto)%d%Creset"
 SUBJECT="%s"
 
 FORMAT="$HASH}$RELATIVE_TIME}$AUTHOR}$REFS $SUBJECT"
@@ -49,13 +49,63 @@ pretty_git_log_paged() {
     less -FXRS
 }
 
+contextual_git_log() {
+  local height="${1#-}"
+  if [ -n "$height" ]; then
+    shift
+  else
+    height=20
+  fi
+
+  local after
+  after=$(git log "HEAD~$height" -1 --pretty="tformat:%aI" 2>/dev/null)
+  if [ -n "$after" ]; then
+    after="--after=\"$after\""
+  fi
+
+  local tmpfile
+  tmpfile=$(mktemp)
+  git log $after --all --graph --abbrev-commit --date=relative --color=always --pretty="tformat:${FORMAT}" "$@" \
+    |
+    
+
+    # Replace (2 years ago) with (2 years)
+    sed -Ee 's/(^[^<]*) ago\)/\1)/' \
+    |
+    
+
+    # Replace (2 years, 5 months) with (2 years)
+    sed -Ee 's/(^[^<]*), [[:digit:]]+ .*months?\)/\1)/' >"$tmpfile"
+
+  local head_line
+  head_line=$(grep -n "[^/]HEAD" -m 1 "$tmpfile" | cut -f 1 -d :)
+  local cutoff
+  cutoff=$((head_line - height / 2))
+  if [ $cutoff -le 0 ]; then
+    head -n "$height" "$tmpfile" | column -s '}' -t
+  else
+    tail -n "+$cutoff" "$tmpfile" | head -n "$height" | column -s '}' -t
+  fi
+}
+
+contextual_git_log_paged() {
+  contextual_git_log "$@" \
+    |
+    
+
+    # Page only if we need to
+    less -FXRS
+}
+
 update_master() {
-  local changes=$(git status --porcelain 2>/dev/null | egrep "^(M| M)" | wc -l)
+  local changes
+  changes=$(git status --porcelain 2>/dev/null | grep -c -E "^(M| M)")
   if [ "$changes" != "0" ]; then
     git stash
   fi
 
-  local branch=$(_get_branch)
+  local branch
+  branch=$(_get_branch)
   if [ "$branch" != "master" ]; then
     git checkout master
   fi
@@ -71,15 +121,16 @@ update_master() {
 }
 
 _github() {
-  local uri=$1
-  if [ ! $GITHUB_TOKEN ]; then
+  local uri="$1"
+  if [ -z "$GITHUB_TOKEN" ]; then
     echo "WARNING: No GITHUB_TOKEN specified" >&2
   fi
   curl -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/$uri" 2>/dev/null
 }
 
 _get_repo() {
-  local repo=$(git remote -v | grep push | cut -f 2 | cut -f 2 -d : | cut -f 1 -d ' ')
+  local repo
+  repo=$(git remote -v | grep push | cut -f 2 | cut -f 2 -d : | cut -f 1 -d ' ')
   # Strip the .git off the end, if present.
   echo "${repo%.git}"
 }
@@ -114,18 +165,22 @@ create_pull_request() {
   done
   shift $((OPTIND - 1))
 
-  local repo=$(_get_repo)
-  local branch=$(_get_branch)
+  local repo
+  repo=$(_get_repo)
+  branch=$(_get_branch)
+  local branch
 
-  local browser=$(_get_browser)
+  local browser
+  browser=$(_get_browser)
   local url="https://github.com/$repo/compare/$branch?expand=1"
   if [ -n "$fix" ]; then
-    local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \" | head -n 1)
+    local issue_title
+    issue_title=$(_github "repos/$repo/issues/$fix" | grep title | cut -f 4 -d \" | head -n 1)
     local body="Fix #$fix: $issue_title"
     body="$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$body")"
     url="$url&body=$body"
   fi
-  $browser $url
+  $browser "$url"
 }
 
 commit_fix() {
@@ -134,18 +189,22 @@ commit_fix() {
     echo "Usage: git fix ISSUE" >&2
     exit 1
   fi
-  local repo=$(_get_repo)
-  local issue_title=$(_github repos/$repo/issues/$fix | grep title | cut -f 4 -d \" | head -n 1)
+  local repo
+  repo=$(_get_repo)
+  local issue_title
+  issue_title=$(_github "repos/$repo/issues/$fix" | grep title | cut -f 4 -d \" | head -n 1)
   git commit -m "Fix #$fix: $issue_title"
   git log -n 1
 }
 
 find_pull_request() {
   local commit="$1"
-  local repo=$(_get_repo)
+  local repo
+  repo=$(_get_repo)
   local url="https://github.com/$repo/search?q=$commit&type=Issues"
-  local browser=$(_get_browser)
-  $browser $url
+  local browser
+  browser=$(_get_browser)
+  $browser "$url"
 }
 
 show_modified_files() {

@@ -33,7 +33,7 @@ tnoremap \: <C-\><C-N>:
 highlight TermCursor ctermfg=DarkRed guifg=red
 
 function! s:MaybeFocus() abort
-  if &buftype == 'terminal' && winnr('$') > 1
+  if &buftype == 'terminal' && winnr('$') > 1 && !get(b:, 'term_no_autoinsert')
     startinsert
   endif
 endfunction
