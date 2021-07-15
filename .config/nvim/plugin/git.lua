@@ -1,14 +1,15 @@
 local stevearc = require("stevearc")
 
 local function get_git_tabpage()
-  for _, winid in ipairs(vim.api.nvim_list_wins()) do
-    if pcall(vim.api.nvim_win_get_var, winid, "is_git_main") then
-      return vim.api.nvim_win_get_tabpage(winid)
+  for _, tabpage in ipairs(vim.api.nvim_list_tabpages()) do
+    if pcall(vim.api.nvim_tabpage_get_var, tabpage, "is_git_main") then
+      return vim.api.nvim_tabpage_get_number(tabpage)
     end
   end
 end
 
 local function set_buf_opts(focusable)
+  vim.cmd("silent! PinBuffer!")
   vim.api.nvim_buf_set_option(0, "bufhidden", "delete")
   vim.api.nvim_buf_set_option(0, "buflisted", false)
   if not focusable then
@@ -77,7 +78,7 @@ function stevearc.toggle_git_terms()
   end
   local dash = TermDash:new()
   vim.cmd("tabnew")
-  vim.api.nvim_win_set_var(0, "is_git_main", true)
+  vim.api.nvim_tabpage_set_var(0, "is_git_main", true)
   vim.fn.termopen("bash", {
     on_stdout = function(j, d)
       dash:on_output(j, d)
