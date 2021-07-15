@@ -13,7 +13,6 @@ nnoremap <silent><buffer><expr> o defx#do_action('open_tree', 'toggle')
 nnoremap <silent><buffer><expr> O defx#do_action('open_tree', 'recursive', 'toggle')
 nnoremap <silent><buffer><expr> d defx#do_action('new_directory')
 nnoremap <silent><buffer><expr> % defx#do_action('new_file')
-nnoremap <silent><buffer><expr> M defx#do_action('new_multiple_files')
 nnoremap <silent><buffer><expr> C defx#do_action('toggle_columns', 'indent:icons:filename:type:size:time')
 nnoremap <silent><buffer><expr> S defx#do_action('toggle_sort', 'time')
 nnoremap <silent><buffer><expr> D defx#do_action('remove')
@@ -28,7 +27,7 @@ nnoremap <silent><buffer><expr> - defx#do_action('cd', ['..'])
 nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
 nnoremap <silent><buffer><expr> ` defx#do_action('cd', getcwd())
 nnoremap <silent><buffer><expr> q defx#do_action('quit')
-nnoremap <silent><buffer><expr> <Space> defx#do_action('toggle_select') . 'j'
+nnoremap <silent><buffer><expr> M defx#do_action('toggle_select') . 'j'
 nnoremap <silent><buffer><expr> * defx#do_action('toggle_select_all')
 nnoremap <silent><buffer><expr> # defx#do_action('clear_select_all')
 nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
