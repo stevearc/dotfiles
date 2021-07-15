@@ -6,6 +6,21 @@ if g:use_barbar
       return
     endif
 
+    if get(w:, 'is_remote')
+      BufferClose
+      if s:OtherNormalWindowExists()
+        close
+      elseif tabpagenr('$') > 1
+        tabclose
+      endif
+    elseif s:OtherNormalWindowExists()
+      close
+    else
+      BufferClose
+    endif
+  endfunction
+
+  function! s:OtherNormalWindowExists() abort
     let i = 1
     let num_normal_wins = 0
     let in_normal_window = v:false
@@ -19,16 +34,7 @@ if g:use_barbar
       let i += 1
     endwhile
 
-    if get(w:, 'is_remote')
-      BufferClose
-      if num_normal_wins == 1 && tabpagenr('$') > 1
-        tabclose
-      endif
-    elseif num_normal_wins > 1 || !in_normal_window
-      close
-    else
-      BufferClose
-    endif
+    return num_normal_wins > 1 || !in_normal_window
   endfunction
 
   function! s:IsFloatingWin(winnr) abort
@@ -36,6 +42,9 @@ if g:use_barbar
   endfunction
 
   function! s:IsNormalWin(winnr) abort
+    if luaeval("require'stickybuf.util'.is_sticky_win()")
+      return v:false
+    endif
     " Check for non-normal (e.g. popup/preview) windows
     if !empty(win_gettype(a:winnr)) || s:IsFloatingWin(a:winnr)
       return v:false
@@ -46,6 +55,14 @@ if g:use_barbar
 
     " Ignore quickfix, prompt, help, and aerial buffer windows
     return bt != 'quickfix' && bt != 'prompt' && bt != 'help' && ft != 'aerial'
+  endfunction
+
+  function! s:SmartDelete() abort
+    if s:OtherNormalWindowExists()
+      bdelete
+    else
+      BufferClose
+    endif
   endfunction
 
   aug StickyRemote
