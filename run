@@ -437,6 +437,7 @@ EOF
 setup-gnome() {
   [ ! $LINUX ] && return 1
 
+  sudo apt install -yq dconf-cli
   cp "$HERE/static/mimeapps.list" ~/.local/share/applications
 
   # Find schema with 'dconf watch /' and then changing the settings
@@ -475,6 +476,16 @@ setup-gnome() {
   dconf write "/org/gnome/terminal/legacy/profiles:/:$term_profile/audible-bell" false
   dconf write "/org/gnome/terminal/legacy/profiles:/:$term_profile/text-blink-mode" '"never"'
   dconf write "/org/gnome/terminal/legacy/profiles:/:$term_profile/font" '"UbuntuMono Nerd Font 12"'
+
+  if [ "$(dconf read "/org/gnome/terminal/legacy/profiles:/$term_profile/use-theme-colors")" == "true" ]; then
+    pushd /tmp
+    if [ ! -e gnome-terminal ]; then
+      git clone https://github.com/dracula/gnome-terminal
+    fi
+    cd gnome-terminal
+    ./install.sh -s Dracula -p "$term_profile" --skip-dircolors
+    popd
+  fi
 }
 
 setup-xfce() {
