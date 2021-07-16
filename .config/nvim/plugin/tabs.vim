@@ -42,7 +42,7 @@ if g:use_barbar
   endfunction
 
   function! s:IsNormalWin(winnr) abort
-    if luaeval("require'stickybuf.util'.is_sticky_win()")
+    if luaeval("require'stickybuf.util'.is_sticky_win(_A)", win_getid(a:winnr))
       return v:false
     endif
     " Check for non-normal (e.g. popup/preview) windows
