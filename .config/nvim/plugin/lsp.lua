@@ -1,5 +1,6 @@
 local stevearc = require("stevearc")
 local projects = require("projects")
+local null_ls = require("null-ls")
 
 -- vim.lsp.set_log_level("debug")
 
@@ -251,17 +252,19 @@ require("lspconfig").pyright.setup({
   on_attach = on_attach,
   diagnostics = not is_using_sqlalchemy(),
 })
-require("lspconfig").efm.setup({
-  on_attach = on_attach,
-  init_options = { documentFormatting = true },
-  cmd = { "efm-langserver", "-logfile", "/tmp/efm.log", "-loglevel", "4" },
-  filetypes = vim.tbl_keys(require("efmconfig")),
-  root_dir = require("lspconfig").util.root_pattern(".git", "setup.py", "setup.cfg", "pyproject.toml", "package.json"),
-  settings = {
-    lintDebounce = 1000000000,
-    languages = require("efmconfig"),
-  },
-})
+if not vim.g.null_ls then
+  require("lspconfig").efm.setup({
+    on_attach = on_attach,
+    init_options = { documentFormatting = true },
+    cmd = { "efm-langserver", "-logfile", "/tmp/efm.log", "-loglevel", "4" },
+    filetypes = vim.tbl_keys(require("efmconfig")),
+    root_dir = require("lspconfig").util.root_pattern(".git", "setup.py", "setup.cfg", "pyproject.toml", "package.json"),
+    settings = {
+      lintDebounce = 1000000000,
+      languages = require("efmconfig"),
+    },
+  })
+end
 
 -- neovim doesn't support the full 3.16 spec, but latest rust-analyzer requires the following capabilities.
 -- Remove once implemented.
@@ -334,6 +337,12 @@ require("lspconfig").sorbet.setup({
   cmd = { "bundle", "exec", "srb", "tc", "--lsp" },
   on_attach = on_attach,
 })
+
+local config = require("nullconfig")
+config.on_attach = on_attach
+if vim.g.null_ls then
+  null_ls.setup(config)
+end
 
 -- Since we missed the FileType event when this runs on vim start, we should
 -- manually make sure that LSP starts on the first file opened.
