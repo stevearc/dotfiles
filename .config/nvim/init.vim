@@ -133,11 +133,8 @@ set whichwrap=h,l
 filetype plugin on
 filetype plugin indent on
 
-" Set auto line wrapping options (overwrites plugins)
-augroup LineWrap
-  au!
-  au FileType * setlocal formatoptions=rqnlj
-augroup end
+" Set auto line wrapping options
+set formatoptions=rqnolj
 
 " Add bash shortcuts for command line
 :cnoremap <C-a>  <Home>
