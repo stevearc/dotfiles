@@ -6,7 +6,9 @@ vim.o.splitright = true
 
 vim.g.win_equal_size = true
 function stevearc.resize_windows()
-  if vim.g.win_equal_size then
+  -- For some reason wincmd = inside the preview window doesn't play nice when
+  -- we have other windows present with winfixwidth/winfixheight
+  if vim.g.win_equal_size and vim.wo.previewwindow == 0 then
     vim.cmd([[wincmd =]])
   end
 end

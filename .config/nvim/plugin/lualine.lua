@@ -65,7 +65,7 @@ require("lualine").setup({
       debug_treesitter_node,
       arduino_status,
     },
-    lualine_x = { lsp_messages, "diff", "filetype" },
+    lualine_x = { lsp_messages, "filetype" },
     lualine_y = { "progress" },
     lualine_z = { "location" },
   },

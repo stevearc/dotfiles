@@ -30,7 +30,7 @@ config.python = {
     lintFormats = { "%f:%l:%c: %m" },
   },
   {
-    lintCommand = "mypy --show-column-numbers",
+    lintCommand = "mypy --show-error-codes --show-column-numbers --follow-imports silent",
     lintFormats = {
       "%f:%l:%c: %trror: %m",
       "%f:%l:%c: %tarning: %m",
