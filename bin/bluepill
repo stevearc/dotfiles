@@ -47,10 +47,10 @@ _confirm() {
   while true; do
     read -r -p "$prompt" response
     case $response in
-      [yY][eE][sS]|[yY])
+      [yY][eE][sS] | [yY])
         return 0
         ;;
-      [nN][oO]|[nN])
+      [nN][oO] | [nN])
         return 1
         ;;
       *)
@@ -69,9 +69,9 @@ _confirm() {
   done
 }
 
-command -v realpath > /dev/null 2>&1 || realpath() {
-  if ! readlink -f "$1" 2> /dev/null; then
-    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+command -v realpath >/dev/null 2>&1 || realpath() {
+  if ! readlink -f "$1" 2>/dev/null; then
+    [[ $1 == /* ]] && echo "$1" || echo "$PWD/${1#./}"
   fi
 }
 
@@ -81,6 +81,20 @@ _bp-image-name() {
 
 _bp-container-name() {
   echo "bp-container-$(basename "${1?_bp-image-name missing arg}")-$(echo "$1" | md5sum | cut -f 1 -d ' ')"
+}
+
+_bp-add-user-to-image() {
+  local sourceImage="${1?missing source image}"
+  local destImage="${2?missing dest image}"
+  docker build -t "$destImage" - <<EOF
+FROM $sourceImage
+RUN groupadd -g $(id -g) $USER && \
+  useradd -m -u $UID -g $(id -g) -s /bin/bash $USER && \
+  apt-get update -q && \
+  apt-get install -y -q sudo && \
+  echo "$USER ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers.d/user
+ENTRYPOINT ["/bin/bash", "-l"]
+EOF
 }
 
 ##############
@@ -100,7 +114,7 @@ Commands:
   setup       Builds your base image that all other containers will inherit from
 
 Run 'bluepill help COMMAND for more information on a command"
-  elif command -v "bluepill-$1" > /dev/null; then
+  elif command -v "bluepill-$1" >/dev/null; then
     "bluepill-$1" -h
   else
     echo "bluepill: '$1' is not a command."
@@ -116,35 +130,24 @@ Builds your base image that all other containers will inherit from
 
   -h, --help   Print usage"
   unset OPTIND
-  while getopts "h-:" opt; do
+  while getopts "h" opt; do
     case $opt in
-      -)
-        case $OPTARG in
-          help)
-            echo "$usage"
-            return 0
-            ;;
-        esac
-        ;;
       h)
         echo "$usage"
         return 0
         ;;
+      /?)
+        echo "$usage"
+        return 1
+        ;;
     esac
   done
-  shift "$(($OPTIND-1))"
-  if docker inspect "$BLUEPILL_BASE_IMAGE" > /dev/null 2>&1; then
-    _confirm "Image $BLUEPILL_BASE_IMAGE already exists. Would you like to replace it?" n || \
-      return
+  shift "$((OPTIND - 1))"
+  if docker inspect "$BLUEPILL_BASE_IMAGE" >/dev/null 2>&1; then
+    _confirm "Image $BLUEPILL_BASE_IMAGE already exists. Would you like to replace it?" n \
+      || return
   fi
-  docker build -t "$BLUEPILL_BASE_IMAGE" - <<EOF
-FROM $BLUEPILL_ROOT_IMAGE
-RUN groupadd -g $(id -g) $USER && \
-  useradd -m -u $UID -g $(id -g) -s /bin/bash $USER && \
-  apt-get update -q && \
-  apt-get install -y -q sudo && \
-  echo "$USER ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers.d/user
-EOF
+  _bp-add-user-to-image "$BLUEPILL_BASE_IMAGE" "$BLUEPILL_ROOT_IMAGE"
   echo "Customize your base image. Type 'exit' when done"
   bluepill-edit
 }
@@ -153,20 +156,10 @@ bluepill-edit() {
   local usage="
 Usage:  bluepill edit
 
-Make interactive changes to your base bluepill image
-
-  -h, --help   Print usage"
+Make interactive changes to your base bluepill image"
   unset OPTIND
-  while getopts "h-:" opt; do
+  while getopts "h" opt; do
     case $opt in
-      -)
-        case $OPTARG in
-          *)
-            echo "$usage"
-            return 1
-            ;;
-        esac
-        ;;
       h)
         echo "$usage"
         return 0
@@ -177,40 +170,35 @@ Make interactive changes to your base bluepill image
         ;;
     esac
   done
-  shift "$(($OPTIND-1))"
+  shift "$((OPTIND - 1))"
   docker inspect bluepill-setup >/dev/null 2>&1 && docker rm bluepill-setup
   docker run --name bluepill-setup -it -e USER -w "/home/$USER" -u "$UID:$(id -g)" \
     "$BLUEPILL_BASE_IMAGE" /bin/bash -l
-  _confirm "Replace current image with changes?" y && \
-    docker commit bluepill-setup "$BLUEPILL_BASE_IMAGE"
+  _confirm "Replace current image with changes?" y \
+    && docker commit bluepill-setup "$BLUEPILL_BASE_IMAGE"
   docker rm bluepill-setup
 }
 
 bluepill-build() {
-  if ! docker inspect "$BLUEPILL_BASE_IMAGE" > /dev/null 2>&1; then
-    echo "To start using bluepill, first run 'bluepill setup'"
-    return 1
-  fi
   local usage="
 Usage:  bluepill build [OPTIONS] [DIRECTORY]
 
 Build a docker image for a directory
 
-  -f <file>    Path to Dockerfile (looks for DIRECTORY/Dockerfile by default)
-  -h, --help   Print usage"
+  -f <file>    Path to Dockerfile
+  -i <image>   Source image to use (defaults to the one created with 'setup')
+  -h           Print usage"
   unset OPTIND
-  while getopts "f:h-:" opt; do
+  local sourceImage="$BLUEPILL_BASE_IMAGE"
+  local customImage=
+  while getopts "f:i:h" opt; do
     case $opt in
-      -)
-        case $OPTARG in
-          *)
-            echo "$usage"
-            return 1
-            ;;
-        esac
-        ;;
       f)
         local dockerfile="$OPTARG"
+        ;;
+      i)
+        sourceImage="$OPTARG"
+        customImage=1
         ;;
       h)
         echo "$usage"
@@ -222,100 +210,96 @@ Build a docker image for a directory
         ;;
     esac
   done
-  shift "$(($OPTIND-1))"
+  shift "$((OPTIND - 1))"
+  if ! docker inspect "$sourceImage" >/dev/null 2>&1 \
+    && [ "$sourceImage" != "$BLUEPILL_BASE_IMAGE" ]; then
+    docker pull "$sourceImage"
+  fi
+  if ! docker inspect "$sourceImage" >/dev/null 2>&1; then
+    echo "To start using bluepill, first run 'bluepill setup'"
+    return 1
+  fi
   local dir
   dir="$(realpath "${1-.}")"
   local imageName
   imageName="$(_bp-image-name "$dir")"
-  pushd "$dir" > /dev/null
-  if [ -z "$dockerfile" ] && [ -e Dockerfile ]; then
-    local dockerfile="Dockerfile"
-  fi
-  if docker inspect "$imageName" > /dev/null 2>&1; then
-    _confirm "Image $imageName already exists. Would you like to replace it?" n || \
-      return
+  pushd "$dir" >/dev/null
+  if docker inspect "$imageName" >/dev/null 2>&1; then
+    _confirm "Image $imageName already exists. Would you like to replace it?" n \
+      || return
   fi
   if [ -n "$dockerfile" ]; then
-    pushd "$(dirname "$dockerfile")" > /dev/null
-    { 
-      echo "FROM $BLUEPILL_BASE_IMAGE";
-      echo "USER root"; 
-      sed /^FROM/d < "$(basename "$dockerfile")";
+    pushd "$(dirname "$dockerfile")" >/dev/null
+    {
+      echo "FROM $sourceImage"
+      echo "USER root"
+      sed /^FROM/d <"$(basename "$dockerfile")"
       echo "USER $USER"
-    } > .Dockerfile.bp
+    } >.Dockerfile.bp
     docker build -t "$imageName" -f .Dockerfile.bp .
     rm .Dockerfile.bp
-    popd > /dev/null
+    popd >/dev/null
+  elif [ $customImage ]; then
+    _bp-add-user-to-image "$sourceImage" "$imageName"
   else
-    docker tag "$BLUEPILL_BASE_IMAGE" "$imageName"
+    docker tag "$sourceImage" "$imageName"
   fi
-  popd > /dev/null
+  popd >/dev/null
 }
 
 bluepill-enter() {
-  if ! docker inspect "$BLUEPILL_BASE_IMAGE" > /dev/null 2>&1; then
-    echo "To start using bluepill, first run 'bluepill setup'"
-    return 1
-  fi
   local usage="
 Usage:  bluepill enter [OPTIONS] [DIRECTORY] [-- DOCKER ARGS]
 
 Build a container for a directory
 
   You may end the command with '--' and any number of arguments to pass to
-  'docker run'
-
-  -h, --help   Print usage"
+  'docker run'"
   unset OPTIND
-  while getopts "h-:" opt; do
+  while getopts "h" opt; do
     case $opt in
-      -)
-        case $OPTARG in
-          help)
-            echo "$usage"
-            return 0
-            ;;
-        esac
-        ;;
       h)
         echo "$usage"
         return 0
         ;;
+      /?)
+        echo "$usage"
+        return 1
+        ;;
     esac
   done
-  local secondToLast="(($OPTIND-1))"
-  local lastArg=${!secondToLast}
-  shift $secondToLast
+  shift "$((OPTIND - 1))"
   local dir
-  if [ "$lastArg" == "--" ]; then
+  if [ "$1" == "--" ]; then
     dir="$(realpath .)"
   else
-    dir="$(realpath "${1-.}")"; shift
+    dir="$(realpath "${1-.}")"
+    shift || :
   fi
   [ "$1" == "--" ] && shift
   local imageName
   imageName="$(_bp-image-name "$dir")"
   local containerName
   containerName="$(_bp-container-name "$dir")"
-  if ! docker inspect "$imageName" > /dev/null 2>&1; then
+  if ! docker inspect "$imageName" >/dev/null 2>&1; then
     echo "Must run 'bluepill build' before doing 'bluepill enter'"
     return 1
   fi
   local sshArgs=
   if [ -n "$SSH_AUTH_SOCK" ]; then
-    local sshArgs="-v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent"
+    sshArgs="-v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent"
   elif [ -e "$HOME/.ssh/id_rsa" ]; then
-    local sshArgs="-v $HOME/.ssh/id_rsa:$HOME/.ssh/id_rsa:ro"
-    local sshArgs="$sshArgs -v $HOME/.ssh/id_rsa.pub:$HOME/.ssh/id_rsa.pub:ro"
+    sshArgs="-v $HOME/.ssh/id_rsa:$HOME/.ssh/id_rsa:ro -v $HOME/.ssh/id_rsa.pub:$HOME/.ssh/id_rsa.pub:ro"
   fi
   echo "Image name: $imageName"
-  if docker inspect "$containerName" > /dev/null 2>&1; then
+  if docker inspect "$containerName" >/dev/null 2>&1; then
     docker start -i "$containerName"
   else
     docker run --name="$containerName" -it \
       -u "${UID}:$(id -g)" \
       --userns=host \
       --net=host \
+      -w "$HOME/$(basename "$dir")" \
       -v "$dir:$HOME/$(basename "$dir")" \
       $sshArgs \
       "$@" \
@@ -323,24 +307,14 @@ Build a container for a directory
   fi
 }
 
-bluepill-delete() {
+bluepill-commit() {
   local usage="
-Usage:  bluepill delete [DIRECTORY]
+Usage:  bluepill commit [DIRECTORY]
 
-Delete the container and image for a directory
-
-  -h, --help   Print usage"
+Save the container for a directory as that directory's image"
   unset OPTIND
-  while getopts "h-:" opt; do
+  while getopts "h" opt; do
     case $opt in
-      -)
-        case $OPTARG in
-          *)
-            echo "$usage"
-            return 1
-            ;;
-        esac
-        ;;
       h)
         echo "$usage"
         return 0
@@ -351,7 +325,43 @@ Delete the container and image for a directory
         ;;
     esac
   done
-  shift "$(($OPTIND-1))"
+  shift "$((OPTIND - 1))"
+  local dir
+  dir="$(realpath "${1-.}")"
+  local imageName
+  imageName="$(_bp-image-name "$dir")"
+  if ! docker inspect "$imageName" >/dev/null 2>&1; then
+    echo "No image found for directory"
+    return 1
+  fi
+  local containerName
+  containerName="$(_bp-container-name "$dir")"
+  if ! docker inspect "$containerName" >/dev/null 2>&1; then
+    echo "No container found for directory"
+    return 1
+  fi
+  docker commit "$containerName" "$imageName"
+}
+
+bluepill-delete() {
+  local usage="
+Usage:  bluepill delete [DIRECTORY]
+
+Delete the container and/or image for a directory"
+  unset OPTIND
+  while getopts "h" opt; do
+    case $opt in
+      h)
+        echo "$usage"
+        return 0
+        ;;
+      \?)
+        echo "$usage"
+        return 1
+        ;;
+    esac
+  done
+  shift "$((OPTIND - 1))"
   local dir
   dir="$(realpath "${1-.}")"
   local imageName
@@ -365,7 +375,7 @@ Delete the container and image for a directory
 }
 
 main() {
-  if ! command -v docker > /dev/null; then
+  if ! command -v docker >/dev/null; then
     echo "Could not find 'docker' command. Please install docker"
     return 1
   fi
@@ -374,7 +384,7 @@ main() {
     return 1
   else
     local cmd="bluepill-$1"
-    if command -v "$cmd" > /dev/null; then
+    if command -v "$cmd" >/dev/null; then
       shift
       $cmd "$@"
     else
