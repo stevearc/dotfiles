@@ -24,6 +24,7 @@ require('telescope').setup{
   },
 }
 require('telescope').load_extension('aerial')
+require('telescope').load_extension('gkeep')
 EOF
 nnoremap <leader>t <cmd>lua require('telescope.builtin').find_files({previewer=false})<cr>
 nnoremap <leader>bb <cmd>lua require('telescope.builtin').buffers({previewer=false})<cr>
@@ -34,3 +35,4 @@ nnoremap <leader>f. <cmd>lua require('telescope.builtin').find_files({cwd=string
 nnoremap <leader>fc <cmd>Telescope commands<CR>
 nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>
 nnoremap <leader>fd <cmd>Telescope aerial<CR>
+nnoremap <leader>fn <cmd>Telescope gkeep<CR>
