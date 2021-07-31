@@ -1,14 +1,34 @@
 {
   "filename": {
-    "prefix": ["fn"],
-    "body": ["$TM_FILENAME_BASE"]
+    "prefix": [
+      "fn"
+    ],
+    "body": [
+      "$TM_FILENAME_BASE"
+    ]
   },
   "filenameWithExtension": {
-    "prefix": ["fnn"],
-    "body": ["$TM_FILENAME"]
+    "prefix": [
+      "fnn"
+    ],
+    "body": [
+      "$TM_FILENAME"
+    ]
   },
   "shrug": {
-    "prefix": ["shrug"],
-    "body": ["¯\\\\_(ツ)_/¯"]
+    "prefix": [
+      "shrug"
+    ],
+    "body": [
+      "¯\\\\_(ツ)_/¯"
+    ]
+  },
+  "lorem ipsum": {
+    "prefix": [
+      "lorem"
+    ],
+    "body": [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque eget ipsum vel dui rhoncus ullamcorper at mattis turpis. Pellentesque finibus lacinia purus vel pellentesque. Vivamus sed metus varius purus gravida placerat in nec ex. Maecenas sagittis, lorem sit amet dictum sodales, leo mi rutrum erat, vel pretium tortor mi et metus. Vivamus eu orci consectetur, elementum neque quis, dapibus odio. Curabitur laoreet gravida ante, vel porttitor ante efficitur vitae. Fusce mattis diam in nisl efficitur, et auctor risus iaculis. Pellentesque sagittis mollis egestas."
+    ]
   }
 }
