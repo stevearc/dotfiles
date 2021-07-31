@@ -10,9 +10,6 @@
 [submodule "vimplugins/vim-repeat"]
 	path = vimplugins/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
-[submodule "vimplugins/vim-snippets"]
-	path = vimplugins/vim-snippets
-	url = https://github.com/honza/vim-snippets.git
 [submodule "vimplugins/vim-arduino"]
 	path = vimplugins/vim-arduino
 	url = https://github.com/stevearc/vim-arduino.git
