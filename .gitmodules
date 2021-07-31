@@ -158,3 +158,6 @@
 [submodule "vimplugins/suda.vim"]
 	path = vimplugins/suda.vim
 	url = https://github.com/lambdalisue/suda.vim.git
+[submodule "vimplugins/gkeep.nvim"]
+	path = vimplugins/gkeep.nvim
+	url = git@github.com:stevearc/gkeep.nvim.git
