@@ -38,6 +38,9 @@ set wildignore+=*.png,*.jpg,*.jpeg,*.gif,*.wav,*.aiff,*.dll,*.pdb,*.mdb,*.so,*.s
 " Make backspace work properly
 set backspace=indent,eol,start
 
+" Transparently use system clipboard
+set clipboard+=unnamedplus
+
 " Make searches case-sensitive only if they contain upper-case characters
 set ignorecase
 set smartcase
@@ -63,6 +66,9 @@ set inccommand=nosplit
 
 " Highlight search matches
 set hls
+
+" Make Y behave like I expect
+nnoremap Y y$
 
 " Highlight the cursor line only in the active window
 augroup CursorLine
@@ -150,14 +156,18 @@ set formatoptions=rqnolj
 :cnoremap <Esc>d <S-right><Delete>
 :cnoremap <C-g>  <C-c>
 
-nnoremap j gj
-nnoremap k gk
-vnoremap j gj
-vnoremap k gk
+" Save jumps > 5 lines to the jumplist
+" Jumps <= 5 respect line wraps
+nnoremap <expr> j (v:count > 5 ? "m'" . v:count . 'j' : 'gj')
+nnoremap <expr> k (v:count > 5 ? "m'" . v:count . 'k' : 'gk')
 
 " Paste last text that was yanked, not deleted
 nnoremap <leader>p "0p
 nnoremap <leader>P "0P
+
+" Move text in visual mode with J/K
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
 
 augroup VCenterCursor
   au!
