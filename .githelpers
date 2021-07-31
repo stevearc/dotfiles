@@ -97,6 +97,12 @@ contextual_git_log_paged() {
     less -FXRS
 }
 
+push_current_branch() {
+  local branch
+  branch=$(_get_branch)
+  git push -u origin "$branch" "$@"
+}
+
 update_master() {
   local changes
   changes=$(git status --porcelain 2>/dev/null | grep -c -E "^(M| M)")
@@ -106,13 +112,15 @@ update_master() {
 
   local branch
   branch=$(_get_branch)
-  if [ "$branch" != "master" ]; then
-    git checkout master
+  local master
+  master=$(git main)
+  if [ "$branch" != "$master" ]; then
+    git checkout "$master"
   fi
   git fetch -p
-  git rebase origin/master
-  if [ "$branch" != "master" ]; then
-    git checkout $branch
+  git rebase "origin/$master"
+  if [ "$branch" != "$master" ]; then
+    git checkout "$branch"
   fi
 
   if [ "$changes" != "0" ]; then
