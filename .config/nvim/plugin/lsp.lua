@@ -4,8 +4,6 @@ local null_ls = require("null-ls")
 
 -- vim.lsp.set_log_level("debug")
 
-require("lspsaga").init_lsp_saga()
-
 if vim.g.nerd_font then
   vim.cmd([[
     sign define LspDiagnosticsSignError text=   numhl=LspDiagnosticsSignError texthl=LspDiagnosticsSignError
@@ -47,6 +45,9 @@ for _, cb in pairs(jump_callbacks) do
   end
   vim.lsp.handlers[cb] = new_callback
 end
+
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 
 local function mapper(mode, key, result)
   vim.api.nvim_buf_set_keymap(0, mode, key, result, { noremap = true, silent = true })
@@ -178,18 +179,16 @@ local on_attach = function(client)
   safemap("implementation", "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
   safemap("find_references", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
   if config.help then
-    safemap("hover", "n", "K", '<cmd>lua require("lspsaga.hover").render_hover_doc()<CR>')
+    safemap("hover", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
   end
   if client.resolved_capabilities.signature_help then
-    mapper("n", "<c-k>", '<cmd>lua require("lspsaga.signaturehelp").signature_help()<CR>')
-    mapper("i", "<c-k>", '<cmd>lua require("lspsaga.signaturehelp").signature_help()<CR>')
+    mapper("n", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
+    mapper("i", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
   end
   if config.code_action then
-    mapper("n", "<leader>fa", '<cmd>lua require("lspsaga.codeaction").code_action()<CR>')
-    mapper("v", "<leader>fa", ':<C-U>lua require("lspsaga.codeaction").range_code_action()<CR>')
+    mapper("n", "<leader>fa", "<cmd>lua vim.lsp.buf.code_action()<CR>")
+    mapper("v", "<leader>fa", ":<C-U>lua vim.lsp.buf.range_code_action()<CR>")
   end
-  mapper("n", "<C-f>", '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(1)<CR>')
-  mapper("n", "<C-b>", '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(-1)<CR>')
   if client.resolved_capabilities.document_formatting then
     vim.cmd([[aug LspAutoformat
       au! * <buffer>
@@ -199,9 +198,9 @@ local on_attach = function(client)
     mapper("n", "=", "<cmd>lua vim.lsp.buf.formatting()<CR>")
   end
   safemap("document_range_formatting", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
-  safemap("rename", "n", "<leader>r", '<cmd>lua require("lspsaga.rename").rename()<CR>')
+  safemap("rename", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
 
-  mapper("n", "<CR>", '<cmd>lua require"lspsaga.diagnostic".show_line_diagnostics()<CR>')
+  mapper("n", "<CR>", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics({border='rounded'})<CR>")
 
   if client.resolved_capabilities.document_highlight then
     vim.cmd([[autocmd CursorHold,CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]])
@@ -210,9 +209,7 @@ local on_attach = function(client)
 
   vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
 
-  require("lsp_signature").on_attach({
-    use_lspsaga = true,
-  })
+  require("lsp_signature").on_attach({})
   require("aerial").on_attach(client)
 end
 
