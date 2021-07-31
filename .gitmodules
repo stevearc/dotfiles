@@ -102,9 +102,6 @@
 [submodule "vimplugins/scnvim"]
 	path = vimplugins/scnvim
 	url = https://github.com/stevearc/scnvim.git
-[submodule "vimplugins/cheat.sh-vim"]
-	path = vimplugins/cheat.sh-vim
-	url = https://github.com/dbeniamine/cheat.sh-vim.git
 [submodule "vimplugins/lspsaga.nvim"]
 	path = vimplugins/lspsaga.nvim
 	url = https://github.com/glepnir/lspsaga.nvim.git
