@@ -1,4 +1,5 @@
 let g:python3_host_prog = expand("~/.envs/py3/bin/python")
+let &rtp = &rtp . ',' . stdpath('data') . '-local'
 
 let g:use_barbar = v:true
 let g:nerd_font = v:true
