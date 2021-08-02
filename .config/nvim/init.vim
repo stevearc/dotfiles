@@ -115,8 +115,8 @@ augroup END
 
 " Search mappings: These will make it so that going to the next one in a
 " search will center on the line it's found in.
-map N Nzv
-map n nzv
+nnoremap N Nzv
+nnoremap n nzv
 
 " Set fileformat to Unix
 set ff=unix

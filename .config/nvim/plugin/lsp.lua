@@ -1,6 +1,5 @@
 local stevearc = require("stevearc")
 local projects = require("projects")
-local null_ls = require("null-ls")
 
 -- vim.lsp.set_log_level("debug")
 
@@ -335,10 +334,10 @@ require("lspconfig").sorbet.setup({
   on_attach = on_attach,
 })
 
-local config = require("nullconfig")
-config.on_attach = on_attach
 if vim.g.null_ls then
-  null_ls.setup(config)
+  local config = require("nullconfig")
+  config.on_attach = on_attach
+  require("null-ls").setup(config)
 end
 
 -- Since we missed the FileType event when this runs on vim start, we should

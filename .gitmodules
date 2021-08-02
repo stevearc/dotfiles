@@ -158,3 +158,9 @@
 [submodule "vimplugins/gkeep.nvim"]
 	path = vimplugins/gkeep.nvim
 	url = git@github.com:stevearc/gkeep.nvim.git
+[submodule "vimplugins/tabout.nvim"]
+	path = vimplugins/tabout.nvim
+	url = https://github.com/abecodes/tabout.nvim.git
+[submodule "vimplugins/nvim-autopairs"]
+	path = vimplugins/nvim-autopairs
+	url = https://github.com/windwp/nvim-autopairs.git

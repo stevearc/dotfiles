@@ -1,8 +1,6 @@
 let g:vsnip_snippet_dirs = [
-      \ $HOME.'/.vim/vsnip',
       \ $HOME.'/.config/nvim/vsnip',
       \ ]
-let g:ulti_expand_or_jump_res = 0 "default value, just set once
 function! Vsnip_jump(direction) abort
   let l:session = vsnip#get_session()
   if !empty(l:session) && l:session.jumpable(a:direction)
