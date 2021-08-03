@@ -118,7 +118,7 @@
 	ignore = untracked
 [submodule "vimplugins/barbar.nvim"]
 	path = vimplugins/barbar.nvim
-	url = https://github.com/romgrk/barbar.nvim.git
+	url = https://github.com/stevearc/barbar.nvim.git
 	ignore = untracked
 [submodule "vimplugins/vim-dadbod"]
 	path = vimplugins/vim-dadbod
