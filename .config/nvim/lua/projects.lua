@@ -18,8 +18,9 @@ setmetatable(M, {
       loaded_local = true
     end
     if type(key) == "number" then
-      key = vim.api.nvim_buf_get_name(key)
-      if key == "" then
+      local bufnr = key
+      key = vim.api.nvim_buf_get_name(bufnr)
+      if key == "" or vim.api.nvim_buf_get_option(bufnr, "buftype") ~= "" then
         key = vim.fn.getcwd()
       end
     end
@@ -28,7 +29,7 @@ setmetatable(M, {
     local maxlen = 0
     if not proj then
       for dir, config in pairs(self) do
-        if string.find(key, dir) == 1 and string.len(dir) > maxlen then
+        if string.len(dir) > maxlen and string.sub(key, 0, string.len(dir)) == dir then
           maxlen = string.len(dir)
           proj = config
         end
