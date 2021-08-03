@@ -115,8 +115,9 @@ config.lua = {
 
 config.css = { prettier("css") }
 config.html = { prettier("html") }
-config.json = { prettier("json") }
-config.jsonc = config.json
+-- conflicts with jsonls
+-- config.json = { prettier("json") }
+config.jsonc = { prettier("json") }
 
 config.javascript = { prettier() }
 config.javascriptreact = config.javascript
