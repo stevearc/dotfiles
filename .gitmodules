@@ -164,3 +164,6 @@
 [submodule "vimplugins/nvim-autopairs"]
 	path = vimplugins/nvim-autopairs
 	url = https://github.com/windwp/nvim-autopairs.git
+[submodule "vimplugins/neorg"]
+	path = vimplugins/neorg
+	url = https://github.com/vhyrro/neorg.git
