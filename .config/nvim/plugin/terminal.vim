@@ -61,3 +61,6 @@ require("toggleterm").setup{
   }
 }
 EOF
+
+nnoremap <silent><c-\> <Cmd>exe v:count1 . "ToggleTerm"<CR>
+inoremap <silent><c-\> <Esc><Cmd>exe v:count1 . "ToggleTerm"<CR>
