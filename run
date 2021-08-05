@@ -10,10 +10,10 @@
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 set -e
 declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore .shellcheckrc .sqliterc"
-declare -r CHECKPOINT_DIR="/tmp/checkpoints"
 declare -r XFCE_DOTFILES=".xsessionrc"
 
 HERE=$(dirname "$(realpath "$0")")
+declare -r CHECKPOINT_DIR="$HERE/.checkpoints"
 OSNAME=$(uname -s)
 if [ "$OSNAME" = "Darwin" ]; then
   MAC=1
