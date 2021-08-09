@@ -70,13 +70,13 @@
     ]
   },
   "Inline docstring": {
-    "prefix": "ds",
+    "prefix": "\"",
     "body": [
       "\"\"\"$1\"\"\""
     ]
   },
   "Multiline docstring": {
-    "prefix": "dss",
+    "prefix": "\"\"",
     "body": [
       "\"\"\"",
       "$1",
