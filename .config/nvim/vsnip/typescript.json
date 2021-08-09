@@ -1,0 +1,45 @@
+{
+  "ternary": {
+    "prefix": [
+      "?"
+    ],
+    "body": [
+      "$1 ? $2 : $3"
+    ]
+  },
+  "oneLineLambda": {
+    "prefix": [
+      "f"
+    ],
+    "body": [
+      "($1) => $0"
+    ]
+  },
+  "multiLineLambda": {
+    "prefix": [
+      "ff"
+    ],
+    "body": [
+      "($1) => {",
+      "  $1",
+      "}"
+    ]
+  },
+  "consoleLog": {
+    "prefix": [
+      "log"
+    ],
+    "body": [
+      "console.log($1)"
+    ]
+  },
+  "import": {
+    "prefix": [
+      "imp",
+      "import"
+    ],
+    "body": [
+      "import $1 from '$2';"
+    ]
+  }
+}

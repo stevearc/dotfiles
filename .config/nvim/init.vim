@@ -15,6 +15,9 @@ let g:null_ls = v:false
 " The syntax plugin was causing lag with multiple windows visible
 let g:polyglot_disabled = ['sh']
 
+" Minimal downsides and doesn't break file watchers
+set backupcopy=yes
+
 " vim-javascript flow syntax highlighting
 let g:javascript_plugin_flow = 1
 
