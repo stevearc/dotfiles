@@ -8,17 +8,17 @@
     ci = commit
     co = checkout
     cob = checkout -b
-    com = checkout master
+    com = !git checkout $(git main)
     cp = cherry-pick
     des = describe --tags
     di = diff
     dc = diff --cached
-    dm = !git diff `git merge-base HEAD origin/master` HEAD
+    dm = !git diff $(git merge-base HEAD origin/$(git main)) HEAD
     ab = rebase --abort
     abort = rebase --abort
     rco = rebase --continue
     mb = merge-base
-    ri = !git rebase -Xpatience -i `git merge-base HEAD origin/master`
+    ri = !git rebase -Xpatience -i $(git merge-base HEAD origin/$(git main))
     amend = commit --amend
     am = commit --amend
     ama = commit --amend -a --reuse-message=HEAD
@@ -43,7 +43,7 @@
     rp = rev-parse --verify
     delmerged = !git branch --merged | grep -v $(git main) | grep -v develop | xargs git branch -d
     rom = !git rebase -Xpatience "origin/$(git main)"
-    main = !git remote show origin | grep HEAD | cut -f 2 -d: | tr -d '[:space:]'
+    main = !git symbolic-ref refs/remotes/origin/HEAD | cut -f 4 -d / | tr -d '[:space:]'
     ss = show --stat
     res = !vim -p `git status --porcelain | grep "^UU " | cut -d ' ' -f 2`
     wip = commit --no-verify -m WIP
