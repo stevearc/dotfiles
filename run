@@ -956,6 +956,7 @@ main() {
     echo "Do not run this script with sudo!"
     exit 1
   fi
+  hascmd column || sudo apt install -y -q bsdmainutils
   while getopts "hfv" opt; do
     case $opt in
       h)
