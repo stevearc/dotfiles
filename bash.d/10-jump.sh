@@ -6,7 +6,7 @@ NUM_COMPRESSED_JUMPLOCS=40
 
 __log_pwd() {
   if [ "$PWD" != "$HOME" ]; then
-    echo "$(readlink -f $PWD)" >> "$LOG_FILE"
+    echo "$(readlink -f $PWD)" >>"$LOG_FILE"
   fi
 }
 
@@ -21,14 +21,14 @@ __compress() {
   echo "[compressing adaptive jumplist]" >&2
   # Dump the count into the compressed file
   awk '{!seen[$0]++}END{for (i in seen) print seen[i], i}' "$LOG_FILE" \
-    | sort -rn  \
-    | head -n "$NUM_COMPRESSED_JUMPLOCS" >> "$COMPRESSED_LOG_FILE"
+    | sort -rn \
+    | head -n "$NUM_COMPRESSED_JUMPLOCS" >>"$COMPRESSED_LOG_FILE"
   # Compress the compressed file
   local tmpfile
   tmpfile="${COMPRESSED_LOG_FILE}.tmp"
   awk '{seen[$2]+=$1}END{for (i in seen) print seen[i] * 0.9, i}' "$COMPRESSED_LOG_FILE" \
     | sort -rn \
-    | head -n "$NUM_COMPRESSED_JUMPLOCS" > "$tmpfile"
+    | head -n "$NUM_COMPRESSED_JUMPLOCS" >"$tmpfile"
   mv "$tmpfile" "$COMPRESSED_LOG_FILE"
   # Delete log file
   rm -f "$LOG_FILE"
@@ -54,17 +54,19 @@ __load_from_uncompressed() {
     | head -n ${NUM_ADAPTIVE_JUMPLOCS-$DEFAULT_ADAPTIVE_JUMPLOCS} \
     | cut -f 2 -d ' '
   stop_time=$(date +%s.%N)
-  local runtime
-  runtime=$(echo "1000 * ($stop_time - $start_time)" | bc -l | cut -f 1 -d .)
-  if [ $runtime -gt 500 ]; then
-    __compress
+  if command -v bc >/dev/null; then
+    local runtime
+    runtime=$(echo "1000 * ($stop_time - $start_time)" | bc -l | cut -f 1 -d .)
+    if [ "$runtime" -gt 500 ]; then
+      __compress
+    fi
   fi
 }
 
 j() {
   declare -g -A JUMP_LOCATIONS
 
-  if command -v __load_jumplocs > /dev/null; then
+  if command -v __load_jumplocs >/dev/null; then
     __load_jumplocs
   fi
 
@@ -84,7 +86,8 @@ j() {
     done
   fi
 
-  local key="$1"; shift
+  local key="$1"
+  shift
 
   if [ "$key" == "__source" ]; then
     complete -W "${!JUMP_LOCATIONS[*]}" j

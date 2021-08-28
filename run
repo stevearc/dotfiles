@@ -191,7 +191,7 @@ Languages:"
 }
 
 install-language-python() {
-  cp .pylintrc "$HOME"
+  cp "$HERE/.pylintrc" "$HOME"
   hascmd apt-get && sudo apt-get install -y -q \
     python3 \
     python-is-python3 \
@@ -658,11 +658,13 @@ dc-install-clipper() {
 # shellcheck disable=SC2034
 DC_INSTALL_NEOVIM_DOC="<3"
 dc-install-neovim() {
+  install-language-python
+  hascmd gcc || sudo apt install -y -q gcc
   if ! hascmd nvim; then
     if confirm "From github appimage?" y; then
       local version
       "$HERE/scripts/install_neovim.sh" --list
-      version=$(prompt "Version?" nightly)
+      version=$(prompt "Version?" stable)
       "$HERE/scripts/install_neovim.sh" "$version"
     elif confirm "From source?" n; then
       sudo apt-get install -y libtool autoconf automake cmake g++ gettext pkg-config \
@@ -688,7 +690,7 @@ dc-install-neovim() {
   if ! hascmd nvr; then
     mkdir -p ~/bin
     pushd ~/bin
-    "$HERE/scripts/make_standalone.py" -s nvr neovim
+    "$HERE/scripts/make_standalone.py" -s nvr neovim-remote
     popd
   fi
 }
@@ -817,6 +819,7 @@ Opts:
     esac
   done
   shift $((OPTIND - 1))
+  hascmd rsync || sudo apt install -y -q rsync
 
   if [ $symbolic ]; then
     for dotfile in $CLI_DOTFILES; do
