@@ -129,7 +129,7 @@
 	ignore = untracked
 [submodule "vimplugins/qf_helper.nvim"]
 	path = vimplugins/qf_helper.nvim
-	url = git@github.com:stevearc/qf_helper.nvim.git
+	url = https://github.com/stevearc/qf_helper.nvim.git
 [submodule "vimplugins/tabular"]
 	path = vimplugins/tabular
 	url = https://github.com/godlygeek/tabular.git
@@ -157,7 +157,7 @@
 	url = https://github.com/lambdalisue/suda.vim.git
 [submodule "vimplugins/gkeep.nvim"]
 	path = vimplugins/gkeep.nvim
-	url = git@github.com:stevearc/gkeep.nvim.git
+	url = https://github.com/stevearc/gkeep.nvim.git
 [submodule "vimplugins/neorg"]
 	path = vimplugins/neorg
 	url = https://github.com/vhyrro/neorg.git
