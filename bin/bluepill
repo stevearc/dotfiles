@@ -147,7 +147,7 @@ Builds your base image that all other containers will inherit from
     _confirm "Image $BLUEPILL_BASE_IMAGE already exists. Would you like to replace it?" n \
       || return
   fi
-  _bp-add-user-to-image "$BLUEPILL_BASE_IMAGE" "$BLUEPILL_ROOT_IMAGE"
+  _bp-add-user-to-image "$BLUEPILL_ROOT_IMAGE" "$BLUEPILL_BASE_IMAGE"
   echo "Customize your base image. Type 'exit' when done"
   bluepill-edit
 }
@@ -172,8 +172,9 @@ Make interactive changes to your base bluepill image"
   done
   shift "$((OPTIND - 1))"
   docker inspect bluepill-setup >/dev/null 2>&1 && docker rm bluepill-setup
-  docker run --name bluepill-setup -it -e USER -w "/home/$USER" -u "$UID:$(id -g)" \
-    "$BLUEPILL_BASE_IMAGE" /bin/bash -l
+  docker run --name bluepill-setup -it -e USER \
+    -w "/home/$USER" -u "$UID:$(id -g)" --entrypoint /bin/bash \
+    "$BLUEPILL_BASE_IMAGE" -l
   _confirm "Replace current image with changes?" y \
     && docker commit bluepill-setup "$BLUEPILL_BASE_IMAGE"
   docker rm bluepill-setup
@@ -220,10 +221,17 @@ Build a docker image for a directory
     return 1
   fi
   local dir
-  dir="$(realpath "${1-.}")"
+  dir="${1-.}"
+  if [ -e "$dir" ]; then
+    dir="$(realpath "$dir")"
+  fi
   local imageName
   imageName="$(_bp-image-name "$dir")"
-  pushd "$dir" >/dev/null
+  if [ -d "$dir" ]; then
+    pushd "$dir" >/dev/null
+  else
+    pushd . >/dev/null
+  fi
   if docker inspect "$imageName" >/dev/null 2>&1; then
     _confirm "Image $imageName already exists. Would you like to replace it?" n \
       || return
@@ -273,7 +281,10 @@ Build a container for a directory
   if [ "$1" == "--" ]; then
     dir="$(realpath .)"
   else
-    dir="$(realpath "${1-.}")"
+    dir="${1-.}"
+    if [ -e "$dir" ]; then
+      dir="$(realpath "$dir")"
+    fi
     shift || :
   fi
   [ "$1" == "--" ] && shift
@@ -363,7 +374,10 @@ Delete the container and/or image for a directory"
   done
   shift "$((OPTIND - 1))"
   local dir
-  dir="$(realpath "${1-.}")"
+  dir="${1-.}"
+  if [ -e "$dir" ]; then
+    dir="$(realpath "$dir")"
+  fi
   local imageName
   imageName="$(_bp-image-name "$dir")"
   local containerName
