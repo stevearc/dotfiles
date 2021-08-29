@@ -2,16 +2,13 @@
 """ Script for building a standalone python package executable """
 import argparse
 import os
-import shutil
 import subprocess
-import sys
 import tempfile
 import venv
-from distutils.spawn import find_executable
 
 
 def main():
-    """ Build a standalone executable """
+    """Build a standalone executable"""
     parser = argparse.ArgumentParser(description=main.__doc__)
     parser.add_argument(
         "package", help="The name of the package containing the executable"
@@ -28,8 +25,7 @@ def main():
     if not args.script:
         args.script = args.package
 
-    venv_dir = tempfile.mkdtemp()
-    try:
+    with tempfile.TemporaryDirectory() as venv_dir:
         venv.create(venv_dir, with_pip=True)
 
         print("Downloading dependencies")
@@ -51,13 +47,19 @@ def main():
             .decode("utf-8")
         )
         pex = os.path.join(venv_dir, "bin", "pex")
-        cmd = [pex, 'setuptools', args.package, "-m", entry, "-o", args.script] + args.args
+        cmd = [
+            pex,
+            "setuptools",
+            args.package,
+            "-m",
+            entry,
+            "-o",
+            args.script,
+        ] + args.args
         print(" ".join(cmd))
         subprocess.check_call(cmd)
 
         print("executable written to %s" % os.path.abspath(args.script))
-    finally:
-        shutil.rmtree(venv_dir)
 
 
 if __name__ == "__main__":

@@ -624,12 +624,19 @@ dc-install-docker() {
       sudo ln -sfT "$HOME/.docker" /var/lib/docker
     fi
   fi
+  if ! hascmd bluepill; then
+    pushd ~/bin
+    curl -o install.py https://raw.githubusercontent.com/stevearc/bluepill/master/bin/install.py \
+      && python install.py \
+      && rm -f install.py
+    popd
+  fi
   if ! hascmd docker-compose; then
     local latest
     latest=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .name)
-    sudo curl -L "https://github.com/docker/compose/releases/download/${latest}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    sudo chmod +x /usr/local/bin/docker-compose
-    sudo curl -L "https://raw.githubusercontent.com/docker/compose/${latest}/contrib/completion/bash/docker-compose" -o /etc/bash_completion.d/docker-compose
+    curl -L "https://github.com/docker/compose/releases/download/${latest}/docker-compose-$(uname -s)-$(uname -m)" -o ~/bin/docker-compose
+    chmod +x ~/bin/docker-compose
+    curl -L "https://raw.githubusercontent.com/docker/compose/${latest}/contrib/completion/bash/docker-compose" -o ~/.bash.d/docker-compose
   fi
 }
 
