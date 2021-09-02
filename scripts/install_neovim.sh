@@ -12,11 +12,13 @@ main() {
 Options:
   -l, --list    List available versions
   -s, --silent  Quiet download
+  -d            Destination dir (default ~/bin)
 "
   LIST=
   SILENT=
+  DEST="$HOME/bin"
   unset OPTIND
-  while getopts ":hsl-:" opt; do
+  while getopts ":hsld:-:" opt; do
     case $opt in
       -)
         case $OPTARG in
@@ -43,6 +45,9 @@ Options:
       s)
         SILENT=1
         ;;
+      d)
+        DEST="$OPTARG"
+        ;;
       l)
         LIST=1
         ;;
@@ -58,15 +63,16 @@ Options:
   if [ -n "$LIST" ]; then
     curl -s https://api.github.com/repos/neovim/neovim/releases | jq -r ".[].tag_name"
   elif [ -n "$VERSION" ]; then
+    mkdir -p "$DEST"
     echo "Installing NVIM $VERSION"
     if [ -n "$MAC" ]; then
-      _install_mac
+      _install_mac "$DEST"
     else
-      _install_linux
+      _install_linux "$DEST"
     fi
-    ~/bin/nvim --headless +UpdateRemotePlugins +qall >/dev/null
+    "$DEST/nvim" --headless +UpdateRemotePlugins +qall >/dev/null
     echo -n "Installed "
-    ~/bin/nvim --version | head -n 1
+    "$DEST/nvim" --version | head -n 1
   else
     echo "Usage: $usage"
     return 1
@@ -80,14 +86,16 @@ _install_mac() {
   tar xzf nvim-macos.tar.gz
   rm -f nvim-macos.tar.gz
   mv nvim-osx64 .nvim-osx64
-  rm -f ~/bin/nvim
-  ln -s ~/.nvim-osx64/bin/nvim ~/bin/nvim
+  mkdir -p "$DEST"
+  rm -f "$DEST/nvim"
+  ln -s ~/.nvim-osx64/bin/nvim "$DEST/nvim"
 }
 
 _install_linux() {
   [ -n "$SILENT" ] && silent="-s"
   curl $silent -L "https://github.com/neovim/neovim/releases/download/$VERSION/nvim.appimage" -o nvim.appimage
   chmod +x nvim.appimage
+  mkdir -p "$DEST"
   if ! ./nvim.appimage --headless +qall >/dev/null 2>&1; then
     mkdir -p ~/.appimages
     mv nvim.appimage ~/.appimages
@@ -95,11 +103,11 @@ _install_linux() {
     ./nvim.appimage --appimage-extract >/dev/null
     rm -rf nvim-appimage
     mv squashfs-root nvim-appimage
-    ln -s -f ~/.appimages/nvim-appimage/AppRun ~/bin/nvim
+    ln -s -f ~/.appimages/nvim-appimage/AppRun "$DEST/nvim"
     rm nvim.appimage
     popd
   else
-    mv nvim.appimage ~/bin/nvim
+    mv nvim.appimage "$DEST/nvim"
   fi
 }
 

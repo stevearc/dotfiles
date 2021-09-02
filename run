@@ -591,6 +591,7 @@ dc-install-nvm() {
       | NVM_DIR="$nvm_dir" PROFILE=/dev/null bash
   fi
   source "$nvm_dir/nvm.sh"
+  mkdir -p ~/.bash.d
   echo -e "source $nvm_dir/nvm.sh\nsource $nvm_dir/bash_completion" >~/.bash.d/nvm.sh
   local node_version
   node_version=$(nvm ls-remote | tail -n 1 | awk '{print $1}')
