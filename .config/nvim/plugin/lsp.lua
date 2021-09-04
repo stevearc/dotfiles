@@ -29,6 +29,26 @@ vim.g.aerial = {
   -- filter_kind = {},
 }
 
+-- callback args changed in Neovim 0.6. See:
+-- https://github.com/neovim/neovim/pull/15504
+local function mk_handler(fn)
+  return function(...)
+    local config_or_client_id = select(4, ...)
+    local is_new = type(config_or_client_id) ~= "number"
+    if is_new then
+      fn(...)
+    else
+      local err = select(1, ...)
+      local method = select(2, ...)
+      local result = select(3, ...)
+      local client_id = select(4, ...)
+      local bufnr = select(5, ...)
+      local config = select(6, ...)
+      fn(err, result, { method = method, client_id = client_id, bufnr = bufnr }, config)
+    end
+  end
+end
+
 -- Make all the "jump" commands call zv after execution
 local jump_callbacks = {
   "textDocument/declaration",
@@ -38,8 +58,8 @@ local jump_callbacks = {
 }
 for _, cb in pairs(jump_callbacks) do
   local orig_callback = vim.lsp.handlers[cb]
-  local new_callback = function(idk, method, result)
-    orig_callback(idk, method, result)
+  local new_callback = function(...)
+    orig_callback(...)
     vim.cmd("normal! zv")
   end
   vim.lsp.handlers[cb] = new_callback
@@ -84,15 +104,22 @@ local ft_config = setmetatable({}, {
 
 local diagnostics_handler = vim.lsp.handlers["textDocument/publishDiagnostics"]
 vim.lsp.handlers["textDocument/publishDiagnostics"] = function(...)
-  local args = { ... }
-  local client_id = args[4]
+  local config_or_client_id = select(4, ...)
+  local is_new = type(config_or_client_id) ~= "number"
+  local client_id
+  if is_new then
+    client_id = config_or_client_id
+  else
+    client_id = select(4, ...)
+  end
   local client = vim.lsp.get_client_by_id(client_id)
   if client.config.diagnostics ~= false then
     diagnostics_handler(...)
   end
 end
 
-vim.lsp.handlers["window/showMessage"] = function(_, _, result, client_id)
+vim.lsp.handlers["window/showMessage"] = mk_handler(function(_err, result, context, _config)
+  local client_id = context.client_id
   local toast = require("toast")
   local message_type = result.type
   local message = result.message
@@ -114,7 +141,7 @@ vim.lsp.handlers["window/showMessage"] = function(_, _, result, client_id)
     toast(string.format("LSP[%s] %s\n", client_name, message), { type = map[message_type_name] })
   end
   return result
-end
+end)
 
 function stevearc.on_update_diagnostics()
   local util = require("qf_helper.util")
