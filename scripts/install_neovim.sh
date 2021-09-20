@@ -13,12 +13,14 @@ Options:
   -l, --list    List available versions
   -s, --silent  Quiet download
   -d            Destination dir (default ~/bin)
+  -n [NAME]     Binary name (default nvim)
 "
   LIST=
   SILENT=
   DEST="$HOME/bin"
+  NAME='nvim'
   unset OPTIND
-  while getopts ":hsld:-:" opt; do
+  while getopts ":hsln:d:-:" opt; do
     case $opt in
       -)
         case $OPTARG in
@@ -48,6 +50,9 @@ Options:
       d)
         DEST="$OPTARG"
         ;;
+      n)
+        NAME="$OPTARG"
+        ;;
       l)
         LIST=1
         ;;
@@ -70,9 +75,9 @@ Options:
     else
       _install_linux "$DEST"
     fi
-    "$DEST/nvim" --headless +UpdateRemotePlugins +qall >/dev/null
+    "$DEST/$NAME" --headless +UpdateRemotePlugins +qall >/dev/null
     echo -n "Installed "
-    "$DEST/nvim" --version | head -n 1
+    "$DEST/$NAME" --version | head -n 1
   else
     echo "Usage: $usage"
     return 1
@@ -87,8 +92,8 @@ _install_mac() {
   rm -f nvim-macos.tar.gz
   mv nvim-osx64 .nvim-osx64
   mkdir -p "$DEST"
-  rm -f "$DEST/nvim"
-  ln -s ~/.nvim-osx64/bin/nvim "$DEST/nvim"
+  rm -f "$DEST/$NAME"
+  ln -s ~/.nvim-osx64/bin/nvim "$DEST/$NAME"
 }
 
 _install_linux() {
@@ -98,16 +103,16 @@ _install_linux() {
   mkdir -p "$DEST"
   if ! ./nvim.appimage --headless +qall >/dev/null 2>&1; then
     mkdir -p ~/.appimages
-    mv nvim.appimage ~/.appimages
+    mv nvim.appimage "$HOME/.appimages/$NAME.appimage"
     pushd ~/.appimages
-    ./nvim.appimage --appimage-extract >/dev/null
-    rm -rf nvim-appimage
-    mv squashfs-root nvim-appimage
-    ln -s -f ~/.appimages/nvim-appimage/AppRun "$DEST/nvim"
-    rm nvim.appimage
+    "./$NAME.appimage" --appimage-extract >/dev/null
+    rm -rf "$NAME-appimage"
+    mv squashfs-root "$NAME-appimage"
+    ln -s -f "$HOME/.appimages/$NAME-appimage/AppRun" "$DEST/$NAME"
+    rm "$NAME.appimage"
     popd
   else
-    mv nvim.appimage "$DEST/nvim"
+    mv nvim.appimage "$DEST/$NAME"
   fi
 }
 
