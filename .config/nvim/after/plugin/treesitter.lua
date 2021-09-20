@@ -17,7 +17,8 @@ require("nvim-treesitter.configs").setup({
   },
   indent = {
     enable = true,
-    disable = { "lua" },
+    -- The python indent is driving me insane
+    disable = { "lua", "python" },
   },
 })
 
