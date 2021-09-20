@@ -4,19 +4,38 @@ local projects = require("projects")
 -- vim.lsp.set_log_level("debug")
 
 if vim.g.nerd_font then
-  vim.cmd([[
-    sign define LspDiagnosticsSignError text=   numhl=LspDiagnosticsSignError texthl=LspDiagnosticsSignError
-    sign define LspDiagnosticsSignWarning text=  numhl=LspDiagnosticsSignWarning texthl=LspDiagnosticsSignWarning
-    sign define LspDiagnosticsSignInformation text=• numhl=LspDiagnosticsSignInformation texthl=LspDiagnosticsSignInformation
-    sign define LspDiagnosticsSignHint text=• numhl=LspDiagnosticsSignHint texthl=LspDiagnosticsSignHint
-  ]])
+  -- Names changed in 0.6
+  if vim.diagnostic == nil then
+    vim.cmd([[
+      sign define LspDiagnosticsSignError text=   numhl=LspDiagnosticsSignError texthl=LspDiagnosticsSignError
+      sign define LspDiagnosticsSignWarning text=  numhl=LspDiagnosticsSignWarning texthl=LspDiagnosticsSignWarning
+      sign define LspDiagnosticsSignInformation text=• numhl=LspDiagnosticsSignInformation texthl=LspDiagnosticsSignInformation
+      sign define LspDiagnosticsSignHint text=• numhl=LspDiagnosticsSignHint texthl=LspDiagnosticsSignHint
+    ]])
+  else
+    vim.cmd([[
+      sign define DiagnosticSignError text=   numhl=DiagnosticSignError texthl=DiagnosticSignError
+      sign define DiagnosticSignWarn text=  numhl=DiagnosticSignWarn texthl=DiagnosticSignWarn
+      sign define DiagnosticSignInformation text=• numhl=DiagnosticSignInformation texthl=DiagnosticSignInformation
+      sign define DiagnosticSignHint text=• numhl=DiagnosticSignHint texthl=DiagnosticSignHint
+    ]])
+  end
 else
-  vim.cmd([[
-    sign define LspDiagnosticsSignError text=• numhl=LspDiagnosticsSignError texthl=LspDiagnosticsSignError
-    sign define LspDiagnosticsSignWarning text=• numhl=LspDiagnosticsSignWarning texthl=LspDiagnosticsSignWarning
-    sign define LspDiagnosticsSignInformation text=. numhl=LspDiagnosticsSignInformation texthl=LspDiagnosticsSignInformation
-    sign define LspDiagnosticsSignHint text=. numhl=LspDiagnosticsSignHint texthl=LspDiagnosticsSignHint
-  ]])
+  if vim.diagnostic == nil then
+    vim.cmd([[
+      sign define LspDiagnosticsSignError text=• numhl=LspDiagnosticsSignError texthl=LspDiagnosticsSignError
+      sign define LspDiagnosticsSignWarning text=• numhl=LspDiagnosticsSignWarning texthl=LspDiagnosticsSignWarning
+      sign define LspDiagnosticsSignInformation text=. numhl=LspDiagnosticsSignInformation texthl=LspDiagnosticsSignInformation
+      sign define LspDiagnosticsSignHint text=. numhl=LspDiagnosticsSignHint texthl=LspDiagnosticsSignHint
+    ]])
+  else
+    vim.cmd([[
+      sign define DiagnosticSignError text=• numhl=DiagnosticSignError texthl=DiagnosticSignError
+      sign define DiagnosticSignWarn text=• numhl=DiagnosticSignWarn texthl=DiagnosticSignWarn
+      sign define DiagnosticSignInformation text=. numhl=DiagnosticSignInformation texthl=DiagnosticSignInformation
+      sign define DiagnosticSignHint text=. numhl=DiagnosticSignHint texthl=DiagnosticSignHint
+    ]])
+  end
 end
 
 vim.g.aerial = {
@@ -108,7 +127,8 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = function(...)
   local is_new = type(config_or_client_id) ~= "number"
   local client_id
   if is_new then
-    client_id = config_or_client_id
+    local context = select(3, ...)
+    client_id = context.client_id
   else
     client_id = select(4, ...)
   end
@@ -155,8 +175,10 @@ function stevearc.on_update_diagnostics()
     end
   else
     vim.lsp.diagnostic.set_loclist({
-      open_loclist = false,
+      open = false,
       severity_limit = "Warning",
+      -- nvim 0.5
+      open_loclist = false,
     })
     -- Resize the loclist
     if util.is_open("l") then
