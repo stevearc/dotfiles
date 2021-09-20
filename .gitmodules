@@ -31,9 +31,6 @@
 [submodule "vimplugins/vim-eunuch"]
 	path = vimplugins/vim-eunuch
 	url = https://github.com/tpope/vim-eunuch.git
-[submodule "vimplugins/vim-solarized8"]
-	path = vimplugins/vim-solarized8
-	url = https://github.com/lifepillar/vim-solarized8
 [submodule "vimplugins/vim-surround"]
 	path = vimplugins/vim-surround
 	url = https://github.com/tpope/vim-surround.git
