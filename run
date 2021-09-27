@@ -881,6 +881,9 @@ Opts:
 DOTCMD_UPGRADE_VIM_PLUGINS_DOC="Upgrade vim plugin submodules"
 dotcmd-upgrade-vim-plugins() {
   for plugdir in vimplugins/*; do
+    if [ ! -e "$plugdir/.git" ]; then
+      continue
+    fi
     echo "    $plugdir"
     cd "$plugdir"
     local branchname
