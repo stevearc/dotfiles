@@ -182,10 +182,8 @@ augroup VCenterCursor
         \ let &l:scrolloff=1+winheight(win_getid())/2
 augroup END
 
-let g:treesitter_languages = [
-      \ "bash", "c", "c_sharp", "cpp", "go", "graphql", "java", "json",
-      \ "kotlin", "latex", "lua", "python", "rst", "ruby", "rust", "toml",
-      \]
+let g:treesitter_languages = 'maintained'
+let g:treesitter_languages_blacklist = ['supercollider']
 
 " Start with folds open
 se foldlevelstart=99

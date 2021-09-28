@@ -19,4 +19,5 @@ parser_configs.norg = {
     files = { "src/parser.c", "src/scanner.cc" },
     branch = "main",
   },
+  maintainers = { "@vhyrro" },
 }

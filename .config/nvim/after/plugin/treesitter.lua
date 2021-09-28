@@ -4,8 +4,8 @@ local parsers = require("nvim-treesitter.parsers")
 
 require("nvim-treesitter.configs").setup({
   ensure_installed = vim.g.treesitter_languages,
+  ignore_install = vim.g.treesitter_languages_blacklist,
   highlight = {
-    -- I found this caused lag in some files :(
     enable = true,
   },
   incremental_selection = {
