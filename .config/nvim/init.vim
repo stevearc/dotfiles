@@ -48,9 +48,6 @@ set wildignore+=*.png,*.jpg,*.jpeg,*.gif,*.wav,*.aiff,*.dll,*.pdb,*.mdb,*.so,*.s
 " Make backspace work properly
 set backspace=indent,eol,start
 
-" Transparently use system clipboard
-set clipboard+=unnamedplus
-
 " Make searches case-sensitive only if they contain upper-case characters
 set ignorecase
 set smartcase
