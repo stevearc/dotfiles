@@ -158,6 +158,15 @@
 [submodule "vimplugins/neorg"]
 	path = vimplugins/neorg
 	url = https://github.com/vhyrro/neorg.git
+[submodule "vimplugins/nvim-ts-context-commentstring"]
+	path = vimplugins/nvim-ts-context-commentstring
+	url = https://github.com/JoosepAlviste/nvim-ts-context-commentstring.git
+[submodule "vimplugins/vim-matchup"]
+	path = vimplugins/vim-matchup
+	url = https://github.com/andymass/vim-matchup.git
+[submodule "vimplugins/nvim-treesitter-textsubjects"]
+	path = vimplugins/nvim-treesitter-textsubjects
+	url = https://github.com/RRethy/nvim-treesitter-textsubjects.git
 [submodule "vimplugins/null-ls.nvim"]
 	path = vimplugins/null-ls.nvim
 	url = https://github.com/jose-elias-alvarez/null-ls.nvim.git

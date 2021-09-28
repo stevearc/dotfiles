@@ -8,17 +8,23 @@ require("nvim-treesitter.configs").setup({
   highlight = {
     enable = true,
   },
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = "<leader>v",
-      node_incremental = "<leader>v",
-    },
-  },
   indent = {
     enable = true,
     -- The python indent is driving me insane
     disable = { "lua", "python" },
+  },
+  context_commentstring = {
+    enable = true,
+  },
+  matchup = {
+    enable = true,
+  },
+  textsubjects = {
+    enable = true,
+    keymaps = {
+      ["."] = "textsubjects-smart",
+      [";"] = "textsubjects-container-outer",
+    },
   },
 })
 
