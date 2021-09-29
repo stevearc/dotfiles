@@ -158,3 +158,6 @@
 [submodule "vimplugins/neorg"]
 	path = vimplugins/neorg
 	url = https://github.com/vhyrro/neorg.git
+[submodule "vimplugins/null-ls.nvim"]
+	path = vimplugins/null-ls.nvim
+	url = https://github.com/jose-elias-alvarez/null-ls.nvim.git

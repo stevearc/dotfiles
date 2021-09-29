@@ -384,9 +384,15 @@ require("lspconfig").sorbet.setup({
 })
 
 if vim.g.null_ls then
-  local config = require("nullconfig")
-  config.on_attach = on_attach
-  require("null-ls").setup(config)
+  require("null-ls").config(require("nullconfig"))
+  require("lspconfig")["null-ls"].setup({
+    root_dir = function(fname)
+      local util = require("lspconfig").util
+      return util.root_pattern(".git", "Makefile", "setup.py", "setup.cfg", "pyproject.toml", "package.json")(fname)
+        or util.path.dirname(fname)
+    end,
+    on_attach = on_attach,
+  })
 end
 
 -- Since we missed the FileType event when this runs on vim start, we should
