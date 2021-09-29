@@ -2,6 +2,7 @@ set show-mode-in-prompt on
 set vi-ins-mode-string "+"
 set vi-cmd-mode-string ":"
 set editing-mode vi
+set bell-style none
 
 $if mode=vi
 
