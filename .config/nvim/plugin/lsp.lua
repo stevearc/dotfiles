@@ -1,5 +1,6 @@
 local stevearc = require("stevearc")
 local projects = require("projects")
+local GENERAL_DIAGNOSTICS = vim.diagnostic ~= nil
 
 -- vim.lsp.set_log_level("debug")
 
@@ -166,24 +167,39 @@ end)
 function stevearc.on_update_diagnostics()
   local util = require("qf_helper.util")
   local config = require("qf_helper.config")
-  local errors = vim.lsp.diagnostic.get_count(0, "Error")
-  local warnings = vim.lsp.diagnostic.get_count(0, "Warning")
-  if warnings + errors == 0 then
+  local total
+  if vim.diagnostic == nil then
+    local errors = vim.lsp.diagnostic.get_count(0, "Error")
+    local warnings = vim.lsp.diagnostic.get_count(0, "Warning")
+    total = errors + warnings
+  else
+    total = vim.tbl_count(vim.diagnostic.get(0, {severity={min = vim.diagnostic.severity.W}}))
+  end
+  if total == 0 then
     vim.lsp.util.set_loclist({})
     if vim.fn.win_gettype() == "" then
       vim.cmd("silent! lclose")
     end
   else
-    vim.lsp.diagnostic.set_loclist({
-      open = false,
-      severity_limit = "Warning",
-      -- nvim 0.5
-      open_loclist = false,
-    })
+    if vim.diagnostic == nil then
+      vim.lsp.diagnostic.set_loclist({
+        open = false,
+        severity_limit = "Warning",
+        -- nvim 0.5
+        open_loclist = false,
+      })
+    else
+      vim.diagnostic.setloclist({
+        open = false,
+        severity = {
+          min = vim.diagnostic.severity.W
+        }
+      })
+    end
     -- Resize the loclist
     if util.is_open("l") then
       local winid = vim.api.nvim_get_current_win()
-      local height = math.max(config.l.min_height, math.min(config.l.max_height, errors + warnings))
+      local height = math.max(config.l.min_height, math.min(config.l.max_height, total))
       vim.cmd("lopen " .. height)
       vim.api.nvim_set_current_win(winid)
     end
@@ -200,10 +216,11 @@ local on_attach = function(client)
     end
   end
 
-  vim.cmd([[augroup LSPDiagnostics
+  local autocmd = GENERAL_DIAGNOSTICS and "DiagnosticsChanged" or "LspDiagnosticsChanged"
+  vim.cmd(string.format([[augroup LSPDiagnostics
   au!
-  autocmd User LspDiagnosticsChanged lua require'stevearc'.on_update_diagnostics()
-  augroup END]])
+  autocmd User %s lua require'stevearc'.on_update_diagnostics()
+  augroup END]], autocmd))
 
   vim.api.nvim_win_set_option(0, "signcolumn", "yes")
 
@@ -248,7 +265,11 @@ local on_attach = function(client)
   safemap("document_range_formatting", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
   safemap("rename", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
 
-  mapper("n", "<CR>", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics({border='rounded'})<CR>")
+  if vim.diagnostic == nil then
+    mapper("n", "<CR>", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics({border='rounded'})<CR>")
+  else
+    mapper("n", "<CR>", "<cmd>lua vim.diagnostic.show_line_diagnostics({border='rounded'})<CR>")
+  end
 
   if client.resolved_capabilities.document_highlight then
     vim.cmd([[autocmd CursorHold,CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]])
