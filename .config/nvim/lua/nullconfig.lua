@@ -8,19 +8,29 @@ local DIAGNOSTICS = methods.internal.DIAGNOSTICS
 -- * pandoc rst seems to not be attaching to buffer
 
 local function sandbox_js_command(config, command, args)
+  local function prefix_args(prefix)
+    return function(params)
+      prefix = vim.list_extend({}, prefix)
+      if type(args) == "table" then
+        return vim.list_extend(prefix, args)
+      else
+        return vim.list_extend(prefix, args(params))
+      end
+    end
+  end
   return config.with({
     condition = function(utils)
-      if utils.root_has_file("yarn.lock") and vim.fn.executable("yarn") then
+      if utils.root_has_file("yarn.lock") and vim.fn.executable("yarn") ~= 0 then
         return config.with({
           command = "yarn",
-          args = vim.tbl_extend({ "--silent", command }, args),
+          args = prefix_args({ "--silent", command }),
         })
-      elseif utils.root_has_file("package.json") and vim.fn.executable("npx") then
+      elseif utils.root_has_file("package.json") and vim.fn.executable("npx") ~= 0 then
         return config.with({
           command = "npx",
-          args = vim.tbl_extend({ command }, args),
+          args = prefix_args({ command }),
         })
-      elseif vim.fn.executable(command) then
+      elseif vim.fn.executable(command) ~= 0 then
         return config.with({
           command = command,
           args = args,
@@ -159,7 +169,11 @@ return {
     null_ls.builtins.formatting.gofmt,
 
     -- javascript and derivatives
-    sandbox_js_command(null_ls.builtins.formatting.prettier, "prettier", { "--stdin-filepath", "$FILENAME" }),
+    sandbox_js_command(
+      null_ls.builtins.formatting.prettier,
+      "prettier",
+      h.range_formatting_args_factory({ "--stdin-filepath", "$FILENAME" })
+    ),
 
     -- lua
     null_ls.builtins.formatting.stylua.with({

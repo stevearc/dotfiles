@@ -1,10 +1,14 @@
 {
   "Print string": {
     "prefix": "ps",
-    "body": ["print(string.format(\"$1\", $2))"]
+    "body": [
+      "print(string.format(\"$1\", $2))"
+    ]
   },
   "string.format": {
     "prefix": "sf",
-    "body": ["string.format(\"$1\", $2)"]
+    "body": [
+      "string.format(\"$1\", $2)"
+    ]
   }
 }

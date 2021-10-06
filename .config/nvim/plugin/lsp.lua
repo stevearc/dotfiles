@@ -173,7 +173,7 @@ function stevearc.on_update_diagnostics()
     local warnings = vim.lsp.diagnostic.get_count(0, "Warning")
     total = errors + warnings
   else
-    total = vim.tbl_count(vim.diagnostic.get(0, {severity={min = vim.diagnostic.severity.W}}))
+    total = vim.tbl_count(vim.diagnostic.get(0, { severity = { min = vim.diagnostic.severity.W } }))
   end
   if total == 0 then
     vim.lsp.util.set_loclist({})
@@ -192,8 +192,8 @@ function stevearc.on_update_diagnostics()
       vim.diagnostic.setloclist({
         open = false,
         severity = {
-          min = vim.diagnostic.severity.W
-        }
+          min = vim.diagnostic.severity.W,
+        },
       })
     end
     -- Resize the loclist
@@ -206,7 +206,7 @@ function stevearc.on_update_diagnostics()
   end
 end
 
-local on_attach = function(client)
+local on_attach = function(client, bufnr)
   local ft = vim.api.nvim_buf_get_option(0, "filetype")
   local config = ft_config[ft] or {}
 
@@ -217,10 +217,13 @@ local on_attach = function(client)
   end
 
   local autocmd = GENERAL_DIAGNOSTICS and "DiagnosticsChanged" or "LspDiagnosticsChanged"
-  vim.cmd(string.format([[augroup LSPDiagnostics
+  vim.cmd(string.format(
+    [[augroup LSPDiagnostics
   au!
   autocmd User %s lua require'stevearc'.on_update_diagnostics()
-  augroup END]], autocmd))
+  augroup END]],
+    autocmd
+  ))
 
   vim.api.nvim_win_set_option(0, "signcolumn", "yes")
 
@@ -278,8 +281,8 @@ local on_attach = function(client)
 
   vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
 
-  require("lsp_signature").on_attach({})
-  require("aerial").on_attach(client)
+  require("lsp_signature").on_attach({}, bufnr)
+  require("aerial").on_attach(client, bufnr)
 end
 
 -- Configure the LSP servers
@@ -288,7 +291,6 @@ local lspservers = {
   "clangd",
   "gdscript",
   "gopls",
-  "jsonls",
   "html",
   "cssls",
   "omnisharp",
@@ -303,7 +305,7 @@ end
 local function is_using_sqlalchemy()
   local util = require("lspconfig").util
   local path = util.path
-  local setup = util.root_pattern("setup.cfg")(vim.fn.getcwd())
+  local setup = util.root_pattern("setup.cfg")(vim.loop.cwd())
   if not setup then
     return false
   end
@@ -317,6 +319,17 @@ end
 require("lspconfig").pyright.setup({
   on_attach = on_attach,
   diagnostics = not is_using_sqlalchemy(),
+})
+require("lspconfig").jsonls.setup({
+  on_attach = function(client, bufnr)
+    local util = require("lspconfig.util")
+    local filename = vim.api.nvim_buf_get_name(bufnr)
+    if vim.fn.executable("prettier") ~= 0 or util.root_pattern("package.json")(filename) then
+      client.resolved_capabilities.document_formatting = false
+      client.resolved_capabilities.document_range_formatting = false
+    end
+    on_attach(client, bufnr)
+  end,
 })
 if not vim.g.null_ls then
   require("lspconfig").efm.setup({
@@ -349,18 +362,27 @@ require("lspconfig").rust_analyzer.setup({
   capabilities = default_capabilities,
 })
 require("lspconfig").tsserver.setup({
-  on_attach = function(client)
+  root_dir = function(fname)
+    local util = require("lspconfig.util")
+    -- Disable tsserver when a flow project is detected
+    if util.root_pattern(".flowconfig")(fname) then
+      return nil
+    end
+    return util.root_pattern("tsconfig.json")(fname) or util.root_pattern("package.json", "jsconfig.json", ".git")(
+      fname
+    )
+  end,
+  on_attach = function(client, bufnr)
     local format = not projects[0].ts_prettier_format
     client.resolved_capabilities.document_formatting = format
     client.resolved_capabilities.document_range_formatting = format
-    on_attach(client)
+    on_attach(client, bufnr)
   end,
-  filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
 })
 require("lspconfig").flow.setup({
-  on_attach = function(client)
-    require("flow").on_attach(client)
-    on_attach(client)
+  on_attach = function(client, bufnr)
+    require("flow").on_attach(client, bufnr)
+    on_attach(client, bufnr)
   end,
   cmd = { "flow", "lsp", "--lazy" },
   settings = {
@@ -408,7 +430,7 @@ if vim.g.null_ls then
   require("null-ls").config(require("nullconfig"))
   require("lspconfig")["null-ls"].setup({
     root_dir = function(fname)
-      local util = require("lspconfig").util
+      local util = require("lspconfig.util")
       return util.root_pattern(".git", "Makefile", "setup.py", "setup.cfg", "pyproject.toml", "package.json")(fname)
         or util.path.dirname(fname)
     end,
