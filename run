@@ -607,6 +607,7 @@ dc-install-nvm() {
 DC_INSTALL_DOCKER_DOC="Docker and docker-compose"
 dc-install-docker() {
   if ! hascmd docker; then
+    rsync -lrp .docker "$HOME"
     sudo apt-get install -yq \
       apt-transport-https \
       ca-certificates \
@@ -620,10 +621,14 @@ dc-install-docker() {
     sudo apt-get update -qq
     sudo apt-get install -yq docker-ce
     confirm "Allow $USER to use docker without sudo?" y && sudo adduser "$USER" docker
-    if [ ! -L /var/lib/docker ]; then
-      sudo rm -rf /var/lib/docker
-      sudo ln -sfT "$HOME/.docker" /var/lib/docker
-    fi
+  fi
+  mkdir -p ~/.docker-images
+  if ! grep -q "^data-root" /etc/docker/daemon.json; then
+    cat /etc/docker/daemon.json | jq '."data-root" = "'"$HOME"'/.docker-images"' >/tmp/docker-daemon.json
+    sudo mv /tmp/docker-daemon.json /etc/docker/daemon.json
+    sudo service docker stop
+    sleep 1
+    sudo service docker start
   fi
   if ! hascmd bluepill; then
     pushd ~/bin
@@ -848,7 +853,6 @@ Opts:
     cp "$HERE/parseargs/parseargs.sh" "$HOME/bin/"
   fi
 
-  rsync -lrp .docker "$HOME"
   mkdir -p ~/.config
   if [ $symbolic ]; then
     link "$HERE/.config/nvim" "$HOME/.config/nvim"
