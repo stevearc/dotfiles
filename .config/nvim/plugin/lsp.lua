@@ -4,6 +4,19 @@ local GENERAL_DIAGNOSTICS = vim.diagnostic ~= nil
 
 -- vim.lsp.set_log_level("debug")
 
+if vim.diagnostic then
+  vim.diagnostic.config({
+      float = {
+        source = 'always'
+      },
+      virtual_text = {
+        severity = {min = vim.diagnostic.severity.W},
+        source = 'if_many'
+      },
+        severity_sort = true
+    })
+end
+
 if vim.g.nerd_font then
   -- Names changed in 0.6
   if vim.diagnostic == nil then
@@ -271,7 +284,7 @@ local on_attach = function(client, bufnr)
   if vim.diagnostic == nil then
     mapper("n", "<CR>", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics({border='rounded'})<CR>")
   else
-    mapper("n", "<CR>", "<cmd>lua vim.diagnostic.show_line_diagnostics({border='rounded'})<CR>")
+    mapper("n", "<CR>", "<cmd>lua vim.diagnostic.open_float(0, {scope='line', border='rounded'})<CR>")
   end
 
   if client.resolved_capabilities.document_highlight then
