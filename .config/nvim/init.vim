@@ -52,8 +52,6 @@ set backspace=indent,eol,start
 set ignorecase
 set smartcase
 
-set completeopt=menuone,noselect
-set shortmess+=c
 set previewheight=5
 
 " Show the row, column of the cursor

@@ -96,10 +96,6 @@
 [submodule "vimplugins/scnvim"]
 	path = vimplugins/scnvim
 	url = https://github.com/stevearc/scnvim.git
-[submodule "vimplugins/nvim-compe"]
-	path = vimplugins/nvim-compe
-	url = https://github.com/hrsh7th/nvim-compe.git
-	ignore = untracked
 [submodule "vimplugins/lsp_signature.nvim"]
 	path = vimplugins/lsp_signature.nvim
 	url = https://github.com/ray-x/lsp_signature.nvim.git
@@ -170,3 +166,25 @@
 [submodule "vimplugins/null-ls.nvim"]
 	path = vimplugins/null-ls.nvim
 	url = https://github.com/jose-elias-alvarez/null-ls.nvim.git
+[submodule "vimplugins/nvim-cmp"]
+	path = vimplugins/nvim-cmp
+	url = https://github.com/hrsh7th/nvim-cmp.git
+[submodule "vimplugins/cmp-vsnip"]
+	path = vimplugins/cmp-vsnip
+	url = https://github.com/hrsh7th/cmp-vsnip.git
+[submodule "vimplugins/cmp-nvim-lua"]
+	path = vimplugins/cmp-nvim-lua
+	url = https://github.com/hrsh7th/cmp-nvim-lua.git
+[submodule "vimplugins/cmp-nvim-lsp"]
+	path = vimplugins/cmp-nvim-lsp
+	url = https://github.com/hrsh7th/cmp-nvim-lsp.git
+[submodule "vimplugins/cmp-buffer"]
+	path = vimplugins/cmp-buffer
+	url = https://github.com/hrsh7th/cmp-buffer.git
+[submodule "vimplugins/cmp-path"]
+	path = vimplugins/cmp-path
+	url = https://github.com/hrsh7th/cmp-path.git
+[submodule "vimplugins/vim-dadbod-completion"]
+	path = vimplugins/vim-dadbod-completion
+	url = https://github.com/kristijanhusak/vim-dadbod-completion.git
+	ignore = untracked

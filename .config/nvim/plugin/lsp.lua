@@ -6,15 +6,15 @@ local GENERAL_DIAGNOSTICS = vim.diagnostic ~= nil
 
 if vim.diagnostic then
   vim.diagnostic.config({
-      float = {
-        source = 'always'
-      },
-      virtual_text = {
-        severity = {min = vim.diagnostic.severity.W},
-        source = 'if_many'
-      },
-        severity_sort = true
-    })
+    float = {
+      source = "always",
+    },
+    virtual_text = {
+      severity = { min = vim.diagnostic.severity.W },
+      source = "if_many",
+    },
+    severity_sort = true,
+  })
 end
 
 if vim.g.nerd_font then
@@ -298,6 +298,9 @@ local on_attach = function(client, bufnr)
   require("aerial").on_attach(client, bufnr)
 end
 
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
+
 -- Configure the LSP servers
 local lspservers = {
   "bashls",
@@ -312,6 +315,7 @@ local lspservers = {
 }
 for _, server in ipairs(lspservers) do
   require("lspconfig")[server].setup({
+    capabilities = capabilities,
     on_attach = on_attach,
   })
 end
@@ -330,10 +334,12 @@ local function is_using_sqlalchemy()
   return false
 end
 require("lspconfig").pyright.setup({
+  capabilities = capabilities,
   on_attach = on_attach,
   diagnostics = not is_using_sqlalchemy(),
 })
 require("lspconfig").jsonls.setup({
+  capabilities = capabilities,
   on_attach = function(client, bufnr)
     local util = require("lspconfig.util")
     local filename = vim.api.nvim_buf_get_name(bufnr)
@@ -346,6 +352,7 @@ require("lspconfig").jsonls.setup({
 })
 if not vim.g.null_ls then
   require("lspconfig").efm.setup({
+    capabilities = capabilities,
     on_attach = on_attach,
     init_options = { documentFormatting = true },
     cmd = { "efm-langserver", "-logfile", "/tmp/efm.log", "-loglevel", "4" },
@@ -360,21 +367,22 @@ end
 
 -- neovim doesn't support the full 3.16 spec, but latest rust-analyzer requires the following capabilities.
 -- Remove once implemented.
-local default_capabilities = vim.lsp.protocol.make_client_capabilities()
-default_capabilities.workspace.workspaceEdit = {
-  normalizesLineEndings = true,
-  changeAnnotationSupport = {
-    groupsOnLabel = true,
-  },
-}
-default_capabilities.textDocument.rename.prepareSupportDefaultBehavior = 1
-default_capabilities.textDocument.completion.completionItem.snippetSupport = true
+-- local default_capabilities = vim.lsp.protocol.make_client_capabilities()
+-- default_capabilities.workspace.workspaceEdit = {
+--   normalizesLineEndings = true,
+--   changeAnnotationSupport = {
+--     groupsOnLabel = true,
+--   },
+-- }
+-- default_capabilities.textDocument.rename.prepareSupportDefaultBehavior = 1
+-- default_capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 require("lspconfig").rust_analyzer.setup({
+  capabilities = capabilities,
   on_attach = on_attach,
-  capabilities = default_capabilities,
 })
 require("lspconfig").tsserver.setup({
+  capabilities = capabilities,
   root_dir = function(fname)
     local util = require("lspconfig.util")
     -- Disable tsserver when a flow project is detected
@@ -393,6 +401,7 @@ require("lspconfig").tsserver.setup({
   end,
 })
 require("lspconfig").flow.setup({
+  capabilities = capabilities,
   on_attach = function(client, bufnr)
     require("flow").on_attach(client, bufnr)
     on_attach(client, bufnr)
@@ -411,6 +420,7 @@ local home = vim.fn.expand("$HOME")
 local sumneko_root_path = home .. "/.local/share/nvim/language-servers/lua-language-server"
 local sumneko_binary = sumneko_root_path .. "/bin/Linux/lua-language-server"
 require("lspconfig").sumneko_lua.setup({
+  capabilities = capabilities,
   cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
   settings = {
     Lua = {
@@ -435,6 +445,7 @@ require("lspconfig").sumneko_lua.setup({
 })
 
 require("lspconfig").sorbet.setup({
+  capabilities = capabilities,
   cmd = { "bundle", "exec", "srb", "tc", "--lsp" },
   on_attach = on_attach,
 })
@@ -442,6 +453,7 @@ require("lspconfig").sorbet.setup({
 if vim.g.null_ls then
   require("null-ls").config(require("nullconfig"))
   require("lspconfig")["null-ls"].setup({
+    capabilities = capabilities,
     root_dir = function(fname)
       local util = require("lspconfig.util")
       return util.root_pattern(".git", "Makefile", "setup.py", "setup.cfg", "pyproject.toml", "package.json")(fname)
