@@ -188,3 +188,6 @@
 	path = vimplugins/vim-dadbod-completion
 	url = https://github.com/kristijanhusak/vim-dadbod-completion.git
 	ignore = untracked
+[submodule "vimplugins/lspkind-nvim"]
+	path = vimplugins/lspkind-nvim
+	url = https://github.com/onsails/lspkind-nvim.git

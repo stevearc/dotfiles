@@ -2,6 +2,9 @@ local MAX_INDEX_FILE_SIZE = 4000
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 vim.opt.shortmess:append("c")
 
+local lspkind = require("lspkind")
+lspkind.init()
+
 local cmp = require("cmp")
 
 cmp.setup({
@@ -25,6 +28,7 @@ cmp.setup({
     { name = "vsnip" },
     {
       name = "buffer",
+      keyword_length = 4,
       opts = {
         get_bufnrs = function()
           local bufs = {}
@@ -44,6 +48,19 @@ cmp.setup({
     expand = function(args)
       vim.fn["vsnip#anonymous"](args.body)
     end,
+  },
+
+  formatting = {
+    format = lspkind.cmp_format({
+      with_text = true,
+      menu = {
+        buffer = "[buf]",
+        nvim_lsp = "[LSP]",
+        nvim_lua = "[api]",
+        path = "[path]",
+        luasnip = "[snip]",
+      },
+    }),
   },
 
   experimental = {
