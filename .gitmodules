@@ -108,7 +108,7 @@
 	url = https://github.com/kyazdani42/nvim-web-devicons.git
 [submodule "vimplugins/lualine.nvim"]
 	path = vimplugins/lualine.nvim
-	url = https://github.com/shadmansaleh/lualine.nvim.git
+	url = https://github.com/nvim-lualine/lualine.nvim.git
 [submodule "vimplugins/defx-icons"]
 	path = vimplugins/defx-icons
 	url = https://github.com/kristijanhusak/defx-icons.git
