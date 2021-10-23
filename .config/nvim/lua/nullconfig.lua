@@ -197,9 +197,15 @@ return {
     null_ls.builtins.formatting.isort,
     null_ls.builtins.formatting.black,
     null_ls.builtins.diagnostics.pylint.with({
+      condition = function()
+        return vim.fn.executable("pylint") ~= 0
+      end,
       diagnostics_format = "[#{c}] #{m} (#{s})",
     }),
     null_ls.builtins.diagnostics.mypy.with({
+      condition = function()
+        return vim.fn.executable("mypy") ~= 0
+      end,
       diagnostics_format = "[#{c}] #{m} (#{s})",
     }),
 
