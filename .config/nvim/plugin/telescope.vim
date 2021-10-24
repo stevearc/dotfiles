@@ -25,6 +25,7 @@ require('telescope').setup{
 }
 require('telescope').load_extension('aerial')
 require('telescope').load_extension('gkeep')
+require('telescope').load_extension('luasnip')
 EOF
 nnoremap <leader>t <cmd>lua require('telescope.builtin').find_files({previewer=false})<cr>
 nnoremap <leader>bb <cmd>lua require('telescope.builtin').buffers({previewer=false})<cr>
@@ -37,3 +38,6 @@ nnoremap <leader>fc <cmd>Telescope commands<CR>
 nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>
 nnoremap <leader>fd <cmd>Telescope aerial<CR>
 nnoremap <leader>fn <cmd>Telescope gkeep<CR>
+if g:snippet_engine == 'luasnip'
+  inoremap <C-s> <cmd>lua require('telescope').extensions.luasnip.luasnip(require('telescope.themes').get_cursor({}))<CR>
+endif
