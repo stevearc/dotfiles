@@ -1,0 +1,38 @@
+{
+  "contributes": {
+    "snippets": [
+      {
+        "language": "csharp",
+        "path": "snippets/csharp.json"
+      },
+      {
+        "language": ["global", "all"],
+        "path": "snippets/global.json"
+      },
+      {
+        "language": "javascript",
+        "path": "snippets/javascript.json"
+      },
+      {
+        "language": "lua",
+        "path": "snippets/lua.json"
+      },
+      {
+        "language": "python",
+        "path": "snippets/python.json"
+      },
+      {
+        "language": "sh",
+        "path": "snippets/sh.json"
+      },
+      {
+        "language": "supercollider",
+        "path": "snippets/supercollider.json"
+      },
+      {
+        "language": "typescript",
+        "path": "snippets/typescript.json"
+      }
+]
+}
+}

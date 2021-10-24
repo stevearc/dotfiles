@@ -1,5 +1,9 @@
+if g:snippet_engine != 'vsnip'
+  finish
+endif
+
 let g:vsnip_snippet_dirs = [
-      \ $HOME.'/.config/nvim/vsnip',
+      \ $HOME.'/.config/nvim/snippets',
       \ ]
 function! Vsnip_jump(direction) abort
   let l:session = vsnip#get_session()

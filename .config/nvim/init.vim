@@ -11,6 +11,8 @@ let g:use_barbar = v:true
 let g:nerd_font = v:true
 let g:debug_treesitter = 0
 let g:null_ls = v:true
+" Luasnip still has some issues https://github.com/L3MON4D3/LuaSnip/issues/206
+let g:snippet_engine = 'vsnip'
 
 " The syntax plugin was causing lag with multiple windows visible
 let g:polyglot_disabled = ['sh']

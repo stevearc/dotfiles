@@ -191,3 +191,10 @@
 [submodule "vimplugins/lspkind-nvim"]
 	path = vimplugins/lspkind-nvim
 	url = https://github.com/onsails/lspkind-nvim.git
+[submodule "vimplugins/luasnip"]
+	path = vimplugins/luasnip
+	url = https://github.com/L3MON4D3/LuaSnip.git
+	ignore = untracked
+[submodule "vimplugins/cmp_luasnip"]
+	path = vimplugins/cmp_luasnip
+	url = https://github.com/saadparwaiz1/cmp_luasnip.git

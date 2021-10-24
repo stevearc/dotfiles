@@ -1,3 +1,7 @@
+if g:snippet_engine != 'vsnip'
+  finish
+endif
+
 let g:autocomplete_cmd = "\<C-x>\<C-o>"
 function! CleverTab() abort
   if vsnip#available(1)
