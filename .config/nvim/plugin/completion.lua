@@ -27,16 +27,6 @@ local mapping = {
 }
 
 if vim.g.snippet_engine == "luasnip" then
-  require("luasnip.loaders.from_vscode").lazy_load()
-  -- TODO need to have some keybinding to cycle through choice nodes
-  vim.cmd([[
-  aug ClearLuasnipSession
-    au!
-    " Can't use InsertLeave here because that fires when we go to select mode
-    au CursorHold * silent lua require('luasnip').unlink_current()
-  aug END
-  ]])
-
   mapping["<Tab>"] = cmp.mapping(function(fallback)
     if luasnip.expand_or_jumpable() then
       luasnip.expand_or_jump()
