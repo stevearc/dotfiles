@@ -69,9 +69,6 @@
 [submodule "vimplugins/nvim-treesitter"]
 	path = vimplugins/nvim-treesitter
 	url = https://github.com/nvim-treesitter/nvim-treesitter
-[submodule "vimplugins/nvim-treesitter-context"]
-	path = vimplugins/nvim-treesitter-context
-	url = https://github.com/romgrk/nvim-treesitter-context.git
 [submodule "vimplugins/telescope.nvim"]
 	path = vimplugins/telescope.nvim
 	url = https://github.com/nvim-telescope/telescope.nvim.git

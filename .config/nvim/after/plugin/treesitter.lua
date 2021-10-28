@@ -28,9 +28,6 @@ require("nvim-treesitter.configs").setup({
   },
 })
 
-require("treesitter-context.config").setup({
-  enable = true,
-})
 vim.cmd("autocmd WinEnter * lua require'stevearc'.set_ts_win_defaults()")
 vim.cmd("autocmd BufWinEnter * lua require'stevearc'.set_ts_win_defaults()")
 
