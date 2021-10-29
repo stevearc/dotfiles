@@ -182,7 +182,6 @@ return {
       end,
     }),
     null_ls.builtins.diagnostics.luacheck.with({
-
       args = { "--globals", "vim", "--formatter", "plain", "--codes", "--ranges", "--filename", "$FILENAME", "-" },
       diagnostics_format = "[#{c}] #{m} (#{s})",
     }),

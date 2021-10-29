@@ -7,7 +7,6 @@ nmap <f1> <cmd>lua if require'profile'.is_recording() then require'profile'.stop
 nmap <f2> <cmd>lua require'plenary.profile'.start("profile.log", {flame = true})<cr>
 nmap <f3> <cmd>lua require'plenary.profile'.stop()<cr>
 
-let g:use_barbar = v:true
 let g:nerd_font = v:true
 let g:debug_treesitter = 0
 let g:null_ls = v:true
