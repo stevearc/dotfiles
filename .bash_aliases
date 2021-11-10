@@ -71,9 +71,9 @@ export or
 alias hr='history -c; history -r'
 __vimm() {
   if git rev-parse --git-dir 2>/dev/null; then
-    vim -p $(git sm @)
+    vim $(git sm @)
   elif hg id 2>/dev/null; then
-    vim -p $(hg mod)
+    vim $(hg mod)
   fi
 }
 alias vimm='__vimm'
