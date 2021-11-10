@@ -1,11 +1,43 @@
 local null_ls = require("null-ls")
 local h = require("null-ls.helpers")
 local methods = require("null-ls.methods")
+local util = require("lspconfig.util")
 local FORMATTING = methods.internal.FORMATTING
 local DIAGNOSTICS = methods.internal.DIAGNOSTICS
+local CONDITION = "_null_ls_root"
 
--- TODO
--- * pandoc rst seems to not be attaching to buffer
+local find_vc_root = util.root_pattern(".git", ".hg")
+
+local function is_exe(name)
+  return vim.fn.executable(name) ~= 0
+end
+
+local function cache_conditional(fn)
+  return function(params)
+    local ok, cached = pcall(vim.api.nvim_buf_get_var, params.bufnr, CONDITION)
+    if ok then
+      return cached
+    end
+    local ret = fn(params)
+    -- Convert nil value to false
+    vim.api.nvim_buf_set_var(params.bufnr, CONDITION, ret or false)
+    return ret
+  end
+end
+
+-- A runtime condition for enforcing the existence of files
+local function has_root_pattern(...)
+  local find = util.root_pattern(...)
+  return cache_conditional(function(params)
+    local vc_root = find_vc_root(params.bufname)
+    local found = find(params.bufname)
+    -- Don't search above the closest git root (might be a submodule)
+    if found and vc_root and string.len(found) < string.len(vc_root) then
+      return nil
+    end
+    return found
+  end)
+end
 
 local function sandbox_js_command(config, command, args)
   local function prefix_args(prefix)
@@ -20,17 +52,17 @@ local function sandbox_js_command(config, command, args)
   end
   return config.with({
     condition = function(utils)
-      if utils.root_has_file("yarn.lock") and vim.fn.executable("yarn") ~= 0 then
+      if utils.root_has_file("yarn.lock") and is_exe("yarn") ~= 0 then
         return config.with({
           command = "yarn",
           args = prefix_args({ "--silent", command }),
         })
-      elseif utils.root_has_file("package.json") and vim.fn.executable("npx") ~= 0 then
+      elseif utils.root_has_file("package.json") and is_exe("npx") ~= 0 then
         return config.with({
           command = "npx",
           args = prefix_args({ command }),
         })
-      elseif vim.fn.executable(command) ~= 0 then
+      elseif is_exe(command) ~= 0 then
         return config.with({
           command = command,
           args = args,
@@ -134,9 +166,7 @@ return {
 
     -- lua
     null_ls.builtins.formatting.stylua.with({
-      condition = function(utils)
-        return utils.root_has_file("stylua.toml") or utils.root_has_file(".stylua.toml")
-      end,
+      runtime_condition = has_root_pattern("stylua.toml", ".stylua.toml"),
     }),
     null_ls.builtins.diagnostics.luacheck.with({
       args = { "--globals", "vim", "--formatter", "plain", "--codes", "--ranges", "--filename", "$FILENAME", "-" },
@@ -151,19 +181,18 @@ return {
     null_ls.builtins.formatting.black,
     null_ls.builtins.diagnostics.pylint.with({
       condition = function()
-        return vim.fn.executable("pylint") ~= 0
+        return is_exe("pylint") ~= 0
       end,
       diagnostics_format = "[#{c}] #{m} (#{s})",
     }),
     null_ls.builtins.diagnostics.mypy.with({
       condition = function()
-        return vim.fn.executable("mypy") ~= 0
+        return is_exe("mypy") ~= 0
       end,
       diagnostics_format = "[#{c}] #{m} (#{s})",
     }),
 
     -- rst
-    null_ls.builtins.formatting.pandoc_rst,
     null_ls.builtins.diagnostics.rstlint,
 
     -- sh
