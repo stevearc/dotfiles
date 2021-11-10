@@ -21,6 +21,11 @@ require("telescope").setup({
       ".*/%.git/",
     },
   },
+  extensions = {
+    gkeep = {
+      find_method = "title",
+    },
+  },
 })
 require("telescope").load_extension("aerial")
 require("telescope").load_extension("gkeep")
