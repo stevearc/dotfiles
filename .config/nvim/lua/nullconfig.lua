@@ -42,38 +42,6 @@ local function sandbox_js_command(config, command, args)
   })
 end
 
-null_ls.builtins.diagnostics.mypy = h.make_builtin({
-  method = DIAGNOSTICS,
-  filetypes = { "python" },
-  generator_opts = {
-    command = "mypy",
-    args = {
-      "--show-error-codes",
-      "--show-column-numbers",
-      "--no-color-output",
-      "--follow-imports",
-      "silent",
-      "$FILENAME",
-    },
-    to_stdin = false,
-    to_temp_file = true,
-    from_stderr = true,
-    format = "line",
-    on_output = h.diagnostics.from_pattern(
-      "(%w+):(%d+):(%d+): (%w+): (.+) %[(.+)%]",
-      { "_file", "row", "col", "severity", "message", "code" },
-      {
-        severities = {
-          error = h.diagnostics.severities["error"],
-          warning = h.diagnostics.severities["warning"],
-          note = h.diagnostics.severities["information"],
-        },
-      }
-    ),
-  },
-  factory = h.generator_factory,
-})
-
 null_ls.builtins.diagnostics.yamllint = h.make_builtin({
   method = DIAGNOSTICS,
   filetypes = { "yaml" },
@@ -145,17 +113,6 @@ null_ls.builtins.formatting.pandoc_rst = h.make_builtin({
   factory = h.formatter_factory,
 })
 
-null_ls.builtins.formatting.pandoc_md = h.make_builtin({
-  method = FORMATTING,
-  filetypes = { "markdown" },
-  generator_opts = {
-    command = "pandoc",
-    args = { "-f", "markdown", "-t", "gfm", "-sp", "--tab-stop=2", "-" },
-    to_stdin = true,
-  },
-  factory = h.formatter_factory,
-})
-
 return {
   debug = false,
   diagnostics_format = "#{m} (#{s})",
@@ -185,9 +142,6 @@ return {
       args = { "--globals", "vim", "--formatter", "plain", "--codes", "--ranges", "--filename", "$FILENAME", "-" },
       diagnostics_format = "[#{c}] #{m} (#{s})",
     }),
-
-    -- markdown
-    null_ls.builtins.formatting.pandoc_md,
 
     -- php
     null_ls.builtins.formatting.hackfmt,
