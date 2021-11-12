@@ -1,11 +1,39 @@
 #!/bin/bash
 set -e
 declare -r XFCE_DOTFILES=".xsessionrc"
+declare -r DESKTOP_CONFIGS="
+  Kvantum
+  breezerc
+  dolphinrc
+  gtk-2.0
+  gtk-3.0
+  gtk-4.0
+  gtkrc
+  gtkrc-2.0
+  kcminputrc
+  kdeglobals
+  kglobalshortcutsrc
+  khotkeysrc
+  klipperrc
+  konsolerc
+  krunnerrc
+  kscreenlockerrc
+  ksmserverrc
+  ksplashrc
+  kwinrc
+  kwinrulesrc
+  kxkbrc
+  latte
+  lattedockrc
+  lightlyrc
+  ncmpcpp
+  oxygenrc
+  plasma-org.kde.plasma.desktop-appletsrc
+  plasmarc
+  plasmashellrc
+"
 
 setup-gnome() {
-  [ ! $LINUX ] && return 1
-
-  sudo apt install -yq dconf-cli
   cp "$HERE/static/mimeapps.list" ~/.local/share/applications
 
   # Find schema with 'dconf watch /' and then changing the settings
@@ -54,6 +82,27 @@ setup-gnome() {
     ./install.sh -s Dracula -p "$term_profile" --skip-dircolors
     popd
   fi
+}
+
+setup-kde() {
+  for conf in $DESKTOP_CONFIGS; do
+    local src="$HERE/.config/$conf"
+    local dest="${XDG_CONFIG_HOME-$HOME/.config}/$conf"
+    if [ -e "$src" ]; then
+      mirror "$src" "$dest" 1
+    fi
+  done
+}
+
+# shellcheck disable=SC2034
+DOTCMD_SAVE_DESKTOP_CONFIG_DOC="Save desktop config files to repo"
+dotcmd-save-desktop-config() {
+  for conf in $DESKTOP_CONFIGS; do
+    local src="${XDG_CONFIG_HOME-$HOME/.config}/$conf"
+    if [ -e "$src" ] && [ ! -L "$src" ]; then
+      cp -r "$src" "$HERE/.config/$conf"
+    fi
+  done
 }
 
 setup-xfce() {

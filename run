@@ -113,7 +113,7 @@ Opts:
   mkdir -p ~/bin
   if [ $symbolic ]; then
     for executable in "$HERE"/bin/*; do
-      link "$HERE/$executable" "$HOME/$executable"
+      link "$executable" "$HOME/bin/$(basename "$executable")"
     done
     link "$HERE/parseargs/parseargs.sh" "$HOME/bin/parseargs.sh"
   else

@@ -1,0 +1,13 @@
+[$Version]
+update_info=kxkb_variants.upd:split-variants
+
+[Layout]
+DisplayNames=
+LayoutList=us
+LayoutLoopCount=-1
+Model=pc86
+Options=,caps:ctrl_modifier
+ResetOldOptions=true
+SwitchMode=Global
+Use=true
+VariantList=

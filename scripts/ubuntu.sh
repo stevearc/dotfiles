@@ -42,23 +42,10 @@ install-language-arduino() {
 }
 
 # shellcheck disable=SC2034
-INSTALL_LANGUAGE_COMMON_DOC="Languages that I commonly use"
-install-language-common() {
-  install-language-python
-  install-language-js
-  install-language-go
-  install-language-rust
-  install-language-lua
-  install-language-vim
-  install-language-misc
-}
-
-# shellcheck disable=SC2034
 INSTALL_LANGUAGE_MISC_DOC="Random small languages like json & yaml"
 install-language-misc() {
   sudo apt-get install -yq pandoc yamllint
-  dc-install-nvm
-  yarn global add -s bash-language-server vscode-langservers-extracted yaml-language-server
+  install-misc-languages
   install-language-go
   if ! hascmd shfmt; then
     GO111MODULE=on go get mvdan.cc/sh/v3/cmd/shfmt
@@ -66,25 +53,8 @@ install-language-misc() {
 }
 
 install-language-lua() {
-  sudo apt-get install -qy lua-check
-  if hascmd cargo; then
-    cargo install stylua
-  fi
-
-  # Install lua language server
-  mkdir -p ~/.local/share/nvim/language-servers/
-  pushd ~/.local/share/nvim/language-servers/
-  if [ ! -d lua-language-server ]; then
-    sudo apt install -qy ninja-build
-    git clone https://github.com/sumneko/lua-language-server
-    cd lua-language-server
-    git submodule update --init --recursive
-    cd 3rd/luamake
-    ninja -f compile/ninja/linux.ninja
-    cd ../..
-    ./3rd/luamake/luamake rebuild
-  fi
-  popd
+  sudo apt-get install -qy lua-check ninja
+  install-lua-utils
 }
 
 install-language-sc() {
@@ -214,21 +184,6 @@ dc-install-docker() {
     sudo apt-get install -yq docker-ce
     confirm "Allow $USER to use docker without sudo?" y && sudo adduser "$USER" docker
   fi
-  mkdir -p ~/.docker-images
-  if ! grep -q "^data-root" /etc/docker/daemon.json; then
-    cat /etc/docker/daemon.json | jq '."data-root" = "'"$HOME"'/.docker-images"' >/tmp/docker-daemon.json
-    sudo mv /tmp/docker-daemon.json /etc/docker/daemon.json
-    sudo service docker stop
-    sleep 1
-    sudo service docker start
-  fi
-  if ! hascmd bluepill; then
-    pushd ~/bin
-    curl -o install.py https://raw.githubusercontent.com/stevearc/bluepill/master/bin/install.py \
-      && python install.py \
-      && rm -f install.py
-    popd
-  fi
   if ! hascmd docker-compose; then
     local latest
     latest=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .name)
@@ -236,6 +191,7 @@ dc-install-docker() {
     chmod +x ~/bin/docker-compose
     curl -L "https://raw.githubusercontent.com/docker/compose/${latest}/contrib/completion/bash/docker-compose" -o ~/.bash.d/docker-compose
   fi
+  setup-docker
 }
 
 dc-install-dotnet() {
@@ -280,18 +236,7 @@ dc-install-neovim() {
     fi
   fi
 
-  # Let's just always do the things for neovim
-  [ -d ~/.envs ] || mkdir ~/.envs
-  [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
-  ~/.envs/py3/bin/pip install -q wheel
-  ~/.envs/py3/bin/pip install -q pynvim
-
-  if ! hascmd nvr; then
-    mkdir -p ~/bin
-    pushd ~/bin
-    "$HERE/scripts/make_standalone.py" -s nvr neovim-remote
-    popd
-  fi
+  post-install-neovim
 }
 
 # shellcheck disable=SC2034
@@ -363,7 +308,8 @@ dotcmd-desktop() {
 
   sudo cp static/reloadaudio.sh /usr/bin/
 
-  if hascmd gsettings; then
+  if [[ $XDG_CURRENT_DESKTOP =~ "GNOME" ]]; then
+    sudo apt install -yq dconf-cli
     setup-gnome
   else
     echo "ERROR: Not sure what desktop environment this is."

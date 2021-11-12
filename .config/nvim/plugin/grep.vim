@@ -6,7 +6,7 @@ elseif executable('ag')
   set grepformat=%f:%l:%c:%m
 elseif executable('ack')
   set grepprg=ack\ --nogroup\ --nocolor
-elseif !empty(fugitive#extract_git_dir(expand('%:p')))
+elseif luaeval('require("lspconfig.util").find_git_ancestor(vim.loop.cwd())') != v:null
   set grepprg=git\ --no-pager\ grep\ --no-color\ -n\ $*
   set grepformat=%f:%l:%m,%m\ %f\ match%ts,%f
 else

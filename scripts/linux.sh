@@ -6,8 +6,7 @@ dc-install-nvm() {
     source ~/.bash.d/nvm.sh || :
   fi
   hascmd nvm && nvm current && return
-  local nvm_dir
-  nvm_dir=$(prompt "NVM install dir:" "${XDG_CONFIG_HOME-$HOME/.config}/nvm")
+  local nvm_dir="${XDG_DATA_HOME-$HOME/.local/share}/nvm"
   if [ ! -d "$nvm_dir" ]; then
     mkdir -p "$nvm_dir"
     local latest
@@ -22,7 +21,6 @@ dc-install-nvm() {
   echo -e "source $nvm_dir/nvm.sh\nsource $nvm_dir/bash_completion" >~/.bash.d/nvm.sh
   local node_version
   node_version=$(nvm ls-remote | tail -n 1 | awk '{print $1}')
-  node_version=$(prompt "Install node version:" "$node_version")
   nvm ls "$node_version" || nvm install --default "$node_version"
   nvm use default
   if ! hascmd yarn; then
@@ -60,7 +58,7 @@ install-language-rust() {
 install-language-go() {
   if [ ! -e /usr/local/go ]; then
     pushd /tmp
-    local pkg="go1.15.6.linux-amd64.tar.gz"
+    local pkg="go1.15.10.linux-amd64.tar.gz"
     if [ ! -e "$pkg" ]; then
       wget -O "$pkg" "https://golang.org/dl/$pkg"
     fi
@@ -82,6 +80,18 @@ install-language-js() {
   yarn global add -s flow-bin typescript-language-server
 }
 
+# shellcheck disable=SC2034
+INSTALL_LANGUAGE_COMMON_DOC="Languages that I commonly use"
+install-language-common() {
+  install-language-python
+  install-language-js
+  install-language-go
+  install-language-rust
+  install-language-lua
+  install-language-vim
+  install-language-misc
+}
+
 install-arduino() {
   hascmd arduino && return
 
@@ -101,12 +111,36 @@ install-arduino() {
   popd >/dev/null
 }
 
+install-lua-utils() {
+  if hascmd cargo; then
+    cargo install stylua
+  fi
+
+  # Install lua language server
+  mkdir -p ~/.local/share/nvim/language-servers/
+  pushd ~/.local/share/nvim/language-servers/
+  if [ ! -d lua-language-server ]; then
+    git clone https://github.com/sumneko/lua-language-server
+    cd lua-language-server
+    git submodule update --init --recursive
+    cd 3rd/luamake
+    ninja -f compile/ninja/linux.ninja
+    cd ../..
+    ./3rd/luamake/luamake rebuild
+  fi
+  popd
+}
+
+install-misc-languages() {
+  dc-install-nvm
+  yarn global add -s bash-language-server vscode-langservers-extracted yaml-language-server
+}
+
 setup-ufw() {
   sudo ufw default deny incoming
   sudo ufw default allow outgoing
   if confirm "Allow ssh connections?" y; then
     sudo ufw allow 22/tcp
-    sudo apt-get install -y -q openssh-server
   fi
   if confirm "Allow steam connections?" y; then
     sudo ufw allow 27031/udp
@@ -115,4 +149,41 @@ setup-ufw() {
     sudo ufw allow 27037/tcp
   fi
   sudo ufw enable
+}
+
+post-install-neovim() {
+  [ -d ~/.envs ] || mkdir ~/.envs
+  [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
+  ~/.envs/py3/bin/pip install -q wheel
+  ~/.envs/py3/bin/pip install -q pynvim
+
+  if ! hascmd nvr; then
+    mkdir -p ~/bin
+    pushd ~/bin
+    "$HERE/scripts/make_standalone.py" -s nvr neovim-remote
+    popd
+  fi
+  nvim --headless +UpdateRemotePlugins +qall >/dev/null
+}
+
+setup-docker() {
+  mkdir -p ~/.docker-images
+  if ! grep -q "^data-root" /etc/docker/daemon.json; then
+    if [ ! -e /etc/docker/daemon.json ]; then
+      sudo mkdir -p /etc/docker
+      echo "{}" | sudo tee /etc/docker/daemon.json >/dev/null
+    fi
+    cat /etc/docker/daemon.json | jq '."data-root" = "'"$HOME"'/.docker-images"' >/tmp/docker-daemon.json
+    sudo mv /tmp/docker-daemon.json /etc/docker/daemon.json
+    sudo systemctl stop docker
+    sleep 1
+    sudo systemctl start docker
+  fi
+  if ! hascmd bluepill; then
+    pushd ~/bin
+    curl -o install.py https://raw.githubusercontent.com/stevearc/bluepill/master/bin/install.py \
+      && python install.py \
+      && rm -f install.py
+    popd
+  fi
 }
