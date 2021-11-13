@@ -365,18 +365,6 @@ if not vim.g.null_ls then
   })
 end
 
--- neovim doesn't support the full 3.16 spec, but latest rust-analyzer requires the following capabilities.
--- Remove once implemented.
--- local default_capabilities = vim.lsp.protocol.make_client_capabilities()
--- default_capabilities.workspace.workspaceEdit = {
---   normalizesLineEndings = true,
---   changeAnnotationSupport = {
---     groupsOnLabel = true,
---   },
--- }
--- default_capabilities.textDocument.rename.prepareSupportDefaultBehavior = 1
--- default_capabilities.textDocument.completion.completionItem.snippetSupport = true
-
 require("lspconfig").rust_analyzer.setup({
   capabilities = capabilities,
   on_attach = on_attach,
