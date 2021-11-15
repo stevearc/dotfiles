@@ -40,6 +40,7 @@ map("<leader>bb", "<cmd>lua require('telescope.builtin').buffers({previewer=fals
 map("<leader>fg", "<cmd>Telescope live_grep<CR>")
 map("<leader>fb", "<cmd>lua require('telescope.builtin').live_grep({grep_open_files = true})<cr>")
 map("<leader>fh", "<cmd>Telescope help_tags<CR>")
+map("<leader>fp", "<cmd>lua require('stevearc').telescope_pick_project()<CR>")
 map(
   "<leader>f.",
   "<cmd>lua require('telescope.builtin').find_files({cwd=string.format('%s/dotfiles/.config/nvim/', os.getenv('HOME')), follow=true, hidden=true, previewer=false})<cr>"
