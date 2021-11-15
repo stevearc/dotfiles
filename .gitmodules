@@ -198,3 +198,6 @@
 [submodule "vimplugins/distant.nvim"]
 	path = vimplugins/distant.nvim
 	url = https://github.com/chipsenkbeil/distant.nvim.git
+[submodule "vimplugins/luv-vimdocs"]
+	path = vimplugins/luv-vimdocs
+	url = https://github.com/nanotee/luv-vimdocs.git
