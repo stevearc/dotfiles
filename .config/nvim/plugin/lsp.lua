@@ -263,7 +263,6 @@ local on_attach = function(client, bufnr)
     safemap("hover", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
   end
   if client.resolved_capabilities.signature_help then
-    mapper("n", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
     mapper("i", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
   end
   if config.code_action then

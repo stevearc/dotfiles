@@ -1,3 +1,4 @@
+local stevearc = require("stevearc")
 vim.o.termguicolors = true
 vim.o.background = "dark"
 
@@ -10,10 +11,19 @@ if vim.g.nerd_font ~= false then
 end
 
 -- Tokyo Night
+function stevearc.tokyonight()
+  local config = require("tokyonight.config")
+  local c = require("tokyonight.colors").setup(config)
+  local util = require("tokyonight.util")
+  util.highlight("BufferTabpage", { bg = c.bg_statusline, fg = c.blue })
+  util.highlight("BufferTabpageFill", { bg = c.bg_statusline, fg = c.none })
+end
 vim.g.tokyonight_style = "night"
 vim.g.tokyonight_dark_float = false
 vim.g.tokyonight_italic_comments = true
 vim.g.tokyonight_italic_keywords = false
 vim.g.tokyonight_sidebars = { "qf", "aerial", "terminal" }
+
+vim.cmd([[autocmd ColorScheme tokyonight lua require'stevearc'.tokyonight()]])
 
 vim.cmd("colorscheme tokyonight")
