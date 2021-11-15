@@ -3,6 +3,7 @@ set -e
 declare -r XFCE_DOTFILES=".xsessionrc"
 declare -r DESKTOP_CONFIGS="
   Kvantum
+  awesome
   breezerc
   dolphinrc
   gtk-2.0
@@ -27,6 +28,7 @@ declare -r DESKTOP_CONFIGS="
   lattedockrc
   lightlyrc
   ncmpcpp
+  nitrogen
   oxygenrc
   plasma-org.kde.plasma.desktop-appletsrc
   plasmarc

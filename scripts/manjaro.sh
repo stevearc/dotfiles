@@ -69,6 +69,12 @@ dc-install-neovim() {
 }
 
 # shellcheck disable=SC2034
+DC_INSTALL_AWESOME_DOC="Awesome WM and friends"
+dc-install-awesome() {
+  sudo pamac install --no-confirm nitrogen awesome dmenu
+}
+
+# shellcheck disable=SC2034
 DC_INSTALL_DOCKER_DOC="Docker and docker-compose"
 dc-install-docker() {
   if ! hascmd docker; then
