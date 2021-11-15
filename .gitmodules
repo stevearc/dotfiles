@@ -201,3 +201,4 @@
 [submodule "vimplugins/luv-vimdocs"]
 	path = vimplugins/luv-vimdocs
 	url = https://github.com/nanotee/luv-vimdocs.git
+	ignore = untracked
