@@ -22,9 +22,6 @@ set backupcopy=yes
 " vim-javascript flow syntax highlighting
 let g:javascript_plugin_flow = 1
 
-" Use Vim settings, rather than Vi
-set nocompatible
-
 " Space is leader
 let mapleader = " "
 
