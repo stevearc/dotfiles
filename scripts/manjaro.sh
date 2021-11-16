@@ -71,7 +71,7 @@ dc-install-neovim() {
 # shellcheck disable=SC2034
 DC_INSTALL_AWESOME_DOC="Awesome WM and friends"
 dc-install-awesome() {
-  sudo pamac install --no-confirm nitrogen awesome dmenu network-manager-applet
+  sudo pamac install --no-confirm awesome dmenu network-manager-applet
 }
 
 # shellcheck disable=SC2034
