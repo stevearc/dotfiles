@@ -32,6 +32,7 @@ declare -r DESKTOP_CONFIGS="
   plasma-org.kde.plasma.desktop-appletsrc
   plasmarc
   plasmashellrc
+  qtile
 "
 
 setup-gnome() {
@@ -119,11 +120,12 @@ setup-xfce() {
   rsync -lrp .config/autostart ~/.config/
 }
 
-setup-wallpaper() {
+setup-desktop-generic() {
   [ -e ~/.config/backgrounds ] && return
   mkdir -p ~/.config/backgrounds
   cd ~/.config/backgrounds
   wget https://images6.alphacoders.com/805/805740.png
+  sudo cp "$HERE/static/pm-no-sudo" /etc/sudoers.d/
 }
 
 # shellcheck disable=SC2034

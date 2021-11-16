@@ -268,6 +268,35 @@ dc-install-common() {
 }
 
 # shellcheck disable=SC2034
+DC_INSTALL_QTILE_DOC="Qtile WM and friends"
+dc-install-qtile() {
+  sudo apt install -yq \
+    arandr \
+    compton \
+    i3lock \
+    libiw-dev \
+    libpangocairo-1.0-0 \
+    libxcb-screensaver0-dev \
+    pm-utils \
+    python-dbus \
+    python-gobject \
+    python3-xcffib \
+    suckless-tools
+  if [ ! -e ~/.envs/qtile ]; then
+    mkdir -p ~/.envs/qtile
+    python -m venv ~/.envs/qtile
+    ~/.envs/qtile/bin/pip install --upgrade pip wheel
+    ~/.envs/qtile/bin/pip install --no-cache xcffib
+    ~/.envs/qtile/bin/pip install --no-cache qtile iwlib dbus-next cairocffi python-mpd2
+  fi
+  install-language-rust
+  cargo install xidlehook --bins
+  sudo ln -sfT ~/.envs/qtile/bin/qtile /usr/bin/qtile
+  sudo cp "$HERE/static/qtile.desktop" /usr/share/xsessions/
+  sudo cp "$HERE/static/qtile-wayland.desktop" /usr/share/xsessions/
+}
+
+# shellcheck disable=SC2034
 DC_INSTALL_UFW_DOC="Uncomplicated FireWall with default config"
 dc-install-ufw() {
   hascmd ufw && return
@@ -293,7 +322,8 @@ dotcmd-desktop() {
     gparted \
     ffmpeg \
     mplayer \
-    vlc
+    vlc \
+    zenity
   if ! hascmd youtube-dl; then
     pushd ~/bin >/dev/null
     wget -O youtube-dl https://yt-dl.org/latest/youtube-dl
@@ -302,6 +332,7 @@ dotcmd-desktop() {
   fi
   if ! hascmd alacritty; then
     install-language-rust
+    sudo apt install -yq libxcb-shape0-dev libxcb-xfixes0-dev libxcb-render0-dev
     cargo install alacritty
   fi
 
@@ -312,7 +343,29 @@ dotcmd-desktop() {
 
   sudo cp static/reloadaudio.sh /usr/bin/
 
-  setup-wallpaper
+  setup-desktop-generic
+  pushd /tmp
+  if [ ! -e Layan-gtk-theme ]; then
+    git clone https://github.com/vinceliuice/Layan-gtk-theme.git
+    cd Layan-gtk-theme
+    ./install.sh
+  fi
+  popd
+  pushd /tmp
+  if [ ! -e Tela-icon-theme ]; then
+    git clone https://github.com/vinceliuice/Tela-icon-theme.git
+    cd Tela-icon-theme
+    ./install.sh
+  fi
+  popd
+  if ! snap list | grep layan-themes >/dev/null; then
+    sudo snap install layan-themes
+  fi
+  if ! snap list | grep tela-icons >/dev/null; then
+    sudo snap install tela-icons
+  fi
+  for i in $(snap connections | grep gtk-common-themes:gtk-3-themes | awk '{print $2}'); do sudo snap connect $i layan-themes:gtk-3-themes; done
+  for i in $(snap connections | grep icon-themes | awk '{print $2}'); do sudo snap connect $i tela-icons:icon-themes; done
   if [[ $XDG_CURRENT_DESKTOP =~ "GNOME" ]]; then
     sudo apt install -yq dconf-cli
     setup-gnome

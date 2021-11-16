@@ -1,0 +1,3 @@
+nonprivilegeduser ALL=NOPASSWD:/usr/sbin/pm-suspend-hybrid
+nonprivilegeduser ALL=NOPASSWD:/usr/sbin/pm-suspend
+nonprivilegeduser ALL=NOPASSWD:/usr/sbin/pm-hibernate

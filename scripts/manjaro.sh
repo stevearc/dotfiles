@@ -69,6 +69,13 @@ dc-install-neovim() {
 }
 
 # shellcheck disable=SC2034
+DC_INSTALL_QTILE_DOC="Qtile WM and friends"
+dc-install-qtile() {
+  sudo pamac install --no-confirm qtile dmenu python-iwlib python-dbus-next compton i3lock
+  yay -S --noconfirm xidlehook
+}
+
+# shellcheck disable=SC2034
 DC_INSTALL_DOCKER_DOC="Docker and docker-compose"
 dc-install-docker() {
   if ! hascmd docker; then
@@ -104,7 +111,8 @@ dotcmd-desktop() {
     mupen64plus \
     ncmpcpp \
     steam-manjaro \
-    vlc
+    vlc \
+    zenity
   yay -S --noconfirm google-chrome mopidy-spotify mopidy-mpd
   if ! hascmd youtube-dl; then
     pushd ~/bin >/dev/null
@@ -112,7 +120,7 @@ dotcmd-desktop() {
     chmod +x youtube-dl
     popd >/dev/null
   fi
-  setup-wallpaper
+  setup-desktop-generic
   if [[ $XDG_CURRENT_DESKTOP =~ "GNOME" ]]; then
     sudo pamac install --no-confirm dconf
     setup-gnome
