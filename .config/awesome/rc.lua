@@ -21,6 +21,7 @@ require("awful.hotkeys_popup.keys")
 local logout_menu_widget = require("awesome-wm-widgets.logout-menu-widget.logout-menu")
 local volume_widget = require("awesome-wm-widgets.volume-widget.volume")
 local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
+local bluetooth = require("gobo-awesome-bluetooth.gobo.awesome.bluetooth")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -247,6 +248,7 @@ awful.screen.connect_for_each_screen(function(s)
       s.mylayoutbox,
       mytextclock,
       wibox.widget.systray(),
+      bluetooth.new(),
       volume_widget({
         widget_type = "icon",
       }),
