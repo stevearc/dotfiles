@@ -118,11 +118,6 @@ augroup SmartOpen
        \ endif
 augroup END
 
-" Search mappings: These will make it so that going to the next one in a
-" search will center on the line it's found in.
-nnoremap N Nzv
-nnoremap n nzv
-
 " Set fileformat to Unix
 set ff=unix
 
@@ -239,12 +234,6 @@ inoremap <C-a> <C-o>0
 inoremap <C-e> <C-o>$
 
 command! GitHistory Git! log -- %
-
-" Fix * and # behavior to respect smartcase
-nnoremap <silent> * :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=1<CR>nzv
-nnoremap <silent> # :let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=0<CR>nzv
-nnoremap <silent> g* :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR>nzv
-nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>nzv
 
 let g:scnvim_no_mappings = 1
 let g:scnvim_eval_flash_repeats = 1
