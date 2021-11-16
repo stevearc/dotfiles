@@ -112,6 +112,7 @@ dotcmd-desktop() {
     chmod +x youtube-dl
     popd >/dev/null
   fi
+  setup-wallpaper
   if [[ $XDG_CURRENT_DESKTOP =~ "GNOME" ]]; then
     sudo pamac install --no-confirm dconf
     setup-gnome

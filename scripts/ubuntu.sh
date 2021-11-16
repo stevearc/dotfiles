@@ -300,6 +300,10 @@ dotcmd-desktop() {
     chmod +x youtube-dl
     popd >/dev/null
   fi
+  if ! hascmd alacritty; then
+    install-language-rust
+    cargo install alacritty
+  fi
 
   if ! grep -q "GRUB_TIMEOUT=4" /etc/default/grub; then
     sudo sed -ie 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=4/' /etc/default/grub
@@ -308,6 +312,7 @@ dotcmd-desktop() {
 
   sudo cp static/reloadaudio.sh /usr/bin/
 
+  setup-wallpaper
   if [[ $XDG_CURRENT_DESKTOP =~ "GNOME" ]]; then
     sudo apt install -yq dconf-cli
     setup-gnome

@@ -3,6 +3,7 @@ set -e
 declare -r XFCE_DOTFILES=".xsessionrc"
 declare -r DESKTOP_CONFIGS="
   Kvantum
+  alacritty
   breezerc
   dolphinrc
   gtk-2.0
@@ -116,6 +117,13 @@ setup-xfce() {
   mkdir -p ~/.config
   rsync -lrp .config/xfce4 ~/.config/
   rsync -lrp .config/autostart ~/.config/
+}
+
+setup-wallpaper() {
+  [ -e ~/.config/backgrounds ] && return
+  mkdir -p ~/.config/backgrounds
+  cd ~/.config/backgrounds
+  wget https://images6.alphacoders.com/805/805740.png
 }
 
 # shellcheck disable=SC2034
