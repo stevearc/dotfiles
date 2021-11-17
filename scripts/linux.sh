@@ -139,6 +139,7 @@ install-misc-languages() {
 setup-ufw() {
   sudo ufw default deny incoming
   sudo ufw default allow outgoing
+  sudo ufw allow from 127.0.0.1
   if confirm "Allow ssh connections?" y; then
     sudo ufw allow 22/tcp
   fi
