@@ -4,13 +4,13 @@ require'lightspeed'.setup{
 }
 EOF
 
-" Try using sS for a while
-" unmap s
-" unmap S
 " Disable all of lightspeed's default keymaps
+unmap s
+" unmap S
 unmap f
 unmap F
 unmap t
 unmap T
 map <leader>j <Plug>Lightspeed_s
 map <leader>k <Plug>Lightspeed_S
+map <C-s> <Plug>Lightspeed_s
