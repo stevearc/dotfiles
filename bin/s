@@ -1,9 +1,8 @@
 #!/bin/bash
 set -e
 
-if [ -z "$1" ]; then
+if [ -z "$1" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
   echo "$0 {Lock,logOut,Suspend,Hibernate,shutDown,Reboot}"
-  exit
 elif [ "$1" == "l" ] || [ "$1" == "lock" ]; then
   i3lock -t -f -e -i ~/.config/backgrounds/805740.png
 elif [ "$1" == "o" ] || [ "$1" == "logout" ]; then

@@ -314,6 +314,10 @@ dotcmd-desktop() {
   fi
   dc-install-nerd-font
 
+  if [ ! -e /etc/apt/sources.list.d/mopidy.list ]; then
+    wget -q -O - https://apt.mopidy.com/mopidy.gpg | sudo apt-key add -
+    sudo wget -q -O /etc/apt/sources.list.d/mopidy.list https://apt.mopidy.com/buster.list
+  fi
   # Enable multiverse
   sudo sed -i -e 's/# \(.* multiverse$\)/\1/' /etc/apt/sources.list
   sudo apt-get update -qq
@@ -321,7 +325,11 @@ dotcmd-desktop() {
   sudo apt-get install -q -y \
     gparted \
     ffmpeg \
+    mopidy \
+    mopidy-mpd \
+    mopidy-spotify \
     mplayer \
+    ncmpcpp \
     vlc \
     zenity
   if ! hascmd youtube-dl; then
@@ -371,6 +379,5 @@ dotcmd-desktop() {
     setup-gnome
   else
     echo "ERROR: Not sure what desktop environment this is."
-    # setup-xfce
   fi
 }

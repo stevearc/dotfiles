@@ -121,11 +121,28 @@ setup-xfce() {
 }
 
 setup-desktop-generic() {
-  [ -e ~/.config/backgrounds ] && return
-  mkdir -p ~/.config/backgrounds
-  cd ~/.config/backgrounds
-  wget https://images6.alphacoders.com/805/805740.png
-  sudo cp "$HERE/static/pm-no-sudo" /etc/sudoers.d/
+  if [ ! -e ~/.config/backgrounds ]; then
+    mkdir -p ~/.config/backgrounds
+    cd ~/.config/backgrounds
+    wget https://images6.alphacoders.com/805/805740.png
+    sudo cp "$HERE/static/pm-no-sudo" /etc/sudoers.d/
+  fi
+  setup-mopidy
+}
+
+setup-mopidy() {
+  grep -q spotify /etc/mopidy/mopidy.conf 2>/dev/null && return
+  cp "$HERE/static/mopidy.conf" /tmp/mopidy.conf
+  read -r -p "Spotify password: " pw
+  sed -i -e "s/^password =.*/password = $pw/" /tmp/mopidy.conf
+  open https://mopidy.com/ext/spotify/
+  echo "Authenticate with spotify then come back"
+  read -r -p "Spotify client_id: " pw
+  sed -i -e "s/^client_id =.*/client_id = $pw/" /tmp/mopidy.conf
+  read -r -p "Spotify client_secret: " pw
+  sed -i -e "s/^client_secret =.*/client_secret = $pw/" /tmp/mopidy.conf
+  sudo mv "/tmp/mopidy.conf" /etc/mopidy/mopidy.conf
+  systemctl restart mopidy
 }
 
 # shellcheck disable=SC2034
