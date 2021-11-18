@@ -10,10 +10,8 @@ def_key "k"
 
 def_key "ctrl-u"
     page_up
-#push_characters "kkkkkkkkkkkkkkk"
 def_key "ctrl-d"
     page_down
-#push_characters "jjjjjjjjjjjjjjj"
 
 def_key "h"
     previous_column
@@ -50,3 +48,14 @@ def_key "N"
 
 def_key "d"
   delete_playlist_items
+
+def_key "-"
+  require_screen "browser"
+  jump_to_parent_directory
+def_key "-"
+    volume_down
+
+def_key "3"
+  show_playlist_editor
+def_key "5"
+  show_search_engine
