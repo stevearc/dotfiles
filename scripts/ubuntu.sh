@@ -353,20 +353,20 @@ dotcmd-desktop() {
   sudo cp static/reloadaudio.sh /usr/bin/
 
   setup-desktop-generic
-  pushd /tmp
-  if [ ! -e Layan-gtk-theme ]; then
-    git clone https://github.com/vinceliuice/Layan-gtk-theme.git
+  if [ ! -e ~/.themes/Layan ]; then
+    pushd /tmp >/dev/null
+    git clone --depth=1 https://github.com/vinceliuice/Layan-gtk-theme.git
     cd Layan-gtk-theme
     ./install.sh
+    popd >/dev/null
   fi
-  popd
-  pushd /tmp
-  if [ ! -e Tela-icon-theme ]; then
-    git clone https://github.com/vinceliuice/Tela-icon-theme.git
+  if [ ! -e ~/.local/share/icons/Tela ]; then
+    pushd /tmp >/dev/null
+    git clone --depth=1 https://github.com/vinceliuice/Tela-icon-theme.git
     cd Tela-icon-theme
     ./install.sh
+    popd >/dev/null
   fi
-  popd
   if ! snap list | grep layan-themes >/dev/null; then
     sudo snap install layan-themes
   fi
