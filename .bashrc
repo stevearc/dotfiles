@@ -154,6 +154,10 @@ if command -v direnv >/dev/null; then
   PS1=$PS1'$(show_virtual_env)'
 fi
 
+if [ "$XDG_SESSION_TYPE" == "tty" ]; then
+  sudo loadkeys ~/.config/keystrings
+fi
+
 export DOCKER_GUI="--net=host --env=DISPLAY --volume=$HOME/.Xauthority:/root/.Xauthority:rw"
 
 if [ -n "$PROFILE_STARTUP" ]; then

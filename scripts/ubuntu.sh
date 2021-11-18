@@ -324,6 +324,7 @@ dotcmd-desktop() {
 
   sudo apt-get install -q -y \
     blueman \
+    console-data \
     ffmpeg \
     gparted \
     mopidy \

@@ -1,0 +1,2 @@
+USER ALL=NOPASSWD:/usr/bin/loadkeys
+

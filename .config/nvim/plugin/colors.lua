@@ -1,6 +1,6 @@
 local stevearc = require("stevearc")
-vim.o.termguicolors = true
-vim.o.background = "dark"
+vim.opt.termguicolors = true
+vim.opt.background = "dark"
 
 require("colorizer").setup()
 
@@ -26,4 +26,9 @@ vim.g.tokyonight_sidebars = { "qf", "aerial", "terminal" }
 
 vim.cmd([[autocmd ColorScheme tokyonight lua require'stevearc'.tokyonight()]])
 
-vim.cmd("colorscheme tokyonight")
+if os.getenv("XDG_SESSION_TYPE") == "tty" then
+  vim.opt.termguicolors = false
+  vim.cmd("colorscheme darkblue")
+else
+  vim.cmd("colorscheme tokyonight")
+end

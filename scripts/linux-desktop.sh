@@ -125,8 +125,9 @@ setup-desktop-generic() {
     mkdir -p ~/.config/backgrounds
     cd ~/.config/backgrounds
     wget https://images6.alphacoders.com/805/805740.png
-    sudo cp "$HERE/static/pm-no-sudo" /etc/sudoers.d/
   fi
+  sudo cp "$HERE/static/pm-no-sudo" /etc/sudoers.d/
+  sed -e "s/USER/$USER/" "$HERE/static/loadkeys-no-sudo" | sudo tee /etc/sudoers.d/loadkeys-no-sudo >/dev/null
   setup-mopidy
 }
 
@@ -178,10 +179,10 @@ dc-install-clipper() {
 DC_INSTALL_NERD_FONT_DOC="Font with icons"
 dc-install-nerd-font() {
   mkdir -p ~/.local/share/fonts
-  pushd ~/.local/share/fonts
+  pushd ~/.local/share/fonts >/dev/null
   if [ ! -e UbuntuMono.zip ]; then
     wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/UbuntuMono.zip
     unzip UbuntuMono.zip
   fi
-  popd
+  popd >/dev/null
 }

@@ -23,7 +23,7 @@ alias ack='ag'
 alias gg='git grep -I'
 alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf'
 alias dua='du -had 1 | sort -rh'
-alias tm='tmux -2'
+alias tm='tmux'
 if [ $MAC ]; then
   alias alert='reattach-to-user-namespace osascript -e "display notification \"$(history|tail -n1|sed -e '\''s/^[[:space:]]*[0-9]*[[:space:]]*//;s/[;&|][[:space:]]*alert$//'\'')\" with title \"$([ $? = 0 ] && echo Success || echo Error)\""'
   alias warn='[ $? != 0 ] && reattach-to-user-namespace osascript -e "display notification \"$(history|tail -n1|sed -e '\''s/^[[:space:]]*[0-9]*[[:space:]]*//;s/[;&|][[:space:]]*warn$//'\'')\" with title \"Error\""'
@@ -41,11 +41,11 @@ alias scu='systemctl --user'
 zlibd() (printf "\x1f\x8b\x08\x00\x00\x00\x00\x00" | cat - $@ | gzip -dc)
 alias mosh='mosh -6'
 ash() {
-  autossh -t "$@" 'tmux -2 attach || tmux -2 new'
+  autossh -t "$@" 'tmux -2 attach || tmux new'
 }
 export ash
 sash() {
-  autossh -t "$@" 'sudo tmux -2 attach || sudo tmux -2 new'
+  autossh -t "$@" 'sudo tmux -2 attach || sudo tmux new'
 }
 export sash
 if command -v nvim >/dev/null; then
