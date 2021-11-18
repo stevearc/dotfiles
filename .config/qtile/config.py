@@ -37,6 +37,11 @@ from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 
+import sys
+# Make sure we reload our companion file
+sys.modules.pop('mpdwidget', None)
+from mpdwidget import MpdWidget
+
 mod = "mod4"
 alt = "mod1"
 terminal = guess_terminal('alacritty')
@@ -52,9 +57,10 @@ formatter = logging.Formatter(
     "%(levelname)s %(asctime)s [%(name)s] %(message)s"
 )
 handler.setFormatter(formatter)
-log = logging.getLogger("config")
+log = logging.getLogger()
 log.setLevel(logging.DEBUG)
 log.addHandler(handler)
+logging.getLogger('mpd.base').setLevel(logging.WARNING)
 logger.debug("Begin config.py")
 
 keys = [
@@ -89,6 +95,10 @@ keys = [
     Key([mod, "control"], "k", lazy.layout.grow_up(), desc="Grow window up"),
     Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
 
+    # Switch screens
+    Key([alt, "control"], "h", lazy.prev_screen(), desc="Focus previous screen"),
+    Key([alt, "control"], "l", lazy.next_screen(), desc="Focus next screen"),
+
     # Toggle between split and unsplit sides of stack.
     # Split = all windows displayed
     # Unsplit = 1 window displayed, like Max layout, but still with
@@ -116,34 +126,25 @@ groups = [Group(i) for i in "123456789"]
 
 for i in groups:
     keys.extend([
-        # mod1 + letter of group = switch to group
-        Key([alt], i.name, lazy.group[i.name].toscreen(),
+        Key([alt], i.name, lazy.group[i.name].toscreen(toggle=False),
             desc="Switch to group {}".format(i.name)),
-
-        # mod1 + shift + letter of group = switch to & move focused window to group
-        Key([alt, "shift"], i.name, lazy.window.togroup(i.name, switch_group=True),
-            desc="Switch to & move focused window to group {}".format(i.name)),
-        # Or, use below if you prefer not to switch to that group.
-        # # mod1 + shift + letter of group = move focused window to group
-        # Key([mod, "shift"], i.name, lazy.window.togroup(i.name),
-        #     desc="move focused window to group {}".format(i.name)),
+        Key([alt, "shift"], i.name, lazy.window.togroup(i.name),
+            desc="Move focused window to group {}".format(i.name)),
     ])
 
-class Theme(NamedTuple):
-    BORDER_FOCUS: str
-    BORDER_NORMAL: str
-
-c = Theme('#3d59a1', '#1f2335.0')
+c_border_focus = '#3d59a1'
+c_border_normal = '#1f2335.0'
+c_bar_bg = "#1a1b26.6"
 
 layouts = [
-    layout.Columns(border_focus=c.BORDER_FOCUS, border_normal=c.BORDER_NORMAL, border_focus_stack=c.BORDER_FOCUS, border_normal_stack=c.BORDER_NORMAL),
+    layout.Columns(border_focus=c_border_focus, border_normal=c_border_normal, border_focus_stack=c_border_focus, border_normal_stack=c_border_normal),
     layout.Max(),
     # Try more layouts by unleashing below layouts.
     # layout.Stack(num_stacks=2),
     # layout.Bsp(),
     # layout.Matrix(),
-    layout.MonadTall(border_focus=c.BORDER_FOCUS, border_normal=c.BORDER_NORMAL, single_border_width=0),
-    layout.MonadWide(border_focus=c.BORDER_FOCUS, border_normal=c.BORDER_NORMAL, single_border_width=0),
+    layout.MonadTall(border_focus=c_border_focus, border_normal=c_border_normal, single_border_width=0),
+    layout.MonadWide(border_focus=c_border_focus, border_normal=c_border_normal, single_border_width=0),
     # layout.RatioTile(),
     # layout.Tile(),
     # layout.TreeTab(),
@@ -157,18 +158,6 @@ widget_defaults = dict(
     padding=3,
 )
 extension_defaults = widget_defaults.copy()
-
-class MyMpd(widget.Mpd2):
-    vol_delta = 1
-
-    def volume_up(self):
-        self.client.volume(self.vol_delta)
-
-    def volume_down(self):
-        self.client.volume(-self.vol_delta)
-
-    def next(self):
-        self.client.next()
 
 num_monitors = int(subprocess.run(r'xrandr | grep "\bconnected" -c', shell=True, stdout=subprocess.PIPE).stdout)
 PRIMARY_MONITOR = int(subprocess.run(r'xrandr | grep "\bconnected" | awk "/ primary/{print NR}"', shell=True, stdout=subprocess.PIPE).stdout or '1') - 1
@@ -186,25 +175,14 @@ screens = [
                 widget.Clock(format='%a %b %d  %I:%M %p'),
                 widget.Spacer(),
                 *([
-                    MyMpd(idle_format='', mouse_buttons={
-                        # Left click toggles play/pause
-                        1: 'toggle',
-                        # Right click skips song
-                        3: 'next',
-                        # Scroll up/down to change volume
-                        4: 'volume_up',
-                        5: 'volume_down',
-                    }),
-                    widget.Systray(),
-                    widget.BatteryIcon(),
-                    widget.Volume(),
-                    widget.Bluetooth(),
-                    widget.Wlan(),
-                    widget.QuickExit(),
+                    MpdWidget(status_format='{play_status} {artist}/{title} {volume}%', idle_format='', space='', color_progress='#9ece6a'),
+                    widget.Systray(background=c_bar_bg),
+                    widget.Battery(hide_threshold=0.9, low_percentage=0.2, format='B{char}{percent:2.0%}'),
+                    widget.Volume(mute_command='amixer -D pulse set Master Playback Switch toggle', emoji=True),
                 ] if i == PRIMARY_MONITOR else [])
             ],
             24,
-            background="#1a1b26.6",
+            background=c_bar_bg,
         ),
     ) for i in range(num_monitors)
 ]

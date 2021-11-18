@@ -323,8 +323,9 @@ dotcmd-desktop() {
   sudo apt-get update -qq
 
   sudo apt-get install -q -y \
-    gparted \
+    blueman \
     ffmpeg \
+    gparted \
     mopidy \
     mopidy-mpd \
     mopidy-spotify \
