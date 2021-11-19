@@ -10,5 +10,11 @@
     "body": [
       "string.format(\"$1\", $2)"
     ]
+  },
+  "vim.inspect": {
+    "prefix": "vi",
+    "body": [
+      "vim.inspect(${1:$TM_SELECTED_TEXT})"
+    ]
   }
 }
