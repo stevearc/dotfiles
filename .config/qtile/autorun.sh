@@ -1,7 +1,6 @@
 #!/bin/bash
 HERE=$(dirname "$(readlink -f "$0")")
 
-rm -f ~/.cache/qtile/screenoff
 setxkbmap -option ctrl:nocaps
 nm-applet &
 blueman-applet &

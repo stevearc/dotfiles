@@ -18,10 +18,8 @@ elif [ "$1" == "d" ] || [ "$1" == "shutdown" ]; then
 elif [ "$1" == "r" ] || [ "$1" == "reboot" ]; then
   reboot
 elif [ "$1" == "screenoff" ]; then
-  touch ~/.cache/qtile/screenoff
   xset dpms force off
 elif [ "$1" == "screenon" ]; then
-  rm -f ~/.cache/qtile/screenoff
   xset dpms force on
   ~/.config/qtile/setup-monitors.sh
 fi

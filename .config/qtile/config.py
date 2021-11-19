@@ -219,10 +219,14 @@ reconfigure_screens = True
 # focus, should we respect this or not?
 auto_minimize = True
 
+def is_monitor_on():
+    ret = subprocess.run("xset -q dpms | grep 'Monitor is Off'", shell=True)
+    return ret.returncode == 1
+
 @hook.subscribe.screen_change
 def randrchange(ev):
     logger.debug("xrandr change event")
-    if os.path.exists(os.path.join(CACHE, 'screenoff')):
+    if not is_monitor_on():
         logger.debug("Ignoring event because user is idle")
         return
     ret = subprocess.run([os.path.join(HOME, '.config', 'qtile', 'setup-monitors.sh')], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
