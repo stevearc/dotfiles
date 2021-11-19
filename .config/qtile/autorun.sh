@@ -2,6 +2,7 @@
 HERE=$(dirname "$(readlink -f "$0")")
 
 setxkbmap -option ctrl:nocaps
+xbindkeys
 nm-applet &
 blueman-applet &
 

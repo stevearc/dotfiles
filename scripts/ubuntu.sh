@@ -333,6 +333,7 @@ dotcmd-desktop() {
     mplayer \
     ncmpcpp \
     vlc \
+    xbindkeys \
     zenity
   if ! hascmd youtube-dl; then
     pushd ~/bin >/dev/null
