@@ -1,0 +1,167 @@
+#!/usr/bin/env python
+import argparse
+import subprocess
+import time
+from typing import Dict, Optional
+
+
+def get_brightness() -> Dict[str, float]:
+    output = subprocess.check_output(
+        r"xrandr --verbose | grep '\bconnected' -A5 | grep '\bconnected\|Brightness'",
+        shell=True,
+    ).decode("utf-8")
+    lines = output.splitlines()
+    ret = {}
+    for i in range(0, len(lines), 2):
+        display = lines[i].split()[0]
+        brightness = float(lines[i + 1].split(":")[1].strip())
+        ret[display] = brightness
+    return ret
+
+
+def set_brightness(values: Dict[str, float]) -> None:
+    args = " ".join(
+        [f"--output {d} --brightness {min(1, max(0, v))}" for d, v in values.items()]
+    )
+    subprocess.check_call("xrandr " + args, shell=True)
+
+
+def lerp(progress: float, start: float, end: float) -> float:
+    delta = end - start
+    return start + max(0, min(1, progress)) * delta
+
+
+def tween_brightness(
+    start_values: Dict[str, float], values: Dict[str, float], tween: Optional[float]
+) -> None:
+    if tween is None:
+        set_brightness(values)
+    else:
+        step = 1 / 60
+        start = time.time()
+        now = start
+        target = now + tween
+        current = start_values.copy()
+        while now < target:
+            progress = (now - start) / (target - start)
+            for k in values:
+                current[k] = lerp(progress, start_values[k], values[k])
+            set_brightness(current)
+            time.sleep(step)
+            now = time.time()
+        set_brightness(values)
+
+
+def smart_inc(start: float, amount: Optional[float], positive: bool):
+    if positive:
+        if amount is not None:
+            return start + amount
+        elif start >= 0.8:
+            return 1
+        elif start > 0.4:
+            return start + 0.2
+        else:
+            return start + 0.1
+    else:
+        if amount is not None:
+            return start - amount
+        elif start >= 0.4:
+            return start - 0.2
+        elif start > 0.1:
+            return start - 0.1
+        else:
+            return 0.1
+
+
+def cmd_increment(
+    display: Optional[str],
+    amount: Optional[float],
+    tween: Optional[float],
+    positive: bool,
+) -> None:
+    start = get_brightness()
+    b = start.copy()
+    if display:
+        b[display] = smart_inc(b[display], amount, positive)
+    else:
+        for k in b:
+            b[k] = smart_inc(b[k], amount, positive)
+    tween_brightness(start, b, tween)
+
+
+def cmd_set(display: Optional[str], value: float, tween: Optional[float]) -> None:
+    start = get_brightness()
+    b = start.copy()
+    if display:
+        b[display] = value
+    else:
+        for k in b:
+            b[k] = value
+    tween_brightness(start, b, tween)
+
+
+def cmd_get(display: Optional[str]) -> None:
+    brightness = get_brightness()
+    if display:
+        print(brightness.get(display))
+    else:
+        for d, b in brightness.items():
+            print(f"{d}: {b}")
+
+
+def _add_tween(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "-t",
+        "--tween",
+        type=float,
+        help="Tween to the target brightness over this many seconds",
+    )
+
+
+def _add_inc_parser(parser: argparse.ArgumentParser, name: str) -> None:
+    parser.add_argument(
+        "delta",
+        nargs="?",
+        type=float,
+        help="Amount to change brightness by (-1 to 1)",
+    )
+    parser.set_defaults(cmd=name)
+    _add_tween(parser)
+
+
+def main() -> None:
+    """Get or set monitor brightness"""
+    parser = argparse.ArgumentParser(description=main.__doc__)
+    parser.add_argument(
+        "-d", "--display", required=False, help="Change the brightness of this display"
+    )
+    subparsers = parser.add_subparsers()
+
+    _add_inc_parser(subparsers.add_parser("inc"), "inc")
+    _add_inc_parser(subparsers.add_parser("dec"), "dec")
+
+    set_parser = subparsers.add_parser("set")
+    set_parser.add_argument("value", type=float, help="New brightness (0 to 1)")
+    set_parser.set_defaults(cmd="set")
+    _add_tween(set_parser)
+
+    get_parser = subparsers.add_parser("get")
+    get_parser.set_defaults(cmd="get")
+
+    args = parser.parse_args()
+    if "cmd" not in args:
+        parser.print_help()
+    elif args.cmd == "inc":
+        cmd_increment(args.display, args.delta, args.tween, True)
+    elif args.cmd == "dec":
+        cmd_increment(args.display, args.delta, args.tween, False)
+    elif args.cmd == "set":
+        cmd_set(args.display, args.value, args.tween)
+    elif args.cmd == "get":
+        cmd_get(args.display)
+    else:
+        print(f"Unknown command {args.cmd}")
+
+
+if __name__ == "__main__":
+    main()

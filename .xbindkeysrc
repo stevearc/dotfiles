@@ -7,3 +7,8 @@
 # Mute volume
 "pactl set-sink-mute @DEFAULT_SINK@ toggle"
    XF86AudioMute
+# Brightness
+"bright inc"
+   XF86MonBrightnessUp
+"bright dec"
+   XF86MonBrightnessDown

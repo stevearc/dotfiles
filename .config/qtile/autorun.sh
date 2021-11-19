@@ -18,12 +18,18 @@ xidlehook \
   --detect-sleep \
   --not-when-fullscreen \
   --not-when-audio \
-  --timer 600 \
+  --timer 30 \
+  'upower -i $(upower -e | grep battery) | grep -q "state.*discharging" && bright set -t 1 .2' \
+  'bright set 1' \
+  --timer 150 \
+  'bright set -t 1 .1' \
+  'bright set 1' \
+  --timer 420 \
   's screenoff' \
-  's screenon' \
+  's screenon; bright set 1' \
   --timer 10 \
   's lock' \
-  's screenon' \
+  's screenon; bright set 1' \
   --timer 1200 \
   'pm-suspend' \
-  's screenon' &
+  's screenon; bright set 1' &
