@@ -52,16 +52,6 @@ else
   end
 end
 
-vim.g.aerial = {
-  default_direction = "prefer_left",
-  highlight_on_jump = 200,
-  link_folds_to_tree = true,
-  link_tree_to_folds = true,
-  manage_folds = true,
-  nerd_font = vim.g.nerd_font,
-  -- filter_kind = {},
-}
-
 -- callback args changed in Neovim 0.6. See:
 -- https://github.com/neovim/neovim/pull/15504
 local function mk_handler(fn)
@@ -240,19 +230,6 @@ local on_attach = function(client, bufnr)
 
   vim.api.nvim_win_set_option(0, "signcolumn", "yes")
 
-  -- Aerial
-  if client.resolved_capabilities.document_symbol then
-    mapper("n", "<leader>a", "<cmd>AerialToggle!<CR>")
-    mapper("n", "{", "<cmd>AerialPrev<CR>")
-    mapper("v", "{", "<cmd>AerialPrev<CR>")
-    mapper("n", "}", "<cmd>AerialNext<CR>")
-    mapper("v", "}", "<cmd>AerialNext<CR>")
-    mapper("n", "[[", "<cmd>AerialPrevUp<CR>")
-    mapper("v", "[[", "<cmd>AerialPrevUp<CR>")
-    mapper("n", "]]", "<cmd>AerialNextUp<CR>")
-    mapper("v", "]]", "<cmd>AerialNextUp<CR>")
-  end
-
   -- Standard LSP
   safemap("goto_definition", "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
   safemap("declaration", "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
@@ -356,7 +333,13 @@ if not vim.g.null_ls then
     init_options = { documentFormatting = true },
     cmd = { "efm-langserver", "-logfile", "/tmp/efm.log", "-loglevel", "4" },
     filetypes = vim.tbl_keys(require("efmconfig")),
-    root_dir = require("lspconfig").util.root_pattern(".git", "setup.py", "setup.cfg", "pyproject.toml", "package.json"),
+    root_dir = require("lspconfig").util.root_pattern(
+      ".git",
+      "setup.py",
+      "setup.cfg",
+      "pyproject.toml",
+      "package.json"
+    ),
     settings = {
       lintDebounce = 1000000000,
       languages = require("efmconfig"),
@@ -376,9 +359,8 @@ require("lspconfig").tsserver.setup({
     if util.root_pattern(".flowconfig")(fname) then
       return nil
     end
-    return util.root_pattern("tsconfig.json")(fname) or util.root_pattern("package.json", "jsconfig.json", ".git")(
-      fname
-    )
+    return util.root_pattern("tsconfig.json")(fname)
+      or util.root_pattern("package.json", "jsconfig.json", ".git")(fname)
   end,
   on_attach = function(client, bufnr)
     local format = not projects[0].ts_prettier_format

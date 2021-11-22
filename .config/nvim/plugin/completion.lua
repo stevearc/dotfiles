@@ -94,6 +94,16 @@ cmp.setup({
   formatting = {
     format = lspkind.cmp_format({
       with_text = true,
+      symbol_map = {
+        Interface = " ",
+        Struct = "ﴯ ",
+        Class = "ﴯ ",
+        Constructor = " ",
+        Folder = " ",
+        Method = " ",
+        Module = " ",
+        Text = " ",
+      },
       menu = {
         buffer = "[buf]",
         nvim_lsp = "[LSP]",

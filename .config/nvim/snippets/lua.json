@@ -8,13 +8,19 @@
   "string.format": {
     "prefix": "sf",
     "body": [
-      "string.format(\"$1\", $2)"
+      "string.format(\"${1:$TM_SELECTED_TEXT}\", $2)"
     ]
   },
   "vim.inspect": {
     "prefix": "vi",
     "body": [
       "vim.inspect(${1:$TM_SELECTED_TEXT})"
+    ]
+  },
+  "vim.api.nvim_": {
+    "prefix": "nv",
+    "body": [
+      "vim.api.nvim_"
     ]
   }
 }
