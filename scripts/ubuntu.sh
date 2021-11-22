@@ -326,12 +326,14 @@ dotcmd-desktop() {
     blueman \
     console-data \
     ffmpeg \
+    geoclue-2.0 \
     gparted \
     mopidy \
     mopidy-mpd \
     mopidy-spotify \
     mplayer \
     ncmpcpp \
+    redshift \
     vlc \
     xbindkeys \
     zenity

@@ -14,6 +14,8 @@ elif command -v compton >/dev/null; then
   compton &
 fi
 
+redshift -l geoclue2 -m randr &
+
 xidlehook \
   --detect-sleep \
   --not-when-fullscreen \
