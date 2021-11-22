@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 import argparse
+import json
+import os
+import os.path
 import subprocess
 import time
 from typing import Dict, Optional
@@ -26,6 +29,23 @@ def set_brightness(values: Dict[str, float]) -> None:
     subprocess.check_call("xrandr " + args, shell=True)
 
 
+def get_cache_file() -> str:
+    cache_home = os.getenv(
+        "XDG_CACHE_HOME", os.path.join(os.getenv("HOME", "/"), ".cache")
+    )
+    return os.path.join(cache_home, "bright.json")
+
+
+def save_brightness(display: Optional[str], value: Dict[str, float]) -> None:
+    file = get_cache_file()
+    if display is not None:
+        if display not in value:
+            return
+        value = {display: value[display]}
+    with open(file, "w", encoding="utf-8") as ofile:
+        json.dump(value, ofile)
+
+
 def lerp(progress: float, start: float, end: float) -> float:
     delta = end - start
     return start + max(0, min(1, progress)) * delta
@@ -37,6 +57,8 @@ def tween_brightness(
     if tween is None:
         set_brightness(values)
     else:
+        for k in values:
+            start_values.setdefault(k, values[k])
         step = 1 / 60
         start = time.time()
         now = start
@@ -77,9 +99,12 @@ def cmd_increment(
     display: Optional[str],
     amount: Optional[float],
     tween: Optional[float],
+    save: bool,
     positive: bool,
 ) -> None:
     start = get_brightness()
+    if save:
+        save_brightness(display, start)
     b = start.copy()
     if display:
         b[display] = smart_inc(b[display], amount, positive)
@@ -89,8 +114,12 @@ def cmd_increment(
     tween_brightness(start, b, tween)
 
 
-def cmd_set(display: Optional[str], value: float, tween: Optional[float]) -> None:
+def cmd_set(
+    display: Optional[str], value: float, tween: Optional[float], save: bool
+) -> None:
     start = get_brightness()
+    if save:
+        save_brightness(display, start)
     b = start.copy()
     if display:
         b[display] = value
@@ -109,12 +138,32 @@ def cmd_get(display: Optional[str]) -> None:
             print(f"{d}: {b}")
 
 
+def cmd_restore(tween: Optional[float]) -> None:
+    file = get_cache_file()
+    if not os.path.exists(file):
+        print("No saved brightness")
+        return
+    with open(file, "r", encoding="utf-8") as ifile:
+        brightness = json.load(ifile)
+    start = get_brightness()
+    tween_brightness(start, brightness, tween)
+
+
 def _add_tween(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "-t",
         "--tween",
         type=float,
         help="Tween to the target brightness over this many seconds",
+    )
+
+
+def _add_save(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "-s",
+        "--save",
+        action="store_true",
+        help="Save the current brightness before changing",
     )
 
 
@@ -127,6 +176,7 @@ def _add_inc_parser(parser: argparse.ArgumentParser, name: str) -> None:
     )
     parser.set_defaults(cmd=name)
     _add_tween(parser)
+    _add_save(parser)
 
 
 def main() -> None:
@@ -144,21 +194,28 @@ def main() -> None:
     set_parser.add_argument("value", type=float, help="New brightness (0 to 1)")
     set_parser.set_defaults(cmd="set")
     _add_tween(set_parser)
+    _add_save(set_parser)
 
     get_parser = subparsers.add_parser("get")
     get_parser.set_defaults(cmd="get")
+
+    restore_parser = subparsers.add_parser("restore")
+    restore_parser.set_defaults(cmd="restore")
+    _add_tween(restore_parser)
 
     args = parser.parse_args()
     if "cmd" not in args:
         parser.print_help()
     elif args.cmd == "inc":
-        cmd_increment(args.display, args.delta, args.tween, True)
+        cmd_increment(args.display, args.delta, args.tween, args.save, True)
     elif args.cmd == "dec":
-        cmd_increment(args.display, args.delta, args.tween, False)
+        cmd_increment(args.display, args.delta, args.tween, args.save, False)
     elif args.cmd == "set":
-        cmd_set(args.display, args.value, args.tween)
+        cmd_set(args.display, args.value, args.tween, args.save)
     elif args.cmd == "get":
         cmd_get(args.display)
+    elif args.cmd == "restore":
+        cmd_restore(args.tween)
     else:
         print(f"Unknown command {args.cmd}")
 
