@@ -62,7 +62,7 @@
 [submodule "vimplugins/nvim-lspconfig"]
 	path = vimplugins/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig
-	ignore = untracked
+	ignore = all
 [submodule "vimplugins/flow-coverage.nvim"]
 	path = vimplugins/flow-coverage.nvim
 	url = https://github.com/stevearc/flow-coverage.nvim.git
@@ -133,6 +133,7 @@
 [submodule "vimplugins/nvim-toggleterm.lua"]
 	path = vimplugins/nvim-toggleterm.lua
 	url = https://github.com/akinsho/nvim-toggleterm.lua.git
+	ignore = untracked
 [submodule "vimplugins/playground"]
 	path = vimplugins/playground
 	url = https://github.com/nvim-treesitter/playground.git
@@ -166,6 +167,7 @@
 [submodule "vimplugins/nvim-cmp"]
 	path = vimplugins/nvim-cmp
 	url = https://github.com/hrsh7th/nvim-cmp.git
+	ignore = untracked
 [submodule "vimplugins/cmp-vsnip"]
 	path = vimplugins/cmp-vsnip
 	url = https://github.com/hrsh7th/cmp-vsnip.git
