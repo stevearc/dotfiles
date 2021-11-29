@@ -33,5 +33,5 @@ xidlehook \
   's lock' \
   's screenon; bright restore' \
   --timer 1200 \
-  'pm-suspend' \
+  'sudo pm-suspend' \
   's screenon; bright restore' &
