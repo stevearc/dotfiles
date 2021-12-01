@@ -43,8 +43,8 @@ function stevearc.autoformat()
   local project = projects[0]
   if
     not vim.g.smartformat_enabled
-    or vim.g.smartformat_enabled == 0
     or not project.autoformat
+    or vim.g.started_by_firenvim
     or vim.api.nvim_buf_line_count(0) > project.autoformat_threshold
   then
     return

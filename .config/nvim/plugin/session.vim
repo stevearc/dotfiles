@@ -6,8 +6,10 @@ let g:session_directory = expand('~/.local/share/nvim/sessions')
 " Don't autoload sessions on startup
 let g:session_autoload = 'no'
 " Don't prompt to save on exit
-let g:session_autosave = 'yes'
-let g:session_autosave_to = 'last'
+if !exists('g:started_by_firenvim')
+  let g:session_autosave = 'yes'
+  let g:session_autosave_to = 'last'
+endif
 let g:session_autosave_periodic = 1
 let g:session_autosave_silent = 1
 let g:session_verbose_messages = 0

@@ -164,7 +164,7 @@ post-install-neovim() {
     "$HERE/scripts/make_standalone.py" -s nvr neovim-remote
     popd
   fi
-  nvim --headless +UpdateRemotePlugins +qall >/dev/null
+  nvim --headless +UpdateRemotePlugins +TSUpdateSync -c 'call firenvim#install(0)' +qall >/dev/null
 }
 
 setup-docker() {

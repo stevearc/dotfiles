@@ -207,3 +207,6 @@
 [submodule "vimplugins/nvim-hlslens"]
 	path = vimplugins/nvim-hlslens
 	url = https://github.com/kevinhwang91/nvim-hlslens.git
+[submodule "vimplugins/firenvim"]
+	path = vimplugins/firenvim
+	url = https://github.com/glacambre/firenvim.git
