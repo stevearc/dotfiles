@@ -135,8 +135,8 @@ RUN+="/bin/chgrp video /sys/class/backlight/%k/brightness"
 EOF
     sudo mv /tmp/backlight.rules /etc/udev/rules.d/backlight.rules
   fi
-  sudo cp "$HERE/static/pm-no-sudo" /etc/sudoers.d/
-  sed -e "s/USER/$USER/" "$HERE/static/loadkeys-no-sudo" | sudo tee /etc/sudoers.d/loadkeys-no-sudo >/dev/null
+  sed -e "s/^USER/$USER/" "$HERE/static/pm-no-sudo" | sudo tee /etc/sudoers.d/pm-no-sudo >/dev/null
+  sed -e "s/^USER/$USER/" "$HERE/static/loadkeys-no-sudo" | sudo tee /etc/sudoers.d/loadkeys-no-sudo >/dev/null
   setup-mopidy
 }
 
