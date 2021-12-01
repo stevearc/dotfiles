@@ -126,6 +126,15 @@ setup-desktop-generic() {
     cd ~/.config/backgrounds
     wget https://images6.alphacoders.com/805/805740.png
   fi
+  if [ ! -e /etc/udev/rules.d/backlight.rules ]; then
+    sudo usermod -a -G video "$USER"
+    cat >/tmp/backlight.rules <<EOF
+ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="acpi_video0", GROUP="video", MODE="0664"
+RUN+="/bin/chmod g+w /sys/class/backlight/%k/brightness"
+RUN+="/bin/chgrp video /sys/class/backlight/%k/brightness"
+EOF
+    sudo mv /tmp/backlight.rules /etc/udev/rules.d/backlight.rules
+  fi
   sudo cp "$HERE/static/pm-no-sudo" /etc/sudoers.d/
   sed -e "s/USER/$USER/" "$HERE/static/loadkeys-no-sudo" | sudo tee /etc/sudoers.d/loadkeys-no-sudo >/dev/null
   setup-mopidy

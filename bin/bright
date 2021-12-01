@@ -7,26 +7,39 @@ import subprocess
 import time
 from typing import Dict, Optional
 
+backlight_dir = os.path.join("/", "sys", "class", "backlight")
+backlights = os.listdir(backlight_dir)
+
+
+def _get_brightness(backlight: str) -> int:
+    with open(
+        os.path.join(backlight_dir, backlight, "brightness"), "r", encoding="ascii"
+    ) as ifile:
+        return int(ifile.read().strip())
+
+
+def _get_max_brightness(backlight: str) -> int:
+    with open(
+        os.path.join(backlight_dir, backlight, "max_brightness"), "r", encoding="ascii"
+    ) as ifile:
+        return int(ifile.read().strip())
+
 
 def get_brightness() -> Dict[str, float]:
-    output = subprocess.check_output(
-        r"xrandr --verbose | grep '\bconnected' -A5 | grep '\bconnected\|Brightness'",
-        shell=True,
-    ).decode("utf-8")
-    lines = output.splitlines()
     ret = {}
-    for i in range(0, len(lines), 2):
-        display = lines[i].split()[0]
-        brightness = float(lines[i + 1].split(":")[1].strip())
-        ret[display] = brightness
+    for backlight in backlights:
+        brightness = _get_brightness(backlight)
+        max_brightness = _get_max_brightness(backlight)
+        ret[backlight] = brightness / max_brightness
     return ret
 
 
 def set_brightness(values: Dict[str, float]) -> None:
-    args = " ".join(
-        [f"--output {d} --brightness {min(1, max(0, v))}" for d, v in values.items()]
-    )
-    subprocess.check_call("xrandr " + args, shell=True)
+    for backlight, brightness in values.items():
+        with open(
+            os.path.join(backlight_dir, backlight, "brightness"), "w", encoding="ascii"
+        ) as ofile:
+            ofile.write(str(int(brightness * _get_max_brightness(backlight))))
 
 
 def get_cache_file() -> str:
