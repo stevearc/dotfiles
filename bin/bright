@@ -95,8 +95,10 @@ def smart_inc(start: float, amount: Optional[float], positive: bool):
             return 1
         elif start > 0.4:
             return start + 0.2
-        else:
+        elif start > 0.1:
             return start + 0.1
+        else:
+            return start + 0.02
     else:
         if amount is not None:
             return start - amount
@@ -104,8 +106,10 @@ def smart_inc(start: float, amount: Optional[float], positive: bool):
             return start - 0.2
         elif start > 0.1:
             return start - 0.1
+        elif start > 0.02:
+            return start - 0.02
         else:
-            return 0.1
+            return 0.02
 
 
 def cmd_increment(
