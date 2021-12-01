@@ -66,6 +66,7 @@
     sm = !bash ~/.githelpers show_modified_files
     prev = checkout @^
     next = !git checkout $(git rev-list --children --all | grep ^$(git rev-parse HEAD) | cut -f 2 -d ' ')
+    hookdir = rev-parse --git-path hooks
 
 
 [merge]
