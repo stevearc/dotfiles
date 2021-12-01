@@ -16,7 +16,8 @@ vim.g.aerial = {
   -- },
   backends = {
     ["_"] = { "treesitter", "lsp", "markdown" },
-    -- ["_"] = { "lsp", "treesitter" },
+    -- ["_"] = { "treesitter", "markdown" },
+    -- ["_"] = { "lsp", "markdown" },
   },
   -- open_automatic = true,
 }
