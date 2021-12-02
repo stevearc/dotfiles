@@ -25,10 +25,6 @@ let g:javascript_plugin_flow = 1
 " Space is leader
 let mapleader = " "
 
-" Allow backgrounding buffers without writing them, and remember marks/undo
-" for backgrounded buffers
-set hidden
-
 " Remember 1000 commands and search history
 set history=1000
 
@@ -63,9 +59,6 @@ set showmatch
 
 " Begin searching as soon as you start typing
 set incsearch
-
-" Magic preview for substitute and friends
-set inccommand=nosplit
 
 " Highlight search matches
 set hls
