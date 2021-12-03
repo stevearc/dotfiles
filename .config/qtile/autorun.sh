@@ -22,10 +22,10 @@ xidlehook \
   --not-when-fullscreen \
   --not-when-audio \
   --timer 30 \
-  'upower -i $(upower -e | grep battery) | grep -q "state.*discharging" && bright set -s -t 1 .2' \
+  'upower -i $(upower -e | grep battery) | grep -q "state.*discharging" && bright set -s -t 1 .02' \
   'bright restore' \
   --timer 150 \
-  'bright set -s -t 1 .1' \
+  'bright set -s -t 1 .02' \
   'bright restore' \
   --timer 420 \
   's screenoff' \
