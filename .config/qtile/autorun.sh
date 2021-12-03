@@ -35,4 +35,4 @@ xidlehook \
   's screenon; bright restore' \
   --timer 1200 \
   'sudo pm-suspend' \
-  's screenon; bright restore' &
+  's screenon; bright restore; qtile shell -c "restart()"' &
