@@ -210,3 +210,6 @@
 [submodule "vimplugins/firenvim"]
 	path = vimplugins/firenvim
 	url = https://github.com/glacambre/firenvim.git
+[submodule "vimplugins/dressing.nvim"]
+	path = vimplugins/dressing.nvim
+	url = https://github.com/stevearc/dressing.nvim.git

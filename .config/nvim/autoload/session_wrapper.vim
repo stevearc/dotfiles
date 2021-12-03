@@ -13,10 +13,10 @@ function! session_wrapper#DetachSession()
 endfunction
 
 function! session_wrapper#QuickOpen(detach)
-  if luaeval("pcall(require, 'telescope')")
+  if luaeval('(vim.ui and vim.ui.select) ~= nil')
     let s:detach_after_open = a:detach
     let l:sessions = xolox#session#get_names(0)
-    call luaeval("require('stevearc.telescope').select('Open Session', _A, 'session_wrapper#OnChooseSession')", l:sessions)
+    call luaeval("vim.ui.select(_A, {prompt='Open session', kind='session'}, function(s) vim.fn['session_wrapper#OnChooseSession'](s) end)", l:sessions)
   else
     OpenSession
     if a:detach
@@ -26,6 +26,9 @@ function! session_wrapper#QuickOpen(detach)
 endfunction
 
 function! session_wrapper#OnChooseSession(session)
+  if a:session == v:null
+    return
+  endif
   exe ':OpenSession ' . a:session
   if s:detach_after_open || a:session == 'last'
     call session_wrapper#DetachSession()
@@ -36,7 +39,7 @@ function! session_wrapper#SafeDelete()
   let l:names = xolox#session#get_names(0)
   if len(l:names) > 1
     if luaeval("pcall(require, 'telescope')")
-      call luaeval("require('stevearc.telescope').select('Delete Session', _A, 'session_wrapper#OnChooseDeleteSession')", l:names)
+      call luaeval("vim.ui.select(_A, {prompt='Delete session', kind='session'}, function(s) vim.fn['session_wrapper#OnChooseDeleteSession'](s) end)", l:names)
     else
       call s:DeleteSession()
     endif
@@ -48,6 +51,9 @@ function! session_wrapper#SafeDelete()
 endfunction
 
 function! session_wrapper#OnChooseDeleteSession(session)
+  if a:session == v:null
+    return
+  endif
   if confirm("Delete " . a:session . "? ", "&Yes\n&No\n") == 1
     call s:DeleteSession(a:session)
   endif
