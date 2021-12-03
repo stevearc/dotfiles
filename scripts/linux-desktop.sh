@@ -15,6 +15,7 @@ declare -r DESKTOP_CONFIGS="
   kdeglobals
   kglobalshortcutsrc
   khotkeysrc
+  kitty
   klipperrc
   konsolerc
   krunnerrc
@@ -138,6 +139,7 @@ EOF
   sed -e "s/^USER/$USER/" "$HERE/static/pm-no-sudo" | sudo tee /etc/sudoers.d/pm-no-sudo >/dev/null
   sed -e "s/^USER/$USER/" "$HERE/static/loadkeys-no-sudo" | sudo tee /etc/sudoers.d/loadkeys-no-sudo >/dev/null
   setup-mopidy
+  dc-install-kitty
 }
 
 setup-mopidy() {
@@ -182,6 +184,12 @@ dc-install-clipper() {
       sudo service clipper start
     fi
   fi
+}
+
+dc-install-kitty() {
+  hascmd kitty && return
+  curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+  link ~/.local/kitty.app/bin/kitty ~/bin/kitty
 }
 
 # shellcheck disable=SC2034
