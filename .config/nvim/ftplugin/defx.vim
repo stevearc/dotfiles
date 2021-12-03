@@ -52,7 +52,7 @@ endfun
 
 fun! s:FindDirFiles() abort
   let l:path = s:GetDefxDir()
-  call luaeval("require('stevearc.telescope').find_files({cwd = _A, hidden=true})", l:path)
+  call luaeval("require('telescope.builtin').find_files({cwd = _A, hidden=true})", l:path)
 endfun
 
 fun! s:OpenTerm() abort
