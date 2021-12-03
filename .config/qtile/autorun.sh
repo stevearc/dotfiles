@@ -14,7 +14,7 @@ elif command -v compton >/dev/null; then
   compton &
 fi
 
-bright set -s 1
+bright set 1
 redshift -l geoclue2 -m randr &
 
 xidlehook \
