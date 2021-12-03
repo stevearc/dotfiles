@@ -7,7 +7,7 @@ if [ "$OSNAME" = "Darwin" ]; then
 fi
 
 main() {
-  local usage="$0 [VERSION]
+  local usage="$0 [OPTS] [VERSION]
 
 Options:
   -l, --list    List available versions
@@ -20,7 +20,7 @@ Options:
   DEST="$HOME/bin"
   NAME='nvim'
   unset OPTIND
-  while getopts ":hsln:d:-:" opt; do
+  while getopts "hsln:d:-:" opt; do
     case $opt in
       -)
         case $OPTARG in
@@ -64,6 +64,11 @@ Options:
   done
   shift $((OPTIND - 1))
   VERSION="$1"
+  shift
+  if [ -n "$1" ]; then
+    echo "Put options before version number"
+    exit 1
+  fi
 
   if [ -n "$LIST" ]; then
     curl -s https://api.github.com/repos/neovim/neovim/releases | jq -r ".[].tag_name"
