@@ -144,25 +144,24 @@ end
 
 vim.lsp.handlers["window/showMessage"] = mk_handler(function(_err, result, context, _config)
   local client_id = context.client_id
-  local toast = require("toast")
   local message_type = result.type
   local message = result.message
   local client = vim.lsp.get_client_by_id(client_id)
   local client_name = client and client.name or string.format("id=%d", client_id)
   if not client then
-    toast("LSP[" .. client_name .. "] client has shut down after sending the message", { type = "error" })
+    vim.notify("LSP[" .. client_name .. "] client has shut down after sending the message", vim.log.levels.ERROR)
   end
   if message_type == vim.lsp.protocol.MessageType.Error then
-    toast("LSP[" .. client_name .. "] " .. message, { type = "error" })
+    vim.notify("LSP[" .. client_name .. "] " .. message, vim.log.levels.ERROR)
   else
     local message_type_name = vim.lsp.protocol.MessageType[message_type]
     local map = {
-      Error = "error",
-      Warning = "warn",
-      Info = "info",
-      Log = "info",
+      Error = vim.log.levels.ERROR,
+      Warning = vim.log.levels.WARN,
+      Info = vim.log.levels.INFO,
+      Log = vim.log.levels.DEBUG,
     }
-    toast(string.format("LSP[%s] %s\n", client_name, message), { type = map[message_type_name] })
+    vim.notify(string.format("LSP[%s] %s\n", client_name, message), map[message_type_name])
   end
   return result
 end)

@@ -213,3 +213,6 @@
 [submodule "vimplugins/dressing.nvim"]
 	path = vimplugins/dressing.nvim
 	url = https://github.com/stevearc/dressing.nvim.git
+[submodule "vimplugins/nvim-notify"]
+	path = vimplugins/nvim-notify
+	url = https://github.com/rcarriga/nvim-notify.git

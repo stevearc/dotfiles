@@ -36,7 +36,8 @@ local function map(lhs, rhs, mode)
 end
 
 map("<leader>t", "<cmd>lua require('telescope.builtin').find_files({previewer=false})<cr>")
-map("<leader>bb", "<cmd>lua require('telescope.builtin').buffers({previewer=false})<cr>")
+map("<leader>bb", "<cmd>lua require('telescope.builtin').buffers({previewer=false, only_cwd=true})<cr>")
+map("<leader>ba", "<cmd>lua require('telescope.builtin').buffers({previewer=false})<cr>")
 map("<leader>fg", "<cmd>Telescope live_grep<CR>")
 map("<leader>fb", "<cmd>lua require('telescope.builtin').live_grep({grep_open_files = true})<cr>")
 map("<leader>fh", "<cmd>Telescope help_tags<CR>")
