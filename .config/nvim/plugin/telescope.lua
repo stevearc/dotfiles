@@ -54,10 +54,8 @@ map("<leader>fc", "<cmd>Telescope commands<CR>")
 map("<leader>fs", "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>")
 map("<leader>fd", "<cmd>Telescope aerial<CR>")
 map("<leader>fn", "<cmd>Telescope gkeep<CR>")
-if vim.g.snippet_engine == "luasnip" then
-  map(
-    "<C-s>",
-    "<cmd>lua require('telescope').extensions.luasnip.luasnip(require('telescope.themes').get_cursor({}))<CR>",
-    "i"
-  )
-end
+map(
+  "<C-s>",
+  "<cmd>lua require('telescope').extensions.luasnip.luasnip(require('telescope.themes').get_cursor({}))<CR>",
+  "i"
+)

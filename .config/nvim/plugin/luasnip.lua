@@ -1,24 +1,22 @@
 -- From https://github.com/L3MON4D3/LuaSnip/wiki/Nice-Configs#imitate-vscodes-behaviour-for-nested-placeholders
 --
-if vim.g.snippet_engine == "luasnip" then
-  require("luasnip.loaders.from_vscode").lazy_load()
-  vim.api.nvim_set_keymap("s", "<Tab>", "<Plug>luasnip-jump-next", {})
-  vim.api.nvim_set_keymap("s", "<C-h>", "<Plug>luasnip-jump-prev", {})
-  vim.api.nvim_set_keymap("s", "<C-l>", "<Plug>luasnip-jump-next", {})
-  vim.api.nvim_set_keymap("i", "<C-h>", "<Plug>luasnip-jump-prev", {})
-  vim.api.nvim_set_keymap("i", "<C-l>", "<Plug>luasnip-jump-next", {})
-  vim.api.nvim_set_keymap("i", "<C-k>", "<Plug>luasnip-prev-choice", {})
-  vim.api.nvim_set_keymap("i", "<C-j>", "<Plug>luasnip-next-choice", {})
-  vim.api.nvim_set_keymap("s", "<C-k>", "<Plug>luasnip-prev-choice", {})
-  vim.api.nvim_set_keymap("s", "<C-j>", "<Plug>luasnip-next-choice", {})
-  vim.cmd([[
+require("luasnip.loaders.from_vscode").lazy_load()
+vim.api.nvim_set_keymap("s", "<Tab>", "<Plug>luasnip-jump-next", {})
+vim.api.nvim_set_keymap("s", "<C-h>", "<Plug>luasnip-jump-prev", {})
+vim.api.nvim_set_keymap("s", "<C-l>", "<Plug>luasnip-jump-next", {})
+vim.api.nvim_set_keymap("i", "<C-h>", "<Plug>luasnip-jump-prev", {})
+vim.api.nvim_set_keymap("i", "<C-l>", "<Plug>luasnip-jump-next", {})
+vim.api.nvim_set_keymap("i", "<C-k>", "<Plug>luasnip-prev-choice", {})
+vim.api.nvim_set_keymap("i", "<C-j>", "<Plug>luasnip-next-choice", {})
+vim.api.nvim_set_keymap("s", "<C-k>", "<Plug>luasnip-prev-choice", {})
+vim.api.nvim_set_keymap("s", "<C-j>", "<Plug>luasnip-next-choice", {})
+vim.cmd([[
   aug ClearLuasnipSession
     au!
     " Can't use InsertLeave here because that fires when we go to select mode
     au CursorHold * silent LuaSnipUnlinkCurrent
   aug END
   ]])
-end
 
 -- Required to support nested placeholders
 local util = require("luasnip.util.util")

@@ -24,35 +24,33 @@ local mapping = {
   ["<C-space>"] = cmp.mapping.complete(),
 }
 
-if vim.g.snippet_engine == "luasnip" then
-  mapping["<Tab>"] = cmp.mapping(function(fallback)
-    if luasnip.expand_or_jumpable() then
-      luasnip.expand_or_jump()
-    elseif cmp.visible() then
-      cmp.select_next_item()
-    elseif has_words_before() then
-      cmp.complete()
-    else
-      fallback()
-    end
-  end, {
-    "i",
-    "s",
-  })
+mapping["<Tab>"] = cmp.mapping(function(fallback)
+  if luasnip.expand_or_jumpable() then
+    luasnip.expand_or_jump()
+  elseif cmp.visible() then
+    cmp.select_next_item()
+  elseif has_words_before() then
+    cmp.complete()
+  else
+    fallback()
+  end
+end, {
+  "i",
+  "s",
+})
 
-  mapping["<S-Tab>"] = cmp.mapping(function(fallback)
-    if luasnip.jumpable(-1) then
-      luasnip.jump(-1)
-    elseif cmp.visible() then
-      cmp.select_prev_item()
-    else
-      fallback()
-    end
-  end, {
-    "i",
-    "s",
-  })
-end
+mapping["<S-Tab>"] = cmp.mapping(function(fallback)
+  if luasnip.jumpable(-1) then
+    luasnip.jump(-1)
+  elseif cmp.visible() then
+    cmp.select_prev_item()
+  else
+    fallback()
+  end
+end, {
+  "i",
+  "s",
+})
 
 cmp.setup({
   mapping = mapping,
@@ -62,7 +60,7 @@ cmp.setup({
     { name = "nvim_lua" },
     { name = "nvim_lsp" },
     { name = "path" },
-    { name = vim.g.snippet_engine },
+    { name = "luasnip" },
     {
       name = "buffer",
       keyword_length = 4,
@@ -83,11 +81,7 @@ cmp.setup({
 
   snippet = {
     expand = function(args)
-      if vim.g.snippet_engine == "luasnip" then
-        require("luasnip").lsp_expand(args.body)
-      else
-        vim.fn["vsnip#anonymous"](args.body)
-      end
+      require("luasnip").lsp_expand(args.body)
     end,
   },
 
