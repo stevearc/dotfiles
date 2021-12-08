@@ -223,6 +223,11 @@ augroup END
 inoremap <C-a> <C-o>^
 inoremap <C-e> <C-o>$
 
+" Super basic bracket completion
+inoremap <nowait> {<CR> {<CR>}<C-o>O
+inoremap <nowait> [<CR> [<CR>]<C-o>O
+inoremap <nowait> (<CR> (<CR>)<C-o>O
+
 command! GitHistory Git! log -- %
 
 let g:scnvim_no_mappings = 1
