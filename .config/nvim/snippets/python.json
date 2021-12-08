@@ -98,6 +98,12 @@
       "    $0"
     ]
   },
+  "Property access": {
+    "prefix": ".",
+    "body": [
+      "self."
+    ]
+  },
   "UnitTest assertEqual": {
     "prefix": "ae",
     "body": [
@@ -108,6 +114,18 @@
     "prefix": "aae",
     "body": [
       "self.assertAlmostEqual($1, $2)"
+    ]
+  },
+  "UnitTest assertTrue": {
+    "prefix": "at",
+    "body": [
+      "self.assertTrue($1)"
+    ]
+  },
+  "UnitTest assertFalse": {
+    "prefix": "af",
+    "body": [
+      "self.assertFalse($1)"
     ]
   },
   "UnitTest assertRaises": {
@@ -143,6 +161,16 @@
       "    \"\"\" $3 \"\"\"",
       "",
       "    $0"
+    ]
+  },
+  "Interview UnitTest class": {
+    "prefix": "T__",
+    "body": [
+      "class Test${1:Class}(${2:unittest.TestCase}):",
+      "",
+      "    $0",
+      "",
+      "unittest.main(exit=False)"
     ]
   },
   "UnitTest test case": {
