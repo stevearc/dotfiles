@@ -286,7 +286,6 @@ local lspservers = {
   "cssls",
   "omnisharp",
   "vimls",
-  "yamlls",
 }
 for _, server in ipairs(lspservers) do
   require("lspconfig")[server].setup({
@@ -294,6 +293,15 @@ for _, server in ipairs(lspservers) do
     on_attach = on_attach,
   })
 end
+require("lspconfig").yamlls.setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  settings = {
+    yaml = {
+      schemas = require("schemastore").json.schemas(),
+    },
+  },
+})
 local function is_using_sqlalchemy()
   local util = require("lspconfig").util
   local path = util.path
@@ -324,6 +332,11 @@ require("lspconfig").jsonls.setup({
     end
     on_attach(client, bufnr)
   end,
+  settings = {
+    json = {
+      schemas = require("schemastore").json.schemas(),
+    },
+  },
 })
 if not vim.g.null_ls then
   require("lspconfig").efm.setup({
