@@ -322,6 +322,7 @@ require("lspconfig").pyright.setup({
   diagnostics = not is_using_sqlalchemy(),
 })
 require("lspconfig").jsonls.setup({
+  filetypes = { "json", "jsonc", "json5" },
   capabilities = capabilities,
   on_attach = function(client, bufnr)
     local util = require("lspconfig.util")

@@ -8,6 +8,12 @@ local CONDITION = "_null_ls_root"
 
 local find_vc_root = util.root_pattern(".git", ".hg")
 
+-- Add some non-standard filetypes to prettier
+vim.list_extend(
+  null_ls.builtins.formatting.prettier.filetypes,
+  { "jsonc", "json5", "javascript.jsx", "typescript.tsx" }
+)
+
 local function is_exe(name)
   return vim.fn.executable(name) ~= 0
 end
