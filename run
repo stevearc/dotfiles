@@ -178,7 +178,6 @@ dotcmd-upgrade-lsp() {
   hascmd vscode-json-language-server && yarn global upgrade -s vscode-langservers-extracted
   hascmd vim-language-server && yarn global upgrade -s vim-language-server
   hascmd yaml-language-server && yarn global upgrade -s yaml-language-server
-  hascmd efm-langserver && go get -u github.com/mattn/efm-langserver
   hascmd shfmt && GO111MODULE=on go get -u mvdan.cc/sh/v3/cmd/shfmt
   hascmd pyright && yarn global upgrade -s pyright
   hascmd flow && yarn global upgrade -s flow-bin

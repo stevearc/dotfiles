@@ -339,26 +339,6 @@ require("lspconfig").jsonls.setup({
     },
   },
 })
-if not vim.g.null_ls then
-  require("lspconfig").efm.setup({
-    capabilities = capabilities,
-    on_attach = on_attach,
-    init_options = { documentFormatting = true },
-    cmd = { "efm-langserver", "-logfile", "/tmp/efm.log", "-loglevel", "4" },
-    filetypes = vim.tbl_keys(require("efmconfig")),
-    root_dir = require("lspconfig").util.root_pattern(
-      ".git",
-      "setup.py",
-      "setup.cfg",
-      "pyproject.toml",
-      "package.json"
-    ),
-    settings = {
-      lintDebounce = 1000000000,
-      languages = require("efmconfig"),
-    },
-  })
-end
 
 require("lspconfig").rust_analyzer.setup({
   capabilities = capabilities,
@@ -432,18 +412,16 @@ require("lspconfig").sorbet.setup({
   on_attach = on_attach,
 })
 
-if vim.g.null_ls then
-  require("null-ls").config(require("nullconfig"))
-  require("lspconfig")["null-ls"].setup({
-    capabilities = capabilities,
-    root_dir = function(fname)
-      local util = require("lspconfig.util")
-      return util.root_pattern(".git", "Makefile", "setup.py", "setup.cfg", "pyproject.toml", "package.json")(fname)
-        or util.path.dirname(fname)
-    end,
-    on_attach = on_attach,
-  })
-end
+require("null-ls").config(require("nullconfig"))
+require("lspconfig")["null-ls"].setup({
+  capabilities = capabilities,
+  root_dir = function(fname)
+    local util = require("lspconfig.util")
+    return util.root_pattern(".git", "Makefile", "setup.py", "setup.cfg", "pyproject.toml", "package.json")(fname)
+      or util.path.dirname(fname)
+  end,
+  on_attach = on_attach,
+})
 
 -- Since we missed the FileType event when this runs on vim start, we should
 -- manually make sure that LSP starts on the first file opened.

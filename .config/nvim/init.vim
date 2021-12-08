@@ -9,7 +9,6 @@ nmap <f3> <cmd>lua require'plenary.profile'.stop()<cr>
 
 let g:nerd_font = v:true
 let g:debug_treesitter = 0
-let g:null_ls = v:true
 " Luasnip still has some issues https://github.com/L3MON4D3/LuaSnip/issues/206
 let g:snippet_engine = 'luasnip'
 
