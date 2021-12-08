@@ -208,9 +208,26 @@ function stevearc.on_update_diagnostics()
   end
 end
 
+local function adjust_formatting_capabilities(client, bufnr)
+  local u = require("null-ls.utils")
+  local info = require("null-ls.info")
+  local null_ls_client = u.get_client()
+  if not null_ls_client or not vim.lsp.buf_is_attached(bufnr, null_ls_client.id) or client.id == null_ls_client.id then
+    return
+  end
+  local active_sources = info.get_active_sources(bufnr)
+  local formatters = active_sources.NULL_LS_FORMATTING
+  if formatters and not vim.tbl_isempty(formatters) then
+    client.resolved_capabilities.document_formatting = false
+    client.resolved_capabilities.document_range_formatting = false
+  end
+end
+
 local on_attach = function(client, bufnr)
   local ft = vim.api.nvim_buf_get_option(0, "filetype")
   local config = ft_config[ft] or {}
+
+  adjust_formatting_capabilities(client, bufnr)
 
   local function safemap(method, mode, key, result)
     if client.resolved_capabilities[method] then
@@ -324,15 +341,7 @@ require("lspconfig").pyright.setup({
 require("lspconfig").jsonls.setup({
   filetypes = { "json", "jsonc", "json5" },
   capabilities = capabilities,
-  on_attach = function(client, bufnr)
-    local util = require("lspconfig.util")
-    local filename = vim.api.nvim_buf_get_name(bufnr)
-    if vim.fn.executable("prettier") ~= 0 or util.root_pattern("package.json")(filename) then
-      client.resolved_capabilities.document_formatting = false
-      client.resolved_capabilities.document_range_formatting = false
-    end
-    on_attach(client, bufnr)
-  end,
+  on_attach = on_attach,
   settings = {
     json = {
       schemas = require("schemastore").json.schemas(),
@@ -355,12 +364,7 @@ require("lspconfig").tsserver.setup({
     return util.root_pattern("tsconfig.json")(fname)
       or util.root_pattern("package.json", "jsconfig.json", ".git")(fname)
   end,
-  on_attach = function(client, bufnr)
-    local format = not projects[0].ts_prettier_format
-    client.resolved_capabilities.document_formatting = format
-    client.resolved_capabilities.document_range_formatting = format
-    on_attach(client, bufnr)
-  end,
+  on_attach = on_attach,
 })
 require("lspconfig").flow.setup({
   capabilities = capabilities,
