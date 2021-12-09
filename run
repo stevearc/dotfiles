@@ -110,15 +110,15 @@ Opts:
     rsync -lrp $CLI_DOTFILES "$HOME"
   fi
 
-  mkdir -p ~/bin
+  mkdir -p .local/bin
   if [ $symbolic ]; then
     for executable in "$HERE"/bin/*; do
       link "$executable" "$HOME/bin/$(basename "$executable")"
     done
     link "$HERE/parseargs/parseargs.sh" "$HOME/bin/parseargs.sh"
   else
-    rsync -lrp bin "$HOME/bin"
-    cp "$HERE/parseargs/parseargs.sh" "$HOME/bin/"
+    rsync -lrp bin "$HOME/.local/bin"
+    cp "$HERE/parseargs/parseargs.sh" "$HOME/.local/bin/"
   fi
 
   mkdir -p ~/.config

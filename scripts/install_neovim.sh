@@ -17,7 +17,7 @@ Options:
 "
   LIST=
   SILENT=
-  DEST="$HOME/bin"
+  DEST="$HOME/.local/bin"
   NAME='nvim'
   unset OPTIND
   while getopts "hsln:d:-:" opt; do

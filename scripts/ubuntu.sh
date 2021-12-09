@@ -187,8 +187,8 @@ dc-install-docker() {
   if ! hascmd docker-compose; then
     local latest
     latest=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .name)
-    curl -L "https://github.com/docker/compose/releases/download/${latest}/docker-compose-$(uname -s)-$(uname -m)" -o ~/bin/docker-compose
-    chmod +x ~/bin/docker-compose
+    curl -L "https://github.com/docker/compose/releases/download/${latest}/docker-compose-$(uname -s)-$(uname -m)" -o ~/.local/bin/docker-compose
+    chmod +x ~/.local/bin/docker-compose
     curl -L "https://raw.githubusercontent.com/docker/compose/${latest}/contrib/completion/bash/docker-compose" -o ~/.bash.d/docker-compose
   fi
   setup-docker
@@ -338,7 +338,7 @@ dotcmd-desktop() {
     xbindkeys \
     zenity
   if ! hascmd youtube-dl; then
-    pushd ~/bin >/dev/null
+    pushd ~/.local/bin >/dev/null
     wget -O youtube-dl https://yt-dl.org/latest/youtube-dl
     chmod +x youtube-dl
     popd >/dev/null

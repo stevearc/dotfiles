@@ -40,7 +40,7 @@ shopt -s checkwinsize
 # Environment variables
 export GOROOT=/usr/local/go
 export GOPATH=~/go
-export PATH=$HOME/bin:$GOROOT/bin:$GOPATH/bin:$PATH
+export PATH=$HOME/.local/bin:$GOROOT/bin:$GOPATH/bin:$PATH
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then

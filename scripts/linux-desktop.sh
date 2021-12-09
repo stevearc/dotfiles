@@ -189,7 +189,7 @@ dc-install-clipper() {
 dc-install-kitty() {
   hascmd kitty && return
   curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-  link ~/.local/kitty.app/bin/kitty ~/bin/kitty
+  link ~/.local/kitty.app/bin/kitty ~/.local/bin/kitty
 }
 
 # shellcheck disable=SC2034

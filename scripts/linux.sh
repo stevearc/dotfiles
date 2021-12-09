@@ -33,7 +33,7 @@ install-language-vim() {
   yarn global add -s vim-language-server
   install-language-python
   if ! hascmd vint; then
-    pushd ~/bin
+    pushd ~/.local/bin
     "$HERE/scripts/make_standalone.py" -s vint vim-vint
     popd
   fi
@@ -46,7 +46,7 @@ install-language-rust() {
   fi
   if ! hascmd rust-analyzer; then
     https://github.com/rust-analyzer/rust-analyzer/releases/download/2021-12-06/rust-analyzer-x86_64-unknown-linux-gnu.gz
-    pushd ~/bin >/dev/null
+    pushd ~/.local/bin >/dev/null
     curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz -o rust-analyzer.gz
     gunzip rust-analyzer
     chmod +x rust-analyzer
@@ -163,8 +163,8 @@ post-install-neovim() {
   ~/.envs/py3/bin/pip install -q pynvim
 
   if ! hascmd nvr; then
-    mkdir -p ~/bin
-    pushd ~/bin
+    mkdir -p ~/.local/bin
+    pushd ~/.local/bin
     "$HERE/scripts/make_standalone.py" -s nvr neovim-remote
     popd
   fi
@@ -185,7 +185,7 @@ setup-docker() {
     sudo systemctl start docker
   fi
   if ! hascmd bluepill; then
-    pushd ~/bin
+    pushd ~/.local/bin
     curl -o install.py https://raw.githubusercontent.com/stevearc/bluepill/master/bin/install.py \
       && python install.py \
       && rm -f install.py

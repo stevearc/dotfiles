@@ -8,10 +8,10 @@ elif [ "$1" == "l" ] || [ "$1" == "lock" ]; then
 elif [ "$1" == "o" ] || [ "$1" == "logout" ]; then
   qtile shell -c "shutdown()"
 elif [ "$1" == "s" ] || [ "$1" == "suspend" ]; then
-  SUDO_ASKPASS="$HOME/bin/askpass.sh" sudo -A pm-suspend
+  SUDO_ASKPASS="$HOME/.local/bin/askpass.sh" sudo -A pm-suspend
   $0 lock
 elif [ "$1" == "h" ] || [ "$1" == "hibernate" ]; then
-  SUDO_ASKPASS="$HOME/bin/askpass.sh" sudo -A pm-hibernate
+  SUDO_ASKPASS="$HOME/.local/bin/askpass.sh" sudo -A pm-hibernate
   $0 lock
 elif [ "$1" == "d" ] || [ "$1" == "shutdown" ]; then
   shutdown -h now

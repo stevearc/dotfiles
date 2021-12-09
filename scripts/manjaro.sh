@@ -115,7 +115,7 @@ dotcmd-desktop() {
     zenity
   yay -S --noconfirm google-chrome mopidy-spotify mopidy-mpd
   if ! hascmd youtube-dl; then
-    pushd ~/bin >/dev/null
+    pushd ~/.local/bin >/dev/null
     wget -O youtube-dl https://yt-dl.org/latest/youtube-dl
     chmod +x youtube-dl
     popd >/dev/null
