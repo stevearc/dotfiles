@@ -58,7 +58,7 @@ require("lualine").setup({
     lualine_c = {
       {
         "diagnostics",
-        sources = { "nvim_lsp" },
+        sources = { "nvim_diagnostic" },
         sections = { "error", "warn" },
       },
       debug_treesitter_node,
@@ -76,7 +76,7 @@ require("lualine").setup({
       path = 1,
     } },
     lualine_c = {
-      { "diagnostics", sources = { "nvim_lsp" }, sections = { "error", "warn" }, colored = false },
+      { "diagnostics", sources = { "nvim_diagnostic" }, sections = { "error", "warn" }, colored = false },
     },
     lualine_x = { "location" },
     lualine_y = {},

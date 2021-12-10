@@ -1,6 +1,7 @@
 lua <<EOF
 require'lightspeed'.setup{
-  jump_to_first_match = false,
+  highlight_unique_chars = false,
+  safe_labels = nil,
 }
 EOF
 
@@ -13,4 +14,3 @@ unmap t
 unmap T
 map <leader>j <Plug>Lightspeed_s
 map <leader>k <Plug>Lightspeed_S
-map <C-s> <Plug>Lightspeed_s
