@@ -5,12 +5,6 @@ local state = require("telescope.actions.state")
 local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
 local conf = require("telescope.config").values
-local json_encode = vim.fn.json_encode
-local json_decode = vim.fn.json_decode
-if vim.json ~= nil then
-  json_encode = vim.json.encode
-  json_decode = vim.json.decode
-end
 local dirs = {}
 
 local sep = package.config:sub(1, 1)
@@ -25,7 +19,7 @@ local function load_cache()
   if file then
     local ok, data = pcall(file.read, file)
     if ok then
-      dirs = json_decode(data)
+      dirs = vim.json.decode(data)
     end
     file:close()
   end
@@ -34,7 +28,7 @@ end
 local function save_cache()
   local filename = get_cache_file()
   local file = io.open(filename, "w")
-  file:write(json_encode(dirs))
+  file:write(vim.json.encode(dirs))
   file:close()
 end
 
@@ -128,9 +122,11 @@ function stevearc.telescope_pick_project()
   }):find()
 end
 
-load_cache()
-on_dir_changed(vim.loop.cwd())
-vim.cmd([[augroup recent_dirs
+vim.defer_fn(function()
+  load_cache()
+  on_dir_changed(vim.loop.cwd())
+  vim.cmd([[augroup recent_dirs
   au!
   au DirChanged lua require("stevearc")._on_dir_changed()
 augroup END]])
+end, 100)
