@@ -255,6 +255,10 @@ endif
 " This lets our bash aliases know to use nvr instead of nvim
 let $INSIDE_NVIM=1
 
+lua <<EOF
+require('Comment').setup()
+EOF
+
 if filereadable(expand('~/.local.vimrc'))
   source ~/.local.vimrc
 endif

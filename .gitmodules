@@ -4,9 +4,6 @@
 [submodule "vimplugins/ultisnips"]
 	path = vimplugins/ultisnips
 	url = https://github.com/SirVer/ultisnips.git
-[submodule "vimplugins/vim-commentary"]
-	path = vimplugins/vim-commentary
-	url = https://github.com/tpope/vim-commentary.git
 [submodule "vimplugins/vim-repeat"]
 	path = vimplugins/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
@@ -146,9 +143,6 @@
 [submodule "vimplugins/neorg"]
 	path = vimplugins/neorg
 	url = https://github.com/vhyrro/neorg.git
-[submodule "vimplugins/nvim-ts-context-commentstring"]
-	path = vimplugins/nvim-ts-context-commentstring
-	url = https://github.com/JoosepAlviste/nvim-ts-context-commentstring.git
 [submodule "vimplugins/vim-matchup"]
 	path = vimplugins/vim-matchup
 	url = https://github.com/andymass/vim-matchup.git
@@ -216,3 +210,6 @@
 [submodule "vimplugins/vim-rhubarb"]
 	path = vimplugins/vim-rhubarb
 	url = https://github.com/tpope/vim-rhubarb.git
+[submodule "vimplugins/comment.nvim"]
+	path = vimplugins/comment.nvim
+	url = https://github.com/numToStr/Comment.nvim.git
