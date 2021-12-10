@@ -1,4 +1,3 @@
-local stevearc = require("stevearc")
 local themes = require("telescope.themes")
 local actions = require("telescope.actions")
 local state = require("telescope.actions.state")
@@ -127,6 +126,6 @@ vim.defer_fn(function()
   on_dir_changed(vim.loop.cwd())
   vim.cmd([[augroup recent_dirs
   au!
-  au DirChanged lua require("stevearc")._on_dir_changed()
+  au DirChanged lua stevearc._on_dir_changed()
 augroup END]])
 end, 100)

@@ -1,5 +1,3 @@
-local stevearc = require("stevearc")
-
 -- vim.lsp.set_log_level("debug")
 
 vim.diagnostic.config({
@@ -134,7 +132,7 @@ end
 
 vim.cmd([[augroup LSPDiagnostics
   au!
-  autocmd DiagnosticChanged lua require'stevearc'.on_update_diagnostics()
+  autocmd DiagnosticChanged lua stevearc.on_update_diagnostics()
   augroup END]])
 
 local on_attach = function(client, bufnr)
@@ -178,7 +176,7 @@ local on_attach = function(client, bufnr)
   if client.resolved_capabilities.document_formatting then
     vim.cmd([[aug LspAutoformat
       au! * <buffer>
-      autocmd BufWritePre <buffer> lua require'stevearc'.autoformat()
+      autocmd BufWritePre <buffer> lua stevearc.autoformat()
       aug END
     ]])
     mapper("n", "=", "<cmd>lua vim.lsp.buf.formatting()<CR>")

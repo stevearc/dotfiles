@@ -13,4 +13,5 @@ ignore = {
 
 read_globals = {
   "vim",
+  "stevearc",
 }

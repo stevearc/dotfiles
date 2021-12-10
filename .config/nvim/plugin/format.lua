@@ -1,4 +1,3 @@
-local stevearc = require("stevearc")
 local projects = require("projects")
 
 vim.g.smartformat_enabled = true

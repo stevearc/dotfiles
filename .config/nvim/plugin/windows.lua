@@ -1,4 +1,3 @@
-local stevearc = require("stevearc")
 vim.o.winwidth = 1
 vim.o.winheight = 1
 vim.o.splitbelow = true
@@ -50,8 +49,8 @@ end
 
 vim.cmd([[augroup WinWidth
 au!
-  au WinEnter * lua require'stevearc'.set_win_size()
-  au VimEnter,WinEnter,BufWinEnter * lua require'stevearc'.resize_windows()
+  au WinEnter * lua stevearc.set_win_size()
+  au VimEnter,WinEnter,BufWinEnter * lua stevearc.resize_windows()
 augroup END
 ]])
 vim.api.nvim_set_keymap(
@@ -61,5 +60,5 @@ vim.api.nvim_set_keymap(
   { silent = true }
 )
 vim.api.nvim_set_keymap("n", "<C-w>z", "<cmd>resize | vertical resize<CR>", { silent = true })
-vim.api.nvim_set_keymap("n", "<A-m>", "<cmd>lua require'stevearc'.toggle_maximize()<CR>", { silent = true })
-vim.api.nvim_set_keymap("t", "<A-m>", "<cmd>lua require'stevearc'.toggle_maximize()<CR>", { silent = true })
+vim.api.nvim_set_keymap("n", "<A-m>", "<cmd>lua stevearc.toggle_maximize()<CR>", { silent = true })
+vim.api.nvim_set_keymap("t", "<A-m>", "<cmd>lua stevearc.toggle_maximize()<CR>", { silent = true })

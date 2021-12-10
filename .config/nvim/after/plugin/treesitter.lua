@@ -1,4 +1,3 @@
-local stevearc = require("stevearc")
 local queries = require("nvim-treesitter.query")
 local parsers = require("nvim-treesitter.parsers")
 
@@ -24,8 +23,8 @@ require("nvim-treesitter.configs").setup({
   },
 })
 
-vim.cmd("autocmd WinEnter * lua require'stevearc'.set_ts_win_defaults()")
-vim.cmd("autocmd BufWinEnter * lua require'stevearc'.set_ts_win_defaults()")
+vim.cmd("autocmd WinEnter * lua stevearc.set_ts_win_defaults()")
+vim.cmd("autocmd BufWinEnter * lua stevearc.set_ts_win_defaults()")
 
 function stevearc.set_ts_win_defaults()
   local parser_name = parsers.get_buf_lang()

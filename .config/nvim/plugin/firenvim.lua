@@ -1,5 +1,3 @@
-local stevearc = require("stevearc")
-
 local timer = nil
 function stevearc.throttle_write(delay)
   if timer then
@@ -36,9 +34,9 @@ if vim.g.started_by_firenvim then
 aug FireNvimFT
   au!
   au BufEnter github.com_*.txt set filetype=markdown
-  au FocusLost * ++nested lua require('stevearc').throttle_write(10)
-  au TextChanged * ++nested lua require('stevearc').throttle_write(1000)
-  au TextChangedI * ++nested lua require('stevearc').throttle_write(1000)
+  au FocusLost * ++nested lua stevearc.throttle_write(10)
+  au TextChanged * ++nested lua stevearc.throttle_write(1000)
+  au TextChangedI * ++nested lua stevearc.throttle_write(1000)
 aug END
 ]])
 end

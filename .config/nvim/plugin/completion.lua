@@ -2,9 +2,6 @@ local cmp = require("cmp")
 local lspkind = require("lspkind")
 local luasnip = require("luasnip")
 
-vim.opt.completeopt = { "menu", "menuone", "noselect" }
-vim.opt.shortmess:append("c")
-
 local MAX_INDEX_FILE_SIZE = 4000
 
 local has_words_before = function()

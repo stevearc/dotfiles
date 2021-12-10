@@ -1,5 +1,3 @@
-local stevearc = require("stevearc")
-
 local function get_git_tabpage()
   for _, tabpage in ipairs(vim.api.nvim_list_tabpages()) do
     if pcall(vim.api.nvim_tabpage_get_var, tabpage, "is_git_main") then
@@ -111,4 +109,4 @@ function stevearc.toggle_git_terms()
   dash:_update()
 end
 
-vim.api.nvim_set_keymap("n", "<leader>gt", [[<cmd>lua require'stevearc'.toggle_git_terms()<CR>]], { silent = true })
+vim.api.nvim_set_keymap("n", "<leader>gt", [[<cmd>lua stevearc.toggle_git_terms()<CR>]], { silent = true })

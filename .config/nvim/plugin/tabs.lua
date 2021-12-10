@@ -1,5 +1,3 @@
-local stevearc = require("stevearc")
-
 vim.g.bufferline = {
   animation = false,
   icons = "numbers",
@@ -37,7 +35,7 @@ map("<leader>7", "<cmd>BufferGoto 7<CR>")
 map("<leader>8", "<cmd>BufferGoto 8<CR>")
 map("<leader>9", "<cmd>BufferGoto 9<CR>")
 map("<leader>`", "<cmd>BufferLast<CR>")
-map("<leader>c", '<cmd>lua require("stevearc").smart_close()<CR>')
+map("<leader>c", "<cmd>lua stevearc.smart_close()<CR>")
 map("<leader>C", "<cmd>BufferClose<CR>")
 map("<leader>h", "<cmd>BufferHide<CR>")
 map("<leader>H", "<cmd>BufferHideAllButCurrent<CR>")

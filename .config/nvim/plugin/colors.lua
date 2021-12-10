@@ -1,4 +1,3 @@
-local stevearc = require("stevearc")
 vim.opt.termguicolors = true
 vim.opt.background = "dark"
 
@@ -33,7 +32,7 @@ vim.g.tokyonight_italic_comments = true
 vim.g.tokyonight_italic_keywords = false
 vim.g.tokyonight_sidebars = { "qf", "aerial", "terminal" }
 
-vim.cmd([[autocmd ColorScheme tokyonight lua require'stevearc'.tokyonight()]])
+vim.cmd([[autocmd ColorScheme tokyonight lua stevearc.tokyonight()]])
 
 if os.getenv("XDG_SESSION_TYPE") == "tty" then
   vim.opt.termguicolors = false
