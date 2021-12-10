@@ -5,4 +5,10 @@ iabbr <buffer> improt import
 
 setlocal shiftwidth=4 tabstop=4 softtabstop=4 tw=88
 
-nnoremap <leader>e :call execute#Run('python')<cr>
+function! s:Run() abort
+  write
+  silent !clear
+  botright split
+  terminal python %
+endfunction
+nnoremap <leader>e <cmd>call <sid>Run()<CR>

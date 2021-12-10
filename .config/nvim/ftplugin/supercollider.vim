@@ -16,11 +16,6 @@ setlocal stl=%f\ %h%w%m%r\ %{scnvim#statusline#server_status()}\ %=\ %(%l,%c%V\ 
 setlocal fdm=marker
 setlocal fmr={{{,}}}
 
-augroup StartSCNvim
-  autocmd! * <buffer>
-  autocmd WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&filetype") == "scnvim"|q|endif
-augroup END
-
 augroup ClostPostWindowIfLast
   autocmd!
   autocmd WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&filetype") == "scnvim"|q|endif

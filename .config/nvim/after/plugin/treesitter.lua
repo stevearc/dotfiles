@@ -13,9 +13,6 @@ require("nvim-treesitter.configs").setup({
     -- The python indent is driving me insane
     disable = { "lua", "python" },
   },
-  context_commentstring = {
-    enable = true,
-  },
   matchup = {
     enable = true,
   },

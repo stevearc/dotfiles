@@ -1,10 +1,10 @@
 se makeprg=cargo\ $*
 
-function! CargoRun() abort
+function! s:CargoRun() abort
   write
   silent !clear
   botright split
   terminal cargo run
 endfunction
 
-nnoremap <leader>e :call CargoRun()<CR>
+nnoremap <leader>e <cmd>call <sid>CargoRun()<CR>
