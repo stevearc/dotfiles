@@ -1,5 +1,5 @@
 function! execute#Run(binary) abort
-  :w
-  :silent !clear
+  write
+  silent !clear
   exec ":botright split | terminal " . a:binary . " " . @%
 endfunction
