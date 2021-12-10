@@ -9,7 +9,7 @@ local function arduino_status()
     line = line .. string.format(" [%s]", vim.g.arduino_programmer)
   end
   if port ~= 0 then
-    line = line .. string.format(" (%s:)", port, vim.g.arduino_serial_baud)
+    line = line .. string.format(" (%s:%s)", port, vim.g.arduino_serial_baud)
   end
   return line
 end

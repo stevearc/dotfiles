@@ -97,6 +97,10 @@ install-language-common() {
 }
 
 install-arduino() {
+  if ! hascmd arduino-cli; then
+    curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=~/.local/bin sh
+  fi
+
   hascmd arduino && return
 
   local default_version
