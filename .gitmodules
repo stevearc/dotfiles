@@ -131,9 +131,6 @@
 [submodule "vimplugins/stickybuf.nvim"]
 	path = vimplugins/stickybuf.nvim
 	url = https://github.com/stevearc/stickybuf.nvim.git
-[submodule "vimplugins/neogit"]
-	path = vimplugins/neogit
-	url = https://github.com/TimUntersberger/neogit.git
 [submodule "vimplugins/suda.vim"]
 	path = vimplugins/suda.vim
 	url = https://github.com/lambdalisue/suda.vim.git
