@@ -113,9 +113,9 @@ Opts:
   mkdir -p .local/bin
   if [ $symbolic ]; then
     for executable in "$HERE"/bin/*; do
-      link "$executable" "$HOME/bin/$(basename "$executable")"
+      link "$executable" "$HOME/.local/bin/$(basename "$executable")"
     done
-    link "$HERE/parseargs/parseargs.sh" "$HOME/bin/parseargs.sh"
+    link "$HERE/parseargs/parseargs.sh" "$HOME/.local/bin/parseargs.sh"
   else
     rsync -lrp bin "$HOME/.local/bin"
     cp "$HERE/parseargs/parseargs.sh" "$HOME/.local/bin/"
