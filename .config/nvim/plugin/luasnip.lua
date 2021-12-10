@@ -1,5 +1,3 @@
--- From https://github.com/L3MON4D3/LuaSnip/wiki/Nice-Configs#imitate-vscodes-behaviour-for-nested-placeholders
---
 require("luasnip.loaders.from_vscode").lazy_load()
 vim.api.nvim_set_keymap("s", "<Tab>", "<Plug>luasnip-jump-next", {})
 vim.api.nvim_set_keymap("s", "<C-h>", "<Plug>luasnip-jump-prev", {})
@@ -19,6 +17,7 @@ vim.cmd([[
   ]])
 
 -- Required to support nested placeholders
+-- From https://github.com/L3MON4D3/LuaSnip/wiki/Nice-Configs#imitate-vscodes-behaviour-for-nested-placeholders
 local util = require("luasnip.util.util")
 
 require("luasnip").config.setup({

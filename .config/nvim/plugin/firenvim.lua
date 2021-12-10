@@ -1,5 +1,4 @@
-lua <<EOF
-local stevearc = require('stevearc')
+local stevearc = require("stevearc")
 
 local timer = nil
 function stevearc.throttle_write(delay)
@@ -14,14 +13,26 @@ function stevearc.throttle_write(delay)
       timer:close()
       timer = nil
       if vim.o.modified then
-        vim.cmd('write')
+        vim.cmd("write")
       end
     end)
   )
 end
-EOF
 
-if exists('g:started_by_firenvim')
+vim.g.firenvim_config = {
+  globalSettings = {
+    -- ["<C-w>"] = "noop",
+    -- ["<C-n>"] = "noop",
+  },
+  localSettings = {
+    [".*"] = {
+      takeover = "never",
+    },
+  },
+}
+
+if vim.g.started_by_firenvim then
+  vim.cmd([[
 aug FireNvimFT
   au!
   au BufEnter github.com_*.txt set filetype=markdown
@@ -29,12 +40,5 @@ aug FireNvimFT
   au TextChanged * ++nested lua require('stevearc').throttle_write(1000)
   au TextChangedI * ++nested lua require('stevearc').throttle_write(1000)
 aug END
-endif
-
-let g:firenvim_config = {
-  \ 'localSettings': {
-    \ '.*': {
-      \ 'takeover': 'never',
-    \ },
-  \ },
-\ }
+]])
+end

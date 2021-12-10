@@ -2,13 +2,17 @@
 
 set sessionoptions=buffers,curdir,tabpages,winsize
 
-let g:session_directory = expand('~/.local/share/nvim/sessions')
+let g:session_directory = stdpath('data') . '/sessions'
 " Don't autoload sessions on startup
 let g:session_autoload = 'no'
 " Don't prompt to save on exit
 if !exists('g:started_by_firenvim')
   let g:session_autosave = 'yes'
   let g:session_autosave_to = 'last'
+  aug QuickLoad
+    au!
+    au VimEnter * nested call s:QuickLoad()
+  aug END
 endif
 let g:session_autosave_periodic = 1
 let g:session_autosave_silent = 1
@@ -40,10 +44,6 @@ function! s:QuickLoad()
     endif
   endfor
 endfunction
-aug QuickLoad
-  au!
-  au VimEnter * nested call s:QuickLoad()
-aug END
 
 function! s:QuickSave()
   wa
