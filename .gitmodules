@@ -213,3 +213,6 @@
 [submodule "vimplugins/SchemaStore.nvim"]
 	path = vimplugins/SchemaStore.nvim
 	url = https://github.com/b0o/SchemaStore.nvim.git
+[submodule "vimplugins/vim-rhubarb"]
+	path = vimplugins/vim-rhubarb
+	url = https://github.com/tpope/vim-rhubarb.git
