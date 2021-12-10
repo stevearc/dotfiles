@@ -242,11 +242,15 @@ vim.g.gkeep_log_levels = {
   gkeep = "debug",
   gkeepapi = "warning",
 }
-vim.notify = require("notify")
-require("notify").setup({
-  stages = "fade",
-  render = "minimal",
-})
+-- We have to set this up after we apply our colorscheme
+vim.cmd([[autocmd ColorScheme * ++once lua stevearc.setup_notify()]])
+function stevearc.setup_notify()
+  vim.notify = require("notify")
+  require("notify").setup({
+    stages = "fade",
+    render = "minimal",
+  })
+end
 
 table.insert(autocmds, "augroup END")
 vim.cmd(table.concat(autocmds, "\n"))
