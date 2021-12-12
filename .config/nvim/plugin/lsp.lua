@@ -119,12 +119,25 @@ local function adjust_formatting_capabilities(client, bufnr)
   local u = require("null-ls.utils")
   local info = require("null-ls.info")
   local null_ls_client = u.get_client()
-  if not null_ls_client or not vim.lsp.buf_is_attached(bufnr, null_ls_client.id) or client.id == null_ls_client.id then
+  if not null_ls_client or not vim.lsp.buf_is_attached(bufnr, null_ls_client.id) then
     return
   end
   local active_sources = info.get_active_sources(bufnr)
   local formatters = active_sources.NULL_LS_FORMATTING
-  if formatters and not vim.tbl_isempty(formatters) then
+  local null_ls_formats = formatters and not vim.tbl_isempty(formatters)
+  if client.id == null_ls_client.id then
+    -- We're attaching a null-ls client. If it has a formatter, disable
+    -- formatting on all prior clients
+    if null_ls_formats then
+      local clients = vim.lsp.buf_get_clients(bufnr)
+      for _, other_client in ipairs(clients) do
+        if other_client.id ~= client.id then
+          other_client.resolved_capabilities.document_formatting = false
+          other_client.resolved_capabilities.document_range_formatting = false
+        end
+      end
+    end
+  elseif null_ls_formats then
     client.resolved_capabilities.document_formatting = false
     client.resolved_capabilities.document_range_formatting = false
   end
