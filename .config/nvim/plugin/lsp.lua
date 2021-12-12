@@ -116,9 +116,8 @@ function stevearc.on_update_diagnostics()
 end
 
 local function adjust_formatting_capabilities(client, bufnr)
-  local u = require("null-ls.utils")
   local info = require("null-ls.info")
-  local null_ls_client = u.get_client()
+  local null_ls_client = require("null-ls.client").get_client()
   if not null_ls_client or not vim.lsp.buf_is_attached(bufnr, null_ls_client.id) then
     return
   end
@@ -341,8 +340,7 @@ require("lspconfig").sorbet.setup({
   on_attach = on_attach,
 })
 
-require("null-ls").config(require("nullconfig"))
-require("lspconfig")["null-ls"].setup({
+require("null-ls").setup(vim.tbl_extend("keep", {
   capabilities = capabilities,
   root_dir = function(fname)
     local util = require("lspconfig.util")
@@ -350,4 +348,4 @@ require("lspconfig")["null-ls"].setup({
       or util.path.dirname(fname)
   end,
   on_attach = on_attach,
-})
+}, require("nullconfig")))
