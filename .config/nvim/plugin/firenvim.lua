@@ -19,8 +19,9 @@ end
 
 vim.g.firenvim_config = {
   globalSettings = {
-    -- ["<C-w>"] = "noop",
-    -- ["<C-n>"] = "noop",
+    ["<C-w>"] = "default",
+    ["<C-n>"] = "default",
+    ["<C-t>"] = "default",
   },
   localSettings = {
     [".*"] = {
