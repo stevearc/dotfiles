@@ -186,6 +186,18 @@ dc-install-clipper() {
   fi
 }
 
+# shellcheck disable=SC2034
+DC_INSTALL_XPADNEO_DOC="Drivers for Xbox controller"
+dc-install-xpadneo() {
+  pushd /tmp >/dev/null
+  if [ ! -e xpadneo ]; then
+    git clone --depth=1 https://github.com/atar-axis/xpadneo.git
+  fi
+  cd xpadneo
+  sudo ./install.sh
+  popd >/dev/null
+}
+
 dc-install-kitty() {
   hascmd kitty && return
   curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
