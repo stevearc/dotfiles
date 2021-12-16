@@ -28,6 +28,9 @@ install-language-python() {
     python3-pip \
     ipython3 \
     python3-restructuredtext-lint
+  "$HERE/scripts/make_standalone.py" -s ~/.local/bin/isort
+  "$HERE/scripts/make_standalone.py" -s ~/.local/bin/black
+  "$HERE/scripts/make_standalone.py" -s ~/.local/bin/autoimport
 }
 
 install-language-arduino() {

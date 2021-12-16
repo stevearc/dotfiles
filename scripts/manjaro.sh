@@ -16,6 +16,9 @@ install-language-python() {
     dc-install-nvm
     yarn global add -s pyright
   fi
+  "$HERE/scripts/make_standalone.py" -s ~/.local/bin/isort
+  "$HERE/scripts/make_standalone.py" -s ~/.local/bin/black
+  "$HERE/scripts/make_standalone.py" -s ~/.local/bin/autoimport
 }
 
 # shellcheck disable=SC2034
