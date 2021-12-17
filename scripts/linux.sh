@@ -121,7 +121,7 @@ install-arduino() {
 
 install-lua-utils() {
   if hascmd cargo; then
-    cargo install stylua
+    cargo install stylua --features lua52
   fi
 
   # Install lua language server
