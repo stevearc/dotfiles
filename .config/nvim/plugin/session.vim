@@ -6,7 +6,7 @@ let g:session_directory = stdpath('data') . '/sessions'
 " Don't autoload sessions on startup
 let g:session_autoload = 'no'
 " Don't prompt to save on exit
-if !exists('g:started_by_firenvim')
+if !exists('g:started_by_firenvim') && !empty(nvim_list_uis())
   let g:session_autosave = 'yes'
   let g:session_autosave_to = 'last'
   aug QuickLoad
