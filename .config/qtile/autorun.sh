@@ -23,7 +23,7 @@ xidlehook \
   --not-when-audio \
   --timer 30 \
   'upower -i $(upower -e | grep battery) | grep -q "state.*discharging" && bright set -s -t 1 .02' \
-  'bright restore' \
+  'upower -i $(upower -e | grep battery) | grep -q "state.*discharging" && bright restore' \
   --timer 150 \
   'bright set -s -t 1 .02' \
   'bright restore' \
