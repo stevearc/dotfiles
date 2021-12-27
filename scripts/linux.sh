@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+dc-install-fzf() {
+  git clone --depth=1 https://github.com/junegunn/fzf.git ~/.local/share/nvim/site/pack/fzf/start/fzf
+  git clone --depth=1 https://github.com/junegunn/fzf.vim.git ~/.local/share/nvim/site/pack/fzf.vim/start/fzf.vim
+  nvim --headless -c 'call fzf#install()' +qall
+}
+
 dc-install-nvm() {
   if [ -e ~/.bash.d/nvm.sh ]; then
     source ~/.bash.d/nvm.sh || :
