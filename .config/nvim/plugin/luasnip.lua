@@ -2,8 +2,6 @@ require("luasnip.loaders.from_vscode").lazy_load()
 vim.api.nvim_set_keymap("s", "<Tab>", "<Plug>luasnip-jump-next", {})
 vim.api.nvim_set_keymap("s", "<C-h>", "<Plug>luasnip-jump-prev", {})
 vim.api.nvim_set_keymap("s", "<C-l>", "<Plug>luasnip-jump-next", {})
-vim.api.nvim_set_keymap("i", "<C-h>", "<Plug>luasnip-jump-prev", {})
-vim.api.nvim_set_keymap("i", "<C-l>", "<Plug>luasnip-jump-next", {})
 vim.api.nvim_set_keymap("i", "<C-k>", "<Plug>luasnip-prev-choice", {})
 vim.api.nvim_set_keymap("i", "<C-j>", "<Plug>luasnip-next-choice", {})
 vim.api.nvim_set_keymap("s", "<C-k>", "<Plug>luasnip-prev-choice", {})
@@ -15,6 +13,25 @@ vim.cmd([[
     au CursorHold * silent LuaSnipUnlinkCurrent
   aug END
   ]])
+
+vim.api.nvim_set_keymap("i", "<C-h>", "v:lua.stevearc.left_in_insert()", { expr = true })
+vim.api.nvim_set_keymap("i", "<C-l>", "v:lua.stevearc.right_in_insert()", { expr = true })
+function stevearc.left_in_insert()
+  if require("luasnip").get_active_snip() then
+    require("luasnip").jump(-1)
+    return ""
+  else
+    return vim.api.nvim_replace_termcodes("<Left>", true, true, true)
+  end
+end
+function stevearc.right_in_insert()
+  if require("luasnip").get_active_snip() then
+    require("luasnip").jump(1)
+    return ""
+  else
+    return vim.api.nvim_replace_termcodes("<Right>", true, true, true)
+  end
+end
 
 -- Required to support nested placeholders
 -- From https://github.com/L3MON4D3/LuaSnip/wiki/Nice-Configs#imitate-vscodes-behaviour-for-nested-placeholders
