@@ -6,7 +6,10 @@
         "path": "snippets/csharp.json"
       },
       {
-        "language": ["global", "all"],
+        "language": [
+          "global",
+          "all"
+        ],
         "path": "snippets/global.json"
       },
       {
@@ -22,6 +25,10 @@
         "path": "snippets/python.json"
       },
       {
+        "language": "rust",
+        "path": "snippets/rust.json"
+      },
+      {
         "language": "sh",
         "path": "snippets/sh.json"
       },
@@ -33,6 +40,6 @@
         "language": "typescript",
         "path": "snippets/typescript.json"
       }
-]
-}
+    ]
+  }
 }

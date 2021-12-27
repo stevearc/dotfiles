@@ -1,0 +1,18 @@
+{
+  "result": {
+    "prefix": "res",
+    "body": ["Result<$1, ${2:dyn error::Error}>"]
+  },
+  "boxed error": {
+    "prefix": "be",
+    "body": ["Box<dyn error::Error>"]
+  },
+  "anyhow error": {
+    "prefix": "ae",
+    "body": ["anyhow::Error"]
+  },
+  "anyhow result": {
+    "prefix": "ar",
+    "body": ["anyhow::Result<$1>"]
+  }
+}
