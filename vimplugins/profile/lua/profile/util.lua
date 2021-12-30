@@ -58,7 +58,12 @@ local function sanitize(table)
       clean[tostring(i)] = v
     end
   end
-  return clean
+  -- If no args, then return nil
+  if next(clean) == nil then
+    return nil
+  else
+    return clean
+  end
 end
 
 M.format_args = function(...)
