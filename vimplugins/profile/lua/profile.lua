@@ -100,10 +100,10 @@ M.export = function(filename)
   file:write("[")
   for i, event in ipairs(events) do
     local e = vim.tbl_extend("keep", event, event_defaults)
-    local ok, jse = pcall(vim.fn.json_encode, e)
-    if not ok then
+    local ok, jse = pcall(vim.json.encode, e)
+    if not ok and e.args then
       e.args = nil
-      ok, jse = pcall(vim.fn.json_encode, e)
+      ok, jse = pcall(vim.json.encode, e)
     end
     if ok then
       file:write(jse)
