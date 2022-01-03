@@ -1,18 +1,25 @@
--- Profiling
--- require('profile').instrument_autocmds()
-
 _G.stevearc = {}
+
+-- Profiling
+-- require("profile").instrument_autocmds()
+-- require("profile").instrument("*")
+
+function stevearc.toggle_profile()
+  local prof = require("profile")
+  if prof.is_recording() then
+    prof.stop("profile.json")
+    print("Wrote profile.json")
+  else
+    prof.start("*")
+  end
+end
+
 vim.g.python3_host_prog = os.getenv("HOME") .. "/.envs/py3/bin/python"
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
 local autocmds = { "augroup StevearcConfig", "au!" }
 
 local opts = { noremap = true, silent = true }
-vim.api.nvim_set_keymap(
-  "n",
-  "<f1>",
-  [[<cmd>lua if require'profile'.is_recording() then require'profile'.stop('profile.json') else require'profile'.start('*') end<cr>]],
-  opts
-)
+vim.api.nvim_set_keymap("n", "<f1>", [[<cmd>lua stevearc.toggle_profile()<cr>]], opts)
 vim.api.nvim_set_keymap(
   "n",
   "<f2>",
