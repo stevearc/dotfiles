@@ -12,7 +12,7 @@ main() {
 Options:
   -l, --list    List available versions
   -s, --silent  Quiet download
-  -d            Destination dir (default ~/bin)
+  -d            Destination dir (default ~/.local/bin)
   -n [NAME]     Binary name (default nvim)
 "
   LIST=
@@ -64,7 +64,7 @@ Options:
   done
   shift $((OPTIND - 1))
   VERSION="$1"
-  shift
+  shift || :
   if [ -n "$1" ]; then
     echo "Put options before version number"
     exit 1
