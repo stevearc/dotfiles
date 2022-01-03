@@ -87,6 +87,7 @@
 [submodule "vimplugins/lsp_signature.nvim"]
 	path = vimplugins/lsp_signature.nvim
 	url = https://github.com/ray-x/lsp_signature.nvim.git
+	ignore = untracked
 [submodule "vimplugins/nvim-web-devicons"]
 	path = vimplugins/nvim-web-devicons
 	url = https://github.com/kyazdani42/nvim-web-devicons.git
