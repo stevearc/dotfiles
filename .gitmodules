@@ -137,9 +137,6 @@
 [submodule "vimplugins/gkeep.nvim"]
 	path = vimplugins/gkeep.nvim
 	url = https://github.com/stevearc/gkeep.nvim.git
-[submodule "vimplugins/neorg"]
-	path = vimplugins/neorg
-	url = https://github.com/vhyrro/neorg.git
 [submodule "vimplugins/vim-matchup"]
 	path = vimplugins/vim-matchup
 	url = https://github.com/andymass/vim-matchup.git
