@@ -116,27 +116,27 @@ function stevearc.on_update_diagnostics()
 end
 
 local function adjust_formatting_capabilities(client, bufnr)
-  local info = require("null-ls.info")
+  local sources = require("null-ls.sources")
+  local methods = require("null-ls.methods")
   local null_ls_client = require("null-ls.client").get_client()
   if not null_ls_client or not vim.lsp.buf_is_attached(bufnr, null_ls_client.id) then
     return
   end
-  local active_sources = info.get_active_sources(bufnr)
-  local formatters = active_sources.NULL_LS_FORMATTING
-  local null_ls_formats = formatters and not vim.tbl_isempty(formatters)
+  local formatters = sources.get_available(vim.api.nvim_buf_get_option(bufnr, "filetype"), methods.FORMATTING)
+  if vim.tbl_isempty(formatters) then
+    return
+  end
   if client.id == null_ls_client.id then
     -- We're attaching a null-ls client. If it has a formatter, disable
     -- formatting on all prior clients
-    if null_ls_formats then
-      local clients = vim.lsp.buf_get_clients(bufnr)
-      for _, other_client in ipairs(clients) do
-        if other_client.id ~= client.id then
-          other_client.resolved_capabilities.document_formatting = false
-          other_client.resolved_capabilities.document_range_formatting = false
-        end
+    local clients = vim.lsp.buf_get_clients(bufnr)
+    for _, other_client in ipairs(clients) do
+      if other_client.id ~= client.id then
+        other_client.resolved_capabilities.document_formatting = false
+        other_client.resolved_capabilities.document_range_formatting = false
       end
     end
-  elseif null_ls_formats then
+  else
     client.resolved_capabilities.document_formatting = false
     client.resolved_capabilities.document_range_formatting = false
   end

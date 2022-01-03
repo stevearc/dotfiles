@@ -80,22 +80,6 @@ local function sandbox_js_command(config, command, args)
   })
 end
 
-null_ls.builtins.diagnostics.yamllint = h.make_builtin({
-  method = DIAGNOSTICS,
-  filetypes = { "yaml" },
-  generator_opts = {
-    command = "yamllint",
-    args = { "-f", "parsable", "-" },
-    to_stdin = true,
-    format = "line",
-    on_output = h.diagnostics.from_pattern(
-      [[(%w+):(%d+):(%d+): %[(%w+)%] (.+) %((.+)%)]],
-      { "_file", "row", "col", "severity", "message", "code" }
-    ),
-  },
-  factory = h.generator_factory,
-})
-
 null_ls.builtins.diagnostics.rstlint = h.make_builtin({
   method = DIAGNOSTICS,
   filetypes = { "rst" },
