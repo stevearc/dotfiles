@@ -237,6 +237,7 @@ vim.api.nvim_set_keymap("n", "<leader>l", "<cmd>LLToggle!<CR>", opts)
 
 require("qf_helper").setup({})
 require("Comment").setup()
+require("crates").setup()
 require("dressing").setup({
   input = {
     insert_only = false,

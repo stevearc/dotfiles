@@ -53,7 +53,7 @@ cmp.setup({
   mapping = mapping,
 
   sources = {
-    { name = "neorg" },
+    { name = "crates" },
     { name = "nvim_lua" },
     { name = "nvim_lsp" },
     { name = "path" },

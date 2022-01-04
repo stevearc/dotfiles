@@ -208,3 +208,6 @@
 [submodule "vimplugins/comment.nvim"]
 	path = vimplugins/comment.nvim
 	url = https://github.com/numToStr/Comment.nvim.git
+[submodule "vimplugins/crates.nvim"]
+	path = vimplugins/crates.nvim
+	url = https://github.com/Saecki/crates.nvim.git
