@@ -6,6 +6,27 @@ aerial.setup({
   link_tree_to_folds = true,
   manage_folds = true,
   nerd_font = vim.g.nerd_font,
+  filter_kind = {
+    ["_"] = {
+      "Class",
+      "Constructor",
+      "Enum",
+      "Function",
+      "Interface",
+      "Method",
+      "Struct",
+    },
+    rust = {
+      "Class",
+      "Constructor",
+      "Enum",
+      "Function",
+      "Interface",
+      "Module",
+      "Method",
+      "Struct",
+    },
+  },
 
   backends = {
     ["_"] = { "treesitter", "lsp", "markdown" },
