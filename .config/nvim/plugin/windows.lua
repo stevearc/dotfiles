@@ -5,9 +5,14 @@ vim.o.splitright = true
 
 vim.g.win_equal_size = true
 function stevearc.resize_windows()
+  local buftype = vim.api.nvim_buf_get_option(0, "buftype")
+  -- Ignore prompt & quickfix windows
   -- For some reason wincmd = inside the preview window doesn't play nice when
   -- we have other windows present with winfixwidth/winfixheight
-  if vim.g.win_equal_size and vim.wo.previewwindow == 0 then
+  if buftype == "prompt" or buftype == "quickfix" or not vim.g.win_equal_size or vim.wo.previewwindow then
+    return
+  end
+  if vim.g.win_equal_size and not vim.wo.previewwindow then
     vim.cmd([[wincmd =]])
   end
 end
