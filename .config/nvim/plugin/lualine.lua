@@ -42,7 +42,7 @@ local function lsp_messages()
   return ret
 end
 
-require("lualine").setup({
+safe_require("lualine").setup({
   options = {
     icons_enabled = vim.g.devicons ~= false,
     theme = "tokyonight",

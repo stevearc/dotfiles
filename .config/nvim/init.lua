@@ -13,6 +13,29 @@ function stevearc.toggle_profile()
     prof.start("*")
   end
 end
+function _G.safe_require(name, cb)
+  local ok, mod = pcall(require, name)
+  if ok then
+    if cb then
+      cb(mod)
+    end
+    return mod
+  else
+    vim.notify(string.format("Missing module: %s", name), vim.log.levels.WARN)
+    -- Return a dummy item that returns functions, so we can do things like
+    -- safe_require("module").setup()
+    local dummy = {}
+    setmetatable(dummy, {
+      __call = function()
+        return dummy
+      end,
+      __index = function()
+        return dummy
+      end,
+    })
+    return dummy
+  end
+end
 
 vim.g.python3_host_prog = os.getenv("HOME") .. "/.envs/py3/bin/python"
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
@@ -235,10 +258,10 @@ vim.api.nvim_set_keymap("n", "<C-P>", "<cmd>QPrev<CR>", opts)
 vim.api.nvim_set_keymap("n", "<leader>q", "<cmd>QFToggle!<CR>", opts)
 vim.api.nvim_set_keymap("n", "<leader>l", "<cmd>LLToggle!<CR>", opts)
 
-require("qf_helper").setup({})
-require("Comment").setup()
-require("crates").setup()
-require("dressing").setup({
+safe_require("qf_helper").setup()
+safe_require("Comment").setup()
+safe_require("crates").setup()
+safe_require("dressing").setup({
   input = {
     insert_only = false,
   },
@@ -253,11 +276,13 @@ vim.g.gkeep_log_levels = {
 -- We have to set this up after we apply our colorscheme
 vim.cmd([[autocmd ColorScheme * ++once lua stevearc.setup_notify()]])
 function stevearc.setup_notify()
-  vim.notify = require("notify")
-  require("notify").setup({
-    stages = "fade",
-    render = "minimal",
-  })
+  safe_require("notify", function(notify)
+    vim.notify = notify
+    notify.setup({
+      stages = "fade",
+      render = "minimal",
+    })
+  end)
 end
 
 table.insert(autocmds, "augroup END")

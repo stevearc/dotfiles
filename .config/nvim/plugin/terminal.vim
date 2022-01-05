@@ -33,7 +33,7 @@ aug END
 
 
 lua <<EOF
-require("toggleterm").setup{
+safe_require("toggleterm").setup({
   open_mapping = [[<c-\>]],
   hide_numbers = true,
   shade_terminals = false,
@@ -46,7 +46,7 @@ require("toggleterm").setup{
     border = 'single',
     winblend = 3,
   }
-}
+})
 EOF
 
 nnoremap <silent><c-\> <Cmd>exe v:count1 . "ToggleTerm"<CR>

@@ -30,7 +30,7 @@ function! s:GetSaveCmd() abort
   endif
 endfunction
 
-function! s:QuickLoad()
+function! s:QuickLoad() abort
   let names = xolox#session#get_names(0)
   if !empty(argv())
     return

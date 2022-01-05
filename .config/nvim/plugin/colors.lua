@@ -1,10 +1,10 @@
 vim.opt.termguicolors = true
 vim.opt.background = "dark"
 
-require("colorizer").setup()
+safe_require("colorizer").setup()
 
 if vim.g.nerd_font ~= false then
-  require("nvim-web-devicons").setup({
+  safe_require("nvim-web-devicons").setup({
     default = true,
   })
 end
@@ -34,7 +34,7 @@ vim.g.tokyonight_sidebars = { "qf", "aerial", "terminal" }
 
 vim.cmd([[autocmd ColorScheme tokyonight lua stevearc.tokyonight()]])
 
-if os.getenv("XDG_SESSION_TYPE") == "tty" then
+if os.getenv("XDG_SESSION_TYPE") == "tty" or not pcall(require, "tokyonight") then
   vim.opt.termguicolors = false
   vim.cmd("colorscheme darkblue")
 else

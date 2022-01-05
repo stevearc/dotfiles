@@ -50,7 +50,7 @@ local function is_floating_win(winid)
 end
 
 local function is_normal_win(winid)
-  if require("stickybuf.util").is_sticky_win(winid) then
+  if safe_require("stickybuf.util").is_sticky_win(winid) == true then
     return false
   end
   -- Check for non-normal (e.g. popup/preview) windows
