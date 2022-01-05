@@ -11,9 +11,9 @@
     com = !git checkout $(git main)
     cp = cherry-pick
     des = describe --tags
-    di = diff
-    dc = diff --cached
-    dm = !git diff $(git merge-base HEAD origin/$(git main)) HEAD
+    di = diff --ignore-all-space
+    dc = diff --cached --ignore-all-space
+    dm = !git diff --ignore-all-space $(git merge-base HEAD origin/$(git main)) HEAD
     ab = rebase --abort
     abort = rebase --abort
     rco = rebase --continue
