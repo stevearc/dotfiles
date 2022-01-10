@@ -5,10 +5,21 @@ vim.g.bufferline = {
   tabpages = "left",
 }
 
+function stevearc.on_enter_remote()
+  if not vim.w.is_remote then
+    return
+  end
+  if not vim.w._remote_entered then
+    vim.w._remote_entered = true
+    vim.cmd([[silent! PinBuffer]])
+    vim.bo.bufhidden = "wipe"
+  end
+end
+
 vim.cmd([[
 aug StickyRemote
   au!
-  au BufEnter * if get(w:, 'is_remote') | silent! PinBuffer | endif
+  au BufEnter * lua stevearc.on_enter_remote()
 aug END
 ]])
 
