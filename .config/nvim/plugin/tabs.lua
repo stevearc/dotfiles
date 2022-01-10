@@ -47,7 +47,7 @@ map("<leader>8", "<cmd>BufferGoto 8<CR>")
 map("<leader>9", "<cmd>BufferGoto 9<CR>")
 map("<leader>`", "<cmd>BufferLast<CR>")
 map("<leader>c", "<cmd>lua stevearc.smart_close()<CR>")
-map("<leader>C", "<cmd>BufferClose<CR>")
+map("<leader>C", "<cmd>lua stevearc.close_buffer_and_maybe_win()<CR>")
 map("<leader>h", "<cmd>BufferHide<CR>")
 map("<leader>H", "<cmd>BufferHideAllButCurrent<CR>")
 map("<C-w><C-b>", "<cmd>tab split<CR>")
@@ -107,5 +107,12 @@ function stevearc.smart_close()
     vim.cmd("close")
   else
     vim.cmd("BufferClose")
+  end
+end
+
+function stevearc.close_buffer_and_maybe_win()
+  vim.cmd("BufferClose")
+  if other_normal_window_exists() then
+    vim.api.nvim_win_close(0, false)
   end
 end
