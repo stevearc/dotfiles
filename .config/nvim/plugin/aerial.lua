@@ -1,32 +1,13 @@
 safe_require("aerial", function(aerial)
   aerial.setup({
     default_direction = "prefer_left",
+    close_behavior = "global",
+    placement_editor_edge = true,
     highlight_on_jump = false,
     link_folds_to_tree = true,
     link_tree_to_folds = true,
     manage_folds = true,
     nerd_font = vim.g.nerd_font,
-    filter_kind = {
-      ["_"] = {
-        "Class",
-        "Constructor",
-        "Enum",
-        "Function",
-        "Interface",
-        "Method",
-        "Struct",
-      },
-      rust = {
-        "Class",
-        "Constructor",
-        "Enum",
-        "Function",
-        "Interface",
-        "Module",
-        "Method",
-        "Struct",
-      },
-    },
 
     backends = {
       ["_"] = { "treesitter", "lsp", "markdown" },
