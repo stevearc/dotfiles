@@ -40,19 +40,28 @@ import sqlite3
 import sys
 from typing import Any, Dict
 
-logger = logging.getLogger('jump')
-CONFIG_DIR = os.environ.get('XDG_CONFIG_HOME', '')
+logger = logging.getLogger("jump")
+CONFIG_DIR = os.environ.get("XDG_CONFIG_HOME", "")
 if not CONFIG_DIR:
-    CONFIG_DIR = os.path.join(os.environ['HOME'], '.config')
-CACHE_DIR = os.environ.get('XDG_CACHE_HOME', '')
+    CONFIG_DIR = os.path.join(os.environ["HOME"], ".config")
+CACHE_DIR = os.environ.get("XDG_CACHE_HOME", "")
 if not CACHE_DIR:
-    CACHE_DIR = os.path.join(os.environ['HOME'], '.cache')
+    CACHE_DIR = os.path.join(os.environ["HOME"], ".cache")
 
-CONFIG_FILE = os.path.join(CONFIG_DIR, 'jump.json')
-DB_FILE = os.path.join(CACHE_DIR, 'jump.db')
+CONFIG_FILE = os.path.join(CONFIG_DIR, "jump.json")
+DB_FILE = os.path.join(CACHE_DIR, "jump.db")
+
 
 class Config:
-    def __init__(self, log_level: str = 'info', decay_every: int = 100, decay_factor: float = 0.5, min_threshold: int = 8, bookmarks: Dict[str, str] = None, **kwargs: Any):
+    def __init__(
+        self,
+        log_level: str = "info",
+        decay_every: int = 400,
+        decay_factor: float = 0.5,
+        min_threshold: int = 2,
+        bookmarks: Dict[str, str] = None,
+        **kwargs: Any
+    ):
         self.log_level = logging.getLevelName(log_level.upper())
         self.decay_every = decay_every
         self.decay_factor = decay_factor
@@ -61,10 +70,10 @@ class Config:
         self.extra_kwargs = kwargs
 
     @classmethod
-    def load(cls) -> 'Config':
+    def load(cls) -> "Config":
         if not os.path.exists(CONFIG_FILE):
             return cls()
-        with open(CONFIG_FILE, 'r') as ifile:
+        with open(CONFIG_FILE, "r") as ifile:
             try:
                 data = json.load(ifile)
             except json.JSONDecodeError:
@@ -75,20 +84,28 @@ class Config:
 def create_table(con: sqlite3.Connection) -> None:
     with con:
         cur = con.cursor()
-        cur.execute('CREATE TABLE IF NOT EXISTS jumps (path TEXT PRIMARY KEY, dir TEXT, count INT)')
-        cur.execute('CREATE TABLE IF NOT EXISTS meta_int (key TEXT PRIMARY KEY, value INT)')
+        cur.execute(
+            "CREATE TABLE IF NOT EXISTS jumps (path TEXT PRIMARY KEY, dir TEXT, count INT)"
+        )
+        cur.execute(
+            "CREATE TABLE IF NOT EXISTS meta_int (key TEXT PRIMARY KEY, value INT)"
+        )
+
 
 def completion(con: sqlite3.Connection, config: Config):
-    line = os.environ['COMP_LINE']
-    point = int(os.environ['COMP_POINT'])
+    line = os.environ["COMP_LINE"]
+    point = int(os.environ["COMP_POINT"])
     pieces = line[0:point].split()
     if len(pieces) == 1:
-        word = ''
+        word = ""
     else:
         word = pieces[-1]
     with con:
         cur = con.cursor()
-        rows = cur.execute('SELECT dir FROM jumps WHERE dir LIKE ? AND count >= ?', [word + '%', config.min_threshold])
+        rows = cur.execute(
+            "SELECT dir FROM jumps WHERE dir LIKE ? AND count >= ?",
+            [word + "%", config.min_threshold],
+        )
         shortcuts = {row[0] for row in rows}
         for key in config.bookmarks:
             if key.startswith(word):
@@ -107,6 +124,7 @@ def _setup_logging(config: Config) -> None:
     logging.root.addHandler(handler)
     logging.root.setLevel(config.log_level)
 
+
 def bootstrap():
     config = Config.load()
     _setup_logging(config)
@@ -120,31 +138,37 @@ def bootstrap():
     else:
         sys.exit(code)
 
+
 def main(config: Config) -> int:
     """Jump to frequently-accessed directories"""
     parser = argparse.ArgumentParser(description=main.__doc__, add_help=False)
-    parser.add_argument('-h', '--help', action='store_true', help="Print this help and exit")
+    parser.add_argument(
+        "-h", "--help", action="store_true", help="Print this help and exit"
+    )
     parser.add_argument("path")
-    if 'COMP_LINE' in os.environ:
-        parser.add_argument('line', nargs='*')
+    if "COMP_LINE" in os.environ:
+        parser.add_argument("line", nargs="*")
     args = parser.parse_args()
     if args.help:
         parser.print_help(sys.stderr)
         return 1
     con = sqlite3.connect(DB_FILE)
 
-    if 'COMP_LINE' in os.environ:
+    if "COMP_LINE" in os.environ:
         completion(con, config)
         return 0
 
     create_table(con)
-    if args.path == '_record':
+    if args.path == "_record":
         path = os.path.realpath(os.path.abspath(os.curdir))
-        if path == os.environ['HOME'] or path == '/':
+        if path == os.environ["HOME"] or path == "/":
             return 0
         with con:
             cur = con.cursor()
-            cur.execute("INSERT OR IGNORE INTO jumps VALUES (?, ?, 0)", [path, os.path.basename(path)])
+            cur.execute(
+                "INSERT OR IGNORE INTO jumps VALUES (?, ?, 0)",
+                [path, os.path.basename(path)],
+            )
             cur.execute("UPDATE jumps SET count = count + 1 WHERE path = ?", [path])
             cur.execute("INSERT OR IGNORE INTO meta_int VALUES ('counter', 0)")
             cur.execute("UPDATE meta_int SET value = value + 1 WHERE key = 'counter'")
@@ -153,12 +177,23 @@ def main(config: Config) -> int:
             if counter >= config.decay_every:
                 logger.info("Decaying location scores")
                 cur.execute("UPDATE meta_int SET value = 0 WHERE key = 'counter'")
-                cur.execute("UPDATE jumps SET count = CAST(count * ? AS INT)", [config.decay_factor])
+                # Simple decrement for entries that cannot decay any more
+                cur.execute(
+                    "UPDATE jumps SET count = count - 1 WHERE count = CAST(count * ? AS INT)",
+                    [config.decay_factor],
+                )
+                cur.execute(
+                    "UPDATE jumps SET count = CAST(count * ? AS INT)",
+                    [config.decay_factor],
+                )
                 cur.execute("DELETE FROM jumps WHERE count = 0")
-    elif args.path == '_debug':
+    elif args.path == "_debug":
         with con:
             cur = con.cursor()
-            rows = cur.execute('SELECT path, dir, count FROM jumps')
+            cur.execute("SELECT value FROM meta_int WHERE key = 'counter'")
+            counter = cur.fetchone()[0]
+            print("Counter:", counter)
+            rows = cur.execute("SELECT path, dir, count FROM jumps")
             for row in rows:
                 print(row[2], row[1], row[0])
     else:
@@ -168,17 +203,22 @@ def main(config: Config) -> int:
             return 0
         with con:
             cur = con.cursor()
-            rows = cur.execute('SELECT path, count FROM jumps WHERE dir = ? ORDER BY count DESC LIMIT 1', [args.path])
+            rows = cur.execute(
+                "SELECT path, count FROM jumps WHERE dir = ? ORDER BY count DESC LIMIT 1",
+                [args.path],
+            )
             rows = list(rows)
             if not rows:
-                rows = cur.execute('SELECT path, count FROM jumps WHERE path LIKE ? ORDER BY count DESC LIMIT 1', ['%' + args.path + '%'])
+                rows = cur.execute(
+                    "SELECT path, count FROM jumps WHERE path LIKE ? ORDER BY count DESC LIMIT 1",
+                    ["%" + args.path + "%"],
+                )
                 rows = list(rows)
             for row in rows:
                 print(row[0])
 
     return 0
-        
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     bootstrap()
