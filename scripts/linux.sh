@@ -51,12 +51,8 @@ install-language-rust() {
     source ~/.cargo/env
   fi
   if ! hascmd rust-analyzer; then
-    https://github.com/rust-analyzer/rust-analyzer/releases/download/2021-12-06/rust-analyzer-x86_64-unknown-linux-gnu.gz
-    pushd ~/.local/bin >/dev/null
-    curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz -o rust-analyzer.gz
-    gunzip rust-analyzer
-    chmod +x rust-analyzer
-    popd >/dev/null
+    curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz | gunzip -c - >~/.local/bin/rust-analyzer
+    chmod +x ~/.local/bin/rust-analyzer
   fi
   rustup component add rust-src
   if [ ! -e ~/.bash.d/rust.sh ]; then
