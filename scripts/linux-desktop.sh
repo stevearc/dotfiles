@@ -190,10 +190,14 @@ dc-install-clipper() {
 DC_INSTALL_XPADNEO_DOC="Drivers for Xbox controller"
 dc-install-xpadneo() {
   pushd /tmp >/dev/null
+  local latest_release
+  latest_release="$(curl -s https://api.github.com/repos/atar-axis/xpadneo/releases | jq -r ".[].tag_name" | sort -V -r | head -1)"
   if [ ! -e xpadneo ]; then
-    git clone --depth=1 https://github.com/atar-axis/xpadneo.git
+    git clone https://github.com/atar-axis/xpadneo.git
   fi
   cd xpadneo
+  git fetch --tags
+  git checkout "$latest_release"
   sudo ./install.sh
   popd >/dev/null
 }
