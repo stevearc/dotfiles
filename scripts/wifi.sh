@@ -22,8 +22,9 @@ if [ "$1" == "manual" ]; then
   sudo ifconfig "$IFACE" down
   sudo iwconfig "$IFACE" essid "$ESSID"
   sudo iwconfig "$IFACE" ap "$BSSID"
-  sudo route add default gw "$GATEWAY"
   sudo ifconfig "$IFACE" up
+  sudo route add "$GATEWAY" dev "$IFACE"
+  sudo route add default gw "$GATEWAY"
   sleep 1
   sudo dhclient
 elif [ "$1" == "auto" ]; then
