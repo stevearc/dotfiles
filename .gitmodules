@@ -211,3 +211,6 @@
 [submodule "vimplugins/crates.nvim"]
 	path = vimplugins/crates.nvim
 	url = https://github.com/Saecki/crates.nvim.git
+[submodule "vimplugins/indent-blankline.nvim"]
+	path = vimplugins/indent-blankline.nvim
+	url = https://github.com/lukas-reineke/indent-blankline.nvim.git

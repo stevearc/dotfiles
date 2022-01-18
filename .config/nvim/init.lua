@@ -266,6 +266,11 @@ safe_require("dressing").setup({
     insert_only = false,
   },
 })
+safe_require("indent_blankline").setup({
+  use_treesitter = true,
+  show_first_indent_level = false,
+  char_highlight_list = { "IndentGuide" },
+})
 vim.api.nvim_set_keymap("n", "<leader>n", "<cmd>GkeepToggle<CR>", { noremap = true })
 -- vim.g.gkeep_sync_dir = '~/notes'
 -- vim.g.gkeep_sync_archived = true
