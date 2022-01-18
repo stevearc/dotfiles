@@ -220,10 +220,10 @@ safe_require("lspconfig", function(lspconfig)
     end
     if client.resolved_capabilities.document_formatting then
       vim.cmd([[aug LspAutoformat
-      au! * <buffer>
-      autocmd BufWritePre <buffer> lua stevearc.autoformat()
-      aug END
-    ]])
+        au! * <buffer>
+        autocmd BufWritePre <buffer> lua stevearc.autoformat()
+        aug END
+      ]])
       mapper("n", "=", "<cmd>lua vim.lsp.buf.formatting()<CR>")
     end
     safemap("document_range_formatting", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
@@ -232,8 +232,12 @@ safe_require("lspconfig", function(lspconfig)
     mapper("n", "<CR>", "<cmd>lua vim.diagnostic.open_float(0, {scope='line', border='rounded'})<CR>")
 
     if client.resolved_capabilities.document_highlight then
-      vim.cmd([[autocmd CursorHold,CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]])
-      vim.cmd([[autocmd CursorMoved,WinLeave <buffer> lua vim.lsp.buf.clear_references()]])
+      vim.cmd([[aug LspShowReferences
+        au! * <buffer>
+        autocmd CursorHold,CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()
+        autocmd CursorMoved,WinLeave <buffer> lua vim.lsp.buf.clear_references()
+        aug END
+      ]])
     end
 
     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
@@ -354,7 +358,7 @@ safe_require("lspconfig", function(lspconfig)
           path = vim.split(package.path, ";"),
         },
         diagnostics = {
-          globals = { "vim" },
+          globals = { "vim", "stevearc", "safe_require" },
         },
         workspace = {
           -- Make the server aware of Neovim runtime files
