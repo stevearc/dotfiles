@@ -1,6 +1,6 @@
 safe_require("lightspeed", function(lightspeed)
   lightspeed.setup({
-    highlight_unique_chars = false,
+    jump_to_unique_chars = false,
     safe_labels = nil,
   })
 
