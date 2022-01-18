@@ -43,11 +43,9 @@ alias mosh='mosh -6'
 ash() {
   autossh -t "$@" 'tmux -2 attach || tmux new'
 }
-export ash
 sash() {
   autossh -t "$@" 'sudo tmux -2 attach || sudo tmux new'
 }
-export sash
 if command -v nvim >/dev/null; then
   if [ -n "$INSIDE_NVIM" ] && command -v nvr >/dev/null; then
     alias vim="nvr -cc 'tabnew | let w:is_remote = v:true'"
@@ -65,11 +63,9 @@ fi
 and() {
   [ $? = 0 ] && "$@"
 }
-export and
 or() {
   [ $? != 0 ] && "$@"
 }
-export or
 alias hr='history -c; history -r'
 __vimm() {
   if git rev-parse --git-dir 2>/dev/null; then
@@ -94,4 +90,9 @@ scsv() {
   cat "$tablefile" | tr -d ' ' | tr ':' ',' >"$1"
   rm -f "$tmpfile" "$tablefile" "$macro"
 }
-export scsv
+
+plugvim() {
+  local repo="${1?Usage: plugvim [REPO]}"
+  local name="${1##*/}"
+  git clone "$repo" "$HOME/.local/share/nvim/site/pack/tmp/start/$name"
+}
