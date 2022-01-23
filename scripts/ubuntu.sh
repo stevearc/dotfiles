@@ -277,6 +277,7 @@ dc-install-qtile() {
     arandr \
     compton \
     i3lock \
+    inputplug \
     libiw-dev \
     libpangocairo-1.0-0 \
     libxcb-screensaver0-dev \

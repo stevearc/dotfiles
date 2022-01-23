@@ -21,18 +21,35 @@ xidlehook \
   --detect-sleep \
   --not-when-fullscreen \
   --not-when-audio \
+  `# Dim screen after 30s when on battery` \
   --timer 30 \
   'upower -i $(upower -e | grep battery) | grep -q "state.*discharging" && bright set -s -t 1 .02' \
   'upower -i $(upower -e | grep battery) | grep -q "state.*discharging" && bright restore' \
+  `# Dim screen after 3m when plugged in` \
   --timer 150 \
   'bright set -s -t 1 .02' \
   'bright restore' \
+  `# Turn off screen after 10m` \
   --timer 420 \
   's screenoff' \
   's screenon; bright restore' \
+  `# Lock screen 10s after it turns off` \
   --timer 10 \
   's lock' \
   's screenon; bright restore' \
+  `# Suspend after 30m` \
   --timer 1200 \
   'sudo pm-suspend' \
   's screenon; bright restore; qtile shell -c "restart()"' &
+
+{
+  echo "XIDeviceEnabled XISlaveKeyboard"
+  inputplug -d -c /bin/echo
+} \
+  | while read event; do
+    case $event in
+      XIDeviceEnabled*XISlaveKeyboard*)
+        setxkbmap -option ctrl:nocaps
+        ;;
+    esac
+  done &
