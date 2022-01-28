@@ -75,9 +75,6 @@
 [submodule "vimplugins/popup.nvim"]
 	path = vimplugins/popup.nvim
 	url = https://github.com/nvim-lua/popup.nvim.git
-[submodule "vimplugins/vim-vsnip-snippets"]
-	path = vimplugins/vim-vsnip-snippets
-	url = https://github.com/stevearc/vim-vsnip-snippets.git
 [submodule "vimplugins/startuptime"]
 	path = vimplugins/startuptime
 	url = https://github.com/tweekmonster/startuptime.vim.git
@@ -214,3 +211,6 @@
 [submodule "vimplugins/indent-blankline.nvim"]
 	path = vimplugins/indent-blankline.nvim
 	url = https://github.com/lukas-reineke/indent-blankline.nvim.git
+[submodule "vimplugins/vim-vscode-snippets"]
+	path = vimplugins/vim-vscode-snippets
+	url = https://github.com/stevearc/vim-vscode-snippets.git
