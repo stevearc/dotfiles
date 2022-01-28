@@ -317,8 +317,15 @@ safe_require("lspconfig", function(lspconfig)
       if util.root_pattern(".flowconfig")(fname) then
         return nil
       end
-      return util.root_pattern("tsconfig.json")(fname)
+      local ts_root = util.root_pattern("tsconfig.json")(fname)
         or util.root_pattern("package.json", "jsconfig.json", ".git")(fname)
+      if ts_root then
+        return ts_root
+      end
+      if vim.g.started_by_firenvim then
+        return util.path.dirname(fname)
+      end
+      return nil
     end,
     on_attach = on_attach,
   })
