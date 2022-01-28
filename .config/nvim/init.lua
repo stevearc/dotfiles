@@ -268,6 +268,7 @@ safe_require("dressing").setup({
 })
 safe_require("indent_blankline").setup({
   use_treesitter = true,
+  filetype_exclude = { "aerial" },
   show_first_indent_level = false,
   char_highlight_list = { "IndentGuide" },
 })

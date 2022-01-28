@@ -19,6 +19,7 @@ end
 
 vim.g.firenvim_config = {
   globalSettings = {
+    -- replace with "noop" to disable
     ["<C-w>"] = "default",
     ["<C-n>"] = "default",
     ["<C-t>"] = "default",
