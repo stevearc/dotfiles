@@ -1,5 +1,6 @@
 local timer = nil
 function stevearc.throttle_write(delay)
+  local bufnr = vim.api.nvim_get_current_buf()
   if timer then
     timer:close()
   end
@@ -10,8 +11,10 @@ function stevearc.throttle_write(delay)
     vim.schedule_wrap(function()
       timer:close()
       timer = nil
-      if vim.o.modified then
-        vim.cmd("write")
+      if vim.api.nvim_buf_get_option(bufnr, "modified") then
+        vim.api.nvim_buf_call(bufnr, function()
+          vim.cmd("write")
+        end)
       end
     end)
   )
@@ -31,14 +34,24 @@ vim.g.firenvim_config = {
   },
 }
 
+-- We wait to call this function until the firenvim buffer is loaded
+function stevearc.firenvim_setup()
+  vim.cmd([[
+  aug FireNvimWrite
+    au! * <buffer>
+    au FocusLost <buffer> ++nested lua stevearc.throttle_write(10)
+    au TextChanged <buffer> ++nested lua stevearc.throttle_write(1000)
+    au TextChangedI <buffer> ++nested lua stevearc.throttle_write(1000)
+  aug END
+  ]])
+end
+
 if vim.g.started_by_firenvim then
   vim.cmd([[
-aug FireNvimFT
-  au!
-  au BufEnter github.com_*.txt set filetype=markdown
-  au FocusLost * ++nested lua stevearc.throttle_write(10)
-  au TextChanged * ++nested lua stevearc.throttle_write(1000)
-  au TextChangedI * ++nested lua stevearc.throttle_write(1000)
-aug END
-]])
+  aug FireNvimFT
+    au!
+    au BufEnter github.com_*.txt set filetype=markdown
+    au BufEnter *.* ++once lua stevearc.firenvim_setup()
+  aug END
+  ]])
 end
