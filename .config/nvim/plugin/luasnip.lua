@@ -7,6 +7,7 @@ safe_require("luasnip", function(luasnip)
   vim.api.nvim_set_keymap("i", "<C-j>", "<Plug>luasnip-next-choice", {})
   vim.api.nvim_set_keymap("s", "<C-k>", "<Plug>luasnip-prev-choice", {})
   vim.api.nvim_set_keymap("s", "<C-j>", "<Plug>luasnip-next-choice", {})
+
   vim.cmd([[
   aug ClearLuasnipSession
     au!
@@ -15,22 +16,22 @@ safe_require("luasnip", function(luasnip)
   aug END
   ]])
 
-  vim.api.nvim_set_keymap("i", "<C-h>", "v:lua.stevearc.left_in_insert()", { expr = true })
-  vim.api.nvim_set_keymap("i", "<C-l>", "v:lua.stevearc.right_in_insert()", { expr = true })
+  vim.api.nvim_set_keymap("i", "<C-h>", "<cmd>lua stevearc.left_in_insert()<CR>", {})
+  vim.api.nvim_set_keymap("i", "<C-l>", "<cmd>lua stevearc.right_in_insert()<CR>", {})
   function stevearc.left_in_insert()
     if luasnip.get_active_snip() then
       luasnip.jump(-1)
-      return ""
     else
-      return vim.api.nvim_replace_termcodes("<Left>", true, true, true)
+      local cur = vim.api.nvim_win_get_cursor(0)
+      pcall(vim.api.nvim_win_set_cursor, 0, { cur[1], cur[2] - 1 })
     end
   end
   function stevearc.right_in_insert()
     if luasnip.get_active_snip() then
       luasnip.jump(1)
-      return ""
     else
-      return vim.api.nvim_replace_termcodes("<Right>", true, true, true)
+      local cur = vim.api.nvim_win_get_cursor(0)
+      pcall(vim.api.nvim_win_set_cursor, 0, { cur[1], cur[2] + 1 })
     end
   end
 
