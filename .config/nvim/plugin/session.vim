@@ -6,20 +6,22 @@ let g:session_directory = stdpath('data') . '/sessions'
 " Don't autoload sessions on startup
 let g:session_autoload = 'no'
 " Don't prompt to save on exit
-if !exists('g:started_by_firenvim') && !empty(nvim_list_uis())
-  let g:session_autosave = 'yes'
-  let g:session_autosave_to = 'last'
-  aug QuickLoad
-    au!
-    au VimEnter * nested call s:QuickLoad()
-  aug END
+if exists('g:started_by_firenvim') || empty(nvim_list_uis())
+  finish
 endif
+let g:session_autosave = 'yes'
+let g:session_autosave_to = 'last'
 let g:session_autosave_periodic = 1
 let g:session_autosave_silent = 1
 let g:session_verbose_messages = 0
 let g:session_command_aliases = 1
 let g:session_menu = 0
 let g:session_name_suggestion_function = "session_wrapper#vcs_feature_branch"
+
+aug QuickLoad
+  au!
+  au VimEnter * nested call s:QuickLoad()
+aug END
 
 function! s:GetSaveCmd() abort
   let name = xolox#session#find_current_session()
