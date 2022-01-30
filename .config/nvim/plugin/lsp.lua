@@ -242,7 +242,6 @@ safe_require("lspconfig", function(lspconfig)
 
     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
-    safe_require("lsp_signature").on_attach({}, bufnr)
     safe_require("aerial").on_attach(client, bufnr)
   end
 
