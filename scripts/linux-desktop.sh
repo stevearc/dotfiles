@@ -34,6 +34,7 @@ declare -r DESKTOP_CONFIGS="
   plasmarc
   plasmashellrc
   qtile
+  yamllint
 "
 
 setup-gnome() {
