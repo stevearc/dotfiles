@@ -105,7 +105,7 @@ vim.o.switchbuf = "useopen,uselast" -- Don't reopen buffers
 vim.o.synmaxcol = 300 -- Don't syntax highlight long lines
 vim.o.tabstop = 2
 vim.o.textwidth = 80 -- Line width of 80
-vim.o.updatetime = 100 -- CursorHold time default is 4s. Way too long
+vim.o.updatetime = 400 -- CursorHold time default is 4s. Way too long
 vim.o.whichwrap = "h,l" -- allow cursor to wrap to next/prev line
 vim.opt.wildignore:append(
   "*.png,*.jpg,*.jpeg,*.gif,*.wav,*.aiff,*.dll,*.pdb,*.mdb,*.so,*.swp,*.zip,*.gz,*.bz2,*.meta,*.svg,*.cache,*/.git/*"
@@ -206,6 +206,8 @@ cabbr <expr> %% expand('%:p:h')
 
 -- Reload files from disk when we focus vim
 table.insert(autocmds, "au FocusGained * if getcmdwintype() == '' | checktime | endif")
+-- Every time we enter an unmodified buffer, check if it changed on disk
+table.insert(autocmds, "au BufEnter * if &buftype == '' && !&modified | exec 'checktime ' . expand('<abuf>') | endif")
 
 -- Enter paste mode with <C-v> in insert mode
 vim.api.nvim_set_keymap("i", "<C-v>", "<cmd>set paste<CR>", opts)
