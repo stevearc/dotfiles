@@ -1,6 +1,6 @@
 safe_require("aerial", function(aerial)
   aerial.setup({
-    default_direction = "prefer_left",
+    default_direction = "left",
     close_behavior = "global",
     placement_editor_edge = true,
     highlight_on_jump = false,
