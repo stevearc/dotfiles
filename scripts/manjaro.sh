@@ -106,6 +106,7 @@ dotcmd-desktop() {
     echo "$DOTCMD_DESKTOP_DOC"
     return
   fi
+  yay -S --noconfirm google-chrome mopidy-spotify mopidy-mpd pamac-flatpak
   sudo pamac install --no-confirm \
     alacritty \
     discord \
@@ -116,7 +117,6 @@ dotcmd-desktop() {
     steam-manjaro \
     vlc \
     zenity
-  yay -S --noconfirm google-chrome mopidy-spotify mopidy-mpd
   if ! hascmd youtube-dl; then
     pushd ~/.local/bin >/dev/null
     wget -O youtube-dl https://yt-dl.org/latest/youtube-dl

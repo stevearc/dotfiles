@@ -330,6 +330,7 @@ dotcmd-desktop() {
     blueman \
     console-data \
     ffmpeg \
+    flatpak \
     geoclue-2.0 \
     gparted \
     mopidy \
