@@ -44,6 +44,19 @@ function stevearc.firenvim_setup()
     au TextChangedI <buffer> ++nested lua stevearc.throttle_write(1000)
   aug END
   ]])
+  -- These create unnecessary autocmds for BufWritePre and BufWritePost
+  -- By clearing them, we can improve the performance of :write
+  vim.cmd([[
+   aug filetypedetect
+   au!
+   aug END
+   aug gzip
+   au!
+   aug END
+   aug eunuch
+   au!
+   aug END
+    ]])
 end
 
 if vim.g.started_by_firenvim then
