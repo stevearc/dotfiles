@@ -46,5 +46,9 @@
   "Props": {
     "prefix": ["props"],
     "body": ["type Props = \\$ReadOnly<{$1}>;"]
+  },
+  "this.": {
+    "prefix": ["t."],
+    "body": ["this."]
   }
 }

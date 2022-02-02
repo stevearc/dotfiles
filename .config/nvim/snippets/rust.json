@@ -1,7 +1,7 @@
 {
   "result": {
     "prefix": "res",
-    "body": ["Result<$1, ${2:dyn error::Error}>"]
+    "body": ["Result<${1:$TM_SELECTED_TEXT}, ${2:dyn std::error::Error}>"]
   },
   "boxed error": {
     "prefix": "be",
@@ -13,6 +13,14 @@
   },
   "anyhow result": {
     "prefix": "ar",
-    "body": ["anyhow::Result<$1>"]
+    "body": ["anyhow::Result<${1:$TM_SELECTED_TEXT}>"]
+  },
+  "println": {
+    "prefix": "pl",
+    "body": ["println!(\"$1\");"]
+  },
+  "rustdoc": {
+    "prefix": "/",
+    "body": ["/// "]
   }
 }
