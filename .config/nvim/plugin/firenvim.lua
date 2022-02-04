@@ -60,6 +60,7 @@ function stevearc.firenvim_setup()
 end
 
 if vim.g.started_by_firenvim then
+  vim.api.nvim_set_option("guifont", "UbuntuMono Nerd Font:h11")
   vim.cmd([[
   aug FireNvimFT
     au!
