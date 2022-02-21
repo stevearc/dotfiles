@@ -64,7 +64,7 @@ install-language-rust() {
 install-language-go() {
   if [ ! -e /usr/local/go ]; then
     pushd /tmp
-    local pkg="go1.15.10.linux-amd64.tar.gz"
+    local pkg="go1.17.6.linux-amd64.tar.gz"
     if [ ! -e "$pkg" ]; then
       wget -O "$pkg" "https://golang.org/dl/$pkg"
     fi
@@ -78,6 +78,7 @@ install-language-go() {
   if ! hascmd gopls; then
     GO111MODULE=on go get golang.org/x/tools/gopls
     GO111MODULE=on go clean -modcache
+    GO111MODULE=on go get golang.org/x/tools/cmd/goimports@latest
   fi
 }
 
