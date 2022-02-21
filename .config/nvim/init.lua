@@ -287,6 +287,63 @@ function stevearc.setup_notify()
     })
   end)
 end
+safe_require("aerial", function(aerial)
+  aerial.setup({
+    default_direction = "prefer_left",
+    close_behavior = "global",
+    highlight_on_jump = false,
+    link_folds_to_tree = true,
+    link_tree_to_folds = true,
+    manage_folds = true,
+    nerd_font = vim.g.nerd_font,
+
+    backends = { "treesitter", "lsp", "markdown" },
+    -- backends = { "treesitter", "markdown" },
+    -- backends = { "lsp", "markdown" },
+    on_attach = function(bufnr)
+      local function map(mode, key, result)
+        vim.api.nvim_buf_set_keymap(bufnr, mode, key, result, { noremap = true, silent = true })
+      end
+      map("n", "<leader>a", "<cmd>AerialToggle!<CR>")
+      map("n", "{", "<cmd>AerialPrev<CR>")
+      map("v", "{", "<cmd>AerialPrev<CR>")
+      map("n", "}", "<cmd>AerialNext<CR>")
+      map("v", "}", "<cmd>AerialNext<CR>")
+      map("n", "[[", "<cmd>AerialPrevUp<CR>")
+      map("v", "[[", "<cmd>AerialPrevUp<CR>")
+      map("n", "]]", "<cmd>AerialNextUp<CR>")
+      map("v", "]]", "<cmd>AerialNextUp<CR>")
+    end,
+  })
+end)
+vim.g.lightspeed_no_default_keymaps = true
+safe_require("lightspeed", function(lightspeed)
+  lightspeed.setup({
+    jump_to_unique_chars = false,
+    safe_labels = nil,
+  })
+  -- Not sure which of these mappings I prefer yet
+  vim.api.nvim_set_keymap("", "<leader>s", "<Plug>Lightspeed_omni_s", {})
+  vim.api.nvim_set_keymap("", "gs", "<Plug>Lightspeed_omni_s", {})
+end)
+safe_require("hlslens", function(hlslens)
+  hlslens.setup({
+    calm_down = true,
+    nearest_only = true,
+  })
+
+  local function map(lhs, rhs)
+    vim.api.nvim_set_keymap("n", lhs, rhs, { noremap = true, silent = true })
+  end
+  map("n", [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]])
+  map("N", [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]])
+
+  -- Fix * and # behavior to respect smartcase
+  map("*", [[:let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=1<CR>:lua require('hlslens').start()<CR>nzv]])
+  map("#", [[:let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=0<CR>:lua require('hlslens').start()<CR>nzv]])
+  map("g*", [[:let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR>:lua require('hlslens').start()<CR>nzv]])
+  map("g#", [[:let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>:lua require('hlslens').start()<CR>nzv]])
+end)
 
 table.insert(autocmds, "augroup END")
 vim.cmd(table.concat(autocmds, "\n"))
