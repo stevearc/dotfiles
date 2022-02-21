@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+
+google-chrome-stable --enable-features=WebUIDarkMode --force-dark-mode "$@"
