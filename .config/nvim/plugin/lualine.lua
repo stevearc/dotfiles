@@ -61,7 +61,6 @@ safe_require("lualine").setup({
         sources = { "nvim_diagnostic" },
         sections = { "error", "warn" },
       },
-      { "aerial" },
       debug_treesitter_node,
       arduino_status,
     },
