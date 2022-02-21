@@ -223,11 +223,6 @@ table.insert(
 vim.api.nvim_set_keymap("i", "<C-a>", "<C-o>^", opts)
 vim.api.nvim_set_keymap("i", "<C-e>", "<C-o>$", opts)
 
--- Super basic bracket completion
-vim.api.nvim_set_keymap("i", "{<CR>", "{<CR>}<C-o>O", { noremap = true, nowait = true })
-vim.api.nvim_set_keymap("i", "[<CR>", "[<CR>]<C-o>O", { noremap = true, nowait = true })
-vim.api.nvim_set_keymap("i", "(<CR>", "(<CR>)<C-o>O", { noremap = true, nowait = true })
-
 vim.cmd("command! GitHistory Git! log -- %")
 
 vim.g.scnvim_no_mappings = 1
