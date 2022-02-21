@@ -53,5 +53,6 @@ function stevearc.autoformat()
   end
   local pos = vim.api.nvim_win_get_cursor(0)
   vim.lsp.buf.formatting_sync(nil, 1000)
-  vim.api.nvim_win_set_cursor(0, pos)
+  -- This can fail if the file is shorter now
+  pcall(vim.api.nvim_win_set_cursor, 0, pos)
 end
