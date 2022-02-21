@@ -41,6 +41,7 @@ safe_require("luasnip", function(luasnip)
 
   luasnip.config.setup({
     store_selection_keys = "<Tab>",
+    updateevents = "TextChanged,TextChangedI",
     parser_nested_assembler = function(_, snippet)
       local select = function(snip, no_move)
         snip.parent:enter_node(snip.indx)
