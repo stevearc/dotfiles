@@ -260,6 +260,12 @@ vim.api.nvim_set_keymap("n", "<C-P>", "<cmd>QPrev<CR>", opts)
 vim.api.nvim_set_keymap("n", "<leader>q", "<cmd>QFToggle!<CR>", opts)
 vim.api.nvim_set_keymap("n", "<leader>l", "<cmd>LLToggle!<CR>", opts)
 
+safe_require("pair-ls").setup({
+  cmd = { "pair-ls", "lsp" },
+  -- cmd = { "pair-ls", "lsp", "-port", "8080" },
+  -- cmd = { "pair-ls", "lsp", "-signal", "wss://localhost:8080" },
+  -- cmd = { "pair-ls", "lsp", "-forward", "wss://localhost:8080" },
+})
 safe_require("qf_helper").setup()
 safe_require("Comment").setup()
 safe_require("crates").setup()
