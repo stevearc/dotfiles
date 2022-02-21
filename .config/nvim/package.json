@@ -13,6 +13,10 @@
         "path": "snippets/global.json"
       },
       {
+        "language": "go",
+        "path": "snippets/go.json"
+      },
+      {
         "language": "javascript",
         "path": "snippets/javascript.json"
       },

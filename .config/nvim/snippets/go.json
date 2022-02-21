@@ -1,0 +1,6 @@
+{
+  "test function": {
+    "prefix": "t_",
+    "body": ["func Test$1(t *testing.T) {", "  $0", "}"]
+  }
+}
