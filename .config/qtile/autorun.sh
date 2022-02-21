@@ -23,11 +23,11 @@ xidlehook \
   --not-when-audio \
   `# Dim screen after 30s when on battery` \
   --timer 30 \
-  'upower -i $(upower -e | grep battery) | grep -q "state.*discharging" && bright set -s -t 1 .02' \
+  'upower -i $(upower -e | grep battery) | grep -q "state.*discharging" && bright set -s -t 1 .01' \
   'upower -i $(upower -e | grep battery) | grep -q "state.*discharging" && bright restore' \
   `# Dim screen after 3m when plugged in` \
   --timer 150 \
-  'bright set -s -t 1 .02' \
+  'bright set -s -t 1 .01' \
   'bright restore' \
   `# Turn off screen after 10m` \
   --timer 420 \
