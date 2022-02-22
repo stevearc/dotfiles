@@ -30,7 +30,7 @@ import os
 import os.path
 import subprocess
 import sys
-from typing import List, NamedTuple  # noqa: F401
+from typing import List  # noqa: F401
 
 from libqtile import bar, hook, layout, qtile, widget
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
@@ -197,21 +197,20 @@ try:
 
     num_monitors = int(
         subprocess.run(
-            r'xrandr | grep "\bconnected" -c', shell=True, stdout=subprocess.PIPE
+            r"xrandr --listmonitors | head -n 1 | cut -f 2 -d :",
+            shell=True,
+            stdout=subprocess.PIPE,
         ).stdout
     )
-    PRIMARY_MONITOR = (
-        int(
-            subprocess.run(
-                r'xrandr | grep "\bconnected" | awk "/ primary/{print NR}"',
-                shell=True,
-                stdout=subprocess.PIPE,
-            ).stdout
-            or "1"
-        )
-        - 1
+    PRIMARY_MONITOR = int(
+        subprocess.run(
+            r'xrandr --listmonitors | awk "/\+\*/{print NR-2}"',
+            shell=True,
+            stdout=subprocess.PIPE,
+        ).stdout
+        or "0"
     )
-    logger.debug("Configuring %d screens", num_monitors)
+    logger.debug("Configuring %d screens (%d primary)", num_monitors, PRIMARY_MONITOR)
     screens = [
         Screen(
             wallpaper="~/.config/backgrounds/805740.png",
