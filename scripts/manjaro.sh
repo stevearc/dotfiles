@@ -74,7 +74,7 @@ dc-install-neovim() {
 # shellcheck disable=SC2034
 DC_INSTALL_QTILE_DOC="Qtile WM and friends"
 dc-install-qtile() {
-  sudo pamac install --no-confirm qtile dmenu python-iwlib python-dbus-next compton i3lock
+  sudo pamac install --no-confirm qtile rofi python-iwlib python-dbus-next compton i3lock
   yay -S --noconfirm xidlehook
 }
 

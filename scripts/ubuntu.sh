@@ -285,6 +285,7 @@ dc-install-qtile() {
     python-dbus \
     python-gobject \
     python3-xcffib \
+    rofi \
     suckless-tools
   if [ ! -e ~/.envs/qtile ]; then
     mkdir -p ~/.envs/qtile

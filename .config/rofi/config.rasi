@@ -1,0 +1,111 @@
+configuration {
+modi: "window,run,ssh,drun,combi";
+combi-modi: "run,drun";
+kb-cancel: "Escape,Control+g,Control+c,Control+bracketleft";
+font: "UbuntuMono Nerd Font Medium 14";
+show-icons: true;
+combi-hide-mode-prefix: true;
+/* Needs newer version than in ubuntu repos */
+/* drun { */
+/*   display-name: " "; */
+/* } */
+/**/
+/* run { */
+/*   display-name: " "; */
+/* } */
+}
+
+* {
+  black:      #000000;
+  red:        #f7768e;
+  green:      #9ece6a;
+  yellow:     #e0af68;
+  blue:       #7aa2f7;
+  mangenta:   #bb9af7;
+  cyan:       #7dcfff;
+  emphasis:   #3d59a1;
+  text:       #c0caf5;
+  text-alt:   #a9b1d6;
+  fg:         #abb2bf;
+  bg:         #24283b;
+
+  spacing: 0;
+  background-color: transparent;
+
+  text-color: @text;
+}
+
+window {
+  transparency: "real";
+  fullscreen: true;
+  background-color: #24283bdd;
+}
+
+mainbox {
+  padding: 30% 30%;
+}
+
+inputbar {
+  margin: 0px 0px 20px 0px;
+  children: [prompt, textbox-prompt-colon, entry, case-indicator];
+}
+
+prompt {
+  text-color: @blue;
+}
+
+textbox-prompt-colon {
+  expand: false;
+  str: ":";
+  text-color: @text-alt;
+}
+
+entry {
+  margin: 0px 10px;
+}
+
+listview {
+  spacing: 5px;
+  dynamic: true;
+  scrollbar: false;
+}
+
+element {
+  padding: 5px;
+  text-color: @text-alt;
+  highlight: bold #9ece6a; /* green */
+  border-radius: 3px;
+}
+
+/* Not recognized by outdated version in ubuntu repos */
+/* element-icon { */
+/*   padding: 10px; */
+/*   size: 1.7ch; */
+/* } */
+
+element selected {
+  background-color: @emphasis;
+  text-color: @text;
+}
+
+element urgent, element selected urgent {
+  text-color: @red;
+}
+
+element active, element selected active {
+  text-color: @purple;
+}
+
+message {
+  padding: 5px;
+  border-radius: 3px;
+  background-color: @emphasis;
+  border: 1px;
+  border-color: @cyan;
+}
+
+button selected {
+  padding: 5px;
+  border-radius: 3px;
+  background-color: @emphasis;
+}

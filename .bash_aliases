@@ -24,6 +24,7 @@ alias gg='git grep -I'
 alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf'
 alias dua='du -had 1 | sort -rh'
 alias tm='tmux'
+alias dfh='df -h | grep -v tmpfs | grep -v snap'
 if [ $MAC ]; then
   alias alert='reattach-to-user-namespace osascript -e "display notification \"$(history|tail -n1|sed -e '\''s/^[[:space:]]*[0-9]*[[:space:]]*//;s/[;&|][[:space:]]*alert$//'\'')\" with title \"$([ $? = 0 ] && echo Success || echo Error)\""'
   alias warn='[ $? != 0 ] && reattach-to-user-namespace osascript -e "display notification \"$(history|tail -n1|sed -e '\''s/^[[:space:]]*[0-9]*[[:space:]]*//;s/[;&|][[:space:]]*warn$//'\'')\" with title \"Error\""'
