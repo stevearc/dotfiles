@@ -140,7 +140,7 @@ try:
         Key(
             [alt, "shift"],
             "p",
-            lazy.spawn("rofi -show combi"),
+            lazy.spawn("rofi -show drun"),
             desc="Spawn a command using a prompt widget",
         ),
         Key([mod], "l", lazy.spawn("s lock"), desc="Lock screen"),
