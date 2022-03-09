@@ -16,9 +16,11 @@ install-language-python() {
     dc-install-nvm
     yarn global add -s pyright
   fi
-  "$HERE/scripts/make_standalone.py" -s ~/.local/bin/isort
-  "$HERE/scripts/make_standalone.py" -s ~/.local/bin/black
-  "$HERE/scripts/make_standalone.py" -s ~/.local/bin/autoimport
+  pushd ~/.local/bin
+  "$HERE/scripts/make_standalone.py" isort
+  "$HERE/scripts/make_standalone.py" black
+  "$HERE/scripts/make_standalone.py" autoimport
+  popd
 }
 
 # shellcheck disable=SC2034
@@ -67,15 +69,31 @@ dc-install-common() {
 DC_INSTALL_NEOVIM_DOC="<3"
 dc-install-neovim() {
   install-language-python
-  sudo pamac install --no-confirm neovim
+  if ! hascmd nvim; then
+    if confirm "From github appimage?" y; then
+      local version
+      "$HERE/scripts/install_neovim.sh" --list
+      version=$(prompt "Version?" stable)
+      "$HERE/scripts/install_neovim.sh" "$version"
+    else
+      sudo pamac install --no-confirm neovim
+    fi
+  fi
   post-install-neovim
 }
 
 # shellcheck disable=SC2034
 DC_INSTALL_QTILE_DOC="Qtile WM and friends"
 dc-install-qtile() {
-  sudo pamac install --no-confirm qtile rofi python-iwlib python-dbus-next compton i3lock
-  yay -S --noconfirm xidlehook
+  sudo pamac install --no-confirm \
+    arandr \
+    compton \
+    i3lock \
+    pkg-config \
+    python-dbus-next \
+    python-iwlib \
+    rofi
+  setup-qtile
 }
 
 # shellcheck disable=SC2034
@@ -106,12 +124,14 @@ dotcmd-desktop() {
     echo "$DOTCMD_DESKTOP_DOC"
     return
   fi
-  yay -S --noconfirm google-chrome mopidy-spotify mopidy-mpd pamac-flatpak
+  yay -S --noconfirm google-chrome mopidy-spotify mopidy-mpd
   sudo pamac install --no-confirm \
     alacritty \
     discord \
     dolphin-emu \
     ffmpeg \
+    flatpak \
+    libpamac-flatpak-plugin \
     mupen64plus \
     ncmpcpp \
     steam-manjaro \

@@ -28,9 +28,11 @@ install-language-python() {
     python3-pip \
     ipython3 \
     python3-restructuredtext-lint
-  "$HERE/scripts/make_standalone.py" -s ~/.local/bin/isort
-  "$HERE/scripts/make_standalone.py" -s ~/.local/bin/black
-  "$HERE/scripts/make_standalone.py" -s ~/.local/bin/autoimport
+  pushd ~/.local/bin
+  "$HERE/scripts/make_standalone.py" isort
+  "$HERE/scripts/make_standalone.py" black
+  "$HERE/scripts/make_standalone.py" autoimport
+  popd
 }
 
 install-language-arduino() {
@@ -285,20 +287,8 @@ dc-install-qtile() {
     python-dbus \
     python-gobject \
     python3-xcffib \
-    rofi \
-    suckless-tools
-  if [ ! -e ~/.envs/qtile ]; then
-    mkdir -p ~/.envs/qtile
-    python -m venv ~/.envs/qtile
-    ~/.envs/qtile/bin/pip install --upgrade pip wheel
-    ~/.envs/qtile/bin/pip install --no-cache xcffib
-    ~/.envs/qtile/bin/pip install --no-cache qtile iwlib dbus-next cairocffi python-mpd2
-  fi
-  install-language-rust
-  cargo install xidlehook --bins
-  sudo ln -sfT ~/.envs/qtile/bin/qtile /usr/bin/qtile
-  sudo cp "$HERE/static/qtile.desktop" /usr/share/xsessions/
-  sudo cp "$HERE/static/qtile-wayland.desktop" /usr/share/xsessions/
+    rofi
+  setup-qtile
 }
 
 # shellcheck disable=SC2034

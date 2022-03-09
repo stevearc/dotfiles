@@ -178,6 +178,23 @@ post-install-neovim() {
   nvim --headless +UpdateRemotePlugins +TSUpdateSync -c 'call firenvim#install(0)' +qall >/dev/null
 }
 
+setup-qtile() {
+  if [ ! -e ~/.envs/qtile ]; then
+    mkdir -p ~/.envs/qtile
+    python -m venv ~/.envs/qtile
+    ~/.envs/qtile/bin/pip install --upgrade pip wheel
+    ~/.envs/qtile/bin/pip install --no-cache xcffib
+    ~/.envs/qtile/bin/pip install --no-cache qtile iwlib dbus-next cairocffi python-mpd2
+  fi
+  if ! hascmd xidlehook; then
+    install-language-rust
+    cargo install xidlehook --bins
+  fi
+  sudo ln -sfT ~/.envs/qtile/bin/qtile /usr/bin/qtile
+  sudo cp "$HERE/static/qtile.desktop" /usr/share/xsessions/
+  sudo cp "$HERE/static/qtile-wayland.desktop" /usr/share/xsessions/
+}
+
 setup-docker() {
   mkdir -p ~/.docker-images
   if ! grep -q "^data-root" /etc/docker/daemon.json; then

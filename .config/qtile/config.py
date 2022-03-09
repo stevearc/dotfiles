@@ -39,7 +39,10 @@ from libqtile.utils import guess_terminal
 
 # Make sure we reload our companion file
 sys.modules.pop("mpdwidget", None)
-from mpdwidget import MpdWidget
+try:
+    from mpdwidget import MpdWidget
+except ImportError:
+    MpdWidget = None
 
 mod = "mod4"
 alt = "mod1"
@@ -59,6 +62,8 @@ log.setLevel(logging.DEBUG)
 log.addHandler(handler)
 logging.getLogger("mpd.base").setLevel(logging.WARNING)
 logger.debug("Begin config.py")
+if MpdWidget is None:
+    logger.error("Error importing MpdWidget")
 
 try:
     keys = [
@@ -217,6 +222,25 @@ try:
         or "0"
     )
     logger.debug("Configuring %d screens (%d primary)", num_monitors, PRIMARY_MONITOR)
+    main_screen_widgets = [
+        widget.Systray(background=c_bar_bg),
+        widget.Battery(
+            hide_threshold=0.9,
+            low_percentage=0.2,
+            format="B{char}{percent:2.0%}",
+        ),
+        widget.Volume(
+            mute_command="amixer -D pulse set Master Playback Switch toggle",
+            emoji=True,
+        ),
+    ]
+    if MpdWidget is not None:
+        main_screen_widgets.insert(0, MpdWidget(
+            status_format="{play_status} {artist}/{title} {volume}%",
+            idle_format="",
+            space="",
+            color_progress="#9ece6a",
+        ))
     screens = [
         Screen(
             wallpaper="~/.config/backgrounds/805740.png",
@@ -230,24 +254,7 @@ try:
                     widget.Clock(format="%a %b %d  %I:%M %p"),
                     widget.Spacer(),
                     *(
-                        [
-                            MpdWidget(
-                                status_format="{play_status} {artist}/{title} {volume}%",
-                                idle_format="",
-                                space="",
-                                color_progress="#9ece6a",
-                            ),
-                            widget.Systray(background=c_bar_bg),
-                            widget.Battery(
-                                hide_threshold=0.9,
-                                low_percentage=0.2,
-                                format="B{char}{percent:2.0%}",
-                            ),
-                            widget.Volume(
-                                mute_command="amixer -D pulse set Master Playback Switch toggle",
-                                emoji=True,
-                            ),
-                        ]
+                        main_screen_widgets
                         if i == PRIMARY_MONITOR
                         else []
                     ),
