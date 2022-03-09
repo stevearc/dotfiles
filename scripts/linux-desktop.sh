@@ -200,6 +200,7 @@ dc-install-xpadneo() {
   cd xpadneo
   git fetch --tags
   git checkout "$latest_release"
+  sudo ./uninstall.sh || :
   sudo ./install.sh
   popd >/dev/null
 }
