@@ -159,9 +159,10 @@ setup-mopidy() {
     sed -i -e "s/^client_secret =.*/client_secret = $pw/" "$conf"
   fi
   sudo rm -f /lib/systemd/system/mopidy.service
-  local service="/etc/systemd/user/mopidy.service"
+  local service="$HOME/.config/systemd/user/mopidy.service"
   if [ ! -e "$service" ]; then
-    sudo cp "$HERE/static/mopidy.service" "$service"
+    cp "$HERE/static/mopidy.service" "$service"
+    systemctl --user daemon-reload
     systemctl --user enable mopidy.service
     systemctl --user start mopidy.service
   fi
@@ -239,4 +240,12 @@ dc-install-rclone() {
   cp rclone.1 ~/.local/share/man/man1/
   mandb || :
   popd
+
+  local service="$HOME/.config/systemd/user/rclone.service"
+  if [ ! -e "$service" ]; then
+    cp "$HERE/static/rclone.service" "$service"
+    systemctl --user daemon-reload
+    systemctl --user enable rclone.service
+    systemctl --user start rclone.service
+  fi
 }
