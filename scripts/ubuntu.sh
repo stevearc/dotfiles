@@ -320,10 +320,12 @@ dotcmd-desktop() {
   sudo apt-get install -q -y \
     blueman \
     console-data \
+    dunst \
     ffmpeg \
     flatpak \
     geoclue-2.0 \
     gparted \
+    libnotify-bin \
     mopidy \
     mopidy-mpd \
     mopidy-spotify \

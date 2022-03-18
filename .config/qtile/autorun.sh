@@ -5,6 +5,7 @@ setxkbmap -option ctrl:nocaps
 xbindkeys
 nm-applet &
 blueman-applet &
+dunst &
 
 "$HERE/setup-monitors.sh" -f
 

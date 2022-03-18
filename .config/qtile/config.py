@@ -235,12 +235,15 @@ try:
         ),
     ]
     if MpdWidget is not None:
-        main_screen_widgets.insert(0, MpdWidget(
-            status_format="{play_status} {artist}/{title} {volume}%",
-            idle_format="",
-            space="",
-            color_progress="#9ece6a",
-        ))
+        main_screen_widgets.insert(
+            0,
+            MpdWidget(
+                status_format="{play_status} {artist}/{title} {volume}%",
+                idle_format="",
+                space="",
+                color_progress="#9ece6a",
+            ),
+        )
     screens = [
         Screen(
             wallpaper="~/.config/backgrounds/805740.png",
@@ -253,11 +256,7 @@ try:
                     widget.WindowName(),
                     widget.Clock(format="%a %b %d  %I:%M %p"),
                     widget.Spacer(),
-                    *(
-                        main_screen_widgets
-                        if i == PRIMARY_MONITOR
-                        else []
-                    ),
+                    *(main_screen_widgets if i == PRIMARY_MONITOR else []),
                 ],
                 24,
                 background=c_bar_bg,

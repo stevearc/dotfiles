@@ -129,8 +129,10 @@ dotcmd-desktop() {
     alacritty \
     discord \
     dolphin-emu \
+    dunst \
     ffmpeg \
     flatpak \
+    libnotify \
     libpamac-flatpak-plugin \
     mupen64plus \
     ncmpcpp \

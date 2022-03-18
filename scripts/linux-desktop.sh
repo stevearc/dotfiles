@@ -6,6 +6,7 @@ declare -r DESKTOP_CONFIGS="
   alacritty
   breezerc
   dolphinrc
+  dunst
   gtk-2.0
   gtk-3.0
   gtk-4.0
@@ -124,6 +125,7 @@ setup-xfce() {
 }
 
 setup-desktop-generic() {
+  flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
   if [ ! -e ~/.config/backgrounds ]; then
     mkdir -p ~/.config/backgrounds
     cd ~/.config/backgrounds
@@ -140,6 +142,10 @@ EOF
   fi
   sed -e "s/^USER/$USER/" "$HERE/static/pm-no-sudo" | sudo tee /etc/sudoers.d/pm-no-sudo >/dev/null
   sed -e "s/^USER/$USER/" "$HERE/static/loadkeys-no-sudo" | sudo tee /etc/sudoers.d/loadkeys-no-sudo >/dev/null
+  if ! hascmd yt-dlp; then
+    curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o ~/.local/bin/yt-dlp
+    chmod +x ~/.local/bin/yt-dlp
+  fi
   setup-mopidy
   dc-install-kitty
   dc-install-rclone
