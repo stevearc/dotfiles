@@ -1,13 +1,4 @@
-vim.opt.termguicolors = true
 vim.opt.background = "dark"
-
-safe_require("colorizer").setup()
-
-if vim.g.nerd_font ~= false then
-  safe_require("nvim-web-devicons").setup({
-    default = true,
-  })
-end
 
 -- Tokyo Night
 function stevearc.tokyonight()
@@ -38,5 +29,7 @@ if os.getenv("XDG_SESSION_TYPE") == "tty" or not pcall(require, "tokyonight") th
   vim.opt.termguicolors = false
   vim.cmd("colorscheme darkblue")
 else
+  vim.opt.termguicolors = true
+  safe_require("colorizer").setup()
   vim.cmd("colorscheme tokyonight")
 end

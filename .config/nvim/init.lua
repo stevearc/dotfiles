@@ -36,6 +36,9 @@ function _G.safe_require(name, cb)
     return dummy
   end
 end
+function stevearc.pack(...)
+  return { n = select("#", ...), ... }
+end
 
 vim.g.python3_host_prog = os.getenv("HOME") .. "/.envs/py3/bin/python"
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
@@ -255,9 +258,32 @@ vim.api.nvim_set_keymap("n", "<C-P>", "<cmd>QPrev<CR>", opts)
 vim.api.nvim_set_keymap("n", "<leader>q", "<cmd>QFToggle!<CR>", opts)
 vim.api.nvim_set_keymap("n", "<leader>l", "<cmd>LLToggle!<CR>", opts)
 
+local pending_notifications = {}
+local old_notify = vim.notify
+vim.notify = function(...)
+  table.insert(pending_notifications, stevearc.pack(...))
+end
+-- We have to set this up after we apply our colorscheme
+vim.cmd([[autocmd ColorScheme * ++once lua stevearc.setup_notify()]])
+function stevearc.setup_notify()
+  vim.notify = old_notify
+  safe_require("notify", function(notify)
+    vim.notify = notify
+    notify.setup({
+      stages = "fade",
+      render = "minimal",
+    })
+  end)
+  for _, args in ipairs(pending_notifications) do
+    vim.notify(unpack(args))
+  end
+  pending_notifications = nil
+end
+
 safe_require("pair-ls").setup({
   cmd = { "pair-ls", "lsp" },
   -- cmd = { "pair-ls", "lsp", "-port", "8080" },
+  -- cmd = { "pair-ls", "lsp", "-port", "8081" },
   -- cmd = { "pair-ls", "lsp", "-signal", "wss://localhost:8080" },
   -- cmd = { "pair-ls", "lsp", "-forward", "wss://localhost:8080" },
 })
@@ -269,6 +295,7 @@ safe_require("dressing").setup({
     insert_only = false,
   },
 })
+
 vim.api.nvim_set_keymap("n", "<leader>n", "<cmd>GkeepToggle<CR>", { noremap = true })
 -- vim.g.gkeep_sync_dir = '~/notes'
 -- vim.g.gkeep_sync_archived = true
@@ -276,17 +303,6 @@ vim.g.gkeep_log_levels = {
   gkeep = "debug",
   gkeepapi = "warning",
 }
--- We have to set this up after we apply our colorscheme
-vim.cmd([[autocmd ColorScheme * ++once lua stevearc.setup_notify()]])
-function stevearc.setup_notify()
-  safe_require("notify", function(notify)
-    vim.notify = notify
-    notify.setup({
-      stages = "fade",
-      render = "minimal",
-    })
-  end)
-end
 safe_require("aerial", function(aerial)
   aerial.setup({
     default_direction = "prefer_left",
@@ -297,9 +313,9 @@ safe_require("aerial", function(aerial)
     manage_folds = true,
     nerd_font = vim.g.nerd_font,
 
-    backends = { "treesitter", "lsp", "markdown" },
     -- backends = { "treesitter", "markdown" },
     -- backends = { "lsp", "markdown" },
+    -- backends = { "lsp", "treesitter", "markdown" },
     on_attach = function(bufnr)
       local function map(mode, key, result)
         vim.api.nvim_buf_set_keymap(bufnr, mode, key, result, { noremap = true, silent = true })
@@ -344,6 +360,12 @@ safe_require("hlslens", function(hlslens)
   map("g*", [[:let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR>:lua require('hlslens').start()<CR>nzv]])
   map("g#", [[:let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>:lua require('hlslens').start()<CR>nzv]])
 end)
+
+if vim.g.nerd_font ~= false then
+  safe_require("nvim-web-devicons").setup({
+    default = true,
+  })
+end
 
 table.insert(autocmds, "augroup END")
 vim.cmd(table.concat(autocmds, "\n"))
