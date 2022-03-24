@@ -178,6 +178,8 @@ lazy("pair-ls.nvim", {
   end,
 })
 
+lazy.load("conjoin.nvim").require("conjoin").setup({})
+
 local gkeep_bindings = {
   { "n", "<leader>m", "<CMD>GkeepEnter menu<CR>" },
   { "n", "<leader>l", "<CMD>GkeepEnter list<CR>" },

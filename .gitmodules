@@ -162,6 +162,9 @@
 [submodule "vimplugins/overseer.nvim"]
 	path = vimplugins/overseer.nvim
 	url = https://github.com/stevearc/overseer.nvim.git
+[submodule "vimplugins/conjoin.nvim"]
+	path = vimplugins/conjoin.nvim
+	url = git@github.com:stevearc/conjoin.nvim.git
 [submodule "vimplugins/neotest-python"]
 	path = vimplugins/neotest-python
 	url = https://github.com/nvim-neotest/neotest-python.git
