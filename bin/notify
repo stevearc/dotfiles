@@ -2,11 +2,67 @@
 set -e
 
 main() {
-  if [ -z "$IFTTT_TOKEN" ]; then
-    echo "Must have env var IFTTT_TOKEN to use notify"
-    return 1
+  local usage="$0 [Options] TITLE [BODY]
+
+Options:
+  -i ICON        Name of icon (linux only)
+  -u URGENCY     Urgency level (low, normal, critical)
+  -c CODE        Set the urgency from an exit code (e.g. -c \$?)
+"
+  local icon=
+  local urgency="normal"
+  local title=
+  local body=
+  while getopts "hu:c:i:" opt; do
+    case $opt in
+      h)
+        echo "$usage"
+        exit 0
+        ;;
+      i)
+        icon="$OPTARG"
+        ;;
+      u)
+        urgency="$OPTARG"
+        if [ "$urgency" = "info" ]; then
+          urgency="normal"
+        elif [ "$urgency" = "error" ]; then
+          urgency="critical"
+        fi
+        ;;
+      c)
+        if [ "$OPTARG" = "0" ]; then
+          urgency="normal"
+        else
+          urgency="critical"
+        fi
+        ;;
+      \?)
+        echo "$usage"
+        exit 1
+        ;;
+    esac
+  done
+  shift $((OPTIND - 1))
+  title="$1"
+  if [ -z "$title" ]; then
+    echo "$usage"
+    exit 1
   fi
-  curl -X POST -d "value1=$(hostname)&value2=$1" "https://maker.ifttt.com/trigger/notify/with/key/$IFTTT_TOKEN"
+  shift
+  body="$1"
+  if [ -z "$icon" ]; then
+    if [ "$urgency" = "critical" ]; then
+      icon="error"
+    else
+      icon="terminal"
+    fi
+  fi
+  if [ "$OSNAME" = "Darwin" ]; then
+    reattach-to-user-namespace osascript -e "display notification \"${body}\" with title \"${title}\""
+  else
+    notify-send -u "$urgency" -i "$icon" "$title" "$body"
+  fi
 }
 
 main "$@"
