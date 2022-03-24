@@ -16,6 +16,7 @@ function stevearc.tokyonight()
   util.highlight("SpellCap", { sp = c.warning, style = "underline" })
   util.highlight("SpellLocal", { sp = c.info, style = "underline" })
   util.highlight("SpellRare", { sp = c.hint, style = "underline" })
+  vim.cmd([[highlight link AerialLineNC LspReferenceText]])
 end
 vim.g.tokyonight_style = "night"
 vim.g.tokyonight_dark_float = false

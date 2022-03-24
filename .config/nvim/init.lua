@@ -316,6 +316,7 @@ safe_require("aerial", function(aerial)
     -- backends = { "treesitter", "markdown" },
     -- backends = { "lsp", "markdown" },
     -- backends = { "lsp", "treesitter", "markdown" },
+    -- filter_kind = false,
     on_attach = function(bufnr)
       local function map(mode, key, result)
         vim.api.nvim_buf_set_keymap(bufnr, mode, key, result, { noremap = true, silent = true })

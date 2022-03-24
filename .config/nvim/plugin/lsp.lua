@@ -373,6 +373,9 @@ safe_require("lspconfig", function(lspconfig)
             [os.getenv("VIMRUNTIME") .. "/lua/vim/lsp"] = true,
           },
         },
+        telemetry = {
+          enable = false,
+        },
       },
     },
 
