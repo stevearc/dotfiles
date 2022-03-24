@@ -116,6 +116,11 @@ dc-install-ufw() {
   setup-ufw
 }
 
+dc-install-watchexec() {
+  hascmd watchexec && return
+  pacman -Sy watchexec
+}
+
 # shellcheck disable=SC2034
 DOTCMD_DESKTOP_DOC="Install config and settings for desktop environment"
 # shellcheck disable=SC2120

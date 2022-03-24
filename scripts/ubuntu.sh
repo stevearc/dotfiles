@@ -384,3 +384,9 @@ dotcmd-desktop() {
     echo "ERROR: Not sure what desktop environment this is."
   fi
 }
+
+dc-install-watchexec() {
+  hascmd watchexec && return
+  install-language-rust
+  cargo install watchexec-cli
+}
