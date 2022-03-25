@@ -62,23 +62,22 @@ install-language-rust() {
 }
 
 install-language-go() {
-  if [ ! -e /usr/local/go ]; then
+  if [ ! -e ~/.local/share/go ]; then
     pushd /tmp
-    local pkg="go1.17.6.linux-amd64.tar.gz"
+    local pkg="go1.18.linux-amd64.tar.gz"
     if [ ! -e "$pkg" ]; then
       wget -O "$pkg" "https://golang.org/dl/$pkg"
     fi
-    sudo tar -C /usr/local -xzf $pkg
+    sudo tar -C ~/.local/share -xzf $pkg
     rm -f $pkg
     popd
   fi
 
-  PATH="/usr/local/go/bin:$PATH"
+  PATH="$HOME/.local/share/go/bin:$PATH"
   export GOPATH="$HOME/go"
   if ! hascmd gopls; then
-    GO111MODULE=on go get golang.org/x/tools/gopls
-    GO111MODULE=on go clean -modcache
-    GO111MODULE=on go get golang.org/x/tools/cmd/goimports@latest
+    go install golang.org/x/tools/gopls@latest
+    go install golang.org/x/tools/cmd/goimports@latest
   fi
 }
 

@@ -38,7 +38,7 @@ shopt -s checkwinsize
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # Environment variables
-export GOROOT=/usr/local/go
+export GOROOT=$HOME/.local/share/go
 export GOPATH=~/go
 export PATH=$HOME/.local/bin:$GOROOT/bin:$GOPATH/bin:$PATH
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
