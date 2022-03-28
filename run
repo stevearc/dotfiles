@@ -1,9 +1,10 @@
 #!/bin/bash -e
 set -e
-declare -r CLI_DOTFILES=".bashrc .bash_aliases .inputrc .psqlrc .gitconfig .githelpers .tmux.conf .agignore .shellcheckrc .sqliterc .xbindkeysrc"
+declare -r CLI_DOTFILES=".bash_aliases .inputrc .psqlrc .githelpers .tmux.conf .agignore .shellcheckrc .sqliterc .xbindkeysrc"
 
 export HERE=$(dirname "$(realpath "$0")")
 source "$HERE/scripts/utils.sh"
+source "$HERE/scripts/all_platforms.sh"
 if [ $UBUNTU ]; then
   source "$HERE/scripts/ubuntu.sh"
 fi
@@ -106,11 +107,15 @@ Opts:
     for dotfile in $CLI_DOTFILES; do
       link "$HERE/$dotfile" "$HOME/$dotfile"
     done
+    grep "source .*dotfiles/.bashrc" ~/.bashrc >/dev/null 2>&1 || echo "source \"$HERE/.bashrc\"" >> ~/.bashrc
+    [ ! -e ~/.gitconfig ] && link "$HERE/.gitconfig" "$HOME/.gitconfig"
   else
     rsync -lrp $CLI_DOTFILES "$HOME"
+    cp "$HERE/.bashrc" "$HOME"
+    [ ! -e ~/.gitconfig ] && cp "$HERE/.gitconfig" "$HOME/.gitconfig"
   fi
 
-  mkdir -p .local/bin
+  mkdir -p "$HOME/.local/bin"
   if [ $symbolic ]; then
     for executable in "$HERE"/bin/*; do
       link "$executable" "$HOME/.local/bin/$(basename "$executable")"
