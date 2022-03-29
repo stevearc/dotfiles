@@ -9,6 +9,8 @@ platform-setup() {
 DC_INSTALL_COMMON_DOC="Common unix utilities like tmux, netcat, etc"
 dc-install-common() {
   brew install tmux
+  # Also needed to download https://share.esdf.io/uKVV63N0hA/ (tmux.terminfo)
+  # and run tic -x tmux.terminfo
 }
 
 dc-install-neovim() {
