@@ -7,6 +7,7 @@ local M = {
     autoformat_threshold = 10000,
     prettier_prefix = "yarn --silent ",
     ts_prettier_format = true,
+    lualine_message = function() return '' end,
   },
 }
 

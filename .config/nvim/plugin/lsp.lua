@@ -1,3 +1,4 @@
+local lsp = require('lsp')
 safe_require("lspconfig", function(lspconfig)
   -- vim.lsp.set_log_level("debug")
 
@@ -47,17 +48,6 @@ safe_require("lspconfig", function(lspconfig)
   vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
   vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 
-  local ft_config = {
-    vim = {
-      help = false,
-    },
-    lua = {
-      help = false,
-    },
-    cs = {
-      code_action = false, -- TODO: this borks the omnisharp server
-    },
-  }
   local diagnostics_handler = vim.lsp.handlers["textDocument/publishDiagnostics"]
   vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, context, config)
     local client = vim.lsp.get_client_by_id(context.client_id)
@@ -144,111 +134,11 @@ safe_require("lspconfig", function(lspconfig)
     stevearc.on_update_diagnostics(vim.api.nvim_get_current_buf())
   end
 
-  local function adjust_formatting_capabilities(client, bufnr)
-    if not pcall(require, "null-ls") then
-      return
-    end
-    local sources = require("null-ls.sources")
-    local methods = require("null-ls.methods")
-    local null_ls_client = require("null-ls.client").get_client()
-    if not null_ls_client or not vim.lsp.buf_is_attached(bufnr, null_ls_client.id) then
-      return
-    end
-    local formatters = sources.get_available(vim.api.nvim_buf_get_option(bufnr, "filetype"), methods.FORMATTING)
-    if vim.tbl_isempty(formatters) then
-      return
-    end
-    if client.id == null_ls_client.id then
-      -- We're attaching a null-ls client. If it has a formatter, disable
-      -- formatting on all prior clients
-      local clients = vim.lsp.buf_get_clients(bufnr)
-      for _, other_client in ipairs(clients) do
-        if other_client.id ~= client.id then
-          other_client.resolved_capabilities.document_formatting = false
-          other_client.resolved_capabilities.document_range_formatting = false
-        end
-      end
-    else
-      client.resolved_capabilities.document_formatting = false
-      client.resolved_capabilities.document_range_formatting = false
-    end
-  end
-
   vim.cmd([[augroup LSPDiagnostics
   au!
   autocmd DiagnosticChanged * call luaeval("stevearc.on_update_diagnostics(tonumber(_A))", expand("<abuf>"))
   autocmd BufEnter * lua stevearc.diagnostics_enter_buffer()
   augroup END]])
-
-  local on_attach = function(client, bufnr)
-    local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")
-    local config = ft_config[ft] or {}
-
-    adjust_formatting_capabilities(client, bufnr)
-
-    local function mapper(mode, key, result)
-      vim.api.nvim_buf_set_keymap(bufnr, mode, key, result, { noremap = true, silent = true })
-    end
-
-    local function safemap(method, mode, key, result)
-      if client.resolved_capabilities[method] then
-        mapper(mode, key, result)
-      end
-    end
-
-    for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-      if vim.api.nvim_win_get_buf(winid) == bufnr then
-        vim.api.nvim_win_set_option(winid, "signcolumn", "yes")
-      end
-    end
-
-    -- Standard LSP
-    safemap("goto_definition", "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
-    safemap("declaration", "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
-    safemap("type_definition", "n", "gtd", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
-    safemap("implementation", "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
-    safemap("find_references", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
-    if config.help ~= false then
-      safemap("hover", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
-    end
-    if client.resolved_capabilities.signature_help then
-      mapper("i", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
-    end
-    if config.code_action ~= false then
-      mapper("n", "<leader>fa", "<cmd>lua vim.lsp.buf.code_action()<CR>")
-      mapper("v", "<leader>fa", ":<C-U>lua vim.lsp.buf.range_code_action()<CR>")
-    end
-    if client.resolved_capabilities.document_formatting then
-      vim.cmd([[aug LspAutoformat
-        au! * <buffer>
-        autocmd BufWritePre <buffer> lua stevearc.autoformat()
-        aug END
-      ]])
-      mapper("n", "=", "<cmd>lua vim.lsp.buf.formatting()<CR>")
-    end
-    safemap("document_range_formatting", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
-    safemap("rename", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
-
-    mapper("n", "<CR>", "<cmd>lua vim.diagnostic.open_float(0, {scope='line', border='rounded'})<CR>")
-
-    if client.resolved_capabilities.document_highlight then
-      vim.cmd([[aug LspShowReferences
-        au! * <buffer>
-        autocmd CursorHold,CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved,WinLeave <buffer> lua vim.lsp.buf.clear_references()
-        aug END
-      ]])
-    end
-
-    vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-
-    safe_require("aerial").on_attach(client, bufnr)
-  end
-
-  local capabilities = vim.lsp.protocol.make_client_capabilities()
-  safe_require("cmp_nvim_lsp", function(cmp_nvim_lsp)
-    capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
-  end)
 
   -- Configure the LSP servers
   local lspservers = {
@@ -264,13 +154,13 @@ safe_require("lspconfig", function(lspconfig)
   }
   for _, server in ipairs(lspservers) do
     lspconfig[server].setup({
-      capabilities = capabilities,
-      on_attach = on_attach,
+      capabilities = lsp.capabilities,
+      on_attach = lsp.on_attach,
     })
   end
   lspconfig.yamlls.setup({
-    capabilities = capabilities,
-    on_attach = on_attach,
+    capabilities = lsp.capabilities,
+    on_attach = lsp.on_attach,
     settings = {
       yaml = {
         schemas = safe_require("schemastore").json.schemas(),
@@ -292,15 +182,15 @@ safe_require("lspconfig", function(lspconfig)
     return false
   end
   lspconfig.pyright.setup({
-    capabilities = capabilities,
-    on_attach = on_attach,
+    capabilities = lsp.capabilities,
+    on_attach = lsp.on_attach,
     -- pyright is real noisy when we're using sqlalchemy
     diagnostics = not is_using_sqlalchemy(),
   })
   lspconfig.jsonls.setup({
     filetypes = { "json", "jsonc", "json5" },
-    capabilities = capabilities,
-    on_attach = on_attach,
+    capabilities = lsp.capabilities,
+    on_attach = lsp.on_attach,
     settings = {
       json = {
         schemas = safe_require("schemastore").json.schemas(),
@@ -309,7 +199,7 @@ safe_require("lspconfig", function(lspconfig)
   })
 
   lspconfig.tsserver.setup({
-    capabilities = capabilities,
+    capabilities = lsp.capabilities,
     root_dir = function(fname)
       local util = require("lspconfig.util")
       -- Disable tsserver when a flow project is detected
@@ -326,10 +216,10 @@ safe_require("lspconfig", function(lspconfig)
       end
       return nil
     end,
-    on_attach = on_attach,
+    on_attach = lsp.on_attach,
   })
   lspconfig.flow.setup({
-    capabilities = capabilities,
+    capabilities = lsp.capabilities,
     root_dir = function(fname)
       local util = require("lspconfig.util")
       -- Disable flow when a typescript project is detected
@@ -339,8 +229,8 @@ safe_require("lspconfig", function(lspconfig)
       return util.root_pattern(".flowconfig")(fname)
     end,
     on_attach = function(client, bufnr)
-      require("flow").on_attach(client, bufnr)
-      on_attach(client, bufnr)
+      safe_require("flow").on_attach(client, bufnr)
+      lsp.on_attach(client, bufnr)
     end,
     cmd = { "flow", "lsp", "--lazy" },
     settings = {
@@ -355,7 +245,7 @@ safe_require("lspconfig", function(lspconfig)
   local sumneko_root_path = os.getenv("HOME") .. "/.local/share/nvim/language-servers/lua-language-server"
   local sumneko_binary = sumneko_root_path .. "/bin/Linux/lua-language-server"
   lspconfig.sumneko_lua.setup({
-    capabilities = capabilities,
+    capabilities = lsp.capabilities,
     cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
     settings = {
       Lua = {
@@ -379,24 +269,24 @@ safe_require("lspconfig", function(lspconfig)
       },
     },
 
-    on_attach = on_attach,
+    on_attach = lsp.on_attach,
   })
 
   lspconfig.sorbet.setup({
-    capabilities = capabilities,
+    capabilities = lsp.capabilities,
     cmd = { "bundle", "exec", "srb", "tc", "--lsp" },
-    on_attach = on_attach,
+    on_attach = lsp.on_attach,
   })
 
   safe_require("null-ls", function(null_ls)
     null_ls.setup(vim.tbl_extend("keep", {
-      capabilities = capabilities,
+      capabilities = lsp.capabilities,
       root_dir = function(fname)
         local util = require("lspconfig.util")
         return util.root_pattern(".git", "Makefile", "setup.py", "setup.cfg", "pyproject.toml", "package.json")(fname)
           or util.path.dirname(fname)
       end,
-      on_attach = on_attach,
+      on_attach = lsp.on_attach,
     }, require("nullconfig")))
   end)
 end)

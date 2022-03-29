@@ -1,3 +1,5 @@
+local projects = require("projects")
+
 local function arduino_status()
   local ft = vim.api.nvim_buf_get_option(0, "ft")
   if ft ~= "arduino" then
@@ -12,15 +14,6 @@ local function arduino_status()
     line = line .. string.format(" (%s:%s)", port, vim.g.arduino_serial_baud)
   end
   return line
-end
-
-local function debug_treesitter_node()
-  local utils = require("nvim-treesitter.ts_utils")
-  if vim.g.debug_treesitter and vim.g.debug_treesitter ~= 0 then
-    return tostring(utils.get_node_at_cursor(0))
-  else
-    return ""
-  end
 end
 
 local function lsp_messages()
@@ -61,10 +54,9 @@ safe_require("lualine").setup({
         sources = { "nvim_diagnostic" },
         sections = { "error", "warn" },
       },
-      debug_treesitter_node,
       arduino_status,
     },
-    lualine_x = { "GkeepStatus", lsp_messages, "filetype" },
+    lualine_x = { projects[0].lualine_message, "GkeepStatus", lsp_messages, "filetype" },
     lualine_y = { "progress" },
     lualine_z = { "location" },
   },
