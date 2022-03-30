@@ -36,7 +36,7 @@ safe_require("telescope", function(telescope)
     vim.api.nvim_set_keymap(mode or "n", lhs, rhs, { noremap = true, silent = true })
   end
 
-  map("<leader>t", "<cmd>lua require('telescope.builtin').find_files({previewer=false})<cr>")
+  map("<leader>t", "<cmd>lua require('projects')[0].find_files()<cr>")
   map("<leader>bb", "<cmd>lua require('telescope.builtin').buffers({previewer=false, only_cwd=true})<cr>")
   map("<leader>ba", "<cmd>lua require('telescope.builtin').buffers({previewer=false})<cr>")
   map("<leader>fg", "<cmd>Telescope live_grep<CR>")

@@ -1,14 +1,19 @@
 -- To customize, add a local_projects.lua file to the runtimepath/lua directory and inside of it add
 -- require('projects')['/path/to/proj'] = { autoformat = false }
 
+local defaults = {
+  autoformat = true, -- true|false|'directive'
+  autoformat_threshold = 10000,
+  prettier_prefix = "yarn --silent ",
+  ts_prettier_format = true,
+  lualine_message = function() return '' end,
+  find_files = function()
+    require('telescope.builtin').find_files({previewer=false})
+  end
+}
+
 local M = {
-  ["_"] = {
-    autoformat = true, -- true|false|'directive'
-    autoformat_threshold = 10000,
-    prettier_prefix = "yarn --silent ",
-    ts_prettier_format = true,
-    lualine_message = function() return '' end,
-  },
+  ["_"] = defaults,
 }
 
 local loaded_local = false
@@ -26,18 +31,17 @@ setmetatable(M, {
       end
     end
 
-    local proj = rawget(self, key)
-    local maxlen = 0
-    if not proj then
-      for dir, config in pairs(self) do
-        if string.len(dir) > maxlen and string.sub(key, 0, string.len(dir)) == dir then
-          maxlen = string.len(dir)
-          proj = config
-        end
+    local dirs = vim.tbl_keys(M)
+    table.sort(dirs)
+    local proj = vim.deepcopy(defaults)
+    for _,dir in ipairs(dirs) do
+      if string.sub(key, 0, string.len(dir)) == dir then
+        proj = vim.tbl_deep_extend('force', proj, M[dir])
       end
     end
 
-    return proj or self._
+
+    return proj
   end,
 })
 
