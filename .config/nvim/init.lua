@@ -42,6 +42,7 @@ end
 
 vim.g.python3_host_prog = os.getenv("HOME") .. "/.envs/py3/bin/python"
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
+vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*")
 local autocmds = { "augroup StevearcConfig", "au!" }
 
 local opts = { noremap = true, silent = true }
