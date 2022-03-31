@@ -41,6 +41,11 @@ alias sct='systemctl'
 alias scu='systemctl --user'
 zlibd() (printf "\x1f\x8b\x08\x00\x00\x00\x00\x00" | cat - $@ | gzip -dc)
 alias mosh='mosh -6'
+if [ $MAC ]; then
+  idof() {
+    osascript -e "id of app \"$*\""
+  }
+fi
 ash() {
   autossh -t "$@" 'tmux -2 attach || tmux new'
 }
