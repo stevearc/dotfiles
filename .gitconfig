@@ -43,7 +43,7 @@
     rp = rev-parse --verify
     delmerged = !git branch --merged | grep -v $(git main) | grep -v develop | xargs git branch -d
     rom = !git rebase -Xpatience "origin/$(git main)"
-    main = !git symbolic-ref refs/remotes/origin/HEAD | cut -f 4 -d / | tr -d '[:space:]'
+    main = !git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || echo 'refs/remotes/origin/master' | cut -f 4 -d / | tr -d '[:space:]'
     ss = show --stat
     res = !vim -p `git status --porcelain | grep "^UU " | cut -d ' ' -f 2`
     wip = commit --no-verify -m WIP

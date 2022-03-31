@@ -108,11 +108,9 @@ Opts:
       link "$HERE/$dotfile" "$HOME/$dotfile"
     done
     grep "source .*dotfiles/.bashrc" ~/.bashrc >/dev/null 2>&1 || echo "source \"$HERE/.bashrc\"" >> ~/.bashrc
-    [ ! -e ~/.gitconfig ] && link "$HERE/.gitconfig" "$HOME/.gitconfig"
   else
     rsync -lrp $CLI_DOTFILES "$HOME"
     cp "$HERE/.bashrc" "$HOME"
-    [ ! -e ~/.gitconfig ] && cp "$HERE/.gitconfig" "$HOME/.gitconfig"
   fi
 
   mkdir -p "$HOME/.local/bin"
@@ -154,6 +152,8 @@ Opts:
   if [ -e ~/.bash_profile ]; then
     grep "source ~/.bashrc" ~/.bash_profile >/dev/null 2>&1 || echo "source ~/.bashrc" >>~/.bash_profile
   fi
+
+  configure-git
 }
 
 # shellcheck disable=SC2034
