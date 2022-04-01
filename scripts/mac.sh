@@ -54,6 +54,7 @@ setup-configs() {
       mirror "$src" "$dest" 1
     fi
   done
+  mirror "$HERE/.config/hammerspoon" "$HOME/.hammerspoon" 1
 }
 
 dc-install-neovim() {
