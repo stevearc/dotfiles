@@ -210,3 +210,6 @@
 [submodule "vimplugins/pair-ls.nvim"]
 	path = vimplugins/pair-ls.nvim
 	url = https://github.com/stevearc/pair-ls.nvim.git
+[submodule "vimplugins/vim-test"]
+	path = vimplugins/vim-test
+	url = https://github.com/vim-test/vim-test.git

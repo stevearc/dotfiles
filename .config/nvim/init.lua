@@ -369,5 +369,15 @@ if vim.g.nerd_font ~= false then
   })
 end
 
+-- vim-test
+vim.g['test#preserve_screen'] = 1
+vim.g['test#neovim#term_position'] = "vert"
+vim.g['test#strategy'] = "neovim"
+vim.api.nvim_set_keymap('n', '<leader>tt', '<cmd>TestFile<CR>', {silent=true})
+vim.api.nvim_set_keymap('n', '<leader>tn', '<cmd>TestNearest<CR>', {silent=true})
+vim.api.nvim_set_keymap('n', '<leader>ts', '<cmd>TestSuite<CR>', {silent=true})
+vim.api.nvim_set_keymap('n', '<leader>tl', '<cmd>TestLast<CR>', {silent=true})
+vim.api.nvim_set_keymap('n', '<leader>tv', '<cmd>TestVisit<CR>', {silent=true})
+
 table.insert(autocmds, "augroup END")
 vim.cmd(table.concat(autocmds, "\n"))
