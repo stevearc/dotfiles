@@ -162,10 +162,6 @@ vim.api.nvim_set_keymap("n", "k", [[(v:count > 5 ? "m'" . v:count . 'k' : 'gk')]
 vim.api.nvim_set_keymap("n", "<leader>p", '"0p', opts)
 vim.api.nvim_set_keymap("n", "<leader>P", '"0P', opts)
 
--- Move text in visual mode with J/K
-vim.api.nvim_set_keymap("v", "J", [[:m '>+1<CR>gv=gv]], opts)
-vim.api.nvim_set_keymap("v", "K", [[:m '<-2<CR>gv=gv]], opts)
-
 -- Always keep cursor vertically centered
 table.insert(autocmds, "au BufEnter,WinEnter,WinNew,VimResized *,*.* let &l:scrolloff=1+winheight(win_getid())/2")
 
