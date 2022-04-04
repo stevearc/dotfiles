@@ -87,4 +87,8 @@ configure-git() {
   git config --global alias.prev 'checkout @^'
   git config --global alias.next '!git checkout $(git rev-list --children --all | grep ^$(git rev-parse HEAD) | cut -f 2 -d " ")'
   git config --global alias.hookdir 'rev-parse --git-path hooks'
+
+  if hascmd fzf; then
+    git config --global alias.fb '!git for-each-ref --format="%(refname:short)" refs/heads | fzf | xargs git checkout'
+  fi
 }
