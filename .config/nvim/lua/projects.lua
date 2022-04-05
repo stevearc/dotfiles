@@ -7,8 +7,10 @@ local defaults = {
   prettier_prefix = "yarn --silent ",
   ts_prettier_format = true,
   lualine_message = function() return '' end,
-  find_files = function()
-    require('telescope.builtin').find_files({previewer=false})
+  find_files = function(opts)
+    opts = opts or {}
+    opts.previewer = false
+    require('telescope.builtin').find_files(opts)
   end
 }
 

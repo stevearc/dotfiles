@@ -37,7 +37,7 @@ nnoremap <silent><buffer><expr> <C-g> defx#do_action('print')
 nnoremap <silent><buffer><expr> > defx#do_action('resize', defx#get_context().winwidth + 10)
 nnoremap <silent><buffer><expr> < defx#do_action('resize', defx#get_context().winwidth - 10)
 nnoremap <silent><buffer> t <cmd>call <sid>OpenTerm()<CR>
-nnoremap <silent><buffer> <leader>t <cmd>call <sid>FindDirFiles()<CR>
+nnoremap <silent><buffer> <leader>ff <cmd>call <sid>FindDirFiles()<CR>
 nnoremap <silent><buffer> H <cmd>call nvim_set_current_dir(<sid>GetDefxDir())<CR>
 
 fun! s:GetDefxDir() abort
@@ -52,7 +52,7 @@ endfun
 
 fun! s:FindDirFiles() abort
   let l:path = s:GetDefxDir()
-  call luaeval("require('telescope.builtin').find_files({cwd = _A, hidden=true})", l:path)
+  call luaeval("require('projects')[0].find_files({cwd = _A, hidden=true})", l:path)
 endfun
 
 fun! s:OpenTerm() abort
