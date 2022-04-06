@@ -1,1 +1,0 @@
-setlocal fo-=t
