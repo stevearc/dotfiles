@@ -202,8 +202,8 @@ safe_require("lspconfig", function(lspconfig)
     capabilities = lsp.capabilities,
     root_dir = function(fname)
       local util = require("lspconfig.util")
-      -- Disable tsserver when a flow project is detected
-      if util.root_pattern(".flowconfig")(fname) then
+      -- Disable tsserver on js files when a flow project is detected
+      if not string.match(fname, '.tsx?$') and util.root_pattern(".flowconfig")(fname) then
         return nil
       end
       local ts_root = util.root_pattern("tsconfig.json")(fname)
