@@ -51,7 +51,7 @@ safe_require("cmp", function(cmp)
   local formatting = {}
   safe_require("lspkind", function(lspkind)
     formatting.format = lspkind.cmp_format({
-      with_text = true,
+      mode = "symbol",
       symbol_map = {
         Class = " ",
         Color = " ",
