@@ -150,8 +150,7 @@ return {
     -- javascript and derivatives
     sandbox_js_command(
       null_ls.builtins.formatting.prettier,
-      "prettier",
-      h.range_formatting_args_factory({ "--stdin-filepath", "$FILENAME" })
+      "prettier"
     ),
 
     -- lua
