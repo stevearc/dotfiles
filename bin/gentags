@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+
+rg --files | ctags -R --links=no -L -

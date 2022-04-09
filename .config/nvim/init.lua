@@ -340,6 +340,11 @@ safe_require("lightspeed", function(lightspeed)
   vim.api.nvim_set_keymap("", "<leader>s", "<Plug>Lightspeed_omni_s", {})
   vim.api.nvim_set_keymap("", "gs", "<Plug>Lightspeed_omni_s", {})
 end)
+safe_require("tags").setup({
+  on_attach = function(bufnr)
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", '<CMD>lua require("tags").goto_definition()<CR>', { silent = true })
+  end,
+})
 safe_require("hlslens", function(hlslens)
   hlslens.setup({
     calm_down = true,
