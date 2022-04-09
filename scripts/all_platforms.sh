@@ -17,7 +17,7 @@ post-install-neovim() {
 }
 
 configure-git() {
-  git config --global user.email || git config --global user.email stevearc@stevearc.com
+  git config --global user.email >/dev/null || git config --global user.email stevearc@stevearc.com
   git config --global color.ui auto
   git config --global user.name 'Steven Arcangeli'
   git config --global merge.tool vimdiff
@@ -63,7 +63,7 @@ configure-git() {
   git config --global alias.rp 'rev-parse --verify'
   git config --global alias.delmerged '!git branch --merged | grep -v $(git main) | grep -v develop | xargs git branch -d'
   git config --global alias.rom '!git rebase "origin/$(git main)"'
-  git config --global alias.main '!(set -o pipefail && git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | cut -f 4 -d / | tr -d "[:space:]" || echo "master")'
+  git config --global alias.main '!(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || echo "///master") | cut -f 4 -d / | tr -d "[:space:]"'
   git config --global alias.ss 'show --stat'
   git config --global alias.res '!vim -p $(git status --porcelain | grep "^UU " | cut -d " " -f 2)'
   git config --global alias.wip 'commit --no-verify -m WIP'
