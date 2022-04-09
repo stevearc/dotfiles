@@ -43,69 +43,67 @@ local function adjust_formatting_capabilities(client, bufnr)
 end
 
 M.on_attach = function(client, bufnr)
-    local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")
-    local config = ft_config[ft] or {}
+  local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")
+  local config = ft_config[ft] or {}
 
-    adjust_formatting_capabilities(client, bufnr)
+  adjust_formatting_capabilities(client, bufnr)
 
-    local function mapper(mode, key, result)
-      vim.api.nvim_buf_set_keymap(bufnr, mode, key, result, { noremap = true, silent = true })
-    end
+  local function mapper(mode, key, result)
+    vim.api.nvim_buf_set_keymap(bufnr, mode, key, result, { noremap = true, silent = true })
+  end
 
-    local function safemap(method, mode, key, result)
-      if client.resolved_capabilities[method] then
-        mapper(mode, key, result)
-      end
+  local function safemap(method, mode, key, result)
+    if client.resolved_capabilities[method] then
+      mapper(mode, key, result)
     end
+  end
 
-    for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-      if vim.api.nvim_win_get_buf(winid) == bufnr then
-        vim.api.nvim_win_set_option(winid, "signcolumn", "yes")
-      end
+  for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    if vim.api.nvim_win_get_buf(winid) == bufnr then
+      vim.api.nvim_win_set_option(winid, "signcolumn", "yes")
     end
+  end
 
-    -- Standard LSP
-    safemap("goto_definition", "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
-    safemap("declaration", "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
-    safemap("type_definition", "n", "gtd", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
-    safemap("implementation", "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
-    safemap("find_references", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
-    if config.help ~= false then
-      safemap("hover", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
-    end
-    if client.resolved_capabilities.signature_help then
-      mapper("i", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
-    end
-    if config.code_action ~= false then
-      mapper("n", "<leader>fa", "<cmd>lua vim.lsp.buf.code_action()<CR>")
-      mapper("v", "<leader>fa", ":<C-U>lua vim.lsp.buf.range_code_action()<CR>")
-    end
-    if client.resolved_capabilities.document_formatting then
-      vim.cmd([[aug LspAutoformat
+  -- Standard LSP
+  safemap("goto_definition", "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
+  safemap("declaration", "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
+  safemap("type_definition", "n", "gtd", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
+  safemap("implementation", "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
+  safemap("find_references", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
+  if config.help ~= false then
+    safemap("hover", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
+  end
+  safemap("signature_help", "i", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
+  if config.code_action ~= false then
+    safemap("code_action", "n", "<leader>fa", "<cmd>lua vim.lsp.buf.code_action()<CR>")
+    safemap("code_action", "v", "<leader>fa", ":<C-U>lua vim.lsp.buf.range_code_action()<CR>")
+  end
+  if client.resolved_capabilities.document_formatting then
+    vim.cmd([[aug LspAutoformat
         au! * <buffer>
         autocmd BufWritePre <buffer> lua stevearc.autoformat()
         aug END
       ]])
-      mapper("n", "=", "<cmd>lua vim.lsp.buf.formatting()<CR>")
-    end
-    safemap("document_range_formatting", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
-    safemap("rename", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
+    mapper("n", "=", "<cmd>lua vim.lsp.buf.formatting()<CR>")
+  end
+  safemap("document_range_formatting", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
+  safemap("rename", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
 
-    mapper("n", "<CR>", "<cmd>lua vim.diagnostic.open_float(0, {scope='line', border='rounded'})<CR>")
+  mapper("n", "<CR>", "<cmd>lua vim.diagnostic.open_float(0, {scope='line', border='rounded'})<CR>")
 
-    if client.resolved_capabilities.document_highlight then
-      vim.cmd([[aug LspShowReferences
+  if client.resolved_capabilities.document_highlight then
+    vim.cmd([[aug LspShowReferences
         au! * <buffer>
         autocmd CursorHold,CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()
         autocmd CursorMoved,WinLeave <buffer> lua vim.lsp.buf.clear_references()
         aug END
       ]])
-    end
-
-    vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-
-    safe_require("aerial").on_attach(client, bufnr)
   end
+
+  vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+
+  safe_require("aerial").on_attach(client, bufnr)
+end
 
 M.capabilities = vim.lsp.protocol.make_client_capabilities()
 safe_require("cmp_nvim_lsp", function(cmp_nvim_lsp)
