@@ -22,13 +22,13 @@ xidlehook \
   --detect-sleep \
   --not-when-fullscreen \
   --not-when-audio \
-  `# Dim screen after 30s when on battery` \
-  --timer 30 \
-  'upower -i $(upower -e | grep battery) | grep -q "state.*discharging" && bright set -s -t 1 .01' \
+  `# Dim screen after 90s when on battery` \
+  --timer 90 \
+  'upower -i $(upower -e | grep battery) | grep -q "state.*discharging" && bright set -s -t 0.3 .01' \
   'upower -i $(upower -e | grep battery) | grep -q "state.*discharging" && bright restore' \
   `# Dim screen after 3m when plugged in` \
-  --timer 150 \
-  'bright set -s -t 1 .01' \
+  --timer 90 \
+  'bright set -s -t 0.3 .01' \
   'bright restore' \
   `# Turn off screen after 10m` \
   --timer 420 \
