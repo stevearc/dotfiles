@@ -17,10 +17,12 @@ keyboard-shortcuts() {
   # $: Shift
   # ~: Alt
   # ^: Ctrl
-  defaults write -g NSUserKeyEquivalents -dict-add "Copy" -string '^c'
-  defaults write -g NSUserKeyEquivalents -dict-add "Cut" -string '^x'
-  defaults write -g NSUserKeyEquivalents -dict-add "Paste" -string '^v'
-  defaults write -g NSUserKeyEquivalents -dict-add "Paste and Match Style" -string '^$v'
+
+  # Unfortunately these do not appear to work properly in Chrome, and in fact make me VERY ANGRY
+  # defaults write -g NSUserKeyEquivalents -dict-add "Copy" -string '^c'
+  # defaults write -g NSUserKeyEquivalents -dict-add "Cut" -string '^x'
+  # defaults write -g NSUserKeyEquivalents -dict-add "Paste" -string '^v'
+  # defaults write -g NSUserKeyEquivalents -dict-add "Paste and Match Style" -string '^$v'
   defaults write -g NSUserKeyEquivalents -dict-add "Select All" -string '^a'
   defaults write -g NSUserKeyEquivalents -dict-add "Undo" -string '^u'
   defaults write -g NSUserKeyEquivalents -dict-add "Redo" -string '^$u'
