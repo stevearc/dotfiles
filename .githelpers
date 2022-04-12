@@ -19,7 +19,8 @@ AUTHOR="%C(bold blue)<%an>%Creset"
 REFS="%C(auto)%d%Creset"
 SUBJECT="%s"
 
-FORMAT="$HASH}$RELATIVE_TIME}$AUTHOR}$REFS $SUBJECT"
+# FORMAT="$HASH}$RELATIVE_TIME}$AUTHOR}$REFS $SUBJECT"
+FORMAT="$HASH $RELATIVE_TIME $AUTHOR $REFS $SUBJECT"
 
 pretty_git_log() {
   git log --graph --abbrev-commit --date=relative --color=always --pretty="tformat:${FORMAT}" "$@" \
@@ -32,12 +33,10 @@ pretty_git_log() {
     
 
     # Replace (2 years, 5 months) with (2 years)
-    sed -Ee 's/(^[^<]*), [[:digit:]]+ .*months?\)/\1)/' \
-    |
-    
+    sed -Ee 's/(^[^<]*), [[:digit:]]+ .*months?\)/\1)/'
 
     # Line columns up based on } delimiter
-    column -s '}' -t
+    # column -s '}' -t
 }
 
 pretty_git_log_paged() {
@@ -82,9 +81,9 @@ contextual_git_log() {
   local cutoff
   cutoff=$((head_line - height / 2))
   if [ $cutoff -le 0 ]; then
-    head -n "$height" "$tmpfile" | column -s '}' -t
+    head -n "$height" "$tmpfile" # | column -s '}' -t
   else
-    tail -n "+$cutoff" "$tmpfile" | head -n "$height" | column -s '}' -t
+    tail -n "+$cutoff" "$tmpfile" | head -n "$height" # | column -s '}' -t
   fi
 }
 
@@ -99,7 +98,7 @@ contextual_git_log_paged() {
 
 push_current_branch() {
   local branch
-  branch=$(_get_branch)
+  branch=$(git branch --show-current)
   git push -u origin "$branch" "$@"
 }
 
@@ -111,7 +110,7 @@ update_master() {
   fi
 
   local branch
-  branch=$(_get_branch)
+  branch=$(git branch --show-current)
   local master
   master=$(git main)
   if [ "$branch" != "$master" ]; then
@@ -136,6 +135,20 @@ _github() {
   curl -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/$uri" 2>/dev/null
 }
 
+_get_repo_url() {
+  local url="$(git remote get-url origin)"
+  if [[ "$url" =~ ^http ]]; then
+    # Strip the .git off the end, if present.
+    echo "${url%.git}"
+  else
+    echo "$url" | \
+      # Trim the git@ from the start
+      sed 's/^.*@//' | \
+      sed 's|:|/|' | \
+      sed 's|^|https://|'
+  fi
+}
+
 _get_repo() {
   local repo
   repo=$(git remote -v | grep push | cut -f 2 | cut -f 2 -d : | cut -f 1 -d ' ')
@@ -143,17 +156,15 @@ _get_repo() {
   echo "${repo%.git}"
 }
 
-_get_branch() {
-  git branch | cut -d ' ' -f 2 | tr -d '\n'
-}
-
-_get_browser() {
+_open_in_browser() {
+  local url="${1?Usage: _open_in_browser URL}"
+  echo "$url"
   if [ "$(uname -s)" = "Darwin" ]; then
-    echo "open"
+    open "$url"
   elif [ -n "$BROWSER" ]; then
-    echo "$BROWSER"
+    $BROWSER "$url"
   else
-    echo "google-chrome"
+    google-chrome "$url"
   fi
 }
 
@@ -175,20 +186,18 @@ create_pull_request() {
 
   local repo
   repo=$(_get_repo)
-  branch=$(_get_branch)
   local branch
+  branch=$(git branch --show-current)
 
-  local browser
-  browser=$(_get_browser)
-  local url="https://github.com/$repo/compare/$branch?expand=1"
+  local url="$(_get_repo_url)/compare/$branch?expand=1"
   if [ -n "$fix" ]; then
     local issue_title
     issue_title=$(_github "repos/$repo/issues/$fix" | grep title | cut -f 4 -d \" | head -n 1)
-    local body="Fix #$fix: $issue_title"
+    local body="fix: $issue_title (#$fix)"
     body="$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$body")"
     url="$url&body=$body"
   fi
-  $browser "$url"
+  _open_in_browser "$url"
 }
 
 commit_fix() {
@@ -209,10 +218,8 @@ find_pull_request() {
   local commit="$1"
   local repo
   repo=$(_get_repo)
-  local url="https://github.com/$repo/search?q=$commit&type=Issues"
-  local browser
-  browser=$(_get_browser)
-  $browser "$url"
+  local url="$(_get_repo_url)/search?q=$commit&type=Issues"
+  _open_in_browser "$url"
 }
 
 show_modified_files() {
