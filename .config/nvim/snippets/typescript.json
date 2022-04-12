@@ -1,52 +1,27 @@
 {
   "ternary": {
-    "prefix": [
-      "?"
-    ],
-    "body": [
-      "$1 ? $2 : $3"
-    ]
+    "prefix": ["?"],
+    "body": ["$1 ? $2 : $3"]
   },
   "oneLineLambda": {
-    "prefix": [
-      "f"
-    ],
-    "body": [
-      "($1) => $0"
-    ]
+    "prefix": ["f"],
+    "body": ["($1) => $0"]
   },
   "multiLineLambda": {
-    "prefix": [
-      "ff"
-    ],
-    "body": [
-      "($1) => {",
-      "  $1",
-      "}"
-    ]
+    "prefix": ["ff"],
+    "body": ["($1) => {", "  $1", "}"]
   },
   "consoleLog": {
-    "prefix": [
-      "log"
-    ],
-    "body": [
-      "console.log($1)"
-    ]
+    "prefix": ["log"],
+    "body": ["console.log($1)"]
   },
   "import": {
-    "prefix": [
-      "imp",
-      "import"
-    ],
-    "body": [
-      "import $1 from '$2';"
-    ]
+    "prefix": ["imp", "import"],
+    "body": ["import $1 from '$2';"]
   },
   "className": {
     "prefix": "cn",
-    "body": [
-      "className={$1}"
-    ]
+    "body": ["className={$1}"]
   },
   "makeStyles": {
     "prefix": "makeStyles",
@@ -62,30 +37,37 @@
   },
   "useStyles": {
     "prefix": "useStyles",
-    "body": [
-      "const classes = useStyles();"
-    ]
+    "body": ["const classes = useStyles();"]
   },
   "useState": {
     "prefix": "useState",
-    "body": [
-      "const [$1, set$2] = useState($3);"
-    ]
+    "body": ["const [$1, set$2] = useState($3);"]
   },
   "useEffect": {
     "prefix": "useEffect",
-    "body": [
-      "useEffect(() => {",
-      "  $1",
-      "}, [$2]);"
-    ]
+    "body": ["useEffect(() => {", "  $1", "}, [$2]);"]
   },
   "useMemo": {
     "prefix": "useMemo",
+    "body": ["const $1 = useMemo(() => {", "  $2", "}, [$3]);"]
+  },
+  "React component": {
+    "prefix": ["comp"],
     "body": [
-      "const $1 = useMemo(() => {",
-      "  $2",
-      "}, [$3]);"
+      "function $1(props: ${2:Props}): React.ReactElement {",
+      "  $0",
+      "}"
+    ]
+  },
+  "Default react component": {
+    "prefix": ["newComp"],
+    "body": [
+      "import * as React from 'react';",
+      "",
+      "type ${TM_FILENAME_BASE}Props = {}",
+      "export default function $TM_FILENAME_BASE(props: ${TM_FILENAME_BASE}Props): React.ReactElement {",
+      "  $0",
+      "}"
     ]
   }
 }
