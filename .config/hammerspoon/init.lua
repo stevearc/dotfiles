@@ -9,6 +9,8 @@ end
 
 sa = hs.alert.show
 
+hs.window.animationDuration = 0
+
 -- Hot reload config
 function reloadConfig(files)
     doReload = false
@@ -39,46 +41,13 @@ local switchers = setmetatable({}, {
 })
 
 hs.hotkey.bind('cmd','`',function()
-  local curwin = hs.window.focusedWindow()
-  local screen = curwin:screen()
-  local wins = hs.fnutils.filter(
-      hs.window.orderedWindows(),
-      hs.fnutils.partial(isInScreen, screen))
-  local idx
-  for i,win in ipairs(wins) do
-    if curwin == win then
-      idx = i
-      break
-    end
-  end
-  idx = (idx % #wins) + 1
-  wins[idx]:focus()
-  -- TODO switcher wasn't properly iterating windows on the laptop screen
-  -- local switcher = switchers[hs.window.focusedWindow():screen():name()]
-  -- switcher:next()
+  local switcher = switchers[hs.window.focusedWindow():screen():id()]
+  switcher:next()
 end)
 
 hs.hotkey.bind('cmd-shift','`',function()
-  local curwin = hs.window.focusedWindow()
-  local screen = curwin:screen()
-  local wins = hs.fnutils.filter(
-      hs.window.orderedWindows(),
-      hs.fnutils.partial(isInScreen, screen))
-  local idx
-  for i,win in ipairs(wins) do
-    if curwin == win then
-      idx = i
-      break
-    end
-  end
-  idx = idx - 1
-  if idx == 0 then
-    idx = #wins
-  end
-  wins[idx]:focus()
-
-  -- local switcher = switchers[hs.window.focusedWindow():screen():name()]
-  -- switcher:previous()
+  local switcher = switchers[hs.window.focusedWindow():screen():name()]
+  switcher:previous()
 end)
 
 function focusScreen(screen)
@@ -95,6 +64,14 @@ function focusScreen(screen)
   -- Move mouse to center of screen
   local pt = hs.geometry.rectMidPoint(screen:fullFrame())
   hs.mouse.absolutePosition(pt)
+end
+
+for i=1,5 do
+  hs.hotkey.bind({'cmd', 'shift'},string.format("%d", i),function()
+    -- TODO this doesn't seem to work for space 2, also moving to space 4
+    -- conflicts with screenshot region
+    hs.spaces.moveWindowToSpace(hs.window.focusedWindow(), i)
+  end)
 end
 
 hs.hotkey.bind({'cmd', 'shift'}, 'd', function()
