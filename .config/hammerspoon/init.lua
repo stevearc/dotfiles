@@ -66,13 +66,14 @@ function focusScreen(screen)
   hs.mouse.absolutePosition(pt)
 end
 
-for i=1,5 do
-  hs.hotkey.bind({'cmd', 'shift'},string.format("%d", i),function()
-    -- TODO this doesn't seem to work for space 2, also moving to space 4
-    -- conflicts with screenshot region
-    hs.spaces.moveWindowToSpace(hs.window.focusedWindow(), i)
-  end)
-end
+-- for i=1,3 do
+--   hs.hotkey.bind({'cmd', 'shift'},string.format("%d", i),function()
+--     -- TODO this doesn't seem to work for space 2, also moving to space 4
+--     -- conflicts with screenshot region
+--     -- cmd+shift+2 conflicts with stop screenflow
+--     hs.spaces.moveWindowToSpace(hs.window.focusedWindow(), i)
+--   end)
+-- end
 
 hs.hotkey.bind({'cmd', 'shift'}, 'd', function()
   log.i("Debug")
