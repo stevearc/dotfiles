@@ -162,7 +162,7 @@ vim.api.nvim_set_keymap("n", "<leader>P", '"0P', opts)
 -- Always keep cursor vertically centered
 table.insert(autocmds, "au BufEnter,WinEnter,WinNew,VimResized *,*.* let &l:scrolloff=1+winheight(win_getid())/2")
 
-vim.g.treesitter_languages = "maintained"
+vim.g.treesitter_languages = "all"
 vim.g.treesitter_languages_blacklist = { "supercollider" }
 
 -- Start with folds open
@@ -340,7 +340,13 @@ end)
 safe_require("tags").setup({
   on_attach = function(bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", '<CMD>lua require("tags").goto_definition()<CR>', { silent = true })
-    vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-]>", '<CMD>lua require("tags").goto_definition()<CR>', { silent = true })
+    vim.api.nvim_buf_set_keymap(
+      bufnr,
+      "n",
+      "<C-]>",
+      '<CMD>lua require("tags").goto_definition()<CR>',
+      { silent = true }
+    )
   end,
 })
 safe_require("hlslens", function(hlslens)
