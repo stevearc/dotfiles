@@ -19,9 +19,6 @@
 [submodule "parseargs"]
 	path = parseargs
 	url = https://github.com/stevearc/parseargs.git
-[submodule "vimplugins/vim-polyglot"]
-	path = vimplugins/vim-polyglot
-	url = https://github.com/sheerun/vim-polyglot
 [submodule "vimplugins/closetag"]
 	path = vimplugins/closetag
 	url = https://github.com/docunext/closetag.vim

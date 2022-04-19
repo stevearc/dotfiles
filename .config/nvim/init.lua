@@ -58,9 +58,6 @@ vim.api.nvim_set_keymap("n", "<f3>", [[<cmd>lua require'plenary.profile'.stop()<
 vim.g.nerd_font = true
 vim.g.debug_treesitter = false
 
--- The syntax plugin was causing lag with multiple windows visible
-vim.g.polyglot_disabled = { "sh" }
-
 -- Space is leader
 vim.g.mapleader = " "
 
