@@ -1,0 +1,216 @@
+{
+  "title": "stevearc's Slack fixes",
+  "rules": [
+    {
+      "description": "Slack Ctrl/Cmd swap",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "k"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": ["com.tinyspeck.slackmacgap"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "modifiers": ["left_gui"],
+              "key_code": "k"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "o"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "description": "",
+              "bundle_identifiers": ["com.tinyspeck.slackmacgap"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "o",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "g"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "description": "",
+              "bundle_identifiers": ["com.tinyspeck.slackmacgap"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "g",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "i"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "description": "",
+              "bundle_identifiers": ["com.tinyspeck.slackmacgap"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "i",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control", "left_shift"]
+            },
+            "key_code": "a"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "description": "",
+              "bundle_identifiers": ["com.tinyspeck.slackmacgap"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "a",
+              "modifiers": ["left_gui", "left_shift"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control", "left_shift"]
+            },
+            "key_code": "t"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "description": "",
+              "bundle_identifiers": ["com.tinyspeck.slackmacgap"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "t",
+              "modifiers": ["left_gui", "left_shift"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control", "left_shift"]
+            },
+            "key_code": "k"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "description": "",
+              "bundle_identifiers": ["com.tinyspeck.slackmacgap"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "k",
+              "modifiers": ["left_gui", "left_shift"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control", "left_shift"]
+            },
+            "key_code": "r"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "description": "",
+              "bundle_identifiers": ["com.tinyspeck.slackmacgap"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "r",
+              "modifiers": ["left_gui", "left_shift"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "r"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "description": "",
+              "bundle_identifiers": ["com.tinyspeck.slackmacgap"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "r",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

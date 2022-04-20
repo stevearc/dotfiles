@@ -1,0 +1,251 @@
+{
+  "title": "stevearc's mac fixes",
+  "rules": [
+    {
+      "description": "Swap Cmd+tab and Cmd+tilde",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_gui"]
+            },
+            "key_code": "tab"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "grave_accent_and_tilde",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_gui"]
+            },
+            "key_code": "grave_accent_and_tilde"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "tab",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Cmd+Shift+R for spotlight",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_gui", "left_shift"]
+            },
+            "key_code": "r"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "spacebar",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Ctrl+Shift+v to paste in terminal",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control", "left_shift"]
+            },
+            "key_code": "v"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": ["io.alacritty", "com.apple.Terminal"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "v",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "System Ctrl/Cmd swap",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "f"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "description": "",
+              "bundle_identifiers": ["io.alacritty", "com.apple.Terminal"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "f",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "a"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "description": "",
+              "bundle_identifiers": ["io.alacritty", "com.apple.Terminal"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "a",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "c"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "bundle_identifiers": ["io.alacritty", "com.apple.Terminal"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "c",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "v"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "bundle_identifiers": ["io.alacritty", "com.apple.Terminal"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "v",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control", "left_shift"]
+            },
+            "key_code": "v"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "bundle_identifiers": ["io.alacritty", "com.apple.Terminal"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "v",
+              "modifiers": ["left_gui", "left_shift"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "z"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "bundle_identifiers": ["io.alacritty", "com.apple.Terminal"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "z",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control", "left_shift"]
+            },
+            "key_code": "z"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "bundle_identifiers": ["io.alacritty", "com.apple.Terminal"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "z",
+              "modifiers": ["left_gui", "left_shift"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

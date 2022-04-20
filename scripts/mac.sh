@@ -18,36 +18,10 @@ keyboard-shortcuts() {
   # ~: Alt
   # ^: Ctrl
 
-  # Unfortunately these do not appear to work properly in Chrome, and in fact make me VERY ANGRY
-  # defaults write -g NSUserKeyEquivalents -dict-add "Copy" -string '^c'
-  # defaults write -g NSUserKeyEquivalents -dict-add "Cut" -string '^x'
-  # defaults write -g NSUserKeyEquivalents -dict-add "Paste" -string '^v'
-  # defaults write -g NSUserKeyEquivalents -dict-add "Paste and Match Style" -string '^$v'
-  defaults write -g NSUserKeyEquivalents -dict-add "Select All" -string '^a'
-  defaults write -g NSUserKeyEquivalents -dict-add "Undo" -string '^u'
-  defaults write -g NSUserKeyEquivalents -dict-add "Redo" -string '^$u'
-  defaults write -g NSUserKeyEquivalents -dict-add "Find..." -string '^f'
-
-  defaults write com.google.Chrome NSUserKeyEquivalents -dict-add "Close Tab" -string '^w'
-  defaults write com.google.Chrome NSUserKeyEquivalents -dict-add "New Tab" -string '^t'
   defaults write com.google.Chrome NSUserKeyEquivalents -dict-add "Reopen Closed Tab" -string '^$t'
   defaults write com.google.Chrome NSUserKeyEquivalents -dict-add "New Window" -string '^n'
   defaults write com.google.Chrome NSUserKeyEquivalents -dict-add "New Incognito Window" -string '^$n'
-  defaults write com.google.Chrome NSUserKeyEquivalents -dict-add 'Use Selection for Find' -string '^e'
   defaults write com.google.Chrome NSUserKeyEquivalents -dict-add 'Developer Tools' -string '^Si'
-  defaults write com.google.Chrome NSUserKeyEquivalents -dict-add 'Reload This Page' -string '^r'
-  defaults write com.google.Chrome NSUserKeyEquivalents -dict-add 'Open Location...' -string '^l'
-  defaults write io.alacritty NSUserKeyEquivalents -dict-add "Paste" -string '^Sv'
-  defaults write io.alacritty NSUserKeyEquivalents -dict-add "Copy" -string '^Sc'
-  defaults write com.tinyspeck.slackmacgap NSUserKeyEquivalents -dict-add "Switch to Channel" -string '^k'
-  defaults write com.tinyspeck.slackmacgap NSUserKeyEquivalents -dict-add "All Unreads" -string '^$a'
-  defaults write com.tinyspeck.slackmacgap NSUserKeyEquivalents -dict-add "Threads" -string '^$t'
-  defaults write com.tinyspeck.slackmacgap NSUserKeyEquivalents -dict-add "All DMs" -string '^$k'
-  defaults write com.tinyspeck.slackmacgap NSUserKeyEquivalents -dict-add "Back" -string '^o'
-  defaults write com.tinyspeck.slackmacgap NSUserKeyEquivalents -dict-add "Forward" -string '^i'
-  defaults write com.tinyspeck.slackmacgap NSUserKeyEquivalents -dict-add "Reload" -string '^r'
-  defaults write com.tinyspeck.slackmacgap NSUserKeyEquivalents -dict-add "Force Reload" -string '^$r'
-  defaults write com.tinyspeck.slackmacgap NSUserKeyEquivalents -dict-add "Search" -string '^g'
 }
 
 # shellcheck disable=SC2034

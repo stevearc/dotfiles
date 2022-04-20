@@ -1,0 +1,378 @@
+{
+  "title": "stevearc's Chrome fixes",
+  "rules": [
+    {
+      "description": "Chrome Ctrl/Cmd swap",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "t"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "description": "",
+              "bundle_identifiers": ["com.google.Chrome"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "t",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "f"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "description": "",
+              "bundle_identifiers": ["com.google.Chrome"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "f",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "r"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "description": "",
+              "bundle_identifiers": ["com.google.Chrome"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "r",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Ctrl+num to switch Chrome tabs",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "1"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "1",
+              "modifiers": ["left_gui"],
+              "lazy": false
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "2"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "2",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "3"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "3",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "4"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "4",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "5"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "5",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "6"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "6",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "7"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "7",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "8"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "8",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
+            "key_code": "9"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "9",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Cmd+num to Cmd+opt+num for mission ctrl (to not conflict with chrome tab mapping)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_gui"]
+            },
+            "key_code": "1"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "1",
+              "modifiers": ["left_gui", "left_alt"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_gui"]
+            },
+            "key_code": "2"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "2",
+              "modifiers": ["left_gui", "left_alt"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_gui"]
+            },
+            "key_code": "3"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "3",
+              "modifiers": ["left_gui", "left_alt"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_gui"]
+            },
+            "key_code": "4"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "4",
+              "modifiers": ["left_gui", "left_alt"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_gui"]
+            },
+            "key_code": "5"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "5",
+              "modifiers": ["left_gui", "left_alt"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_gui"]
+            },
+            "key_code": "6"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "6",
+              "modifiers": ["left_gui", "left_alt"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_gui"]
+            },
+            "key_code": "7"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "7",
+              "modifiers": ["left_gui", "left_alt"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_gui"]
+            },
+            "key_code": "8"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "8",
+              "modifiers": ["left_gui", "left_alt"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_gui"]
+            },
+            "key_code": "9"
+          },
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "9",
+              "modifiers": ["left_gui", "left_alt"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
