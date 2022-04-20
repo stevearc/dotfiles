@@ -163,7 +163,7 @@ vim.api.nvim_set_keymap("n", "<leader>P", '"0P', opts)
 table.insert(autocmds, "au BufEnter,WinEnter,WinNew,VimResized *,*.* let &l:scrolloff=1+winheight(win_getid())/2")
 
 vim.g.treesitter_languages = "all"
-vim.g.treesitter_languages_blacklist = { "supercollider" }
+vim.g.treesitter_languages_blacklist = { "supercollider", "phpdoc" }
 
 -- Start with folds open
 vim.o.foldlevelstart = 99
