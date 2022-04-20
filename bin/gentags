@@ -1,4 +1,4 @@
 #!/bin/bash
 set -e
 
-rg --files | ctags -R --links=no -L -
+rg --files | ctags -R --links=no -L - 2>&1 | grep -v "ignoring null tag"
