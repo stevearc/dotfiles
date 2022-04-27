@@ -29,21 +29,53 @@ safe_require("lspconfig", function(lspconfig)
     ]])
   end
 
-  -- Make all the "jump" commands call zv after execution
-  local jump_callbacks = {
-    "textDocument/declaration",
-    "textDocument/definition",
-    "textDocument/typeDefinition",
-    "textDocument/implementation",
-  }
-  for _, cb in pairs(jump_callbacks) do
-    local orig_callback = vim.lsp.handlers[cb]
-    local new_callback = function(...)
-      orig_callback(...)
-      vim.cmd("normal! zv")
+
+  local function location_handler(_, result, ctx, _)
+    if result == nil or vim.tbl_isempty(result) then
+      local _ = log.info() and log.info(ctx.method, 'No location found')
+      return nil
     end
-    vim.lsp.handlers[cb] = new_callback
+    local client = vim.lsp.get_client_by_id(ctx.client_id)
+
+    -- textDocument/definition can return Location or Location[]
+    -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
+
+    local has_telescope, telescope = pcall(require, 'telescope')
+    if vim.tbl_islist(result) then
+      if #result == 1 then
+        vim.lsp.util.jump_to_location(result[1], client.offset_encoding)
+      elseif has_telescope then
+        local opts = {}
+        local pickers = require "telescope.pickers"
+        local finders = require "telescope.finders"
+        local make_entry = require "telescope.make_entry"
+        local conf = require("telescope.config").values
+        local items = vim.lsp.util.locations_to_items(result, client.offset_encoding)
+        pickers.new(opts, {
+          prompt_title = "LSP Locations",
+          finder = finders.new_table {
+            results = items,
+            entry_maker = make_entry.gen_from_quickfix(opts),
+          },
+          previewer = conf.qflist_previewer(opts),
+          sorter = conf.generic_sorter(opts),
+        }):find()
+      else
+        vim.fn.setqflist({}, ' ', {
+          title = 'LSP locations',
+          items = vim.lsp.util.locations_to_items(result, client.offset_encoding)
+        })
+        vim.cmd([[botright copen]])
+      end
+    else
+      vim.lsp.util.jump_to_location(result, client.offset_encoding)
+    end
   end
+
+  vim.lsp.handlers['textDocument/declaration'] = location_handler
+  vim.lsp.handlers['textDocument/definition'] = location_handler
+  vim.lsp.handlers['textDocument/typeDefinition'] = location_handler
+  vim.lsp.handlers['textDocument/implementation'] = location_handler
 
   vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
   vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
