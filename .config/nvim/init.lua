@@ -306,6 +306,7 @@ safe_require("aerial", function(aerial)
     link_tree_to_folds = true,
     manage_folds = true,
     nerd_font = vim.g.nerd_font,
+    max_width = {80, .2},
 
     -- backends = { "treesitter", "markdown" },
     -- backends = { "lsp", "markdown" },
