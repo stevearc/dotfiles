@@ -33,6 +33,29 @@
             "modifiers": {
               "mandatory": ["left_control"]
             },
+            "key_code": "w"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "description": "",
+              "bundle_identifiers": ["com.google.Chrome"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "w",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
             "key_code": "f"
           },
           "conditions": [
