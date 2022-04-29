@@ -49,8 +49,9 @@ pretty_git_log_paged() {
 }
 
 contextual_git_log() {
-  local height="${1#-}"
-  if [ -n "$height" ]; then
+  local height=
+  if [[ "$1" =~ ^\-[0-9]+$ ]]; then
+    height="${1#-}"
     shift
   else
     height=20
@@ -242,6 +243,60 @@ show_modified_files() {
         echo "$root/$filename"
       done
   fi
+}
+
+confirm() {
+  # $1 (optional) [str] - Prompt string
+  # $2 (optional) [y|n] - The default return value if user just hits enter
+  local prompt="${1-Are you sure?}"
+  local default="$2"
+  case $default in
+    [yY])
+      prompt="$prompt [Y/n] "
+      ;;
+    [nN])
+      prompt="$prompt [y/N] "
+      ;;
+    *)
+      prompt="$prompt [y/n] "
+      ;;
+  esac
+  while true; do
+    read -r -p "$prompt" response
+    case $response in
+      [yY][eE][sS] | [yY])
+        return 0
+        ;;
+      [nN][oO] | [nN])
+        return 1
+        ;;
+      *)
+        if [ -z "$response" ]; then
+          case $default in
+            [yY])
+              return 0
+              ;;
+            [nN])
+              return 1
+              ;;
+          esac
+        fi
+        ;;
+    esac
+  done
+}
+
+delete_merged() {
+  # Now find local branches with no remote
+  for branch in $(git branch --format "%(refname:short) %(upstream)" | awk '{if (!$2) print $1;}') $(git branch --merged "$(git main)" | grep -v $(git main)); do
+    if git rev-parse "$branch" > /dev/null 2>&1; then
+      pretty_git_log -20 "$branch"
+      echo ""
+      if confirm "Delete $branch?" "n"; then
+        git branch -d "$branch"
+      fi
+    fi
+  done
 }
 
 cmd=$1

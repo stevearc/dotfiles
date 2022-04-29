@@ -61,7 +61,7 @@ configure-git() {
   git config --global alias.su 'submodule update --init --recursive'
   git config --global alias.sclean '!git submodule update --init --recursive && git submodule foreach --recursive "git reset --hard" && git submodule foreach --recursive "git clean -fd"'
   git config --global alias.rp 'rev-parse --verify'
-  git config --global alias.delmerged '!git branch --merged | grep -v $(git main) | grep -v develop | xargs git branch -d'
+  git config --global alias.delm '!bash ~/.githelpers delete_merged'
   git config --global alias.rom '!git rebase "origin/$(git main)"'
   git config --global alias.main '!(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || echo "///master") | cut -f 4 -d / | tr -d "[:space:]"'
   git config --global alias.ss 'show --stat'
