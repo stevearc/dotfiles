@@ -1,0 +1,6 @@
+{
+  "print": {
+    "prefix": ["print", "p"],
+    "body": ["std.debug.print(\"$1\\n\", .{$2});"]
+  }
+}

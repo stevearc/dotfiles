@@ -43,6 +43,10 @@
       {
         "language": "typescript",
         "path": "snippets/typescript.json"
+      },
+      {
+        "language": "zig",
+        "path": "snippets/zig.json"
       }
     ]
   }

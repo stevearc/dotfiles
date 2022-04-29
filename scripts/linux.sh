@@ -61,6 +61,29 @@ install-language-rust() {
   fi
 }
 
+install-language-zig() {
+  local ZIG_VERSION=0.9.1
+  if ! hascmd zig; then
+    local dirname="zig-linux-x86_64-${ZIG_VERSION}"
+    local tarball="zig-linux-x86_64-${ZIG_VERSION}.tar.xz"
+    local url="https://ziglang.org/download/${ZIG_VERSION}/$tarball"
+    pushd /tmp >/dev/null
+    curl -L "$url" -o "$tarball"
+    tar -xf "$tarball"
+    mv "$dirname" ~/.local/share
+    ln -s "$HOME/.local/share/${dirname}/zig" "$HOME/.local/bin/zig"
+    popd >/dev/null
+  fi
+  if ! hascmd zls; then
+    mkdir -p ~/.local/share/nvim/language-servers/zls
+    pushd ~/.local/share/nvim/language-servers/zls >/dev/null
+    curl -L https://github.com/zigtools/zls/releases/latest/download/x86_64-linux.tar.xz | tar -xJ --strip-components=1 -C .
+    chmod +x "$HOME/.local/share/nvim/language-servers/zls/zls"
+    ln -s "$HOME/.local/share/nvim/language-servers/zls/zls" "$HOME/.local/bin/zls"
+    popd >/dev/null
+  fi
+}
+
 install-language-go() {
   if [ ! -e ~/.local/share/go ]; then
     pushd /tmp

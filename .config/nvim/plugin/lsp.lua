@@ -192,6 +192,7 @@ safe_require("lspconfig", function(lspconfig)
     "omnisharp",
     "rust_analyzer",
     "vimls",
+    "zls",
   }
   for _, server in ipairs(lspservers) do
     lspconfig[server].setup({
