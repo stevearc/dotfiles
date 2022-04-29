@@ -1,4 +1,5 @@
 local projects = require("projects")
+local lsp = require("lsp")
 
 vim.g.smartformat_enabled = true
 vim.cmd([[command! FormatDisable let g:smartformat_enabled = v:false]])
@@ -51,8 +52,7 @@ function stevearc.autoformat()
   if project.autoformat == "directive" and not has_format_directive() then
     return
   end
-  local pos = vim.api.nvim_win_get_cursor(0)
+  local restore = lsp.save_win_positions(0)
   vim.lsp.buf.formatting_sync(nil, 1000)
-  -- This can fail if the file is shorter now
-  pcall(vim.api.nvim_win_set_cursor, 0, pos)
+  restore()
 end

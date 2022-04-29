@@ -29,10 +29,9 @@ safe_require("lspconfig", function(lspconfig)
     ]])
   end
 
-
   local function location_handler(_, result, ctx, _)
     if result == nil or vim.tbl_isempty(result) then
-      local _ = log.info() and log.info(ctx.method, 'No location found')
+      local _ = log.info() and log.info(ctx.method, "No location found")
       return nil
     end
     local client = vim.lsp.get_client_by_id(ctx.client_id)
@@ -40,30 +39,30 @@ safe_require("lspconfig", function(lspconfig)
     -- textDocument/definition can return Location or Location[]
     -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
 
-    local has_telescope, telescope = pcall(require, 'telescope')
+    local has_telescope, telescope = pcall(require, "telescope")
     if vim.tbl_islist(result) then
       if #result == 1 then
         vim.lsp.util.jump_to_location(result[1], client.offset_encoding)
       elseif has_telescope then
         local opts = {}
-        local pickers = require "telescope.pickers"
-        local finders = require "telescope.finders"
-        local make_entry = require "telescope.make_entry"
+        local pickers = require("telescope.pickers")
+        local finders = require("telescope.finders")
+        local make_entry = require("telescope.make_entry")
         local conf = require("telescope.config").values
         local items = vim.lsp.util.locations_to_items(result, client.offset_encoding)
         pickers.new(opts, {
           prompt_title = "LSP Locations",
-          finder = finders.new_table {
+          finder = finders.new_table({
             results = items,
             entry_maker = make_entry.gen_from_quickfix(opts),
-          },
+          }),
           previewer = conf.qflist_previewer(opts),
           sorter = conf.generic_sorter(opts),
         }):find()
       else
-        vim.fn.setqflist({}, ' ', {
-          title = 'LSP locations',
-          items = vim.lsp.util.locations_to_items(result, client.offset_encoding)
+        vim.fn.setqflist({}, " ", {
+          title = "LSP locations",
+          items = vim.lsp.util.locations_to_items(result, client.offset_encoding),
         })
         vim.cmd([[botright copen]])
       end
@@ -72,10 +71,20 @@ safe_require("lspconfig", function(lspconfig)
     end
   end
 
-  vim.lsp.handlers['textDocument/declaration'] = location_handler
-  vim.lsp.handlers['textDocument/definition'] = location_handler
-  vim.lsp.handlers['textDocument/typeDefinition'] = location_handler
-  vim.lsp.handlers['textDocument/implementation'] = location_handler
+  vim.lsp.handlers["textDocument/declaration"] = location_handler
+  vim.lsp.handlers["textDocument/definition"] = location_handler
+  vim.lsp.handlers["textDocument/typeDefinition"] = location_handler
+  vim.lsp.handlers["textDocument/implementation"] = location_handler
+
+  vim.lsp.handlers["textDocument/formatting"] = function(_, result, ctx, _)
+    if not result then
+      return
+    end
+    local client = vim.lsp.get_client_by_id(ctx.client_id)
+    local restore = lsp.save_win_positions(ctx.bufnr)
+    vim.lsp.util.apply_text_edits(result, ctx.bufnr, client.offset_encoding)
+    restore()
+  end
 
   vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
   vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
@@ -235,7 +244,7 @@ safe_require("lspconfig", function(lspconfig)
     root_dir = function(fname)
       local util = require("lspconfig.util")
       -- Disable tsserver on js files when a flow project is detected
-      if not string.match(fname, '.tsx?$') and util.root_pattern(".flowconfig")(fname) then
+      if not string.match(fname, ".tsx?$") and util.root_pattern(".flowconfig")(fname) then
         return nil
       end
       local ts_root = util.root_pattern("tsconfig.json")(fname)
