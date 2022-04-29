@@ -58,7 +58,7 @@ Options:
       icon="terminal"
     fi
   fi
-  if [ "$OSNAME" = "Darwin" ]; then
+  if [ "$(uname -s)" = "Darwin" ]; then
     reattach-to-user-namespace osascript -e "display notification \"${body}\" with title \"${title}\""
   else
     notify-send -u "$urgency" -i "$icon" "$title" "$body"
