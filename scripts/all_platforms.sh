@@ -65,7 +65,7 @@ configure-git() {
   git config --global alias.rom '!git rebase "origin/$(git main)"'
   git config --global alias.main '!(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || echo "///master") | cut -f 4 -d / | tr -d "[:space:]"'
   git config --global alias.ss 'show --stat'
-  git config --global alias.res '!vim -p $(git status --porcelain | grep "^UU " | cut -d " " -f 2)'
+  git config --global alias.res '!nvim $(git status --porcelain | grep "^UU " | cut -d " " -f 2)'
   git config --global alias.wip 'commit --no-verify -m WIP'
   git config --global alias.undo 'reset HEAD^'
   git config --global alias.po '!bash ~/.githelpers push_current_branch'
