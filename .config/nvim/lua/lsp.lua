@@ -1,17 +1,5 @@
 local M = {}
 
-local ft_config = {
-  vim = {
-    help = false,
-  },
-  lua = {
-    help = false,
-  },
-  cs = {
-    code_action = false, -- TODO: this borks the omnisharp server
-  },
-}
-
 local function adjust_formatting_capabilities(client, bufnr)
   if not pcall(require, "null-ls") then
     return
@@ -32,13 +20,23 @@ local function adjust_formatting_capabilities(client, bufnr)
     local clients = vim.lsp.buf_get_clients(bufnr)
     for _, other_client in ipairs(clients) do
       if other_client.id ~= client.id then
-        other_client.resolved_capabilities.document_formatting = false
-        other_client.resolved_capabilities.document_range_formatting = false
+        other_client.server_capabilities.documentFormattingProvider = nil
+        other_client.server_capabilities.documentRangeFormattingProvider = nil
+        -- For backwards compatibility. Remove in neovim 0.7.1
+        if other_client.resolved_capabilities then
+          other_client.resolved_capabilities.document_formatting = false
+          other_client.resolved_capabilities.document_range_formatting = false
+        end
       end
     end
   else
-    client.resolved_capabilities.document_formatting = false
-    client.resolved_capabilities.document_range_formatting = false
+    client.server_capabilities.documentFormattingProvider = nil
+    client.server_capabilities.documentRangeFormattingProvider = nil
+    -- For backwards compatibility. Remove in neovim 0.7.1
+    if client.resolved_capabilities then
+      client.resolved_capabilities.document_formatting = false
+      client.resolved_capabilities.document_range_formatting = false
+    end
   end
 end
 
@@ -67,9 +65,6 @@ M.save_win_positions = function(bufnr)
 end
 
 M.on_attach = function(client, bufnr)
-  local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")
-  local config = ft_config[ft] or {}
-
   adjust_formatting_capabilities(client, bufnr)
 
   local function mapper(mode, key, result)
@@ -77,7 +72,7 @@ M.on_attach = function(client, bufnr)
   end
 
   local function safemap(method, mode, key, result)
-    if client.resolved_capabilities[method] then
+    if client.server_capabilities[method] then
       mapper(mode, key, result)
     end
   end
@@ -89,20 +84,22 @@ M.on_attach = function(client, bufnr)
   end
 
   -- Standard LSP
-  safemap("goto_definition", "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
-  safemap("declaration", "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
-  safemap("type_definition", "n", "gtd", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
-  safemap("implementation", "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
-  safemap("find_references", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
-  if config.help ~= false then
-    safemap("hover", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
+  safemap("definitionProvider", "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
+  safemap("declarationProvider", "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
+  safemap("typeDefinitionProvider", "n", "gtd", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
+  safemap("implementationProvider", "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
+  safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
+  -- These two clients should use K to open :help
+  if client.name ~= "sumneko_lua" and client.name ~= "vimls" then
+    safemap("hoverProvider", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
   end
-  safemap("signature_help", "i", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
-  if config.code_action ~= false then
-    safemap("code_action", "n", "<leader>fa", "<cmd>lua vim.lsp.buf.code_action()<CR>")
-    safemap("code_action", "v", "<leader>fa", ":<C-U>lua vim.lsp.buf.range_code_action()<CR>")
+  safemap("signatureHelpProvider", "i", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
+  -- This crashed omnisharp last I checked
+  if client.name ~= "omnisharp" then
+    safemap("codeActionProvider", "n", "<leader>fa", "<cmd>lua vim.lsp.buf.code_action()<CR>")
+    safemap("codeActionProvider", "v", "<leader>fa", ":<C-U>lua vim.lsp.buf.range_code_action()<CR>")
   end
-  if client.resolved_capabilities.document_formatting then
+  if client.server_capabilities.documentFormattingProvider then
     vim.cmd([[aug LspAutoformat
         au! * <buffer>
         autocmd BufWritePre <buffer> lua stevearc.autoformat()
@@ -110,12 +107,12 @@ M.on_attach = function(client, bufnr)
       ]])
     mapper("n", "=", "<cmd>lua vim.lsp.buf.formatting()<CR>")
   end
-  safemap("document_range_formatting", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
-  safemap("rename", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
+  safemap("documentRangeFormattingProvider", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
+  safemap("renameProvider", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
 
   mapper("n", "<CR>", "<cmd>lua vim.diagnostic.open_float(0, {scope='line', border='rounded'})<CR>")
 
-  if client.resolved_capabilities.document_highlight then
+  if client.server_capabilities.documentHighlightProvider then
     vim.cmd([[aug LspShowReferences
         au! * <buffer>
         autocmd CursorHold,CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()
