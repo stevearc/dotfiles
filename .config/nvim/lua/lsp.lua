@@ -89,8 +89,8 @@ M.on_attach = function(client, bufnr)
   safemap("typeDefinitionProvider", "n", "gtd", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
   safemap("implementationProvider", "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
   safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
-  -- These two clients should use K to open :help
-  if client.name ~= "sumneko_lua" and client.name ~= "vimls" then
+  -- Only map K if keywordprg is not set
+  if vim.api.nvim_buf_get_option(bufnr, "keywordprg") == ":Man" then
     safemap("hoverProvider", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
   end
   safemap("signatureHelpProvider", "i", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
