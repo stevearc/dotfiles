@@ -112,13 +112,15 @@ M.on_attach = function(client, bufnr)
 
   mapper("n", "<CR>", "<cmd>lua vim.diagnostic.open_float(0, {scope='line', border='rounded'})<CR>")
 
-  if client.server_capabilities.documentHighlightProvider then
-    vim.cmd([[aug LspShowReferences
-        au! * <buffer>
-        autocmd CursorHold,CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved,WinLeave <buffer> lua vim.lsp.buf.clear_references()
-        aug END
-      ]])
+  if client.server_capabilities.documentHighlightProvider and client.name ~= "sorbet" then
+    vim.api.nvim_create_autocmd({'CursorHold', 'CursorHoldI'}, {
+      buffer = bufnr,
+      callback = vim.lsp.buf.document_highlight
+    })
+    vim.api.nvim_create_autocmd({'CursorMoved', 'WinLeave'}, {
+      buffer = bufnr,
+      callback = vim.lsp.buf.clear_references
+    })
   end
 
   vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
