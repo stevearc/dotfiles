@@ -74,6 +74,18 @@ install-language-zig() {
     ln -s "$HOME/.local/share/${dirname}/zig" "$HOME/.local/bin/zig"
     popd >/dev/null
   fi
+  if ! hascmd zig-nightly; then
+    local tarball="zig-linux-x86_64-nightly.tar.xz"
+    local url
+    url="$(curl -s https://ziglang.org/download/index.json | jq -r '.master["x86_64-linux"].tarball')"
+    pushd /tmp >/dev/null
+    curl -L "$url" -o "$tarball"
+    rm -rf ~/.local/share/zig-nightly
+    mkdir -p ~/.local/share/zig-nightly
+    tar -xf "$tarball" --strip-components=1 -C ~/.local/share/zig-nightly
+    ln -s "$HOME/.local/share/zig-nightly/zig" "$HOME/.local/bin/zig-nightly"
+    popd >/dev/null
+  fi
   if ! hascmd zls; then
     mkdir -p ~/.local/share/nvim/language-servers/zls
     pushd ~/.local/share/nvim/language-servers/zls >/dev/null
