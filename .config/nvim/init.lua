@@ -43,7 +43,7 @@ end
 vim.g.python3_host_prog = os.getenv("HOME") .. "/.envs/py3/bin/python"
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*")
-local autocmds = { "augroup StevearcConfig", "au!" }
+local aug = vim.api.nvim_create_augroup('StevearcNewConfig', {})
 
 local opts = { noremap = true, silent = true }
 vim.api.nvim_set_keymap("n", "<f1>", [[<cmd>lua stevearc.toggle_profile()<cr>]], opts)
@@ -114,9 +114,18 @@ vim.opt.wildignore:append(
 vim.o.wildmenu = true
 vim.o.wildmode = "longest,list,full"
 
--- Highlight the cursor line only in the active window
-table.insert(autocmds, "au VimEnter,WinEnter,BufWinEnter * setlocal cursorline")
-table.insert(autocmds, "au WinLeave * setlocal nocursorline")
+vim.api.nvim_create_autocmd({'VimEnter', 'WinEnter', 'BufWinEnter'}, {
+  desc = "Highlight the cursor line in the active window",
+  pattern = '*',
+  command = 'setlocal cursorline',
+  group = aug,
+})
+vim.api.nvim_create_autocmd('WinLeave', {
+  desc = "Clear the cursor line highlight when leaving a window",
+  pattern = '*',
+  command = 'setlocal nocursorline',
+  group = aug,
+})
 
 -- Syntax highlighting
 vim.cmd([[
@@ -126,16 +135,12 @@ filetype plugin on
 filetype plugin indent on
 ]])
 
--- Return to last edit position when opening files
-table.insert(
-  autocmds,
-  [[
-  autocmd BufReadPost *
-       \ if line("'\"") > 0 && line("'\"") <= line("$") && expand('%:t') != 'COMMIT_EDITMSG' |
-       \   exe "normal! g`\"" |
-       \ endif
-]]
-)
+vim.api.nvim_create_autocmd('BufReadPost', {
+  desc = "Return to last edit position when opening files",
+  pattern = '*',
+  command = [[if line("'\"") > 0 && line("'\"") <= line("$") && expand('%:t') != 'COMMIT_EDITMSG' | exe "normal! g`\"" | endif]],
+  group = aug,
+})
 
 -- Add bash shortcuts for command line
 vim.api.nvim_set_keymap("c", "<C-a>", "<Home>", opts)
@@ -159,8 +164,12 @@ vim.api.nvim_set_keymap("n", "k", [[(v:count > 5 ? "m'" . v:count . 'k' : 'gk')]
 vim.api.nvim_set_keymap("n", "<leader>p", '"0p', opts)
 vim.api.nvim_set_keymap("n", "<leader>P", '"0P', opts)
 
--- Always keep cursor vertically centered
-table.insert(autocmds, "au BufEnter,WinEnter,WinNew,VimResized *,*.* let &l:scrolloff=1+winheight(win_getid())/2")
+vim.api.nvim_create_autocmd({'BufEnter','WinEnter','WinNew','VimResized'}, {
+  desc = "Always keep the cursor vertically centered",
+  pattern = '*,*.*',
+  command = 'let &l:scrolloff=1+winheight(win_getid())/2")',
+  group = aug,
+})
 
 vim.g.treesitter_languages = "all"
 vim.g.treesitter_languages_blacklist = { "supercollider", "phpdoc" }
@@ -201,20 +210,35 @@ vim.cmd([[
 cabbr <expr> %% expand('%:p:h')
 ]])
 
--- Reload files from disk when we focus vim
-table.insert(autocmds, "au FocusGained * if getcmdwintype() == '' | checktime | endif")
--- Every time we enter an unmodified buffer, check if it changed on disk
-table.insert(autocmds, "au BufEnter * if &buftype == '' && !&modified | exec 'checktime ' . expand('<abuf>') | endif")
+vim.api.nvim_create_autocmd('FocusGained', {
+  desc = "Reload files from disk when we focus vim",
+  pattern = '*',
+  command = "if getcmdwintype() == '' | checktime | endif",
+  group = aug,
+})
+vim.api.nvim_create_autocmd('BufEnter', {
+  desc = "Every time we enter an unmodified buffer, check if it changed on disk",
+  pattern = '*',
+  command = "if &buftype == '' && !&modified | exec 'checktime ' . expand('<abuf>') | endif",
+  group = aug,
+})
 
 -- Enter paste mode with <C-v> in insert mode
 vim.api.nvim_set_keymap("i", "<C-v>", "<cmd>set paste<CR>", opts)
-table.insert(autocmds, "au InsertLeave * set nopaste")
+vim.api.nvim_create_autocmd('InsertLeave', {
+  desc = "Leave paste mode when leaving insert",
+  pattern = '*',
+  command = "set nopaste",
+  group = aug,
+})
 
 -- Close the scratch preview automatically
-table.insert(
-  autocmds,
-  "autocmd CursorMovedI,InsertLeave * if pumvisible() == 0 && !&pvw && getcmdwintype() == ''|pclose|endif"
-)
+vim.api.nvim_create_autocmd({'CursorMovedI', 'InsertLeave'}, {
+  desc = "Close the popup-menu automatically",
+  pattern = '*',
+  command = "if pumvisible() == 0 && !&pvw && getcmdwintype() == ''|pclose|endif",
+  group = aug,
+})
 
 -- BASH-style movement in insert mode
 vim.api.nvim_set_keymap("i", "<C-a>", "<C-o>^", opts)
@@ -384,6 +408,3 @@ vim.api.nvim_set_keymap("n", "<leader>tn", "<cmd>TestNearest<CR>", { silent = tr
 vim.api.nvim_set_keymap("n", "<leader>ts", "<cmd>TestSuite<CR>", { silent = true })
 vim.api.nvim_set_keymap("n", "<leader>tl", "<cmd>TestLast<CR>", { silent = true })
 vim.api.nvim_set_keymap("n", "<leader>tv", "<cmd>TestVisit<CR>", { silent = true })
-
-table.insert(autocmds, "augroup END")
-vim.cmd(table.concat(autocmds, "\n"))
