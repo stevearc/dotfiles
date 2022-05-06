@@ -19,16 +19,10 @@ tnoremap \k <C-\><C-N><c-w>k<CR>
 tnoremap \: <C-\><C-N>:
 highlight TermCursor ctermfg=DarkRed guifg=red
 
-function! s:MaybeFocus() abort
-  if &buftype == 'terminal' && winnr('$') > 1 && !get(b:, 'term_no_autoinsert')
-    startinsert
-  endif
-endfunction
-" auto-enter insert mode when switching to a terminal
+" auto-enter insert mode when opening a terminal
 aug TerminalInsert
   au!
   au TermOpen * setlocal nonumber norelativenumber signcolumn=no | :startinsert
-  au BufEnter * :call <sid>MaybeFocus()
 aug END
 
 
