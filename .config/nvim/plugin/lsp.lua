@@ -31,7 +31,7 @@ safe_require("lspconfig", function(lspconfig)
 
   local function location_handler(_, result, ctx, _)
     if result == nil or vim.tbl_isempty(result) then
-      local _ = log.info() and log.info(ctx.method, "No location found")
+      local _ = vim.lsp.log.info() and vim.lsp.log.info(ctx.method, "No location found")
       return nil
     end
     local client = vim.lsp.get_client_by_id(ctx.client_id)
@@ -39,7 +39,7 @@ safe_require("lspconfig", function(lspconfig)
     -- textDocument/definition can return Location or Location[]
     -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
 
-    local has_telescope, telescope = pcall(require, "telescope")
+    local has_telescope = pcall(require, "telescope")
     if vim.tbl_islist(result) then
       if #result == 1 then
         vim.lsp.util.jump_to_location(result[1], client.offset_encoding)
