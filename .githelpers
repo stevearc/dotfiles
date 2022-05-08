@@ -35,8 +35,8 @@ pretty_git_log() {
     # Replace (2 years, 5 months) with (2 years)
     sed -Ee 's/(^[^<]*), [[:digit:]]+ .*months?\)/\1)/'
 
-    # Line columns up based on } delimiter
-    # column -s '}' -t
+  # Line columns up based on } delimiter
+  # column -s '}' -t
 }
 
 pretty_git_log_paged() {
@@ -50,7 +50,7 @@ pretty_git_log_paged() {
 
 contextual_git_log() {
   local height=
-  if [[ "$1" =~ ^\-[0-9]+$ ]]; then
+  if [[ $1 =~ ^\-[0-9]+$ ]]; then
     height="${1#-}"
     shift
   else
@@ -138,15 +138,16 @@ _github() {
 
 _get_repo_url() {
   local url="$(git remote get-url origin)"
-  if [[ "$url" =~ ^http ]]; then
+  if [[ $url =~ ^http ]]; then
     # Strip the .git off the end, if present.
     echo "${url%.git}"
   else
-    echo "$url" | \
+    echo "$url" \
+      |
       # Trim the git@ from the start
-      sed 's/^.*@//' | \
-      sed 's|:|/|' | \
-      sed 's|^|https://|'
+      sed 's/^.*@//' \
+      | sed 's|:|/|' \
+      | sed 's|^|https://|'
   fi
 }
 
@@ -289,7 +290,7 @@ confirm() {
 delete_merged() {
   # Now find local branches with no remote
   for branch in $(git branch --format "%(refname:short) %(upstream)" | awk '{if (!$2) print $1;}') $(git branch --merged "$(git main)" | grep -v $(git main)); do
-    if git rev-parse "$branch" > /dev/null 2>&1; then
+    if git rev-parse "$branch" >/dev/null 2>&1; then
       pretty_git_log -20 "$branch"
       echo ""
       if confirm "Delete $branch?" "n"; then
