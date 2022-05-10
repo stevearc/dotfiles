@@ -163,6 +163,28 @@
             "modifiers": {
               "mandatory": ["left_control"]
             },
+            "key_code": "x"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "bundle_identifiers": ["io.alacritty", "com.apple.Terminal"]
+            }
+          ],
+          "to": [
+            {
+              "repeat": false,
+              "key_code": "x",
+              "modifiers": ["left_gui"]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "modifiers": {
+              "mandatory": ["left_control"]
+            },
             "key_code": "v"
           },
           "conditions": [
