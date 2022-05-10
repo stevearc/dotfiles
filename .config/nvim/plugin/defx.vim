@@ -17,7 +17,7 @@ function! s:OpenDefxIfDirectory() abort
   if isdirectory(l:full_path)
     let l:bn = bufnr()
     Defx -columns=`g:defx_columns` `expand('%:p')` -vertical-preview -new -preview-width=100
-    execute "bd " . l:bn
+    execute "silent! bd " . l:bn
   endif
 endfunction
 
