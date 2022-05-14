@@ -88,8 +88,10 @@ configure-git() {
   git config --global alias.prev 'checkout @^'
   git config --global alias.next '!git checkout $(git rev-list --children --all | grep ^$(git rev-parse HEAD) | cut -f 2 -d " ")'
   git config --global alias.hookdir 'rev-parse --git-path hooks'
+  git config --global alias.sk '!python ~/.local/bin/githelper.py stack'
+  git config --global alias.up '!python ~/.local/bin/githelper.py update'
 
   if hascmd fzf; then
-    git config --global alias.fb '!git for-each-ref --format="%(refname:short)" refs/heads | fzf | xargs git checkout'
+    git config --global alias.fb '!git sk list | fzf | xargs git checkout'
   fi
 }
