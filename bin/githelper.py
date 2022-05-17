@@ -1,26 +1,40 @@
 #!/usr/bin/env python
 import sys
+import copy
+import json
 import hashlib
 import re
 import os
+import shutil
 import argparse
 import subprocess
-from typing import List, Optional
+from typing import List, Optional, Dict, Tuple
 
-def git(*args, **kwargs) -> str:
+def run(*args, **kwargs) -> str:
     kwargs.setdefault('check', True)
     kwargs.setdefault('capture_output', True)
     try:
-        stdout = subprocess.run(('git',) + args, **kwargs).stdout
+        stdout = subprocess.run(args, **kwargs).stdout
     except subprocess.CalledProcessError as e:
-        print("Error running: git", ' '.join(args))
-        print(e.stdout.decode('utf-8'))
-        print(e.stderr.decode('utf-8'))
+        print("Error running: ", ' '.join(args))
+        if e.stdout is not None:
+            print(e.stdout.decode('utf-8'))
+        if e.stderr is not None:
+            print(e.stderr.decode('utf-8'))
         raise
     if stdout is None:
         return ''
     else:
         return stdout.decode('utf-8').strip()
+
+def git(*args, **kwargs) -> str:
+    return run(*(('git',) + args), **kwargs)
+
+def gh(*args, **kwargs) -> str:
+    if shutil.which('gh') is None:
+        print("Missing gh executable")
+        sys.exit(1)
+    return run(*(('gh',) + args), **kwargs)
 
 def git_lines(*args, **kwargs) -> List[str]:
     ret = git(*args, **kwargs)
@@ -43,6 +57,8 @@ class Stack:
     def __init__(self, name: str, children: List[str]):
         self.name = name
         self.children = children
+        self.pull_requests = []
+        self.pr_map = {}
 
     def add_child(self, branch: str):
         self.children.append(branch)
@@ -50,6 +66,21 @@ class Stack:
 
     def rebase(self, target: str):
         rebase_branches(target, self.children + [self.name])
+
+    def load_prs(self):
+        prs = json.loads(gh('pr', 'status', '--json', 'title,body,number,headRefName'))
+        self.pr_map = {pr['headRefName']: PullRequest(pr['number'], pr['title'], pr['body'], pr['headRefName']) for pr in prs['createdBy']}
+        self.pull_requests = []
+        for child in self.children:
+            if child in self.pr_map:
+                self.pull_requests.append(self.pr_map[child])
+
+    def update_prs(self):
+        total = len(self.pull_requests)
+        for i, pr in enumerate(self.pull_requests):
+            pr.set_title(i+1, total, pr.title)
+        for pr in self.pull_requests:
+            pr.set_table(self.pull_requests)
 
     def get_next_base(self) -> str:
         if self.children:
@@ -65,6 +96,7 @@ class Stack:
             return self.name + "-1"
 
     def tidy(self):
+        cur = current_branch()
         i = 0
         while i < len(self.children):
             top = self.children[i]
@@ -72,11 +104,90 @@ class Stack:
             if len(children) != len(self.children) - i:
                 rebase_branches(top, self.children[i+1:] + [self.name])
             i += 1
+        switch_branch(cur)
+
+    def get_stack_graph(self) -> str:
+        return git('log', '--format=%h %d %s', merge_base(self.name) + '...' + self.name)
 
     def __str__(self) -> str:
         return self.name + ': ' + ', '.join(self.children)
 
+PR_TITLE_RE = re.compile(r'^(WIP)?\s*(\[\d+/\d+\])?\s*(.*)$')
+
+class PullRequest:
+    def __init__(self, number: int, title: str, body: str, headRefName: str):
+        match = PR_TITLE_RE.match(title)
+        self.number = number
+        self.raw_title = title
+        self.raw_body = body
+        self.table, self.body = parse_markdown_table(body)
+        self.branch = headRefName
+        self.wip = match[1]
+        self.count = match[2]
+        self.title = match[3]
+
+    @staticmethod
+    def make_title(wip: bool, index: int, total: int, title: str) -> str:
+        ret = f"[{index}/{total}] {title}"
+        if wip:
+            ret = 'WIP ' + ret
+        return ret
+
+    def set_title(self, index: int, total: int, title: str):
+        new_title = PullRequest.make_title(self.wip, index, total, title)
+        if new_title != self.raw_title:
+            gh('pr', 'edit', str(self.number), '-t', new_title, capture_output=False)
+            self.title = title
+            self.raw_title = new_title
+
+    def set_table(self, stack_prs: List['PullRequest']):
+        rows = []
+        for pr in stack_prs:
+            row = {'PR': f'#{pr.number}', 'Title': pr.title}
+            if pr.number == self.number:
+                row['PR'] = '*'
+            rows.append(row)
+        table = make_markdown_table(rows, ['PR', 'Title'])
+        if table != self.table:
+            new_body = table + '\r\n' + self.body
+            gh('pr', 'edit', str(self.number), '-b', new_body, capture_output=False)
+            self.raw_body = new_body
+            self.table = table
+
+    @property
+    def is_wip(self) -> bool:
+        return bool(self.wip)
+
+
 STACK_RE = re.compile(r'^(.*)\-(\d+)$')
+
+def parse_markdown_table(body: str) -> Tuple[str, str]:
+    table = []
+    rest = []
+    lines = body.split('\r\n')
+    for i, line in enumerate(lines):
+        if line.startswith('|'):
+            table.append(line)
+        else:
+            rest = lines[i:]
+            break
+    return '\r\n'.join(table), '\r\n'.join(rest)
+
+def make_markdown_table(data: List[Dict[str, str]], cols: List[str]) -> str:
+    max_width = [len(col) for col in cols]
+    for row in data:
+        for i, col in enumerate(cols):
+            max_width[i] = max(max_width[i], len(row[col]))
+
+    lines = [
+        '| ' + ' | '.join([col.center(max_width[i]) for i, col in enumerate(cols)]) + ' |',
+        '| ' + ' | '.join([max_width[i] * '-' for i in range(len(cols))]) + ' |',
+    ]
+    for row in data:
+        lines.append(
+            '| ' + ' | '.join([row[col].ljust(max_width[i]) for i, col in enumerate(cols)]) + ' |',
+        )
+    return '\n'.join(lines)
 
 def list_branches() -> List[str]:
     return [b.strip() for b in git_lines('branch', '--format=%(refname:short)')]
@@ -139,6 +250,8 @@ def refs_between(ref1: str, ref2: str) -> List[str]:
     """Exclusive on ref1, inclusive on ref2"""
     return list(reversed(git_lines('log', ref1 + "..." + ref2, '--format=%H')))
 
+# FIXME this doesn't work if we want to either a) amend a commit and change a new file or b) reword the commit
+# FIXME need to warn/error if there are two commits in the same history with the same fingerprint
 _fingerprints = {}
 def fingerprint_commit(ref: str) -> str:
     if ref not in _fingerprints:
@@ -199,6 +312,7 @@ def switch_branch(branch: str):
 def create_branch(branch: str, start: str = MASTER):
     git('checkout', '-b', branch, start)
 
+
 def touch_file(filename: str, contents: str = ""):
     with open(filename, 'w', encoding='utf-8') as ofile:
         ofile.write(contents)
@@ -216,9 +330,23 @@ def _add_cmd_stack(parser):
     push_parser.add_argument('branch', nargs='?')
     pr_parser = subparsers.add_parser('pr')
     pr_parser.add_argument('branch', nargs='?')
-    subparsers.add_parser('prev')
-    subparsers.add_parser('next')
+    prev_parser = subparsers.add_parser('prev')
+    prev_parser.add_argument('count', nargs='?', type=int, default=1)
+    next_parser = subparsers.add_parser('next')
+    next_parser.add_argument('count', nargs='?', type=int, default=1)
+    next_parser = subparsers.add_parser('tip')
+    next_parser = subparsers.add_parser('first')
+    del_parser = subparsers.add_parser('delete')
+    del_parser.add_argument('name', nargs='?')
 
+def navigate_stack_relative(count: int):
+    stack = get_stack(current_stack())
+    cur = current_branch()
+    branches = stack.children + [stack.name]
+    idx = branches.index(cur)
+    new_idx = max(0, min(len(branches)-1, idx + count))
+    switch_branch(branches[new_idx])
+    print(stack.get_stack_graph())
 
 def cmd_stack(args, parser):
     if 'stack_cmd' not in args or args.stack_cmd == 'list':
@@ -252,7 +380,7 @@ def cmd_stack(args, parser):
         cur = current_branch()
         for branch in stack.children:
             switch_branch(branch)
-            git('push', '--force-with-lease', '-u', 'origin', branch)
+            git('push', '--force-with-lease', '-u', 'origin', branch, capture_output=False)
         switch_branch(cur)
     elif args.stack_cmd == 'pr':
         url = get_repo_url()
@@ -262,15 +390,28 @@ def cmd_stack(args, parser):
         if stack is None:
             print("Could not find stack", args.branch)
             sys.exit(1)
+        stack.load_prs()
         rel = MASTER
         for branch in stack.children:
-            print(f"{url}/compare/{rel}...{branch}?expand=1")
+            if branch not in stack.pr_map:
+                print(f"{url}/compare/{rel}...{branch}?expand=1")
             rel = branch
-        print("TODO use gh to update title/description")
+        stack.update_prs()
     elif args.stack_cmd == 'prev':
-        print("TODO")
+        navigate_stack_relative(-1 * args.count)
     elif args.stack_cmd == 'next':
-        print("TODO")
+        navigate_stack_relative(args.count)
+    elif args.stack_cmd == 'tip':
+        navigate_stack_relative(10000)
+    elif args.stack_cmd == 'first':
+        navigate_stack_relative(-10000)
+    elif args.stack_cmd == 'delete':
+        if args.name:
+            stack = get_stack(args.name)
+        else:
+            stack = get_stack(current_stack())
+        for branch in stack.children:
+            delete_branch(branch, True)
     else:
         parser.print_help()
 
@@ -280,21 +421,19 @@ def _add_cmd_update(parser):
     parser.add_argument('target', nargs='?', help='Target branch to rebase atop (default %(default)s)', default=MASTER)
 
 def cmd_update(args):
+    cur = current_branch()
     if not args.local:
         git('fetch', capture_output=False)
-        cur = current_branch()
         for branch in list_branches():
             # FIXME This is to catch master-passing-tests. There's probably a better way to do this.
             if branch.startswith(MASTER):
-                if cur != branch:
-                    git('branch', '-f', branch, 'origin/' + branch)
-                else:
-                    git('reset', '--hard', 'origin/' + branch)
+                git('rebase', 'origin/' + branch, branch)
     if args.rebase or args.local:
         stack = get_stack('stevearc-TEST')
         for stack in list_stacks():
             print("Rebasing", stack.name)
             stack.rebase(args.target)
+    switch_branch(cur)
 
 def _add_cmd_test(parser):
     parser.add_argument('test_cmd', default='tidy_stack', choices=['tidy_stack', 'tidy_rebase', 'clean', 'old_stack', 'incomplete_stack'])
