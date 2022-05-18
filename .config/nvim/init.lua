@@ -43,7 +43,7 @@ end
 vim.g.python3_host_prog = os.getenv("HOME") .. "/.envs/py3/bin/python"
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*")
-local aug = vim.api.nvim_create_augroup('StevearcNewConfig', {})
+local aug = vim.api.nvim_create_augroup("StevearcNewConfig", {})
 
 local opts = { noremap = true, silent = true }
 vim.api.nvim_set_keymap("n", "<f1>", [[<cmd>lua stevearc.toggle_profile()<cr>]], opts)
@@ -114,16 +114,16 @@ vim.opt.wildignore:append(
 vim.o.wildmenu = true
 vim.o.wildmode = "longest,list,full"
 
-vim.api.nvim_create_autocmd({'VimEnter', 'WinEnter', 'BufWinEnter'}, {
+vim.api.nvim_create_autocmd({ "VimEnter", "WinEnter", "BufWinEnter" }, {
   desc = "Highlight the cursor line in the active window",
-  pattern = '*',
-  command = 'setlocal cursorline',
+  pattern = "*",
+  command = "setlocal cursorline",
   group = aug,
 })
-vim.api.nvim_create_autocmd('WinLeave', {
+vim.api.nvim_create_autocmd("WinLeave", {
   desc = "Clear the cursor line highlight when leaving a window",
-  pattern = '*',
-  command = 'setlocal nocursorline',
+  pattern = "*",
+  command = "setlocal nocursorline",
   group = aug,
 })
 
@@ -135,9 +135,9 @@ filetype plugin on
 filetype plugin indent on
 ]])
 
-vim.api.nvim_create_autocmd('BufReadPost', {
+vim.api.nvim_create_autocmd("BufReadPost", {
   desc = "Return to last edit position when opening files",
-  pattern = '*',
+  pattern = "*",
   command = [[if line("'\"") > 0 && line("'\"") <= line("$") && expand('%:t') != 'COMMIT_EDITMSG' | exe "normal! g`\"" | endif]],
   group = aug,
 })
@@ -164,9 +164,9 @@ vim.api.nvim_set_keymap("n", "k", [[(v:count > 5 ? "m'" . v:count . 'k' : 'gk')]
 vim.api.nvim_set_keymap("n", "<leader>p", '"0p', opts)
 vim.api.nvim_set_keymap("n", "<leader>P", '"0P', opts)
 
-vim.api.nvim_create_autocmd({'BufEnter','WinEnter','WinNew','VimResized'}, {
+vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "WinNew", "VimResized" }, {
   desc = "Always keep the cursor vertically centered",
-  pattern = '*,*.*',
+  pattern = "*,*.*",
   command = 'let &l:scrolloff=1+winheight(win_getid())/2")',
   group = aug,
 })
@@ -210,32 +210,32 @@ vim.cmd([[
 cabbr <expr> %% expand('%:p:h')
 ]])
 
-vim.api.nvim_create_autocmd('FocusGained', {
+vim.api.nvim_create_autocmd("FocusGained", {
   desc = "Reload files from disk when we focus vim",
-  pattern = '*',
+  pattern = "*",
   command = "if getcmdwintype() == '' | checktime | endif",
   group = aug,
 })
-vim.api.nvim_create_autocmd('BufEnter', {
+vim.api.nvim_create_autocmd("BufEnter", {
   desc = "Every time we enter an unmodified buffer, check if it changed on disk",
-  pattern = '*',
+  pattern = "*",
   command = "if &buftype == '' && !&modified | exec 'checktime ' . expand('<abuf>') | endif",
   group = aug,
 })
 
 -- Enter paste mode with <C-v> in insert mode
 vim.api.nvim_set_keymap("i", "<C-v>", "<cmd>set paste<CR>", opts)
-vim.api.nvim_create_autocmd('InsertLeave', {
+vim.api.nvim_create_autocmd("InsertLeave", {
   desc = "Leave paste mode when leaving insert",
-  pattern = '*',
+  pattern = "*",
   command = "set nopaste",
   group = aug,
 })
 
 -- Close the scratch preview automatically
-vim.api.nvim_create_autocmd({'CursorMovedI', 'InsertLeave'}, {
+vim.api.nvim_create_autocmd({ "CursorMovedI", "InsertLeave" }, {
   desc = "Close the popup-menu automatically",
-  pattern = '*',
+  pattern = "*",
   command = "if pumvisible() == 0 && !&pvw && getcmdwintype() == ''|pclose|endif",
   group = aug,
 })
