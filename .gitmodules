@@ -210,3 +210,6 @@
 [submodule "vimplugins/vim-test"]
 	path = vimplugins/vim-test
 	url = https://github.com/vim-test/vim-test.git
+[submodule "vimplugins/overseer.nvim"]
+	path = vimplugins/overseer.nvim
+	url = https://github.com/stevearc/overseer.nvim.git
