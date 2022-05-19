@@ -90,6 +90,7 @@ configure-git() {
   git config --global alias.hookdir 'rev-parse --git-path hooks'
   git config --global alias.sk '!python ~/.local/bin/githelper.py stack'
   git config --global alias.up '!python ~/.local/bin/githelper.py update'
+  git config --global alias.mine '!git log --author=$(git config --get user.email) --pretty=medium --compact-summary'
 
   if hascmd fzf; then
     git config --global alias.fb '!git sk list | fzf | xargs git checkout'
