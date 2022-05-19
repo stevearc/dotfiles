@@ -374,6 +374,25 @@ safe_require("tags").setup({
     )
   end,
 })
+safe_require("overseer", function(overseer)
+  overseer.setup()
+  vim.keymap.set("n", "<leader>ot", function()
+    local ok, err = pcall(overseer.start_from_template, "run test")
+    if not ok then
+      vim.notify(tostring(err), vim.log.levels.ERROR)
+    end
+  end)
+  vim.keymap.set("n", "<leader>on", function()
+    local ok, err = pcall(overseer.start_from_template, "run test", { line = vim.api.nvim_win_get_cursor(0)[1] })
+    if not ok then
+      vim.notify(tostring(err), vim.log.levels.ERROR)
+    end
+  end)
+  vim.keymap.set("n", "<leader>oo", overseer.toggle)
+  vim.keymap.set("n", "<leader>or", overseer.start_from_template)
+
+  overseer.template.register_all()
+end)
 safe_require("hlslens", function(hlslens)
   hlslens.setup({
     calm_down = true,
