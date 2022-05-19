@@ -19,14 +19,28 @@ tnoremap \k <C-\><C-N><c-w>k<CR>
 tnoremap \: <C-\><C-N>:
 highlight TermCursor ctermfg=DarkRed guifg=red
 
-" auto-enter insert mode when opening a terminal
-aug TerminalInsert
-  au!
-  au TermOpen * setlocal nonumber norelativenumber signcolumn=no | :startinsert
-aug END
-
-
 lua <<EOF
+local aug = vim.api.nvim_create_augroup("TerminalDefaults", {})
+vim.api.nvim_create_autocmd("TermOpen", {
+  desc = "Set defaults for terminal window",
+  pattern = "*",
+  command = "setlocal nonumber norelativenumber signcolumn=no",
+  group = aug,
+})
+vim.api.nvim_create_autocmd("TermOpen", {
+  desc = "Auto enter insert mode when opening a terminal",
+  pattern = "*",
+  group = aug,
+  callback = function()
+    -- Wait briefly just in case we immediately switch out of the buffer
+    vim.defer_fn(function()
+      if vim.api.nvim_buf_get_option(0, 'buftype') == 'terminal' then
+        vim.cmd([[startinsert]])
+      end
+    end, 100)
+  end,
+})
+
 safe_require("toggleterm").setup({
   open_mapping = [[<c-\>]],
   hide_numbers = true,
