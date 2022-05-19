@@ -31,7 +31,6 @@ safe_require("lspconfig", function(lspconfig)
 
   local function location_handler(_, result, ctx, _)
     if result == nil or vim.tbl_isempty(result) then
-      local _ = vim.lsp.log.info() and vim.lsp.log.info(ctx.method, "No location found")
       return nil
     end
     local client = vim.lsp.get_client_by_id(ctx.client_id)
