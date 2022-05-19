@@ -429,6 +429,7 @@ def cmd_update(args):
             if branch.startswith(MASTER):
                 git('rebase', 'origin/' + branch, branch)
     if args.rebase or args.local:
+        # FIXME this doesn't work well if part of a stack has been merged
         stack = get_stack('stevearc-TEST')
         for stack in list_stacks():
             print("Rebasing", stack.name)
