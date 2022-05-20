@@ -377,21 +377,25 @@ safe_require("tags").setup({
 safe_require("overseer", function(overseer)
   overseer.setup()
   vim.keymap.set("n", "<leader>ot", function()
-    local ok, err = pcall(overseer.start_from_template, "run test")
+    local ok, err = pcall(overseer.run_template, { tags = { overseer.TAG.TEST } })
     if not ok then
       vim.notify(tostring(err), vim.log.levels.ERROR)
     end
   end)
   vim.keymap.set("n", "<leader>on", function()
-    local ok, err = pcall(overseer.start_from_template, "run test", { line = vim.api.nvim_win_get_cursor(0)[1] })
+    local ok, err = pcall(
+      overseer.run_template,
+      { tags = { overseer.TAG.TEST } },
+      { line = vim.api.nvim_win_get_cursor(0)[1] }
+    )
     if not ok then
       vim.notify(tostring(err), vim.log.levels.ERROR)
     end
   end)
-  vim.keymap.set("n", "<leader>oo", overseer.toggle)
-  vim.keymap.set("n", "<leader>or", overseer.start_from_template)
-
-  overseer.template.register_all()
+  vim.keymap.set("n", "<leader>oo", "<cmd>OverseerToggle<CR>")
+  vim.keymap.set("n", "<leader>or", "<cmd>OverseerRun<CR>")
+  vim.keymap.set("n", "<leader>os", "<cmd>OverseerSaveBundle<CR>")
+  vim.keymap.set("n", "<leader>ol", "<cmd>OverseerLoadBundle<CR>")
 end)
 safe_require("hlslens", function(hlslens)
   hlslens.setup({
