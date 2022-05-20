@@ -16,6 +16,23 @@ function stevearc.tokyonight()
   util.highlight("SpellCap", { sp = c.warning, style = "underline" })
   util.highlight("SpellLocal", { sp = c.info, style = "underline" })
   util.highlight("SpellRare", { sp = c.hint, style = "underline" })
+  util.highlight("NotifyERRORBorder", { fg = util.darken(c.error, 0.8) })
+  util.highlight("NotifyWARNBorder", { fg = util.darken(c.warning, 0.8) })
+  util.highlight("NotifyINFOBorder", { fg = util.darken(c.green, 0.8) })
+  util.highlight("NotifyDEBUGBorder", { fg = util.darken(c.info, 0.8) })
+  util.highlight("NotifyTRACEBorder", { fg = util.darken(c.info, 0.8) })
+
+  util.highlight("NotifyERRORTitle", { fg = c.error })
+  util.highlight("NotifyWARNTitle", { fg = c.warn })
+  util.highlight("NotifyINFOTitle", { fg = c.green })
+  util.highlight("NotifyDEBUGTitle", { fg = c.info })
+  util.highlight("NotifyTRACETitle", { fg = c.info })
+
+  util.highlight("NotifyERRORIcon", { fg = c.error })
+  util.highlight("NotifyWARNIcon", { fg = c.warn })
+  util.highlight("NotifyINFOIcon", { fg = c.green })
+  util.highlight("NotifyDEBUGIcon", { fg = c.info })
+  util.highlight("NotifyTRACEIcon", { fg = c.info })
   vim.cmd([[highlight link AerialLineNC LspReferenceText]])
 end
 vim.g.tokyonight_style = "night"
