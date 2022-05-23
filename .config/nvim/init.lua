@@ -389,6 +389,8 @@ safe_require("overseer", function(overseer)
   vim.keymap.set("n", "<leader>or", "<cmd>OverseerRun<CR>")
   vim.keymap.set("n", "<leader>os", "<cmd>OverseerSaveBundle<CR>")
   vim.keymap.set("n", "<leader>ol", "<cmd>OverseerLoadBundle<CR>")
+  vim.keymap.set("n", "<leader>od", "<cmd>OverseerDeleteBundle<CR>")
+  vim.keymap.set("n", "<leader>ob", "<cmd>OverseerBuild<CR>")
 end)
 safe_require("hlslens", function(hlslens)
   hlslens.setup({
