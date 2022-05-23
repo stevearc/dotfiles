@@ -34,6 +34,7 @@ function stevearc.tokyonight()
   util.highlight("NotifyDEBUGIcon", { fg = c.info })
   util.highlight("NotifyTRACEIcon", { fg = c.info })
   vim.cmd([[highlight link AerialLineNC LspReferenceText]])
+  vim.cmd([[highlight link OverseerOutput NormalSB]])
 end
 vim.g.tokyonight_style = "night"
 vim.g.tokyonight_dark_float = false

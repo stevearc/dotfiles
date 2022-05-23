@@ -345,13 +345,10 @@ safe_require("aerial", function(aerial)
       map("v", "{", "<cmd>AerialPrev<CR>")
       map("n", "}", "<cmd>AerialNext<CR>")
       map("v", "}", "<cmd>AerialNext<CR>")
-      map("n", "[[", "<cmd>AerialPrevUp<CR>")
-      map("v", "[[", "<cmd>AerialPrevUp<CR>")
-      map("n", "]]", "<cmd>AerialNextUp<CR>")
-      map("v", "]]", "<cmd>AerialNextUp<CR>")
     end,
   })
 end)
+
 vim.g.lightspeed_no_default_keymaps = true
 safe_require("lightspeed", function(lightspeed)
   lightspeed.setup({
@@ -377,20 +374,16 @@ safe_require("tags").setup({
 safe_require("overseer", function(overseer)
   overseer.setup()
   vim.keymap.set("n", "<leader>ot", function()
-    local ok, err = pcall(overseer.run_template, { tags = { overseer.TAG.TEST } })
-    if not ok then
-      vim.notify(tostring(err), vim.log.levels.ERROR)
-    end
+    overseer.run_template(
+      { tags = { overseer.TAG.TEST }, prompt = "allow" },
+      { filename = vim.api.nvim_buf_get_name(0) }
+    )
   end)
   vim.keymap.set("n", "<leader>on", function()
-    local ok, err = pcall(
-      overseer.run_template,
-      { tags = { overseer.TAG.TEST } },
-      { line = vim.api.nvim_win_get_cursor(0)[1] }
+    overseer.run_template(
+      { tags = { overseer.TAG.TEST }, prompt = "allow" },
+      { filename = vim.api.nvim_buf_get_name(0), line = vim.api.nvim_win_get_cursor(0)[1] }
     )
-    if not ok then
-      vim.notify(tostring(err), vim.log.levels.ERROR)
-    end
   end)
   vim.keymap.set("n", "<leader>oo", "<cmd>OverseerToggle<CR>")
   vim.keymap.set("n", "<leader>or", "<cmd>OverseerRun<CR>")
@@ -421,6 +414,11 @@ if vim.g.nerd_font ~= false then
     default = true,
   })
 end
+
+-- vim-matchup
+vim.g.matchup_surround_enabled = 1
+vim.keymap.set({ "n", "x" }, "[", "<plug>(matchup-[%)")
+vim.keymap.set({ "n", "x" }, "]", "<plug>(matchup-]%)")
 
 -- vim-test
 vim.g["test#preserve_screen"] = 1
