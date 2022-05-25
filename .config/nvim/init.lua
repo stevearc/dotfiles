@@ -127,7 +127,8 @@ vim.api.nvim_create_autocmd("WinLeave", {
   group = aug,
 })
 
--- Syntax highlighting
+-- built-in ftplugins should not change my keybindings
+vim.g.no_plugin_maps = true
 vim.cmd([[
 syntax enable
 syntax on
