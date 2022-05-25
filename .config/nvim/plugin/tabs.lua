@@ -73,7 +73,7 @@ local function is_normal_win(winid)
   local bt = vim.api.nvim_buf_get_option(bufnr, "buftype")
 
   -- Ignore quickfix, prompt, help, and aerial buffer windows
-  return bt ~= "quickfix" and bt ~= "prompt" and bt ~= "help" and ft ~= "aerial" and ft ~= "overseer"
+  return bt ~= "quickfix" and bt ~= "prompt" and bt ~= "help" and ft ~= "aerial" and ft ~= "OverseerList"
 end
 
 local function other_normal_window_exists()
