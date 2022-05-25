@@ -33,6 +33,10 @@
         "path": "snippets/rust.json"
       },
       {
+        "language": "ruby",
+        "path": "snippets/ruby.json"
+      },
+      {
         "language": "sh",
         "path": "snippets/sh.json"
       },

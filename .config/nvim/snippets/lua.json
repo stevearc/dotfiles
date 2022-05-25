@@ -1,26 +1,38 @@
 {
   "Print string": {
     "prefix": "ps",
-    "body": [
-      "print(string.format(\"$1\", $2))"
-    ]
+    "body": ["print(string.format(\"$1\", $2))"]
   },
   "string.format": {
     "prefix": "sf",
-    "body": [
-      "string.format(\"${1:$TM_SELECTED_TEXT}\", $2)"
-    ]
+    "body": ["string.format(\"${1:$TM_SELECTED_TEXT}\", $2)"]
   },
   "vim.inspect": {
     "prefix": "vi",
-    "body": [
-      "vim.inspect(${1:$TM_SELECTED_TEXT})"
-    ]
+    "body": ["vim.inspect(${1:$TM_SELECTED_TEXT})"]
   },
   "vim.api.nvim_": {
     "prefix": "nv",
+    "body": ["vim.api.nvim_"]
+  },
+  "for ipairs": {
+    "prefix": "fori",
     "body": [
-      "vim.api.nvim_"
+      "for ${1:i},${2:v} in ipairs($3) do",
+      "  ${0:$TM_SELECTED_TEXT}",
+      "end"
     ]
+  },
+  "for pairs": {
+    "prefix": "forp",
+    "body": [
+      "for ${1:k},${2:v} in pairs($3) do",
+      "  ${0:$TM_SELECTED_TEXT}",
+      "end"
+    ]
+  },
+  "if": {
+    "prefix": "if",
+    "body": ["if $1 then", "  ${0:$TM_SELECTED_TEXT}", "end"]
   }
 }
