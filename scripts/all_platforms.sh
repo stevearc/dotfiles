@@ -57,6 +57,7 @@ configure-git() {
   git config --global alias.ba 'branch -a'
   git config --global alias.ds 'diff --stat=160,120'
   git config --global alias.dh1 'diff HEAD~1'
+  git config --global alias.sh 'show -w'
   git config --global alias.s 'submodule'
   git config --global alias.su 'submodule update --init --recursive'
   git config --global alias.sclean '!git submodule update --init --recursive && git submodule foreach --recursive "git reset --hard" && git submodule foreach --recursive "git clean -fd"'
