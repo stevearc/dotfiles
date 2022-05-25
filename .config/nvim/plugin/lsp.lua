@@ -120,66 +120,6 @@ safe_require("lspconfig", function(lspconfig)
     return result
   end
 
-  function stevearc.on_update_diagnostics(bufnr)
-    local config = require("qf_helper.config")
-    local util = require("qf_helper.util")
-    if bufnr ~= vim.api.nvim_get_current_buf() or util.get_win_type() ~= "" then
-      return
-    end
-    for _, winid in ipairs(vim.api.nvim_list_wins()) do
-      if vim.api.nvim_win_get_buf(winid) == bufnr then
-        vim.diagnostic.setloclist({
-          open = false,
-          winnr = winid,
-          severity = {
-            min = vim.diagnostic.severity.W,
-          },
-        })
-      end
-    end
-    if bufnr == vim.api.nvim_get_current_buf() then
-      local total = vim.tbl_count(vim.diagnostic.get(bufnr, { severity = { min = vim.diagnostic.severity.W } }))
-      if total == 0 then
-        if vim.fn.win_gettype() == "" then
-          vim.cmd("silent! lclose")
-        end
-        -- Resize the loclist
-      elseif util.is_open("l") then
-        local winid = vim.api.nvim_get_current_win()
-        local height = math.max(config.l.min_height, math.min(config.l.max_height, total))
-        vim.cmd("lopen " .. height)
-        vim.api.nvim_set_current_win(winid)
-      end
-    end
-  end
-  function stevearc.diagnostics_enter_buffer()
-    local util = require("qf_helper.util")
-    if vim.bo.buftype ~= "" or not util.is_open("l") then
-      return
-    end
-    local diagnostics = vim.diagnostic.get(0, {
-      severity = {
-        min = vim.diagnostic.severity.W,
-      },
-    })
-    local items = vim.fn.getloclist(0)
-    -- Only update the loclist if they're not already showing for our buffer
-    if #diagnostics == #items and #items > 0 then
-      local diag = diagnostics[1]
-      local item = items[1]
-      if diag.bufnr == item.bufnr and diag.lnum + 1 == item.lnum and diag.col + 1 == item.col then
-        return
-      end
-    end
-    stevearc.on_update_diagnostics(vim.api.nvim_get_current_buf())
-  end
-
-  vim.cmd([[augroup LSPDiagnostics
-  au!
-  autocmd DiagnosticChanged * call luaeval("stevearc.on_update_diagnostics(tonumber(_A))", expand("<abuf>"))
-  autocmd BufEnter * lua stevearc.diagnostics_enter_buffer()
-  augroup END]])
-
   -- Configure the LSP servers
   local lspservers = {
     "bashls",
@@ -295,7 +235,7 @@ safe_require("lspconfig", function(lspconfig)
           path = vim.split(package.path, ";"),
         },
         diagnostics = {
-          globals = { "vim", "stevearc", "safe_require" },
+          globals = { "vim", "stevearc", "safe_require", "it", "describe", "before_each", "after_each" },
         },
         workspace = {
           -- Make the server aware of Neovim runtime files
