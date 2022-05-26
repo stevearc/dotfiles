@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import sys
-import copy
 import json
 import hashlib
 import re
@@ -44,14 +43,15 @@ def git_lines(*args, **kwargs) -> List[str]:
         return []
 
 def remote_main_branch() -> str:
-    proc = subprocess.run(['git', 'symbolic-ref', 'refs/remotes/origin/HEAD'], capture_output=True)
+    proc = subprocess.run(['git', 'symbolic-ref', 'refs/remotes/origin/HEAD'], capture_output=True, check=False)
     if proc.returncode == 0:
-        return proc.output.decode('utf-8').split('/')[-1]
+        return proc.stdout.decode('utf-8').split('/')[-1]
     return 'master'
 
 MASTER = remote_main_branch()
 ORIGIN_MASTER = 'origin/' + MASTER
 USER = os.environ['USER']
+STACK_RE = re.compile(r'^(.*)\-(\d+)$')
 
 class Stack:
     def __init__(self, name: str, children: List[str]):
@@ -158,8 +158,6 @@ class PullRequest:
     def is_wip(self) -> bool:
         return bool(self.wip)
 
-
-STACK_RE = re.compile(r'^(.*)\-(\d+)$')
 
 def parse_markdown_table(body: str) -> Tuple[str, str]:
     table = []
@@ -290,7 +288,7 @@ def merge_base(branch: str, ref2: str = ORIGIN_MASTER) -> str:
 def child_branches(ref: str) -> List[str]:
     return [b for b in git_lines('branch', '--contains', ref, '--format=%(refname:short)') if b != ref]
 
-def make_stack(branch: str=None):
+def make_stack(branch: Optional[str]=None):
     cur = current_branch()
     if branch is None or branch == '.' or branch == '@':
         branch = current_stack()
@@ -341,6 +339,9 @@ def _add_cmd_stack(parser):
 
 def navigate_stack_relative(count: int):
     stack = get_stack(current_stack())
+    if stack is None:
+        sys.stderr.write("Not on a stack branch\n")
+        sys.exit(1)
     cur = current_branch()
     branches = stack.children + [stack.name]
     idx = branches.index(cur)
@@ -410,6 +411,9 @@ def cmd_stack(args, parser):
             stack = get_stack(args.name)
         else:
             stack = get_stack(current_stack())
+        if stack is None:
+            sys.stderr.write("Not a valid stack branch\n")
+            sys.exit(1)
         for branch in stack.children:
             delete_branch(branch, True)
     else:
