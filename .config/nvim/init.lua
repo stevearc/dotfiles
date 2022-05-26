@@ -312,6 +312,7 @@ safe_require("crates").setup()
 safe_require("dressing").setup({
   input = {
     insert_only = false,
+    relative = "editor",
   },
 })
 
