@@ -56,7 +56,7 @@ safe_require("lualine").setup({
       },
       arduino_status,
     },
-    lualine_x = { projects[0].lualine_message, "GkeepStatus", lsp_messages, "filetype" },
+    lualine_x = { projects[0].lualine_message, "GkeepStatus", lsp_messages, { "overseer", label = "" }, "filetype" },
     lualine_y = { "progress" },
     lualine_z = { "location" },
   },
