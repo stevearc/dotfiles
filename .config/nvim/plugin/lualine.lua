@@ -37,6 +37,7 @@ end
 
 safe_require("lualine").setup({
   options = {
+    globalstatus = true,
     icons_enabled = vim.g.devicons ~= false,
     theme = "tokyonight",
     section_separators = "",
