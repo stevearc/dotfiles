@@ -2,22 +2,42 @@ safe_require("nvim-treesitter", function()
   local queries = require("nvim-treesitter.query")
   local parsers = require("nvim-treesitter.parsers")
 
+  local disable_max_size = 1000000
+
+  local function should_disable(lang, bufnr)
+    local size = vim.fn.getfsize(vim.api.nvim_buf_get_name(bufnr or 0))
+    -- size will be -2 if it doesn't fit into a number
+    if size > disable_max_size or size == -2 then
+      return true
+    end
+    return false
+  end
+
   require("nvim-treesitter.configs").setup({
     ensure_installed = vim.g.treesitter_languages,
     ignore_install = vim.g.treesitter_languages_blacklist,
     highlight = {
       enable = true,
+      disable = should_disable,
     },
     indent = {
       enable = true,
-      -- The python indent is driving me insane
-      disable = { "lua", "python" },
+      disable = function(lang, bufnr)
+        -- The python indent is driving me insane
+        if lang == 'lua' or lang == 'python' then
+          return true
+        else
+          return should_disable(lang, bufnr)
+        end
+      end,
     },
     matchup = {
       enable = true,
+      disable = should_disable,
     },
     textsubjects = {
       enable = true,
+      disable = should_disable,
       keymaps = {
         ["."] = "textsubjects-smart",
       },
