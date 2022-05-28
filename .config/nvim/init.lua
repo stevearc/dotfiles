@@ -1,14 +1,26 @@
 _G.stevearc = {}
 
 -- Profiling
--- require("profile").instrument_autocmds()
--- require("profile").instrument("*")
+local should_profile = os.getenv('NVIM_PROFILE')
+if should_profile then
+  require("profile").instrument_autocmds()
+  if should_profile:lower():match("^start") then
+    require("profile").start("*")
+  else
+    require("profile").instrument("*")
+  end
+end
 
-function stevearc.toggle_profile()
+local function toggle_profile()
   local prof = require("profile")
   if prof.is_recording() then
-    prof.stop("profile.json")
-    print("Wrote profile.json")
+    prof.stop()
+    vim.ui.input({prompt = "Save profile to:", completion='file', default="profile.json"}, function(filename)
+      if filename then
+        prof.export(filename)
+        vim.notify(string.format("Wrote %s", filename))
+      end
+    end)
   else
     prof.start("*")
   end
@@ -46,7 +58,7 @@ vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*
 local aug = vim.api.nvim_create_augroup("StevearcNewConfig", {})
 
 local opts = { noremap = true, silent = true }
-vim.api.nvim_set_keymap("n", "<f1>", [[<cmd>lua stevearc.toggle_profile()<cr>]], opts)
+vim.keymap.set({"n", "i"}, "<f1>", toggle_profile)
 vim.api.nvim_set_keymap(
   "n",
   "<f2>",
@@ -339,14 +351,11 @@ safe_require("aerial", function(aerial)
     -- backends = { "lsp", "treesitter", "markdown" },
     -- filter_kind = false,
     on_attach = function(bufnr)
-      local function map(mode, key, result)
-        vim.api.nvim_buf_set_keymap(bufnr, mode, key, result, { noremap = true, silent = true })
-      end
-      map("n", "<leader>a", "<cmd>AerialToggle!<CR>")
-      map("n", "{", "<cmd>AerialPrev<CR>")
-      map("v", "{", "<cmd>AerialPrev<CR>")
-      map("n", "}", "<cmd>AerialNext<CR>")
-      map("v", "}", "<cmd>AerialNext<CR>")
+      vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>")
+      vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>")
+      vim.keymap.set("v", "{", "<cmd>AerialPrev<CR>")
+      vim.keymap.set("n", "}", "<cmd>AerialNext<CR>")
+      vim.keymap.set("v", "}", "<cmd>AerialNext<CR>")
     end,
   })
 end)
@@ -363,14 +372,8 @@ safe_require("lightspeed", function(lightspeed)
 end)
 safe_require("tags").setup({
   on_attach = function(bufnr)
-    vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", '<CMD>lua require("tags").goto_definition()<CR>', { silent = true })
-    vim.api.nvim_buf_set_keymap(
-      bufnr,
-      "n",
-      "<C-]>",
-      '<CMD>lua require("tags").goto_definition()<CR>',
-      { silent = true }
-    )
+    vim.keymap.set("n", "gd", tags.goto_definition, { buffer = bufnr })
+    vim.keymap.set("n", "<C-]>", tags.goto_definition, { buffer = bufnr })
   end,
 })
 safe_require("overseer", function(overseer)
