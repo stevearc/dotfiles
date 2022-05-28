@@ -2,7 +2,7 @@ safe_require("nvim-treesitter", function()
   local queries = require("nvim-treesitter.query")
   local parsers = require("nvim-treesitter.parsers")
 
-  local disable_max_size = 1000000
+  local disable_max_size = 2000000 -- 2MB
 
   local function should_disable(lang, bufnr)
     local size = vim.fn.getfsize(vim.api.nvim_buf_get_name(bufnr or 0))
@@ -24,7 +24,7 @@ safe_require("nvim-treesitter", function()
       enable = true,
       disable = function(lang, bufnr)
         -- The python indent is driving me insane
-        if lang == 'lua' or lang == 'python' then
+        if lang == "lua" or lang == "python" then
           return true
         else
           return should_disable(lang, bufnr)
@@ -44,12 +44,9 @@ safe_require("nvim-treesitter", function()
     },
   })
 
-  vim.cmd("autocmd WinEnter * lua stevearc.set_ts_win_defaults()")
-  vim.cmd("autocmd BufWinEnter * lua stevearc.set_ts_win_defaults()")
-
-  function stevearc.set_ts_win_defaults()
+  local function set_ts_win_defaults()
     local parser_name = parsers.get_buf_lang()
-    if parsers.has_parser(parser_name) then
+    if parsers.has_parser(parser_name) and not should_disable(parser_name, 0) then
       local ok, has_folds = pcall(queries.get_query, parser_name, "folds")
       if ok and has_folds then
         if vim.wo.foldmethod == "manual" then
@@ -74,4 +71,12 @@ safe_require("nvim-treesitter", function()
       end
     end
   end
+
+  local aug = vim.api.nvim_create_augroup("StevearcTSConfig", {})
+  vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter" }, {
+    desc = "Set treesitter defaults on win enter",
+    pattern = "*",
+    callback = set_ts_win_defaults,
+    group = aug,
+  })
 end)

@@ -1,7 +1,7 @@
 _G.stevearc = {}
 
 -- Profiling
-local should_profile = os.getenv('NVIM_PROFILE')
+local should_profile = os.getenv("NVIM_PROFILE")
 if should_profile then
   require("profile").instrument_autocmds()
   if should_profile:lower():match("^start") then
@@ -15,7 +15,7 @@ local function toggle_profile()
   local prof = require("profile")
   if prof.is_recording() then
     prof.stop()
-    vim.ui.input({prompt = "Save profile to:", completion='file', default="profile.json"}, function(filename)
+    vim.ui.input({ prompt = "Save profile to:", completion = "file", default = "profile.json" }, function(filename)
       if filename then
         prof.export(filename)
         vim.notify(string.format("Wrote %s", filename))
@@ -58,7 +58,7 @@ vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*
 local aug = vim.api.nvim_create_augroup("StevearcNewConfig", {})
 
 local opts = { noremap = true, silent = true }
-vim.keymap.set({"n", "i"}, "<f1>", toggle_profile)
+vim.keymap.set({ "n", "i" }, "<f1>", toggle_profile)
 vim.api.nvim_set_keymap(
   "n",
   "<f2>",
@@ -370,12 +370,14 @@ safe_require("lightspeed", function(lightspeed)
   vim.api.nvim_set_keymap("", "<leader>s", "<Plug>Lightspeed_omni_s", {})
   vim.api.nvim_set_keymap("", "gs", "<Plug>Lightspeed_omni_s", {})
 end)
-safe_require("tags").setup({
-  on_attach = function(bufnr)
-    vim.keymap.set("n", "gd", tags.goto_definition, { buffer = bufnr })
-    vim.keymap.set("n", "<C-]>", tags.goto_definition, { buffer = bufnr })
-  end,
-})
+safe_require("tags", function(tags)
+  tags.setup({
+    on_attach = function(bufnr)
+      vim.keymap.set("n", "gd", tags.goto_definition, { buffer = bufnr })
+      vim.keymap.set("n", "<C-]>", tags.goto_definition, { buffer = bufnr })
+    end,
+  })
+end)
 safe_require("overseer", function(overseer)
   overseer.setup()
   vim.keymap.set("n", "<leader>ot", function()
