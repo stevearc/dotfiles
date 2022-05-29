@@ -36,6 +36,7 @@ nnoremap <silent><buffer><expr> <C-l> defx#do_action('redraw')
 nnoremap <silent><buffer><expr> <C-g> defx#do_action('print')
 nnoremap <silent><buffer><expr> > defx#do_action('resize', defx#get_context().winwidth + 10)
 nnoremap <silent><buffer><expr> < defx#do_action('resize', defx#get_context().winwidth - 10)
+nnoremap <silent><buffer> <C-t> <cmd>call <sid>OpenCurdirInTab()<CR>
 nnoremap <silent><buffer> t <cmd>call <sid>OpenTerm()<CR>
 nnoremap <silent><buffer> <leader>ff <cmd>call <sid>FindDirFiles()<CR>
 nnoremap <silent><buffer> H <cmd>call nvim_set_current_dir(<sid>GetDefxDir())<CR>
@@ -48,6 +49,12 @@ fun! s:GetDefxDir() abort
     let l:mod = ':p:h'
   endif
   return fnamemodify(l:candidate['action__path'], l:mod)
+endfun
+
+fun! s:OpenCurdirInTab() abort
+  let dir = s:GetDefxDir()
+  tabnew
+  exec 'tcd ' . dir
 endfun
 
 fun! s:FindDirFiles() abort
