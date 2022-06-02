@@ -107,7 +107,7 @@ Opts:
     for dotfile in $CLI_DOTFILES; do
       link "$HERE/$dotfile" "$HOME/$dotfile"
     done
-    grep "source .*dotfiles/.bashrc" ~/.bashrc >/dev/null 2>&1 || echo "source \"$HERE/.bashrc\"" >> ~/.bashrc
+    grep "source .*dotfiles/.bashrc" ~/.bashrc >/dev/null 2>&1 || echo "source \"$HERE/.bashrc\"" >>~/.bashrc
   else
     rsync -lrp $CLI_DOTFILES "$HOME"
     cp "$HERE/.bashrc" "$HOME"
@@ -183,7 +183,7 @@ dotcmd-upgrade-lsp() {
   hascmd vscode-json-language-server && yarn global upgrade -s vscode-langservers-extracted
   hascmd vim-language-server && yarn global upgrade -s vim-language-server
   hascmd yaml-language-server && yarn global upgrade -s yaml-language-server
-  hascmd shfmt && GO111MODULE=on go get -u mvdan.cc/sh/v3/cmd/shfmt
+  hascmd shfmt && go install mvdan.cc/sh/v3/cmd/shfmt@latest
   hascmd pyright && yarn global upgrade -s pyright
   hascmd flow && yarn global upgrade -s flow-bin
   hascmd typescript-language-server && yarn global upgrade -s typescript-language-server

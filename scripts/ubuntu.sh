@@ -52,9 +52,7 @@ install-language-misc() {
   sudo apt-get install -yq pandoc yamllint
   install-misc-languages
   install-language-go
-  if ! hascmd shfmt; then
-    GO111MODULE=on go get mvdan.cc/sh/v3/cmd/shfmt
-  fi
+  hascmd shfmt || go install mvdan.cc/sh/v3/cmd/shfmt@latest
 }
 
 install-language-lua() {
