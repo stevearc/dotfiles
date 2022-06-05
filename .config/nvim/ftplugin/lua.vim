@@ -1,4 +1,4 @@
 setlocal keywordprg=:help
 iabbr <buffer> != ~=
-nmap <leader>e <Plug>PlenaryTestFile
+iabbr <buffer> locla local
 inoremap <nowait> [[<CR> [[<CR>]]<C-o>O
