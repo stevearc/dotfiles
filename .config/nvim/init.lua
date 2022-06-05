@@ -379,7 +379,38 @@ safe_require("tags", function(tags)
   })
 end)
 safe_require("overseer", function(overseer)
-  overseer.setup()
+  local nvim_tests = overseer.wrap_test("lua.plenary_busted", {
+    get_cmd = function()
+      return { "./run_tests.sh" }
+    end,
+    run_test_dir = function(self, dirname)
+      return {
+        cmd = self:get_cmd(),
+        args = { dirname },
+      }
+    end,
+    run_test_file = function(self, filename)
+      return {
+        cmd = self:get_cmd(),
+        args = { filename },
+      }
+    end,
+  })
+  overseer.setup({
+    testing = {
+      -- disable = {},
+      -- modify = nil,
+      -- disable_builtin = true,
+      dirs = {
+        ["~/dotfiles/vimplugins/overseer.nvim"] = {
+          nvim_tests,
+        },
+        ["~/dotfiles/vimplugins/aerial.nvim"] = {
+          nvim_tests,
+        },
+      },
+    },
+  })
   vim.keymap.set("n", "<leader>ot", function()
     overseer.run_template(
       { tags = { overseer.TAG.TEST }, prompt = "allow" },
@@ -392,12 +423,24 @@ safe_require("overseer", function(overseer)
       { filename = vim.api.nvim_buf_get_name(0), line = vim.api.nvim_win_get_cursor(0)[1] }
     )
   end)
+  vim.api.nvim_create_user_command(
+    "OverseerDebugParser",
+    'lua require("overseer.parser.debug").start_debug_session()',
+    {}
+  )
   vim.keymap.set("n", "<leader>oo", "<cmd>OverseerToggle<CR>")
   vim.keymap.set("n", "<leader>or", "<cmd>OverseerRun<CR>")
   vim.keymap.set("n", "<leader>ol", "<cmd>OverseerLoadBundle<CR>")
   vim.keymap.set("n", "<leader>ob", "<cmd>OverseerBuild<CR>")
-  vim.keymap.set("n", "<leader>oa", "<cmd>OverseerQuickAction 1<CR>")
-  vim.keymap.set("n", "<leader>os", "<cmd>OverseerQuickAction<CR>")
+  vim.keymap.set("n", "<leader>od", "<cmd>OverseerQuickAction<CR>")
+  vim.keymap.set("n", "<leader>os", "<cmd>OverseerTaskAction<CR>")
+  -- Testing keybinds
+  vim.keymap.set("n", "<leader>tt", "<cmd>OverseerTestFile<CR>")
+  vim.keymap.set("n", "<leader>tn", "<cmd>OverseerTestNearest<CR>")
+  vim.keymap.set("n", "<leader>ta", "<cmd>OverseerTest<CR>")
+  vim.keymap.set("n", "<leader>tp", "<cmd>OverseerToggleTestPanel<CR>")
+  vim.keymap.set("n", "<leader>td", "<cmd>OverseerTestAction<CR>")
+  vim.keymap.set("n", "<leader>tl", "<cmd>OverseerTestLast<CR>")
 end)
 safe_require("hlslens", function(hlslens)
   hlslens.setup({
@@ -405,17 +448,30 @@ safe_require("hlslens", function(hlslens)
     nearest_only = true,
   })
 
-  local function map(lhs, rhs)
-    vim.api.nvim_set_keymap("n", lhs, rhs, { noremap = true, silent = true })
-  end
-  map("n", [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]])
-  map("N", [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]])
+  vim.keymap.set("n", "n", [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]])
+  vim.keymap.set("n", "N", [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]])
 
   -- Fix * and # behavior to respect smartcase
-  map("*", [[:let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=1<CR>:lua require('hlslens').start()<CR>nzv]])
-  map("#", [[:let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=0<CR>:lua require('hlslens').start()<CR>nzv]])
-  map("g*", [[:let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR>:lua require('hlslens').start()<CR>nzv]])
-  map("g#", [[:let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>:lua require('hlslens').start()<CR>nzv]])
+  vim.keymap.set(
+    "n",
+    "*",
+    [[:let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=1<CR>:lua require('hlslens').start()<CR>nzv]]
+  )
+  vim.keymap.set(
+    "n",
+    "#",
+    [[:let @/='\v<'.expand('<cword>').'>'<CR>:let v:searchforward=0<CR>:lua require('hlslens').start()<CR>nzv]]
+  )
+  vim.keymap.set(
+    "n",
+    "g*",
+    [[:let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR>:lua require('hlslens').start()<CR>nzv]]
+  )
+  vim.keymap.set(
+    "n",
+    "g#",
+    [[:let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>:lua require('hlslens').start()<CR>nzv]]
+  )
 end)
 
 if vim.g.nerd_font ~= false then
@@ -434,11 +490,10 @@ vim.keymap.set({ "n", "x" }, "[", "<plug>(matchup-[%)")
 vim.keymap.set({ "n", "x" }, "]", "<plug>(matchup-]%)")
 
 -- vim-test
-vim.g["test#preserve_screen"] = 1
-vim.g["test#neovim#term_position"] = "vert"
-vim.g["test#strategy"] = "neovim"
-vim.api.nvim_set_keymap("n", "<leader>tt", "<cmd>TestFile<CR>", { silent = true })
-vim.api.nvim_set_keymap("n", "<leader>tn", "<cmd>TestNearest<CR>", { silent = true })
-vim.api.nvim_set_keymap("n", "<leader>ts", "<cmd>TestSuite<CR>", { silent = true })
-vim.api.nvim_set_keymap("n", "<leader>tl", "<cmd>TestLast<CR>", { silent = true })
+vim.g["test#overseer#term_position"] = "vert"
+vim.g["test#strategy"] = "overseer"
+-- vim.api.nvim_set_keymap("n", "<leader>tt", "<cmd>TestFile<CR>", { silent = true })
+-- vim.api.nvim_set_keymap("n", "<leader>tn", "<cmd>TestNearest<CR>", { silent = true })
+-- vim.api.nvim_set_keymap("n", "<leader>ts", "<cmd>TestSuite<CR>", { silent = true })
+-- vim.api.nvim_set_keymap("n", "<leader>tl", "<cmd>TestLast<CR>", { silent = true })
 vim.api.nvim_set_keymap("n", "<leader>tv", "<cmd>TestVisit<CR>", { silent = true })
