@@ -364,7 +364,7 @@ vim.g.lightspeed_no_default_keymaps = true
 safe_require("lightspeed", function(lightspeed)
   lightspeed.setup({
     jump_to_unique_chars = false,
-    safe_labels = nil,
+    safe_labels = {},
   })
   -- Not sure which of these mappings I prefer yet
   vim.api.nvim_set_keymap("", "<leader>s", "<Plug>Lightspeed_omni_s", {})
