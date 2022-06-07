@@ -148,10 +148,7 @@ return {
     null_ls.builtins.formatting.gofmt,
 
     -- javascript and derivatives
-    sandbox_js_command(
-      null_ls.builtins.formatting.prettier,
-      "prettier"
-    ),
+    sandbox_js_command(null_ls.builtins.formatting.prettier, "prettier"),
 
     -- lua
     null_ls.builtins.formatting.stylua.with({

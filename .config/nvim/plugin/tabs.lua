@@ -60,6 +60,8 @@ local function is_floating_win(winid)
   return vim.api.nvim_win_get_config(winid).relative ~= ""
 end
 
+local panel_types = { "aerial", "OverseerList", "neotest-summary" }
+
 local function is_normal_win(winid)
   if safe_require("stickybuf.util").is_sticky_win(winid) == true then
     return false
@@ -73,7 +75,7 @@ local function is_normal_win(winid)
   local bt = vim.api.nvim_buf_get_option(bufnr, "buftype")
 
   -- Ignore quickfix, prompt, help, and aerial buffer windows
-  return bt ~= "quickfix" and bt ~= "prompt" and bt ~= "help" and ft ~= "aerial" and ft ~= "OverseerList"
+  return bt ~= "quickfix" and bt ~= "prompt" and bt ~= "help" and not vim.tbl_contains(panel_types, ft)
 end
 
 local function other_normal_window_exists()

@@ -52,6 +52,7 @@ function stevearc.pack(...)
   return { n = select("#", ...), ... }
 end
 
+vim.g.use_neotest = true
 vim.g.python3_host_prog = os.getenv("HOME") .. "/.envs/py3/bin/python"
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*")
@@ -378,6 +379,115 @@ safe_require("tags", function(tags)
     end,
   })
 end)
+
+if vim.g.use_neotest then
+  -- Pros:
+  -- * DAP integration
+  -- * Shows full test output in diagnostics sign on the test
+  -- * Splits tests by integration in the summary panel
+  -- Cons:
+  -- * Bug: Open test file. Open ../../other/test_file. error("Common root not found")
+  -- * Bug: Doesn't parse plenary skip (registered as success)
+  -- * Bug: default colors are not in-colorscheme
+  -- * Bug: If I add tests to a plenary test file, the summary breaks
+  -- * Nit: diagnostics are set twice from a single test run
+  -- * Perf: using treesitter to parse the query on every invocation
+  -- * Nit: Only updates position on BufAdd and BufWritePost (and CursorHold?) (could easily do it on CursorMoved with TS)
+  -- * Perf: But also, updating the position calls lib.files.find when does a whole-repo find command! Not sure exactly when these get triggered, but even once could be terrible in FB's repos.
+  -- * Feat: Con't run test suites without crawling directory first
+  -- * Feat: Can't rerun on save
+  -- * Feat: Can't rerun last test cmd
+  -- * Feat: Can't rerun failed tests
+  -- * Feat: No results streaming
+  -- * Feat: Can configure adapters, but not on a per-directory basis
+  -- Same:
+  -- * summary panel
+  -- * diagnostics (neotest shows more of the output though)
+  -- * signs
+  -- * per-test output
+  -- Investigate:
+  -- * vim-test integration
+  -- * Does neotest have ability to throttle groups of individual test runs?
+  -- * attaching to process
+  -- * Tangential, but also check out https://github.com/andythigpen/nvim-coverage
+  safe_require("neotest", function(neotest)
+    local adapters = {}
+    safe_require("neotest-python", function(adapter)
+      table.insert(
+        adapters,
+        adapter({
+          dap = { justMyCode = false },
+        })
+      )
+    end)
+    safe_require("neotest-plenary", function(adapter)
+      table.insert(adapters, adapter)
+    end)
+    safe_require("neotest-vim-test", function(adapter)
+      table.insert(
+        adapters,
+        adapter({
+          ignore_file_types = { "python", "vim", "lua" },
+        })
+      )
+    end)
+    neotest.setup({
+      adapters = adapters,
+      summary = {
+        mappings = {
+          expand = "l",
+          output = "<C-f>",
+          short = "p",
+          jumpto = "gf",
+          run = "<C-r>",
+        },
+      },
+      diagnostic = {
+        enabled = true,
+      },
+      output = {
+        enabled = true,
+        open_on_run = false,
+      },
+      status = {
+        enabled = true,
+      },
+    })
+    vim.cmd([[
+    hi! link NeotestPassed String
+    hi! link NeotestFailed DiagnosticError
+    hi! link NeotestRunning Constant
+    hi! link NeotestSkipped DiagnosticInfo
+    hi! link NeotestTest Normal
+    hi! link NeotestNamespace TSKeyword
+    hi! link NeotestFocused QuickFixLine
+    hi! link NeotestFile Keyword
+    hi! link NeotestDir Keyword
+    hi! link NeotestIndent Conceal
+    hi! link NeotestExpandMarker Conceal
+    hi! link NeotestAdapterName TSConstructor
+    ]])
+    vim.keymap.set("n", "<leader>tn", function()
+      neotest.run.run()
+    end)
+    vim.keymap.set("n", "<leader>tt", function()
+      neotest.run.run(vim.api.nvim_buf_get_name(0))
+    end)
+    vim.keymap.set("n", "<leader>tl", function()
+      neotest.run.run_last()
+    end)
+    vim.keymap.set("n", "<leader>td", function()
+      neotest.run.run({ strategy = "dap" })
+    end)
+    vim.keymap.set("n", "<leader>tp", function()
+      neotest.summary.toggle()
+    end)
+    vim.keymap.set("n", "<leader>to", function()
+      neotest.output.open({ short = true })
+    end)
+  end)
+end
+
 safe_require("overseer", function(overseer)
   local nvim_tests = overseer.wrap_test("lua.plenary_busted", {
     get_cmd = function()
@@ -398,15 +508,21 @@ safe_require("overseer", function(overseer)
   })
   overseer.setup({
     testing = {
-      -- disable = {},
       -- modify = nil,
-      -- disable_builtin = true,
+      disable = { "lua.busted", "lua.plenary_busted" },
+      -- disable_builtin = false,
       dirs = {
         ["~/dotfiles/vimplugins/overseer.nvim"] = {
           nvim_tests,
         },
         ["~/dotfiles/vimplugins/aerial.nvim"] = {
           nvim_tests,
+        },
+        ["~/ws/overseer-test-frameworks/lua/busted"] = {
+          "lua.busted",
+        },
+        ["~/ws/overseer-test-frameworks/lua/plenary_busted"] = {
+          "lua.plenary_busted",
         },
       },
     },
@@ -435,12 +551,15 @@ safe_require("overseer", function(overseer)
   vim.keymap.set("n", "<leader>od", "<cmd>OverseerQuickAction<CR>")
   vim.keymap.set("n", "<leader>os", "<cmd>OverseerTaskAction<CR>")
   -- Testing keybinds
-  vim.keymap.set("n", "<leader>tt", "<cmd>OverseerTestFile<CR>")
-  vim.keymap.set("n", "<leader>tn", "<cmd>OverseerTestNearest<CR>")
-  vim.keymap.set("n", "<leader>ta", "<cmd>OverseerTest<CR>")
-  vim.keymap.set("n", "<leader>tp", "<cmd>OverseerToggleTestPanel<CR>")
-  vim.keymap.set("n", "<leader>td", "<cmd>OverseerTestAction<CR>")
-  vim.keymap.set("n", "<leader>tl", "<cmd>OverseerTestLast<CR>")
+  if not vim.g.use_neotest then
+    vim.keymap.set("n", "<leader>tt", "<cmd>OverseerTestFile<CR>")
+    vim.keymap.set("n", "<leader>tn", "<cmd>OverseerTestNearest<CR>")
+    vim.keymap.set("n", "<leader>ta", "<cmd>OverseerTest<CR>")
+    vim.keymap.set("n", "<leader>tp", "<cmd>OverseerToggleTestPanel<CR>")
+    vim.keymap.set("n", "<leader>td", "<cmd>OverseerTestAction<CR>")
+    vim.keymap.set("n", "<leader>tl", "<cmd>OverseerTestLast<CR>")
+    vim.keymap.set("n", "<leader>tr", "<cmd>OverseerTestRerunFailed<CR>")
+  end
 end)
 safe_require("hlslens", function(hlslens)
   hlslens.setup({
