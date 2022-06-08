@@ -93,6 +93,8 @@ configure-git() {
   git config --global alias.up '!python ~/.local/bin/githelper.py update'
   git config --global alias.mine '!git log --author=$(git config --get user.email) --pretty=medium --compact-summary'
 
+  git config --global core.excludesFile '~/.config/global-git-ignore'
+
   if hascmd fzf; then
     git config --global alias.fb '!git sk list | fzf | xargs git checkout'
   fi
