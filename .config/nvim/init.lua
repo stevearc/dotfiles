@@ -25,28 +25,38 @@ local function toggle_profile()
     prof.start("*")
   end
 end
-function _G.safe_require(name, cb)
-  local ok, mod = pcall(require, name)
-  if ok then
-    if cb then
-      cb(mod)
+function _G.safe_require(...)
+  local args = { ... }
+  local mods = {}
+  local first_mod
+  for _,arg in ipairs(args) do
+    if type(arg) == 'function' then
+      arg(unpack(mods))
+      break
     end
-    return mod
-  else
-    vim.notify(string.format("Missing module: %s", name), vim.log.levels.WARN)
-    -- Return a dummy item that returns functions, so we can do things like
-    -- safe_require("module").setup()
-    local dummy = {}
-    setmetatable(dummy, {
-      __call = function()
-        return dummy
-      end,
-      __index = function()
-        return dummy
-      end,
-    })
-    return dummy
+    local ok, mod = pcall(require, arg)
+    if ok then
+      if not first_mod then
+        first_mod = mod
+      end
+      table.insert(mods, mod)
+    else
+      vim.notify(string.format("Missing module: %s", name), vim.log.levels.WARN)
+      -- Return a dummy item that returns functions, so we can do things like
+      -- safe_require("module").setup()
+      local dummy = {}
+      setmetatable(dummy, {
+        __call = function()
+          return dummy
+        end,
+        __index = function()
+          return dummy
+        end,
+      })
+      return dummy
+    end
   end
+  return first_mod
 end
 function stevearc.pack(...)
   return { n = select("#", ...), ... }
@@ -396,7 +406,6 @@ if vim.g.use_neotest then
   -- * Perf: But also, updating the position calls lib.files.find when does a whole-repo find command! Not sure exactly when these get triggered, but even once could be terrible in FB's repos.
   -- * Feat: Con't run test suites without crawling directory first
   -- * Feat: Can't rerun on save
-  -- * Feat: Can't rerun last test cmd
   -- * Feat: Can't rerun failed tests
   -- * Feat: No results streaming
   -- * Feat: Can configure adapters, but not on a per-directory basis
@@ -406,33 +415,22 @@ if vim.g.use_neotest then
   -- * signs
   -- * per-test output
   -- Investigate:
+  -- * we can run single test with run(expand('%')); that passes the filename to the adapter. But I thought adapter IDs could be anything? Does this mean that all adapters HAVE to support directory and file IDs?
   -- * vim-test integration
   -- * Does neotest have ability to throttle groups of individual test runs?
   -- * attaching to process
   -- * Tangential, but also check out https://github.com/andythigpen/nvim-coverage
-  safe_require("neotest", function(neotest)
-    local adapters = {}
-    safe_require("neotest-python", function(adapter)
-      table.insert(
-        adapters,
-        adapter({
-          dap = { justMyCode = false },
-        })
-      )
-    end)
-    safe_require("neotest-plenary", function(adapter)
-      table.insert(adapters, adapter)
-    end)
-    safe_require("neotest-vim-test", function(adapter)
-      table.insert(
-        adapters,
-        adapter({
-          ignore_file_types = { "python", "vim", "lua" },
-        })
-      )
-    end)
+  safe_require("neotest", 'neotest-python', 'neotest-plenary', 'neotest-vim-test', function(neotest, python_adapter, plenary_adapter, vim_test_adapter)
     neotest.setup({
-      adapters = adapters,
+      adapters = {
+        python_adapter({
+          dap = { justMyCode = false },
+        }),
+        plenary_adapter,
+        vim_test_adapter({
+          ignore_file_types = { "python", "vim", "lua" },
+        }),
+      },
       summary = {
         mappings = {
           expand = "l",
