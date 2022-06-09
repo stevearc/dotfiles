@@ -29,8 +29,8 @@ function _G.safe_require(...)
   local args = { ... }
   local mods = {}
   local first_mod
-  for _,arg in ipairs(args) do
-    if type(arg) == 'function' then
+  for _, arg in ipairs(args) do
+    if type(arg) == "function" then
       arg(unpack(mods))
       break
     end
@@ -397,9 +397,7 @@ if vim.g.use_neotest then
   -- * Splits tests by integration in the summary panel
   -- Cons:
   -- * Bug: Open test file. Open ../../other/test_file. error("Common root not found")
-  -- * Bug: Doesn't parse plenary skip (registered as success)
   -- * Bug: default colors are not in-colorscheme
-  -- * Bug: If I add tests to a plenary test file, the summary breaks
   -- * Nit: diagnostics are set twice from a single test run
   -- * Perf: using treesitter to parse the query on every invocation
   -- * Nit: Only updates position on BufAdd and BufWritePost (and CursorHold?) (could easily do it on CursorMoved with TS)
@@ -420,38 +418,43 @@ if vim.g.use_neotest then
   -- * Does neotest have ability to throttle groups of individual test runs?
   -- * attaching to process
   -- * Tangential, but also check out https://github.com/andythigpen/nvim-coverage
-  safe_require("neotest", 'neotest-python', 'neotest-plenary', 'neotest-vim-test', function(neotest, python_adapter, plenary_adapter, vim_test_adapter)
-    neotest.setup({
-      adapters = {
-        python_adapter({
-          dap = { justMyCode = false },
-        }),
-        plenary_adapter,
-        vim_test_adapter({
-          ignore_file_types = { "python", "vim", "lua" },
-        }),
-      },
-      summary = {
-        mappings = {
-          expand = "l",
-          output = "<C-f>",
-          short = "p",
-          jumpto = "gf",
-          run = "<C-r>",
+  safe_require(
+    "neotest",
+    "neotest-python",
+    "neotest-plenary",
+    "neotest-vim-test",
+    function(neotest, python_adapter, plenary_adapter, vim_test_adapter)
+      neotest.setup({
+        adapters = {
+          python_adapter({
+            dap = { justMyCode = false },
+          }),
+          plenary_adapter,
+          vim_test_adapter({
+            ignore_file_types = { "python", "vim", "lua" },
+          }),
         },
-      },
-      diagnostic = {
-        enabled = true,
-      },
-      output = {
-        enabled = true,
-        open_on_run = false,
-      },
-      status = {
-        enabled = true,
-      },
-    })
-    vim.cmd([[
+        summary = {
+          mappings = {
+            expand = "l",
+            output = "<C-f>",
+            short = "p",
+            jumpto = "gf",
+            run = "<C-r>",
+          },
+        },
+        diagnostic = {
+          enabled = true,
+        },
+        output = {
+          enabled = true,
+          open_on_run = false,
+        },
+        status = {
+          enabled = true,
+        },
+      })
+      vim.cmd([[
     hi! link NeotestPassed String
     hi! link NeotestFailed DiagnosticError
     hi! link NeotestRunning Constant
@@ -465,25 +468,26 @@ if vim.g.use_neotest then
     hi! link NeotestExpandMarker Conceal
     hi! link NeotestAdapterName TSConstructor
     ]])
-    vim.keymap.set("n", "<leader>tn", function()
-      neotest.run.run()
-    end)
-    vim.keymap.set("n", "<leader>tt", function()
-      neotest.run.run(vim.api.nvim_buf_get_name(0))
-    end)
-    vim.keymap.set("n", "<leader>tl", function()
-      neotest.run.run_last()
-    end)
-    vim.keymap.set("n", "<leader>td", function()
-      neotest.run.run({ strategy = "dap" })
-    end)
-    vim.keymap.set("n", "<leader>tp", function()
-      neotest.summary.toggle()
-    end)
-    vim.keymap.set("n", "<leader>to", function()
-      neotest.output.open({ short = true })
-    end)
-  end)
+      vim.keymap.set("n", "<leader>tn", function()
+        neotest.run.run()
+      end)
+      vim.keymap.set("n", "<leader>tt", function()
+        neotest.run.run(vim.api.nvim_buf_get_name(0))
+      end)
+      vim.keymap.set("n", "<leader>tl", function()
+        neotest.run.run_last()
+      end)
+      vim.keymap.set("n", "<leader>td", function()
+        neotest.run.run({ strategy = "dap" })
+      end)
+      vim.keymap.set("n", "<leader>tp", function()
+        neotest.summary.toggle()
+      end)
+      vim.keymap.set("n", "<leader>to", function()
+        neotest.output.open({ short = true })
+      end)
+    end
+  )
 end
 
 safe_require("overseer", function(overseer)
