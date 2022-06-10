@@ -54,6 +54,19 @@ local function open()
     bufnr = vim.api.nvim_create_buf(false, true)
     dir_to_buf[cwd] = bufnr
     open_term = true
+    vim.api.nvim_create_autocmd('BufLeave', {
+      desc = 'Close floating window when leaving terminal buffer',
+      buffer = bufnr,
+      callback = function()
+        vim.defer_fn(function()
+          for _,winid in ipairs(vim.api.nvim_list_wins()) do
+            if vim.api.nvim_win_get_buf(winid) == bufnr then
+              vim.api.nvim_win_close(winid, true)
+            end
+          end
+        end, 10)
+      end
+    })
   end
 
   local padding = 2
