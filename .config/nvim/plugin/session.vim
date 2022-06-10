@@ -33,6 +33,9 @@ function! s:GetSaveCmd() abort
 endfunction
 
 function! s:QuickLoad() abort
+  if !exists('xolox#session#get_names')
+    return
+  endif
   let names = xolox#session#get_names(0)
   if !empty(argv())
     return

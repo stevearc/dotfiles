@@ -41,7 +41,10 @@ function _G.safe_require(...)
       end
       table.insert(mods, mod)
     else
-      vim.notify(string.format("Missing module: %s", name), vim.log.levels.WARN)
+      -- Don't bother notifying if we're in a nvenv
+      if not os.getenv("NVENV") then
+        vim.notify_once(string.format("Missing module: %s", arg), vim.log.levels.WARN)
+      end
       -- Return a dummy item that returns functions, so we can do things like
       -- safe_require("module").setup()
       local dummy = {}
@@ -397,6 +400,7 @@ if vim.g.use_neotest then
   -- * Splits tests by integration in the summary panel
   -- Cons:
   -- * Bug: Open test file. Open ../../other/test_file. error("Common root not found")
+  -- * Bug: No output or debug info if test fails to run (e.g. try running tests in cpython)
   -- * Bug: default colors are not in-colorscheme
   -- * Nit: diagnostics are set twice from a single test run
   -- * Perf: using treesitter to parse the query on every invocation
