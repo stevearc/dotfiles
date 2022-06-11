@@ -211,13 +211,13 @@
 	url = https://github.com/stevearc/overseer.nvim.git
 [submodule "vimplugins/neotest-python"]
 	path = vimplugins/neotest-python
-	url = https://github.com/rcarriga/neotest-python.git
+	url = https://github.com/nvim-neotest/neotest-python.git
 [submodule "vimplugins/neotest-plenary"]
 	path = vimplugins/neotest-plenary
-	url = https://github.com/rcarriga/neotest-plenary.git
+	url = https://github.com/nvim-neotest/neotest-plenary.git
 [submodule "vimplugins/neotest-vim-test"]
 	path = vimplugins/neotest-vim-test
-	url = https://github.com/rcarriga/neotest-vim-test.git
+	url = https://github.com/nvim-neotest/neotest-vim-test.git
 [submodule "vimplugins/neotest"]
 	path = vimplugins/neotest
-	url = https://github.com/rcarriga/neotest.git
+	url = https://github.com/nvim-neotest/neotest.git
