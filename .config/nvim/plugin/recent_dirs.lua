@@ -1,50 +1,10 @@
-safe_require("telescope", function()
+safe_require('recent_dirs', "telescope", function(recent_dirs)
   local themes = require("telescope.themes")
   local actions = require("telescope.actions")
   local state = require("telescope.actions.state")
   local pickers = require("telescope.pickers")
   local finders = require("telescope.finders")
   local conf = require("telescope.config").values
-  local dirs = {}
-
-  local sep = package.config:sub(1, 1)
-  local function get_cache_file()
-    local cache_dir = vim.fn.stdpath("cache")
-    return cache_dir .. sep .. "recent_dirs.json"
-  end
-
-  local function load_cache()
-    local filename = get_cache_file()
-    local file = io.open(filename, "r")
-    if file then
-      local ok, data = pcall(file.read, file)
-      if ok then
-        dirs = vim.json.decode(data)
-      end
-      file:close()
-    end
-  end
-
-  local function save_cache()
-    local filename = get_cache_file()
-    local file = io.open(filename, "w")
-    file:write(vim.json.encode(dirs))
-    file:close()
-  end
-
-  local function on_dir_changed(dir)
-    dirs[dir] = 1
-    save_cache()
-  end
-
-  function stevearc._on_dir_changed()
-    on_dir_changed(vim.v.event.cwd)
-  end
-
-  local function remove_recent_dir(dir)
-    dirs[dir] = nil
-    save_cache()
-  end
 
   local function display_path(dir)
     local home = os.getenv("HOME")
@@ -79,7 +39,7 @@ safe_require("telescope", function()
     pickers.new(opts, {
       prompt_title = "Projects",
       finder = finders.new_table({
-        results = vim.tbl_keys(dirs),
+        results = recent_dirs.get_dirs(),
         entry_maker = function(dir)
           local entry = {}
           local display = display_path(dir)
@@ -114,7 +74,7 @@ safe_require("telescope", function()
         map("i", "<C-d>", function(prompt_bufnr)
           local current_picker = state.get_current_picker(prompt_bufnr)
           current_picker:delete_selection(function(selection)
-            remove_recent_dir(selection.value)
+            recent_dirs.remove_dir(selection.value)
           end)
         end)
         return true
@@ -123,11 +83,15 @@ safe_require("telescope", function()
   end
 
   vim.defer_fn(function()
-    load_cache()
-    on_dir_changed(vim.loop.cwd())
-    vim.cmd([[augroup recent_dirs
-  au!
-  au DirChanged lua stevearc._on_dir_changed()
-augroup END]])
+    recent_dirs.load_cache()
+    recent_dirs.record_dir(vim.loop.cwd())
+    local aug = vim.api.nvim_create_augroup('StevearcRecentDirs', {})
+    vim.api.nvim_create_autocmd('DirChanged', {
+      desc = 'Record recent dir',
+      group = aug,
+      callback = function()
+        recent_dirs.record_dir(vim.v.event.cwd)
+      end,
+    })
   end, 100)
 end)
