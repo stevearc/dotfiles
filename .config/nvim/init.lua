@@ -65,7 +65,6 @@ function stevearc.pack(...)
   return { n = select("#", ...), ... }
 end
 
-vim.g.use_neotest = true
 vim.g.python3_host_prog = os.getenv("HOME") .. "/.envs/py3/bin/python"
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*")
@@ -393,72 +392,73 @@ safe_require("tags", function(tags)
   })
 end)
 
-if vim.g.use_neotest then
-  -- Pros:
-  -- * DAP integration
-  -- * Shows full test output in diagnostics sign on the test
-  -- * Splits tests by integration in the summary panel
-  -- Cons:
-  -- * Bug: Open test file. Open ../../other/test_file. error("Common root not found")
-  -- * Bug: No output or debug info if test fails to run (e.g. try running tests in cpython)
-  -- * Bug: default colors are not in-colorscheme
-  -- * Nit: diagnostics are set twice from a single test run
-  -- * Perf: using treesitter to parse the query on every invocation
-  -- * Nit: Only updates position on BufAdd and BufWritePost (and CursorHold?) (could easily do it on CursorMoved with TS)
-  -- * Perf: But also, updating the position calls lib.files.find when does a whole-repo find command! Not sure exactly when these get triggered, but even once could be terrible in FB's repos.
-  -- * Feat: Con't run test suites without crawling directory first
-  -- * Feat: Can't rerun on save
-  -- * Feat: Can't rerun failed tests
-  -- * Feat: No results streaming
-  -- * Feat: Can configure adapters, but not on a per-directory basis
-  -- Same:
-  -- * summary panel
-  -- * diagnostics (neotest shows more of the output though)
-  -- * signs
-  -- * per-test output
-  -- Investigate:
-  -- * we can run single test with run(expand('%')); that passes the filename to the adapter. But I thought adapter IDs could be anything? Does this mean that all adapters HAVE to support directory and file IDs?
-  -- * vim-test integration
-  -- * Does neotest have ability to throttle groups of individual test runs?
-  -- * attaching to process
-  -- * Tangential, but also check out https://github.com/andythigpen/nvim-coverage
-  safe_require(
-    "neotest",
-    "neotest-python",
-    "neotest-plenary",
-    "neotest-vim-test",
-    function(neotest, python_adapter, plenary_adapter, vim_test_adapter)
-      neotest.setup({
-        adapters = {
-          python_adapter({
-            dap = { justMyCode = false },
-          }),
-          plenary_adapter,
-          vim_test_adapter({
-            ignore_file_types = { "python", "vim", "lua" },
-          }),
+-- Todo:
+-- * Bug: Open test file. Open ../../other/test_file. error("Common root not found")
+-- * Bug: No output or debug info if test fails to run (e.g. try running tests in cpython)
+-- * Bug: Files shouldn't appear in summary if they contain no tests (e.g. python file named 'test_*.py')
+-- * Bug: default colors are not in-colorscheme
+-- * Perf: But also, updating the position calls lib.files.find which does a whole-repo find command! Not sure exactly when these get triggered, but even once could be terrible in FB's repos.
+-- * Feat: Can't rerun on save
+-- * Feat: Can't rerun failed tests
+-- * Feat: No results streaming
+-- * Feat: Can configure adapters, but not on a per-directory basis
+-- Investigate:
+-- * vim-test integration
+-- * Does neotest have ability to throttle groups of individual test runs?
+-- * Tangential, but also check out https://github.com/andythigpen/nvim-coverage
+safe_require(
+  "neotest",
+  "neotest-python",
+  "neotest-plenary",
+  "neotest-vim-test",
+  function(neotest, python_adapter, plenary_adapter, vim_test_adapter)
+    neotest.setup({
+      adapters = {
+        python_adapter({
+          dap = { justMyCode = false },
+        }),
+        plenary_adapter,
+        vim_test_adapter({
+          ignore_file_types = { "python", "vim", "lua" },
+        }),
+      },
+      summary = {
+        mappings = {
+          attach = "a",
+          expand = "l",
+          expand_all = "L",
+          jumpto = "gf",
+          output = "o",
+          run = "<C-r>",
+          short = "p",
+          stop = "u",
         },
-        summary = {
-          mappings = {
-            expand = "l",
-            output = "<C-f>",
-            short = "p",
-            jumpto = "gf",
-            run = "<C-r>",
-          },
-        },
-        diagnostic = {
-          enabled = true,
-        },
-        output = {
-          enabled = true,
-          open_on_run = false,
-        },
-        status = {
-          enabled = true,
-        },
-      })
-      vim.cmd([[
+      },
+      icons = {
+        expanded = "",
+        child_prefix = "",
+        child_indent = "",
+        final_child_prefix = "",
+        non_collapsible = "",
+        collapsed = "",
+
+        passed = "",
+        running = "",
+        failed = "",
+        unknown = "",
+      },
+      diagnostic = {
+        enabled = true,
+      },
+      output = {
+        enabled = true,
+        open_on_run = false,
+      },
+      status = {
+        enabled = true,
+      },
+    })
+    vim.cmd([[
     hi! link NeotestPassed String
     hi! link NeotestFailed DiagnosticError
     hi! link NeotestRunning Constant
@@ -472,79 +472,44 @@ if vim.g.use_neotest then
     hi! link NeotestExpandMarker Conceal
     hi! link NeotestAdapterName TSConstructor
     ]])
-      vim.keymap.set("n", "<leader>tn", function()
-        neotest.run.run()
-      end)
-      vim.keymap.set("n", "<leader>tt", function()
-        neotest.run.run(vim.api.nvim_buf_get_name(0))
-      end)
-      vim.keymap.set("n", "<leader>tl", function()
-        neotest.run.run_last()
-      end)
-      vim.keymap.set("n", "<leader>td", function()
-        neotest.run.run({ strategy = "dap" })
-      end)
-      vim.keymap.set("n", "<leader>tp", function()
-        neotest.summary.toggle()
-      end)
-      vim.keymap.set("n", "<leader>to", function()
-        neotest.output.open({ short = true })
-      end)
-    end
-  )
-end
+    vim.keymap.set("n", "<leader>tn", function()
+      neotest.run.run({ strategy = "overseer" })
+    end)
+    vim.keymap.set("n", "<leader>tt", function()
+      neotest.run.run({ vim.api.nvim_buf_get_name(0), strategy = "overseer" })
+    end)
+    vim.keymap.set("n", "<leader>ta", function()
+      neotest.run.run({ vim.fn.getcwd(0), strategy = "overseer" })
+    end)
+    vim.keymap.set("n", "<leader>tl", function()
+      neotest.run.run_last()
+    end)
+    vim.keymap.set("n", "<leader>td", function()
+      neotest.run.run({ strategy = "dap" })
+    end)
+    vim.keymap.set("n", "<leader>tp", function()
+      neotest.summary.toggle()
+    end)
+    vim.keymap.set("n", "<leader>to", function()
+      neotest.output.open({ short = true })
+    end)
+  end
+)
 
 safe_require("overseer", function(overseer)
-  local nvim_tests = overseer.wrap_test("lua.plenary_busted", {
-    get_cmd = function()
-      return { "./run_tests.sh" }
-    end,
-    run_test_dir = function(self, dirname)
-      return {
-        cmd = self:get_cmd(),
-        args = { dirname },
-      }
-    end,
-    run_test_file = function(self, filename)
-      return {
-        cmd = self:get_cmd(),
-        args = { filename },
-      }
-    end,
-  })
   overseer.setup({
-    testing = {
-      -- modify = nil,
-      disable = { "lua.busted", "lua.plenary_busted" },
-      -- disable_builtin = false,
-      dirs = {
-        ["~/dotfiles/vimplugins/overseer.nvim"] = {
-          nvim_tests,
-        },
-        ["~/dotfiles/vimplugins/aerial.nvim"] = {
-          nvim_tests,
-        },
-        ["~/ws/overseer-test-frameworks/lua/busted"] = {
-          "lua.busted",
-        },
-        ["~/ws/overseer-test-frameworks/lua/plenary_busted"] = {
-          "lua.plenary_busted",
-        },
+    log = {
+      {
+        type = "echo",
+        level = vim.log.levels.WARN,
+      },
+      {
+        type = "file",
+        filename = "overseer.log",
+        level = vim.log.levels.DEBUG,
       },
     },
   })
-  vim.keymap.set("n", "<leader>ot", function()
-    overseer.run_template(
-      { tags = { overseer.TAG.TEST }, prompt = "allow" },
-      { filename = vim.api.nvim_buf_get_name(0) }
-    )
-  end)
-  vim.keymap.set("n", "<leader>on", function()
-    overseer.run_template(
-      { tags = { overseer.TAG.TEST }, prompt = "allow" },
-      { filename = vim.api.nvim_buf_get_name(0), line = vim.api.nvim_win_get_cursor(0)[1] }
-    )
-  end)
   vim.api.nvim_create_user_command(
     "OverseerDebugParser",
     'lua require("overseer.parser.debug").start_debug_session()',
@@ -556,16 +521,6 @@ safe_require("overseer", function(overseer)
   vim.keymap.set("n", "<leader>ob", "<cmd>OverseerBuild<CR>")
   vim.keymap.set("n", "<leader>od", "<cmd>OverseerQuickAction<CR>")
   vim.keymap.set("n", "<leader>os", "<cmd>OverseerTaskAction<CR>")
-  -- Testing keybinds
-  if not vim.g.use_neotest then
-    vim.keymap.set("n", "<leader>tt", "<cmd>OverseerTestFile<CR>")
-    vim.keymap.set("n", "<leader>tn", "<cmd>OverseerTestNearest<CR>")
-    vim.keymap.set("n", "<leader>ta", "<cmd>OverseerTest<CR>")
-    vim.keymap.set("n", "<leader>tp", "<cmd>OverseerToggleTestPanel<CR>")
-    vim.keymap.set("n", "<leader>td", "<cmd>OverseerTestAction<CR>")
-    vim.keymap.set("n", "<leader>tl", "<cmd>OverseerTestLast<CR>")
-    vim.keymap.set("n", "<leader>tr", "<cmd>OverseerTestRerunFailed<CR>")
-  end
 end)
 safe_require("hlslens", function(hlslens)
   hlslens.setup({
