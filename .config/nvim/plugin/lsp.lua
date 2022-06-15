@@ -225,33 +225,56 @@ safe_require("lspconfig", function(lspconfig)
   })
   local sumneko_root_path = os.getenv("HOME") .. "/.local/share/nvim/language-servers/lua-language-server"
   local sumneko_binary = sumneko_root_path .. "/bin/Linux/lua-language-server"
-  lspconfig.sumneko_lua.setup({
-    capabilities = lsp.capabilities,
-    cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
-    settings = {
-      Lua = {
-        runtime = {
-          version = "LuaJIT",
-          path = vim.split(package.path, ";"),
-        },
-        diagnostics = {
-          globals = { "vim", "stevearc", "safe_require", "it", "describe", "before_each", "after_each" },
-        },
-        workspace = {
-          -- Make the server aware of Neovim runtime files
-          library = {
-            [os.getenv("VIMRUNTIME") .. "/lua"] = true,
-            [os.getenv("VIMRUNTIME") .. "/lua/vim/lsp"] = true,
+  local lua_config = {
+    lspconfig = {
+      capabilities = lsp.capabilities,
+      cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
+      on_attach = lsp.on_attach,
+      settings = {
+        Lua = {
+          IntelliSense = {
+            traceLocalSet = true,
           },
-        },
-        telemetry = {
-          enable = false,
+          diagnostics = {
+            globals = { "describe", "it", "before_each", "after_each", "vim", "stevearc", "safe_require" },
+          },
+          telemetry = {
+            enable = false,
+          },
         },
       },
     },
-
-    on_attach = lsp.on_attach,
-  })
+  }
+  safe_require("lua-dev", function(lua_dev)
+    lspconfig.sumneko_lua.setup(lua_dev.setup(lua_config))
+  end)
+  -- lspconfig.sumneko_lua.setup({
+  --   capabilities = lsp.capabilities,
+  --   cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
+  --   settings = {
+  --     Lua = {
+  --       runtime = {
+  --         version = "LuaJIT",
+  --         path = vim.split(package.path, ";"),
+  --       },
+  --       diagnostics = {
+  --         globals = { "vim", "stevearc", "safe_require", "it", "describe", "before_each", "after_each" },
+  --       },
+  --       workspace = {
+  --         -- Make the server aware of Neovim runtime files
+  --         library = {
+  --           [os.getenv("VIMRUNTIME") .. "/lua"] = true,
+  --           [os.getenv("VIMRUNTIME") .. "/lua/vim/lsp"] = true,
+  --         },
+  --       },
+  --       telemetry = {
+  --         enable = false,
+  --       },
+  --     },
+  --   },
+  --
+  --   on_attach = lsp.on_attach,
+  -- })
 
   lspconfig.sorbet.setup({
     capabilities = lsp.capabilities,
