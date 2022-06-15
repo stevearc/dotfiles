@@ -394,10 +394,11 @@ end)
 
 -- Todo:
 -- * Bug: Open test file. Open ../../other/test_file. error("Common root not found")
+--        Needs to merge if under cwd, otherwise create new root?
 -- * Bug: No output or debug info if test fails to run (e.g. try running tests in cpython)
 -- * Bug: Files shouldn't appear in summary if they contain no tests (e.g. python file named 'test_*.py')
 -- * Bug: default colors are not in-colorscheme
--- * Perf: But also, updating the position calls lib.files.find which does a whole-repo find command! Not sure exactly when these get triggered, but even once could be terrible in FB's repos.
+-- * Feat: Set default strategy (b/c can't set my strategy on the summary panel runs)
 -- * Feat: Can't rerun on save
 -- * Feat: Can't rerun failed tests
 -- * Feat: No results streaming
@@ -421,6 +422,9 @@ safe_require(
         vim_test_adapter({
           ignore_file_types = { "python", "vim", "lua" },
         }),
+      },
+      discovery = {
+        enabled = false,
       },
       summary = {
         mappings = {
