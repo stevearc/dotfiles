@@ -56,7 +56,7 @@ install-language-misc() {
 }
 
 install-language-lua() {
-  sudo apt-get install -qy lua-check ninja
+  sudo apt-get install -qy lua-check ninja-build
   install-lua-utils
 }
 

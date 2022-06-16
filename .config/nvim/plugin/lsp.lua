@@ -224,7 +224,7 @@ safe_require("lspconfig", function(lspconfig)
     },
   })
   local sumneko_root_path = os.getenv("HOME") .. "/.local/share/nvim/language-servers/lua-language-server"
-  local sumneko_binary = sumneko_root_path .. "/bin/Linux/lua-language-server"
+  local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
   local lua_config = {
     lspconfig = {
       capabilities = lsp.capabilities,
