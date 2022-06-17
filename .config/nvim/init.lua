@@ -393,18 +393,18 @@ safe_require("tags", function(tags)
 end)
 
 -- Todo:
--- * Bug: Open test file. Open ../../other/test_file. error("Common root not found")
---        Needs to merge if under cwd, otherwise create new root?
+-- * Bug: Running tests on directory doesn't work if directory not in tree (but tree has subdirectories)
 -- * Bug: No output or debug info if test fails to run (e.g. try running tests in cpython)
+-- * Bug: Sometimes issues with running python tests (dir position stuck in running state)
 -- * Bug: Files shouldn't appear in summary if they contain no tests (e.g. python file named 'test_*.py')
 -- * Bug: default colors are not in-colorscheme
+-- * Feat: If summary tree only has a single (file/dir) child, merge the display
 -- * Feat: Set default strategy (b/c can't set my strategy on the summary panel runs)
 -- * Feat: Can't rerun on save
 -- * Feat: Can't rerun failed tests
--- * Feat: No results streaming
--- * Feat: Can configure adapters, but not on a per-directory basis
+-- * Feat: Populate test results as they come in
+-- * Feat: Configure adapters & discovery on a per-directory basis
 -- Investigate:
--- * vim-test integration
 -- * Does neotest have ability to throttle groups of individual test runs?
 -- * Tangential, but also check out https://github.com/andythigpen/nvim-coverage
 safe_require(
@@ -439,17 +439,10 @@ safe_require(
         },
       },
       icons = {
-        expanded = "",
-        child_prefix = "",
-        child_indent = "",
-        final_child_prefix = "",
-        non_collapsible = "",
-        collapsed = "",
-
-        passed = "",
-        running = "",
-        failed = "",
-        unknown = "",
+        passed = " ",
+        running = " ",
+        failed = " ",
+        unknown = " ",
       },
       diagnostic = {
         enabled = true,
