@@ -1,4 +1,3 @@
-setlocal keywordprg=:help
+nnoremap gh <CMD>exec 'help ' . expand('<cword>')<CR>
 iabbr <buffer> != ~=
 iabbr <buffer> locla local
-inoremap <nowait> [[<CR> [[<CR>]]<C-o>O
