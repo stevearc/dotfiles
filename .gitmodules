@@ -203,9 +203,6 @@
 [submodule "vimplugins/pair-ls.nvim"]
 	path = vimplugins/pair-ls.nvim
 	url = https://github.com/stevearc/pair-ls.nvim.git
-[submodule "vimplugins/vim-test"]
-	path = vimplugins/vim-test
-	url = https://github.com/vim-test/vim-test.git
 [submodule "vimplugins/overseer.nvim"]
 	path = vimplugins/overseer.nvim
 	url = https://github.com/stevearc/overseer.nvim.git
@@ -215,9 +212,6 @@
 [submodule "vimplugins/neotest-plenary"]
 	path = vimplugins/neotest-plenary
 	url = https://github.com/nvim-neotest/neotest-plenary.git
-[submodule "vimplugins/neotest-vim-test"]
-	path = vimplugins/neotest-vim-test
-	url = https://github.com/nvim-neotest/neotest-vim-test.git
 [submodule "vimplugins/neotest"]
 	path = vimplugins/neotest
 	url = https://github.com/nvim-neotest/neotest.git
