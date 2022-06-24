@@ -218,3 +218,6 @@
 [submodule "vimplugins/lua-dev.nvim"]
 	path = vimplugins/lua-dev.nvim
 	url = https://github.com/folke/lua-dev.nvim.git
+[submodule "vimplugins/neotest-jest"]
+	path = vimplugins/neotest-jest
+	url = https://github.com/haydenmeade/neotest-jest.git

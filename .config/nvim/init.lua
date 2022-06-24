@@ -410,13 +410,14 @@ end)
 -- Investigate:
 -- * Does neotest have ability to throttle groups of individual test runs?
 -- * Tangential, but also check out https://github.com/andythigpen/nvim-coverage
-safe_require("neotest", "neotest-python", "neotest-plenary", function(neotest, python_adapter, plenary_adapter)
+safe_require("neotest", "neotest-python", "neotest-plenary", "neotest-jest", function(neotest, python_adapter, plenary_adapter, jest_adapter)
   neotest.setup({
     adapters = {
       python_adapter({
         dap = { justMyCode = false },
       }),
       plenary_adapter,
+      jest_adapter,
     },
     discovery = {
       enabled = false,
