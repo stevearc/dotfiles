@@ -44,7 +44,8 @@ vim.g.tokyonight_sidebars = { "qf", "aerial", "terminal" }
 
 vim.cmd([[autocmd ColorScheme tokyonight lua stevearc.tokyonight()]])
 
-if os.getenv("XDG_SESSION_TYPE") == "tty" or not pcall(require, "tokyonight") then
+local is_tty = os.getenv("XDG_SESSION_TYPE") == "tty" and os.getenv("SSH_TTY") == ""
+if is_tty or not pcall(require, "tokyonight") then
   vim.opt.termguicolors = false
   vim.cmd("colorscheme darkblue")
 else

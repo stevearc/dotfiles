@@ -5,7 +5,7 @@ platform-setup() {
   has-checkpoint platform-setup && return
   sudo apt-get update -qq
   sudo apt-get install -y -q \
-    python-pycurl \
+    python3-pycurl \
     software-properties-common \
     wget \
     curl
@@ -29,9 +29,9 @@ install-language-python() {
     ipython3 \
     python3-restructuredtext-lint
   pushd ~/.local/bin
-  "$HERE/scripts/make_standalone.py" isort
-  "$HERE/scripts/make_standalone.py" black
-  "$HERE/scripts/make_standalone.py" autoimport
+  hascmd isort || "$HERE/scripts/make_standalone.py" isort
+  hascmd black || "$HERE/scripts/make_standalone.py" black
+  hascmd autoimport || "$HERE/scripts/make_standalone.py" autoimport
   popd
 }
 

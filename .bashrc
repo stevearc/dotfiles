@@ -155,7 +155,7 @@ if command -v direnv >/dev/null; then
   PS1=$PS1'$(show_virtual_env)'
 fi
 
-if [ "$XDG_SESSION_TYPE" == "tty" ]; then
+if [ "$XDG_SESSION_TYPE" == "tty" ] && [ -z "$SSH_TTY" ]; then
   sudo loadkeys ~/.config/keystrings
 fi
 
