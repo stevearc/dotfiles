@@ -18,21 +18,22 @@ install-language-python() {
     python3 \
     python-is-python3 \
     python3-distutils \
-    python3-venv
-  if ! hascmd pyright; then
-    dc-install-nvm
-    yarn global add -s pyright
-  fi
-  sudo apt-get install -y -q \
+    python3-venv \
     python3-dev \
-    python3-pip \
-    ipython3 \
-    python3-restructuredtext-lint
-  pushd ~/.local/bin
-  hascmd isort || "$HERE/scripts/make_standalone.py" isort
-  hascmd black || "$HERE/scripts/make_standalone.py" black
-  hascmd autoimport || "$HERE/scripts/make_standalone.py" autoimport
-  popd
+    python3-pip
+    # ipython3 \
+    # python3-restructuredtext-lint
+  if [ "$1" != "--bare" ]; then
+    if ! hascmd pyright; then
+      dc-install-nvm
+      yarn global add -s pyright
+    fi
+    pushd ~/.local/bin
+    hascmd isort || "$HERE/scripts/make_standalone.py" isort
+    hascmd black || "$HERE/scripts/make_standalone.py" black
+    hascmd autoimport || "$HERE/scripts/make_standalone.py" autoimport
+    popd
+  fi
 }
 
 install-language-arduino() {
@@ -216,7 +217,7 @@ dc-install-dotnet() {
 # shellcheck disable=SC2034
 DC_INSTALL_NEOVIM_DOC="<3"
 dc-install-neovim() {
-  install-language-python
+  install-language-python --bare
   hascmd gcc || sudo apt install -y -q gcc
   if ! hascmd nvim; then
     if confirm "From github appimage?" y; then

@@ -139,7 +139,7 @@ fi
 
 if command -v yarn >/dev/null; then
   pushd $HOME >/dev/null
-  export PATH="$(yarn global bin | grep -v "Using globally installed version of Yarn"):$PATH"
+  export PATH="$(yarn global bin 2>/dev/null | grep -v "Using globally installed version of Yarn"):$PATH"
   popd >/dev/null
 fi
 export PATH="/usr/local/sbin:$PATH"

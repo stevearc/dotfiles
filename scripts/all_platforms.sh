@@ -23,6 +23,8 @@ configure-git() {
   git config --global merge.tool vimdiff
   git config --global diff.algorithm patience
   git config --global fetch.prune true
+  git config --global diff.colorMoved zebra
+  git config --global core.fsmonitor true
 
   git config --global alias.st 'status'
   git config --global alias.ci 'commit'
@@ -40,9 +42,8 @@ configure-git() {
   git config --global alias.mb 'merge-base'
   git config --global alias.ri '!git rebase -i $(git merge-base HEAD origin/$(git main))'
   git config --global alias.amend 'commit --amend'
-  git config --global alias.am 'commit --amend'
+  git config --global alias.am 'commit --amend --no-edit'
   git config --global alias.ama 'commit --amend -a --no-edit'
-  git config --global alias.amn 'commit --amend --no-edit'
   git config --global alias.aa 'add --all'
   git config --global alias.head '!git l -1'
   git config --global alias.h '!git head'
