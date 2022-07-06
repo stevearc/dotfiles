@@ -5,15 +5,16 @@ post-install-neovim() {
   [ -d ~/.envs ] || mkdir ~/.envs
   [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
   ~/.envs/py3/bin/pip install -q wheel
-  ~/.envs/py3/bin/pip install -q pynvim
+  ~/.envs/py3/bin/pip install -q pynvim || ~/.envs/py3/bin/pip install -i https://pypi.org/simple -q pynvim
 
-  if ! hascmd nvr; then
-    mkdir -p ~/.local/bin
-    pushd ~/.local/bin
-    "$HERE/scripts/make_standalone.py" -s nvr neovim-remote
-    popd
-  fi
   nvim --headless +UpdateRemotePlugins +TSUpdateSync -c 'call firenvim#install(0)' +qall >/dev/null
+  # TODO find a replacement for this
+  # if ! hascmd nvr; then
+  #   mkdir -p ~/.local/bin
+  #   pushd ~/.local/bin
+  #   "$HERE/scripts/make_standalone.py" -s nvr neovim-remote
+  #   popd
+  # fi
 }
 
 configure-git() {
@@ -24,7 +25,8 @@ configure-git() {
   git config --global diff.algorithm patience
   git config --global fetch.prune true
   git config --global diff.colorMoved zebra
-  git config --global core.fsmonitor true
+  # This was causing massive lag
+  # git config --global core.fsmonitor true
 
   git config --global alias.st 'status'
   git config --global alias.ci 'commit'
