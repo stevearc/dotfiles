@@ -53,7 +53,7 @@ Languages:"
     local cmd="install-language-$language"
     $cmd
     language="$1"
-    shift
+    shift || :
   done
 }
 
@@ -73,7 +73,7 @@ Programs:"
     local cmd="dc-install-$prog"
     $cmd
     prog="$1"
-    shift
+    shift || :
   done
 }
 
