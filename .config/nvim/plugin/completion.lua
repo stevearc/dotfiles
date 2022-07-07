@@ -72,6 +72,7 @@ safe_require("cmp", function(cmp)
         Snippet = " ",
         Struct = " ",
         Text = " ",
+        TypeParameter = " ",
         Unit = "塞",
         Value = " ",
         Variable = " ",

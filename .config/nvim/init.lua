@@ -424,6 +424,7 @@ end)
 -- * Bug: Files shouldn't appear in summary if they contain no tests (e.g. python file named 'test_*.py')
 -- * Bug: default colors are not in-colorscheme
 -- * Bug: dir/file/namespace status should be set by children
+-- * Bug: Run last test doesn't work with marked tests (if ran all marked last)
 -- * Feat: If summary tree only has a single (file/dir) child, merge the display
 -- * Feat: Set default strategy (b/c can't set my strategy on the summary panel runs)
 -- * Feat: Different bindings for expand/collapse
@@ -435,54 +436,60 @@ end)
 -- Investigate:
 -- * Does neotest have ability to throttle groups of individual test runs?
 -- * Tangential, but also check out https://github.com/andythigpen/nvim-coverage
-safe_require("neotest", "neotest-python", "neotest-plenary", "neotest-jest", function(neotest, python_adapter, plenary_adapter, jest_adapter)
-  neotest.setup({
-    adapters = {
-      python_adapter({
-        dap = { justMyCode = false },
-      }),
-      plenary_adapter,
-      jest_adapter,
-    },
-    discovery = {
-      enabled = false,
-    },
-    summary = {
-      mappings = {
-        attach = "a",
-        expand = "l",
-        expand_all = "L",
-        jumpto = "gf",
-        output = "o",
-        run = "<C-r>",
-        short = "p",
-        stop = "u",
+safe_require(
+  "neotest",
+  "neotest-python",
+  "neotest-plenary",
+  "neotest-jest",
+  function(neotest, python_adapter, plenary_adapter, jest_adapter)
+    neotest.setup({
+      adapters = {
+        python_adapter({
+          dap = { justMyCode = false },
+        }),
+        plenary_adapter,
+        jest_adapter,
       },
-    },
-    icons = {
-      passed = " ",
-      running = " ",
-      failed = " ",
-      unknown = " ",
-    },
-    diagnostic = {
-      enabled = true,
-    },
-    output = {
-      enabled = true,
-      open_on_run = false,
-    },
-    status = {
-      enabled = true,
-    },
-  })
-  vim.cmd([[
+      discovery = {
+        enabled = false,
+      },
+      summary = {
+        mappings = {
+          attach = "a",
+          expand = "l",
+          expand_all = "L",
+          jumpto = "gf",
+          output = "o",
+          run = "<C-r>",
+          short = "p",
+          stop = "u",
+        },
+      },
+      icons = {
+        passed = " ",
+        running = " ",
+        failed = " ",
+        unknown = " ",
+      },
+      diagnostic = {
+        enabled = true,
+      },
+      output = {
+        enabled = true,
+        open_on_run = false,
+      },
+      status = {
+        enabled = true,
+      },
+    })
+    vim.cmd([[
     hi! link NeotestPassed String
     hi! link NeotestFailed DiagnosticError
     hi! link NeotestRunning Constant
     hi! link NeotestSkipped DiagnosticInfo
     hi! link NeotestTest Normal
     hi! link NeotestNamespace TSKeyword
+    hi! link NeotestMarked Bold
     hi! link NeotestFocused QuickFixLine
     hi! link NeotestFile Keyword
     hi! link NeotestDir Keyword
@@ -490,28 +497,29 @@ safe_require("neotest", "neotest-python", "neotest-plenary", "neotest-jest", fun
     hi! link NeotestExpandMarker Conceal
     hi! link NeotestAdapterName TSConstructor
     ]])
-  vim.keymap.set("n", "<leader>tn", function()
-    neotest.run.run({ strategy = "overseer" })
-  end)
-  vim.keymap.set("n", "<leader>tt", function()
-    neotest.run.run({ vim.api.nvim_buf_get_name(0), strategy = "overseer" })
-  end)
-  vim.keymap.set("n", "<leader>ta", function()
-    neotest.run.run({ vim.fn.getcwd(0), strategy = "overseer" })
-  end)
-  vim.keymap.set("n", "<leader>tl", function()
-    neotest.run.run_last()
-  end)
-  vim.keymap.set("n", "<leader>td", function()
-    neotest.run.run({ strategy = "dap" })
-  end)
-  vim.keymap.set("n", "<leader>tp", function()
-    neotest.summary.toggle()
-  end)
-  vim.keymap.set("n", "<leader>to", function()
-    neotest.output.open({ short = true })
-  end)
-end)
+    vim.keymap.set("n", "<leader>tn", function()
+      neotest.run.run({ strategy = "overseer" })
+    end)
+    vim.keymap.set("n", "<leader>tt", function()
+      neotest.run.run({ vim.api.nvim_buf_get_name(0), strategy = "overseer" })
+    end)
+    vim.keymap.set("n", "<leader>ta", function()
+      neotest.run.run({ suite = true, strategy = "overseer" })
+    end)
+    vim.keymap.set("n", "<leader>tl", function()
+      neotest.run.run_last()
+    end)
+    vim.keymap.set("n", "<leader>td", function()
+      neotest.run.run({ strategy = "dap" })
+    end)
+    vim.keymap.set("n", "<leader>tp", function()
+      neotest.summary.toggle()
+    end)
+    vim.keymap.set("n", "<leader>to", function()
+      neotest.output.open({ short = true })
+    end)
+  end
+)
 
 safe_require("overseer", function(overseer)
   overseer.setup({
@@ -524,6 +532,15 @@ safe_require("overseer", function(overseer)
         type = "file",
         filename = "overseer.log",
         level = vim.log.levels.DEBUG,
+      },
+    },
+    component_aliases = {
+      default = {
+        "on_output_summarize",
+        "result_exit_code",
+        { "on_result_notify", desktop = "unfocused" },
+        "on_restart_handler",
+        "dispose_delay",
       },
     },
   })
