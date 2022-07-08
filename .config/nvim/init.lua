@@ -70,6 +70,7 @@ vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*")
 local aug = vim.api.nvim_create_augroup("StevearcNewConfig", {})
 
+local ftplugin = safe_require('ftplugin')
 local opts = { noremap = true, silent = true }
 vim.keymap.set({ "n", "i" }, "<f1>", toggle_profile)
 vim.api.nvim_set_keymap(
@@ -324,6 +325,8 @@ function stevearc.setup_notify()
   pending_notifications = nil
 end
 
+ftplugin.create_autocmds(aug)
+
 safe_require("pair-ls").setup({
   cmd = { "pair-ls", "lsp" },
   -- cmd = { "pair-ls", "lsp", "-port", "8080" },
@@ -348,7 +351,29 @@ vim.g.gkeep_log_levels = {
   gkeep = "debug",
   gkeepapi = "warning",
 }
+local gkeep_bindings = {
+  {'n', '<leader>m', '<CMD>GkeepEnter menu<CR>'},
+  {'n', '<leader>l', '<CMD>GkeepEnter list<CR>'},
+}
+ftplugin.set('GoogleKeepList', {
+  callback = function(bufnr)
+    -- FIXME update the api for stickybuf
+    vim.cmd('silent! PinBuffer')
+  end,
+  bindings = gkeep_bindings,
+})
+ftplugin.set('GoogleKeepMenu', ftplugin.get('GoogleKeepList'))
+ftplugin.set('GoogleKeepNote', {
+  bindings = vim.list_extend({
+    {'n', '<leader>x', '<CMD>GkeepCheck<CR>'},
+    {'n', '<leader>p', '<CMD>GkeepPopup<CR>'},
+    {'n', '<leader>fl', '<CMD>Telescope gkeep link<CR>'},
+  }, gkeep_bindings)
+})
+ftplugin.extend('norg', {bindings = gkeep_bindings})
+
 safe_require("aerial", function(aerial)
+  ftplugin.extend('aerial', {bindings = {'n', '<leader>a', '<CMD>AerialClose<CR>'}})
   aerial.setup({
     default_direction = "prefer_left",
     close_behavior = "global",
@@ -551,6 +576,59 @@ if vim.g.nerd_font ~= false then
     default = true,
   })
 end
+
+vim.g.arduino_serial_cmd = 'picocom {port} -b {baud} -l'
+
+-- Filetype mappings and options
+ftplugin.set_all({
+  arduino = {
+    bindings = {
+      {'n', '<leader>ac', ":wa<CR>:ArduinoVerify<CR>"},
+      {'n', '<leader>au', ":wa<CR>:ArduinoUpload<CR>"},
+      {'n', '<leader>ad', ":wa<CR>:ArduinoUploadAndSerial<CR>"},
+      {'n', '<leader>ab', "<CR>:ArduinoChooseBoard<CR>"},
+      {'n', '<leader>ap', "<CR>:ArduinoChooseProgrammer<CR>"},
+    }
+  },
+  fugitiveblame = {
+    bindings = {
+      {'n', 'gp', "<CMD>echo system('git findpr ' . expand('<cword>'))<CR>"},
+    }
+  },
+  help = {
+    bindings = {
+      {'n', 'gd', '<C-]>'},
+    }
+  },
+  make = {
+    buf = {
+      expandtab = false,
+    }
+  },
+  python = {
+    buf = {
+      shiftwidth = 4,
+      tabstop = 4,
+      softtabstop = 4,
+      textwidth = 88,
+    },
+  },
+  vim = {
+    buf = {
+      keywordprg = ':help',
+    },
+    win = {
+      fdm = 'marker',
+    },
+  },
+  zig = {
+    buf = {
+      shiftwidth = 4,
+      tabstop = 4,
+      softtabstop = 4,
+    }
+  },
+})
 
 -- vim-matchup
 vim.g.matchup_surround_enabled = 1
