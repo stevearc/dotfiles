@@ -713,10 +713,12 @@ ftplugin.set_all({
     end,
   },
   sh = {
-    opt = {
-      winhighlight = "TSConstant:Identifier,TSVariable:Identifier",
-    },
     callback = function(bufnr)
+      -- Highlight variables inside strings
+      vim.cmd([[
+        hi link TSConstant Identifier
+        hi link TSVariable Identifier
+      ]])
       vim.keymap.set("n", "<leader>e", function()
         run_file("terminal bash %")
       end, { buffer = bufnr })

@@ -52,11 +52,27 @@ ash() {
 sash() {
   autossh -t "$@" 'sudo tmux -2 attach || sudo tmux new'
 }
+_nvim_remote() {
+  local edit_cmd=
+  # TODO currently barbar isn't detecting & showing multiple files
+  # for filename in "$@"; do
+  #   edit_cmd="$edit_cmd | call nvim_buf_set_option(bufadd('${filename// /\ }'), 'buflisted', v:true)"
+  # done
+  edit_cmd="| edit ${1// /\ }"
+  nvim --server "${NVIM-$NVIM_LISTEN_ADDRESS}" --remote-send "<C-\><C-N>:tabnew | setlocal bufhidden=wipe | let w:is_remote = v:true $edit_cmd <CR>"
+}
+_nvim_listen() {
+  local rundir="${XDG_CACHE_HOME-$HOME/.cache}/nvim/run"
+  mkdir -p "$rundir"
+  nvim --listen "$rundir/$RANDOM" "$@"
+}
 if command -v nvim >/dev/null; then
-  if [ -n "$INSIDE_NVIM" ] && command -v nvr >/dev/null; then
+  if [ -n "${NVIM-$NVIM_LISTEN_ADDRESS}" ]; then
+    alias vim="_nvim_remote"
+  elif [ -n "$INSIDE_NVIM" ] && command -v nvr >/dev/null; then
     alias vim="nvr -cc 'tabnew | let w:is_remote = v:true'"
   else
-    alias vim="nvim"
+    alias vim="_nvim_listen"
   fi
   alias vi="vim"
 fi
