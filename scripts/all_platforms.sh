@@ -98,6 +98,11 @@ configure-git() {
   git config --global alias.mine '!git log --author=$(git config --get user.email) --pretty=medium --compact-summary'
 
   git config --global core.excludesFile '~/.config/global-git-ignore'
+  git config --global color.decorate.HEAD 'bold red'
+  git config --global color.decorate.branch green
+  git config --global color.decorate.remoteBranch cyan
+  git config --global color.decorate.tag 'bold yellow'
+  git config --global color.decorate.stash green
 
   if hascmd fzf; then
     git config --global alias.fb '!git sk list | fzf | xargs git checkout'
