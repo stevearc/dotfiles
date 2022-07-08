@@ -1,1 +1,0 @@
-set listchars+=tab:\ \ 

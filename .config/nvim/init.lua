@@ -103,26 +103,16 @@ vim.o.hlsearch = true -- Highlight search matches
 vim.o.ignorecase = true
 vim.o.incsearch = true -- Begin searching as soon as you start typing
 vim.o.laststatus = 3 -- Global statusline
-vim.opt.list = true -- show whitespace
-vim.opt.listchars = {
-  nbsp = "⦸", -- CIRCLED REVERSE SOLIDUS (U+29B8, UTF-8: E2 A6 B8)
-  extends = "»", -- RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK (U+00BB, UTF-8: C2 BB)
-  precedes = "«", -- LEFT-POINTING DOUBLE ANGLE QUOTATION MARK (U+00AB, UTF-8: C2 AB)
-  tab = "▷⋯", -- WHITE RIGHT-POINTING TRIANGLE (U+25B7, UTF-8: E2 96 B7) + MIDLINE HORIZONTAL ELLIPSIS (U+22EF, UTF-8: E2 8B AF)
-}
 vim.o.mouse = "a" -- Enable use of mouse
-vim.o.number = true -- Except for current line
 vim.o.path = "**" -- Use a recursive path (for :find)
 vim.o.previewheight = 5
 vim.o.pumblend = 10 -- Transparency for popup-menu
-vim.o.relativenumber = true -- Relative line numbers
 vim.o.ruler = true -- Show the row, column of the cursor
 vim.o.shiftwidth = 2
 vim.opt.shortmess:append("c") -- for nvim-cmp
 vim.opt.shortmess:append("I") -- Hide the startup screen
 vim.opt.shortmess:append("A") -- Ignore swap file messages
 vim.opt.shortmess:append("a") -- Shorter message formats
-vim.opt.showbreak = "↳ " -- DOWNWARDS ARROW WITH TIP RIGHTWARDS (U+21B3, UTF-8: E2 86 B3)
 vim.o.showcmd = true -- Display incomplete commands
 vim.o.showmatch = true -- When a bracket is inserted, briefly jump to the matching one
 vim.o.showtabline = 2 -- Always show tab line
@@ -139,6 +129,18 @@ vim.opt.wildignore:append(
 )
 vim.o.wildmenu = true
 vim.o.wildmode = "longest,list,full"
+
+-- Window options
+vim.opt.list = true -- show whitespace
+vim.opt.listchars = {
+  nbsp = "⦸", -- CIRCLED REVERSE SOLIDUS (U+29B8, UTF-8: E2 A6 B8)
+  extends = "»", -- RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK (U+00BB, UTF-8: C2 BB)
+  precedes = "«", -- LEFT-POINTING DOUBLE ANGLE QUOTATION MARK (U+00AB, UTF-8: C2 AB)
+  tab = "▷⋯", -- WHITE RIGHT-POINTING TRIANGLE (U+25B7, UTF-8: E2 96 B7) + MIDLINE HORIZONTAL ELLIPSIS (U+22EF, UTF-8: E2 8B AF)
+}
+vim.o.number = true -- Except for current line
+vim.o.relativenumber = true -- Relative line numbers
+vim.opt.showbreak = "↳ " -- DOWNWARDS ARROW WITH TIP RIGHTWARDS (U+21B3, UTF-8: E2 86 B3)
 
 vim.api.nvim_create_autocmd({ "VimEnter", "WinEnter", "BufWinEnter" }, {
   desc = "Highlight the cursor line in the active window",
@@ -324,8 +326,6 @@ function stevearc.setup_notify()
   end
   pending_notifications = nil
 end
-
-ftplugin.create_autocmds(aug)
 
 safe_require("pair-ls").setup({
   cmd = { "pair-ls", "lsp" },
@@ -600,15 +600,41 @@ end
 
 vim.g.arduino_serial_cmd = "picocom {port} -b {baud} -l"
 
+local function run_file(cmd)
+  vim.cmd([[
+    write
+    silent! clear
+    botright split
+  ]])
+  vim.cmd(cmd)
+end
+
 -- Filetype mappings and options
+ftplugin.setup({ augroup = aug })
 ftplugin.set_all({
   arduino = {
     bindings = {
       { "n", "<leader>ac", ":wa<CR>:ArduinoVerify<CR>" },
       { "n", "<leader>au", ":wa<CR>:ArduinoUpload<CR>" },
       { "n", "<leader>ad", ":wa<CR>:ArduinoUploadAndSerial<CR>" },
-      { "n", "<leader>ab", "<CR>:ArduinoChooseBoard<CR>" },
-      { "n", "<leader>ap", "<CR>:ArduinoChooseProgrammer<CR>" },
+      { "n", "<leader>ab", "<CMD>ArduinoChooseBoard<CR>" },
+      { "n", "<leader>ap", "<CMD>ArduinoChooseProgrammer<CR>" },
+    },
+  },
+  cs = {
+    opt = {
+      foldlevel = 0,
+      foldmethod = "syntax",
+      textwidth = 100,
+    },
+    bufvar = {
+      match_words = "\\s*#\\s*region.*$:\\s*#\\s*endregion",
+      all_folded = 1,
+    },
+  },
+  defx = {
+    opt = {
+      bufhidden = "wipe",
     },
   },
   fugitiveblame = {
@@ -616,34 +642,122 @@ ftplugin.set_all({
       { "n", "gp", "<CMD>echo system('git findpr ' . expand('<cword>'))<CR>" },
     },
   },
+  go = {
+    opt = {
+      list = false,
+      listchars = "nbsp:⦸,extends:»,precedes:«,tab:  ",
+    },
+  },
   help = {
     bindings = {
       { "n", "gd", "<C-]>" },
     },
   },
+  lua = {
+    abbr = {
+      ["!="] = "~=",
+      ["local"] = "local",
+    },
+    bindings = {
+      { "n", "gh", "<CMD>exec 'help ' . expand('<cword>')<CR>" },
+    },
+    opt = {
+      comments = ":---,:--",
+    },
+  },
   make = {
-    buf = {
+    opt = {
       expandtab = false,
     },
   },
+  markdown = {
+    opt = {
+      conceallevel = 2,
+      formatoptions = "jqln",
+    },
+  },
   python = {
-    buf = {
+    abbr = {
+      inn = "is not None",
+      ipmort = "import",
+      improt = "import",
+    },
+    opt = {
       shiftwidth = 4,
       tabstop = 4,
       softtabstop = 4,
       textwidth = 88,
     },
+    callback = function(bufnr)
+      if vim.fn.executable("autoimport") then
+        vim.keymap.set("n", "<leader>o", function()
+          vim.cmd("write")
+          vim.cmd("silent !autoimport " .. vim.api.nvim_buf_get_name(0))
+          vim.cmd("edit")
+          vim.lsp.buf.formatting({})
+        end, { buffer = bufnr })
+      end
+      vim.keymap.set("n", "<leader>e", function()
+        run_file("terminal python %")
+      end, { buffer = bufnr })
+    end,
+  },
+  rust = {
+    opt = {
+      makeprg = "cargo $*",
+    },
+    callback = function(bufnr)
+      vim.keymap.set("n", "<leader>e", function()
+        run_file("terminal cargo run")
+      end, { buffer = bufnr })
+    end,
+  },
+  sh = {
+    opt = {
+      winhighlight = "TSConstant:Identifier,TSVariable:Identifier",
+    },
+    callback = function(bufnr)
+      vim.keymap.set("n", "<leader>e", function()
+        run_file("terminal bash %")
+      end, { buffer = bufnr })
+    end,
+  },
+  supercollider = {
+    bindings = {
+      { "n", "<CR>", "<Plug>(scnvim-send-block)", { remap = false } },
+      { "i", "<c-CR>", "<Plug>(scnvim-send-block)", { remap = false } },
+      { "x", "<CR>", "<Plug>(scnvim-send-selection)", { remap = false } },
+      { "n", "<F1>", "<cmd>call scnvim#install()<CR><cmd>SCNvimStart<CR><cmd>SCNvimStatusLine<CR>" },
+      { "n", "<F2>", "<cmd>SCNvimStop<CR>" },
+      { "n", "<F12>", "<Plug>(scnvim-hard-stop)", { remap = false } },
+      { "n", "<leader><space>", "<Plug>(scnvim-postwindow-toggle)", { remap = false } },
+      { "n", "<leader>g", "<cmd>call scnvim#sclang#send('s.plotTree;')<CR>" },
+      { "n", "<leader>s", "<cmd>call scnvim#sclang#send('s.scope;')<CR>" },
+      { "n", "<leader>f", "<cmd>call scnvim#sclang#send('FreqScope.new;')<CR>" },
+      { "n", "<leader>r", "<cmd>SCNvimRecompile<CR>" },
+      { "n", "<leader>m", "<cmd>call scnvim#sclang#send('Master.gui;')<CR>" },
+    },
+    opt = {
+      foldmethod = "marker",
+      foldmarker = "{{{,}}}",
+      statusline = "%f %h%w%m%r %{scnvim#statusline#server_status()} %= %(%l,%c%V %= %P%)",
+    },
+    callback = function(bufnr)
+      vim.api.nvim_create_autocmd("WinEnter", {
+        pattern = "*",
+        command = "if winnr('$') == 1 && getbufvar(winbufnr(winnr()), '&filetype') == 'scnvim'|q|endif",
+        group = "ClosePostWindowIfLast",
+      })
+    end,
   },
   vim = {
-    buf = {
+    opt = {
+      foldmethod = "marker",
       keywordprg = ":help",
-    },
-    win = {
-      fdm = "marker",
     },
   },
   zig = {
-    buf = {
+    opt = {
       shiftwidth = 4,
       tabstop = 4,
       softtabstop = 4,
