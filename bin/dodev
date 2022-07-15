@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Command line tool for managing a Digital Ocean development box"""
 import argparse
 import logging
 import os
@@ -7,8 +8,8 @@ import subprocess
 import sys
 import time
 from datetime import datetime
-from pprint import pformat, pprint
-from typing import Any, Dict, List, Optional
+from pprint import pformat
+from typing import Dict, List, Optional
 
 import requests
 
@@ -16,7 +17,7 @@ log = logging.getLogger("dodev")
 
 
 def load_ssh_keys() -> List[str]:
-    ssh_dir = os.path.join(os.getenv("HOME"), ".ssh")
+    ssh_dir = os.path.join(os.getenv("HOME", ""), ".ssh")
     ret = []
     for filename in os.listdir(ssh_dir):
         if filename.endswith(".pub"):
@@ -39,17 +40,22 @@ def load_ssh_keys() -> List[str]:
 def call(
     path: str, method: str = "GET", headers: Optional[Dict] = None, **data
 ) -> Optional[Dict]:
-    kwargs = {}
+    json_data = None
+    params = None
     if method in ("POST", "PUT"):
-        kwargs["json"] = data
+        json_data = data
     else:
-        kwargs["params"] = data
+        params = data
     secret = os.getenv("DO_SECRET_KEY")
     log.debug("%s %s: %s", method, path, pformat(data))
     headers = headers or {}
     headers["Authorization"] = f"Bearer {secret}"
     resp = requests.request(
-        method, f"https://api.digitalocean.com{path}", headers=headers, **kwargs
+        method,
+        f"https://api.digitalocean.com{path}",
+        headers=headers,
+        json=json_data,
+        params=params,
     )
     try:
         response_data = resp.json()
@@ -63,12 +69,17 @@ def call(
 
 def get_devbox(name: str) -> Optional[Dict]:
     resp = call("/v2/droplets", name=name)
-    droplets = resp["droplets"]
-    return droplets[0] if droplets else None
+    if resp:
+        droplets = resp["droplets"]
+        if droplets:
+            return droplets[0]
+    return None
 
 
 def get_matching_snapshots(name: str) -> List[Dict]:
     resp = call("/v2/snapshots")
+    if not resp:
+        return []
     snaps = [s for s in resp["snapshots"] if s["name"].startswith(name)]
     snaps.sort(
         key=lambda s: datetime.strptime(s["created_at"], "%Y-%m-%dT%H:%M:%SZ"),
@@ -113,6 +124,8 @@ def cmd_up(args):
             snap = snaps[0]
         else:
             resp = call(f"/v2/images/{args.default_image}")
+            if not resp:
+                raise Exception("Could not find default image")
             snap = resp["image"]
             print(
                 "Could not find snapshot for %s. Using default image %s"
@@ -128,6 +141,8 @@ def cmd_up(args):
             image=snap["id"],
             ssh_keys=load_ssh_keys(),
         )
+        if not resp:
+            raise Exception("No response from create droplet")
         droplet = resp["droplet"]
         print("Created droplet %s: %s" % (droplet["name"], droplet["id"]))
     networks = droplet["networks"]["v4"]
@@ -136,6 +151,8 @@ def cmd_up(args):
         while not networks:
             time.sleep(10)
             droplet = get_devbox(args.name)
+            if not droplet:
+                raise Exception("Could not find new droplet")
             networks = droplet["networks"]["v4"]
 
     public_net = [n for n in networks if n["type"] == "public"]
@@ -147,7 +164,7 @@ def cmd_up(args):
 
 
 def update_ssh_config(name: str, ip: str):
-    config_file = os.path.join(os.getenv("HOME"), ".ssh", "config")
+    config_file = os.path.join(os.getenv("HOME", ""), ".ssh", "config")
     lines = [f"Host {name}\n", f"  hostname {ip}\n", "  ForwardAgent yes"]
     if not os.path.exists(config_file):
         fd = os.open(config_file, os.O_CREAT | os.O_WRONLY, 0o700)
@@ -191,12 +208,16 @@ def cmd_snapshot(args):
         sys.exit(1)
     drop_id = droplet["id"]
     resp = call(f"/v2/droplets/{drop_id}/actions", "POST", type="snapshot")
+    if not resp:
+        raise Exception("Missing action response")
     action = resp["action"]
     action_id = action["id"]
     print("Snapshot starting...")
     while action["status"] == "in-progress":
         time.sleep(20)
         resp = call(f"/v2/images/{drop_id}/actions/{action_id}")
+        if not resp:
+            raise Exception("Missing action response")
         action = resp["action"]
     print("Snapshot %s" % action["status"])
 
@@ -241,15 +262,10 @@ def main() -> None:
     )
 
     subparsers = parser.add_subparsers(dest="cmd")
-    up_parser = subparsers.add_parser("up", help="Start the DO droplet")
-    cmd_up_add_args(up_parser)
-    down_parser = subparsers.add_parser("down", help="Destroy the DO droplet")
-    snapshot_parser = subparsers.add_parser(
-        "snapshot", help="Take a snapshot of the DO droplet"
-    )
-    gc_parser = subparsers.add_parser(
-        "gc", help="Delete all snapshots but the most recent"
-    )
+    cmd_up_add_args(subparsers.add_parser("up", help="Start the DO droplet"))
+    subparsers.add_parser("down", help="Destroy the DO droplet")
+    subparsers.add_parser("snapshot", help="Take a snapshot of the DO droplet")
+    subparsers.add_parser("gc", help="Delete all snapshots but the most recent")
     args = parser.parse_args()
     _setup_logging(args)
 

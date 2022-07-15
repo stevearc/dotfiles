@@ -11,7 +11,7 @@
 # can either give multiple identifier separated by comma (,) or put this option
 # multiple time (only on the command line, not in the configuration file where
 # it should appear only once).
-disable=E1103,W0142,W0622,W1401,R0912,R0904,W0221,R0913,R0902,R0915,R0911,R0914,R0903,I0011,W0141,W0110
+disable=E1103,W0622,W1401,R0912,R0904,W0221,R0913,R0902,R0915,R0911,R0914,R0903,I0011,C0103,C0116,C0209
 
 [BASIC]
 argument-rgx=[a-z_][a-z0-9_]{0,30}$
