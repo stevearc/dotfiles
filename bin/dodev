@@ -1,44 +1,56 @@
 #!/usr/bin/env python
-import re
 import argparse
 import logging
 import os
-import sys
-import requests
+import re
 import subprocess
+import sys
 import time
 from datetime import datetime
-from typing import Dict, Any, Optional, List
-from pprint import pprint, pformat
+from pprint import pformat, pprint
+from typing import Any, Dict, List, Optional
 
-log = logging.getLogger('dodev')
+import requests
+
+log = logging.getLogger("dodev")
+
 
 def load_ssh_keys() -> List[str]:
-    ssh_dir = os.path.join(os.getenv('HOME'), '.ssh')
+    ssh_dir = os.path.join(os.getenv("HOME"), ".ssh")
     ret = []
     for filename in os.listdir(ssh_dir):
-        if filename.endswith('.pub'):
+        if filename.endswith(".pub"):
             keyfile = os.path.join(ssh_dir, os.path.splitext(filename)[0])
-            proc = subprocess.run(['ssh-keygen', '-f', keyfile, '-l', '-E', 'md5'], capture_output=True, check=True, encoding='utf-8')
+            proc = subprocess.run(
+                ["ssh-keygen", "-f", keyfile, "-l", "-E", "md5"],
+                capture_output=True,
+                check=True,
+                encoding="utf-8",
+            )
             output = proc.stdout.strip()
             pieces = output.split()
             fingerprint = pieces[1]
-            if fingerprint.startswith('MD5:'):
+            if fingerprint.startswith("MD5:"):
                 fingerprint = fingerprint[4:]
             ret.append(fingerprint)
     return ret
 
-def call(path: str, method:str='GET', headers:Optional[Dict]=None, **data) -> Optional[Dict]:
+
+def call(
+    path: str, method: str = "GET", headers: Optional[Dict] = None, **data
+) -> Optional[Dict]:
     kwargs = {}
-    if method in ('POST', 'PUT'):
-        kwargs['json'] = data
+    if method in ("POST", "PUT"):
+        kwargs["json"] = data
     else:
-        kwargs['params'] = data
-    secret = os.getenv('DO_SECRET_KEY')
+        kwargs["params"] = data
+    secret = os.getenv("DO_SECRET_KEY")
     log.debug("%s %s: %s", method, path, pformat(data))
     headers = headers or {}
-    headers['Authorization'] = f'Bearer {secret}'
-    resp = requests.request(method, f"https://api.digitalocean.com{path}", headers=headers, **kwargs)
+    headers["Authorization"] = f"Bearer {secret}"
+    resp = requests.request(
+        method, f"https://api.digitalocean.com{path}", headers=headers, **kwargs
+    )
     try:
         response_data = resp.json()
     except requests.exceptions.JSONDecodeError:
@@ -48,29 +60,48 @@ def call(path: str, method:str='GET', headers:Optional[Dict]=None, **data) -> Op
         resp.raise_for_status()
     return response_data
 
+
 def get_devbox(name: str) -> Optional[Dict]:
-    resp = call('/v2/droplets', name=name)
-    droplets = resp['droplets']
+    resp = call("/v2/droplets", name=name)
+    droplets = resp["droplets"]
     return droplets[0] if droplets else None
 
+
 def get_matching_snapshots(name: str) -> List[Dict]:
-    resp = call('/v2/snapshots')
-    snaps = [s for s in resp['snapshots'] if s['name'].startswith(name)]
-    snaps.sort(key = lambda s: datetime.strptime(s['created_at'], '%Y-%m-%dT%H:%M:%SZ'), reverse=True)
+    resp = call("/v2/snapshots")
+    snaps = [s for s in resp["snapshots"] if s["name"].startswith(name)]
+    snaps.sort(
+        key=lambda s: datetime.strptime(s["created_at"], "%Y-%m-%dT%H:%M:%SZ"),
+        reverse=True,
+    )
     return snaps
 
+
 def cmd_up_add_args(parser):
-    parser.add_argument('-r', '--region', help='The DO region (default %(default)s)', default=os.getenv('DO_REGION', 'sfo'))
-    parser.add_argument('-s', '--size', help='The size of the devbox', default='s-2vcpu-4gb')
-    parser.add_argument('--default-image', help="The default image to use if no snapshot is present (default Ubuntu 22.04 LTS)", default="106926987")
+    parser.add_argument(
+        "-r",
+        "--region",
+        help="The DO region (default %(default)s)",
+        default=os.getenv("DO_REGION", "sfo"),
+    )
+    parser.add_argument(
+        "-s", "--size", help="The size of the devbox", default="s-2vcpu-4gb"
+    )
+    parser.add_argument(
+        "--default-image",
+        help="The default image to use if no snapshot is present (default Ubuntu 22.04 LTS)",
+        default="106926987",
+    )
+
 
 def select_region(regions: List[str], region: str):
-    preferences = region.split(',')
+    preferences = region.split(",")
     for pref in preferences:
         for r in regions:
             if r.startswith(pref):
                 return r
     return regions[0]
+
 
 def cmd_up(args):
     droplet = get_devbox(args.name)
@@ -81,49 +112,61 @@ def cmd_up(args):
         if snaps:
             snap = snaps[0]
         else:
-            resp = call(f'/v2/images/{args.default_image}')
-            snap = resp['image']
-            print("Could not find snapshot for %s. Using default image %s" % (args.name, snap['name']))
-        region = select_region(snap['regions'], args.region)
-        resp = call('/v2/droplets', 'POST', name=args.name, region=region, size=args.size, image=snap['id'], ssh_keys=load_ssh_keys())
-        droplet = resp['droplet']
-        print("Created droplet %s: %s" % (droplet['name'], droplet['id']))
-    networks = droplet['networks']['v4']
+            resp = call(f"/v2/images/{args.default_image}")
+            snap = resp["image"]
+            print(
+                "Could not find snapshot for %s. Using default image %s"
+                % (args.name, snap["name"])
+            )
+        region = select_region(snap["regions"], args.region)
+        resp = call(
+            "/v2/droplets",
+            "POST",
+            name=args.name,
+            region=region,
+            size=args.size,
+            image=snap["id"],
+            ssh_keys=load_ssh_keys(),
+        )
+        droplet = resp["droplet"]
+        print("Created droplet %s: %s" % (droplet["name"], droplet["id"]))
+    networks = droplet["networks"]["v4"]
     if not networks:
         print("Waiting for droplet to connect to network")
         while not networks:
             time.sleep(10)
             droplet = get_devbox(args.name)
-            networks = droplet['networks']['v4']
+            networks = droplet["networks"]["v4"]
 
-    public_net = [n for n in networks if n['type'] == 'public']
+    public_net = [n for n in networks if n["type"] == "public"]
     if not public_net:
         raise Exception(f"Could not find public IP address for {args.name}")
-    public_ip = public_net[0]['ip_address']
+    public_ip = public_net[0]["ip_address"]
     update_ssh_config(args.name, public_ip)
     print(f"Droplet {args.name} ready")
 
+
 def update_ssh_config(name: str, ip: str):
-    config_file = os.path.join(os.getenv('HOME'), '.ssh', 'config')
-    lines = [f'Host {name}\n', f'  hostname {ip}\n', '  ForwardAgent yes']
+    config_file = os.path.join(os.getenv("HOME"), ".ssh", "config")
+    lines = [f"Host {name}\n", f"  hostname {ip}\n", "  ForwardAgent yes"]
     if not os.path.exists(config_file):
         fd = os.open(config_file, os.O_CREAT | os.O_WRONLY, 0o700)
-        with open(fd, 'w', encoding='utf-8') as ofile:
+        with open(fd, "w", encoding="utf-8") as ofile:
             ofile.writelines(lines)
     else:
         new_lines = []
-        with open(config_file, 'r', encoding='utf-8') as ifile:
+        with open(config_file, "r", encoding="utf-8") as ifile:
             inside_section = False
             for line in ifile:
                 if inside_section:
-                    if re.match(r'^[^\s]', line):
+                    if re.match(r"^[^\s]", line):
                         inside_section = False
-                if line.startswith(f'Host {name}'):
+                if line.startswith(f"Host {name}"):
                     inside_section = True
                 if not inside_section:
                     new_lines.append(line)
         new_lines.extend(lines)
-        with open(config_file, 'w', encoding='utf-8') as ofile:
+        with open(config_file, "w", encoding="utf-8") as ofile:
             ofile.writelines(new_lines)
 
 
@@ -132,34 +175,41 @@ def cmd_down(args):
     if not droplet:
         print(f"{args.name} is not running")
         return
-    drop_id = droplet['id']
-    call(f'/v2/droplets/{drop_id}/destroy_with_associated_resources/dangerous', 'DELETE', headers={'X-Dangerous': 'true'})
+    drop_id = droplet["id"]
+    call(
+        f"/v2/droplets/{drop_id}/destroy_with_associated_resources/dangerous",
+        "DELETE",
+        headers={"X-Dangerous": "true"},
+    )
     print(f"Deleted droplet {args.name}")
+
 
 def cmd_snapshot(args):
     droplet = get_devbox(args.name)
     if not droplet:
         print(f"{args.name} is not running")
         sys.exit(1)
-    drop_id = droplet['id']
-    resp = call(f'/v2/droplets/{drop_id}/actions', 'POST', type='snapshot')
-    action = resp['action']
-    action_id = action['id']
+    drop_id = droplet["id"]
+    resp = call(f"/v2/droplets/{drop_id}/actions", "POST", type="snapshot")
+    action = resp["action"]
+    action_id = action["id"]
     print("Snapshot starting...")
-    while action['status'] == 'in-progress':
+    while action["status"] == "in-progress":
         time.sleep(20)
-        resp = call(f'/v2/images/{drop_id}/actions/{action_id}')
-        action = resp['action']
-    print("Snapshot %s" % action['status'])
+        resp = call(f"/v2/images/{drop_id}/actions/{action_id}")
+        action = resp["action"]
+    print("Snapshot %s" % action["status"])
+
 
 def cmd_gc(args):
     snaps = get_matching_snapshots(args.name)
     print("Found %d snapshots" % len(snaps))
     for snap in snaps[1:]:
-        snap_id = snap['id']
+        snap_id = snap["id"]
         print("Deleting snapshot %s" % snap_id)
-        call(f'/v2/images/{snap_id}', 'DELETE')
+        call(f"/v2/images/{snap_id}", "DELETE")
     print("Done")
+
 
 def _setup_logging(args: argparse.Namespace) -> None:
     handler = logging.StreamHandler(sys.stdout)
@@ -169,9 +219,10 @@ def _setup_logging(args: argparse.Namespace) -> None:
     level = logging.getLevelName(args.log_level)
     logging.root.setLevel(level)
 
+
 def main() -> None:
     """Manage Digital Ocean development box"""
-    if not os.getenv('DO_SECRET_KEY'):
+    if not os.getenv("DO_SECRET_KEY"):
         print("Missing environment variable DO_SECRET_KEY")
         sys.exit(1)
     parser = argparse.ArgumentParser(description=main.__doc__)
@@ -182,27 +233,37 @@ def main() -> None:
         default=logging.WARNING,
         help="Stdout logging level (default 'warning')",
     )
-    parser.add_argument('-n', '--name', help='The name of the droplet to start (also used to match snapshot)', default=os.getenv('DO_DROPLET_NAME', 'devi'))
+    parser.add_argument(
+        "-n",
+        "--name",
+        help="The name of the droplet to start (also used to match snapshot)",
+        default=os.getenv("DO_DROPLET_NAME", "devi"),
+    )
 
-    subparsers = parser.add_subparsers(dest='cmd')
-    up_parser = subparsers.add_parser('up', help="Start the DO droplet")
+    subparsers = parser.add_subparsers(dest="cmd")
+    up_parser = subparsers.add_parser("up", help="Start the DO droplet")
     cmd_up_add_args(up_parser)
-    down_parser = subparsers.add_parser('down', help="Destroy the DO droplet")
-    snapshot_parser = subparsers.add_parser('snapshot', help="Take a snapshot of the DO droplet")
-    gc_parser = subparsers.add_parser('gc', help="Delete all snapshots but the most recent")
+    down_parser = subparsers.add_parser("down", help="Destroy the DO droplet")
+    snapshot_parser = subparsers.add_parser(
+        "snapshot", help="Take a snapshot of the DO droplet"
+    )
+    gc_parser = subparsers.add_parser(
+        "gc", help="Delete all snapshots but the most recent"
+    )
     args = parser.parse_args()
     _setup_logging(args)
 
-    if args.cmd == 'up':
+    if args.cmd == "up":
         cmd_up(args)
-    elif args.cmd == 'down':
+    elif args.cmd == "down":
         cmd_down(args)
-    elif args.cmd == 'snapshot':
+    elif args.cmd == "snapshot":
         cmd_snapshot(args)
-    elif args.cmd == 'gc':
+    elif args.cmd == "gc":
         cmd_gc(args)
     else:
         parser.print_help()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
