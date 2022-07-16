@@ -8,7 +8,7 @@ import subprocess
 import sys
 import time
 from datetime import datetime
-from pprint import pformat
+from pprint import pformat, pprint
 from typing import Dict, List, Optional
 
 import requests
@@ -266,6 +266,34 @@ def cmd_snapshot(args):
         action = resp["action"]
     print("Snapshot %s" % action["status"])
 
+def cmd_action_add_args(parser):
+    parser.add_argument("action", help="The droplet action to perform", choices=(
+        'enable_backups',
+        'disable_backups',
+        'reboot',
+        'power_cycle',
+        'shutdown',
+        'power_off',
+        'power_on',
+        # 'restore',
+        'password_reset',
+        # 'resize',
+        # 'rebuild',
+        # 'rename',
+        # 'change_kernel',
+        # 'enable_ipv6',
+        # 'snapshot',
+    ))
+
+def cmd_action(args):
+    droplet = get_devbox(args.name)
+    if not droplet:
+        print(f"{args.name} does not exist")
+        sys.exit(1)
+    drop_id = droplet["id"]
+    resp = call(f"/v2/droplets/{drop_id}/actions", "POST", type=args.action)
+    pprint(resp)
+
 
 def cmd_gc(args):
     snaps = get_matching_snapshots(args.name)
@@ -314,6 +342,7 @@ def main() -> None:
     subparsers.add_parser("down", help="Destroy the DO droplet")
     subparsers.add_parser("snapshot", help="Take a snapshot of the DO droplet")
     subparsers.add_parser("gc", help="Delete all snapshots but the most recent")
+    cmd_action_add_args(subparsers.add_parser("action", help="Perform an action on the droplet"))
     args = parser.parse_args()
     _setup_logging(args)
 
@@ -325,6 +354,8 @@ def main() -> None:
         cmd_snapshot(args)
     elif args.cmd == "gc":
         cmd_gc(args)
+    elif args.cmd == "action":
+        cmd_action(args)
     else:
         parser.print_help()
 
