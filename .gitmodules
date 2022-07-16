@@ -92,13 +92,6 @@
 	path = vimplugins/barbar.nvim
 	url = https://github.com/stevearc/barbar.nvim.git
 	ignore = untracked
-[submodule "vimplugins/vim-dadbod"]
-	path = vimplugins/vim-dadbod
-	url = https://github.com/tpope/vim-dadbod.git
-[submodule "vimplugins/vim-dadbod-ui"]
-	path = vimplugins/vim-dadbod-ui
-	url = https://github.com/kristijanhusak/vim-dadbod-ui.git
-	ignore = untracked
 [submodule "vimplugins/qf_helper.nvim"]
 	path = vimplugins/qf_helper.nvim
 	url = https://github.com/stevearc/qf_helper.nvim.git
@@ -152,10 +145,6 @@
 [submodule "vimplugins/cmp-path"]
 	path = vimplugins/cmp-path
 	url = https://github.com/hrsh7th/cmp-path.git
-[submodule "vimplugins/vim-dadbod-completion"]
-	path = vimplugins/vim-dadbod-completion
-	url = https://github.com/kristijanhusak/vim-dadbod-completion.git
-	ignore = untracked
 [submodule "vimplugins/lspkind-nvim"]
 	path = vimplugins/lspkind-nvim
 	url = https://github.com/onsails/lspkind-nvim.git
