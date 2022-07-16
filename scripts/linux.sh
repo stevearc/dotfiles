@@ -47,7 +47,7 @@ install-language-vim() {
 
 install-language-rust() {
   if ! rustc --version >/dev/null; then
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y -c rust-src
     source ~/.cargo/env
   fi
   if ! hascmd rust-analyzer; then
