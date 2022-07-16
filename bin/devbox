@@ -240,9 +240,8 @@ def cmd_down(args):
         return
     drop_id = droplet["id"]
     call(
-        f"/v2/droplets/{drop_id}/destroy_with_associated_resources/dangerous",
+        f"/v2/droplets/{drop_id}",
         "DELETE",
-        headers={"X-Dangerous": "true"},
     )
     print(f"Deleted droplet {args.name}")
 
