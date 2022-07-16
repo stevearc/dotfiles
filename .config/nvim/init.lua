@@ -674,6 +674,7 @@ ftplugin.set_all({
     opt = {
       conceallevel = 2,
       formatoptions = "jqln",
+      textwidth = 100,
     },
   },
   python = {
