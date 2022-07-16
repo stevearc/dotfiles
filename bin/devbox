@@ -140,6 +140,11 @@ def cmd_up(args):
             size=args.size,
             image=snap["id"],
             ssh_keys=load_ssh_keys(),
+            # TODO make this configurable
+            user_data = """#cloud-config
+runcmd:
+  - 'curl https://raw.githubusercontent.com/stevearc/dotfiles/master/bootstrap/bootstrap-cloud.sh | /bin/bash -s'
+            """
         )
         if not resp:
             raise Exception("No response from create droplet")
@@ -186,6 +191,47 @@ def update_ssh_config(name: str, ip: str):
         with open(config_file, "w", encoding="utf-8") as ofile:
             ofile.writelines(new_lines)
 
+NO_DEFAULT = object()
+def prompt(msg, default=NO_DEFAULT, validate=None):
+    """Prompt user for input"""
+    while True:
+        response = wrapped_input(msg + " ").strip()
+        if not response:
+            if default is NO_DEFAULT:
+                continue
+            return default
+        if validate is None or validate(response):
+            return response
+
+
+def prompt_option(text, choices, default=NO_DEFAULT):
+    """Prompt the user to choose one of a list of options"""
+    while True:
+        for i, msg in enumerate(choices):
+            print("[%d] %s" % (i + 1, msg))
+        response = prompt(text, default=default)
+        try:
+            idx = int(response) - 1
+            return choices[idx]
+        except (ValueError, IndexError):
+            print("Invalid choice\n")
+
+
+def promptyn(msg, default=None):
+    """Display a blocking prompt until the user confirms"""
+    while True:
+        yes = "Y" if default else "y"
+        if default or default is None:
+            no = "n"
+        else:
+            no = "N"
+        confirm = prompt("%s [%s/%s]" % (msg, yes, no), "").lower()
+        if confirm in ("y", "yes"):
+            return True
+        elif confirm in ("n", "no"):
+            return False
+        elif not confirm and default is not None:
+            return default
 
 def cmd_down(args):
     droplet = get_devbox(args.name)
@@ -225,10 +271,13 @@ def cmd_snapshot(args):
 def cmd_gc(args):
     snaps = get_matching_snapshots(args.name)
     print("Found %d snapshots" % len(snaps))
+    for snap in snaps:
+        print("%s %s" % (snap['created_at'], snap['name']))
     for snap in snaps[1:]:
-        snap_id = snap["id"]
-        print("Deleting snapshot %s" % snap_id)
-        call(f"/v2/images/{snap_id}", "DELETE")
+        if promptyn("Delete snapshot %s from %s?" % (snap['name'], snap['created_at'])):
+            snap_id = snap["id"]
+            print("Deleting snapshot %s [%s]" % (snap['name'], snap_id))
+            call(f"/v2/images/{snap_id}", "DELETE")
     print("Done")
 
 
