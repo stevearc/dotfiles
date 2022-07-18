@@ -541,8 +541,8 @@ safe_require("overseer", function(overseer)
     component_aliases = {
       default = {
         "on_output_summarize",
-        "result_exit_code",
-        { "on_result_notify", desktop = "unfocused" },
+        "on_exit_set_status",
+        { "on_complete_notify", desktop = "unfocused" },
         "on_restart_handler",
         "dispose_delay",
       },
