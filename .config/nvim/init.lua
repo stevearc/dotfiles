@@ -480,8 +480,6 @@ safe_require(
       },
       status = {
         enabled = true,
-        signs = false,
-        virtual_text = true,
       },
     })
     vim.cmd([[
