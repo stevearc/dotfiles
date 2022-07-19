@@ -542,7 +542,7 @@ safe_require("overseer", function(overseer)
       default = {
         "on_output_summarize",
         "on_exit_set_status",
-        { "on_complete_notify", desktop = "unfocused" },
+        { "on_complete_notify", system = "unfocused" },
         "on_restart_handler",
         "dispose_delay",
       },
