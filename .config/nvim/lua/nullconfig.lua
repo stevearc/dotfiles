@@ -31,6 +31,18 @@ local function cache_conditional(fn)
   end
 end
 
+local function has_exe(name)
+  return function()
+    return is_exe(name)
+  end
+end
+
+local function runtime_has_exe(name)
+  return cache_conditional(function()
+    return is_exe(name)
+  end)
+end
+
 -- A runtime condition for enforcing the existence of files
 local function has_root_pattern(...)
   local find = util.root_pattern(...)
@@ -58,17 +70,17 @@ local function sandbox_js_command(config, command, args)
   end
   return config.with({
     condition = function(utils)
-      if utils.root_has_file("yarn.lock") and is_exe("yarn") ~= 0 then
+      if utils.root_has_file("yarn.lock") and is_exe("yarn") then
         return config.with({
           command = "yarn",
           args = prefix_args({ "--silent", command }),
         })
-      elseif utils.root_has_file("package.json") and is_exe("npx") ~= 0 then
+      elseif utils.root_has_file("package.json") and is_exe("npx") then
         return config.with({
           command = "npx",
           args = prefix_args({ command }),
         })
-      elseif is_exe(command) ~= 0 then
+      elseif is_exe(command) then
         return config.with({
           command = command,
           args = args,
@@ -141,40 +153,50 @@ return {
 
   sources = {
     -- C/C++
-    null_ls.builtins.formatting.clang_format,
+    null_ls.builtins.formatting.clang_format.with({
+      condition = has_exe("clang-format"),
+    }),
 
     -- go
-    null_ls.builtins.formatting.goimports,
-    null_ls.builtins.formatting.gofmt,
+    null_ls.builtins.formatting.goimports.with({
+      condition = has_exe("goimports"),
+    }),
+    null_ls.builtins.formatting.gofmt.with({
+      condition = has_exe("gofmt"),
+    }),
 
     -- javascript and derivatives
     sandbox_js_command(null_ls.builtins.formatting.prettier, "prettier"),
 
     -- lua
     null_ls.builtins.formatting.stylua.with({
+      condition = has_exe("stylua"),
       runtime_condition = has_root_pattern("stylua.toml", ".stylua.toml"),
     }),
     null_ls.builtins.diagnostics.luacheck.with({
+      condition = has_exe("luacheck"),
       args = { "--globals", "vim", "--formatter", "plain", "--codes", "--ranges", "--filename", "$FILENAME", "-" },
       diagnostics_format = "[#{c}] #{m} (#{s})",
     }),
 
     -- php
-    null_ls.builtins.formatting.hackfmt,
+    null_ls.builtins.formatting.hackfmt.with({
+      condition = has_exe("hackfmt"),
+    }),
 
     -- python
-    null_ls.builtins.formatting.isort,
-    null_ls.builtins.formatting.black,
+    null_ls.builtins.formatting.isort.with({
+      runtime_condition = runtime_has_exe("isort"),
+    }),
+    null_ls.builtins.formatting.black.with({
+      runtime_condition = runtime_has_exe("black"),
+    }),
     null_ls.builtins.diagnostics.pylint.with({
-      condition = function()
-        return is_exe("pylint") ~= 0
-      end,
+      runtime_condition = runtime_has_exe("pylint"),
       diagnostics_format = "[#{c}] #{m} (#{s})",
     }),
     null_ls.builtins.diagnostics.mypy.with({
-      condition = function()
-        return is_exe("mypy") ~= 0
-      end,
+      runtime_condition = runtime_has_exe("mypy"),
       diagnostics_format = "[#{c}] #{m} (#{s})",
     }),
 
@@ -183,9 +205,11 @@ return {
 
     -- sh
     null_ls.builtins.diagnostics.shellcheck.with({
+      condition = has_exe("shellcheck"),
       args = { "-x", "--format", "json1", "-" },
     }),
     null_ls.builtins.formatting.shfmt.with({
+      condition = has_exe("shfmt"),
       args = { "-ci", "-i", "2", "-s", "-bn" },
     }),
 
@@ -197,15 +221,24 @@ return {
 
     -- vim
     null_ls.builtins.diagnostics.vint.with({
+      condition = has_exe("vint"),
       args = { "--enable-neovim", "--style-problem", "--json", "$FILENAME" },
     }),
 
     -- xml
-    null_ls.builtins.formatting.xmllint,
+    null_ls.builtins.formatting.xmllint.with({
+      condition = has_exe("xmllint"),
+    }),
 
     -- yaml
     null_ls.builtins.diagnostics.yamllint.with({
+      condition = has_exe("yamllint"),
       diagnostics_format = "[#{c}] #{m} (#{s})",
     }),
   },
+
+  -- Export this for use in other locations
+  has_root_pattern = has_root_pattern,
+  has_exe = has_exe,
+  runtime_has_exe = runtime_has_exe,
 }
