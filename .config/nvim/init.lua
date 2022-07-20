@@ -121,7 +121,7 @@ vim.o.softtabstop = 2
 vim.o.switchbuf = "useopen,uselast" -- Don't reopen buffers
 vim.o.synmaxcol = 300 -- Don't syntax highlight long lines
 vim.o.tabstop = 2
-vim.o.textwidth = 80 -- Line width of 80
+vim.o.textwidth = 100 -- Line width of 100
 vim.o.updatetime = 400 -- CursorHold time default is 4s. Way too long
 vim.o.whichwrap = "h,l" -- allow cursor to wrap to next/prev line
 vim.opt.wildignore:append(
@@ -623,7 +623,6 @@ ftplugin.set_all({
     opt = {
       foldlevel = 0,
       foldmethod = "syntax",
-      textwidth = 100,
     },
     bufvar = {
       match_words = "\\s*#\\s*region.*$:\\s*#\\s*endregion",
@@ -650,6 +649,9 @@ ftplugin.set_all({
     bindings = {
       { "n", "gd", "<C-]>" },
     },
+    opt = {
+      textwidth = 80,
+    },
   },
   lua = {
     abbr = {
@@ -672,7 +674,6 @@ ftplugin.set_all({
     opt = {
       conceallevel = 2,
       formatoptions = "jqln",
-      textwidth = 100,
     },
   },
   python = {
