@@ -49,7 +49,14 @@ local colorscheme_set = false
 if not is_tty then
   vim.opt.termguicolors = true
   safe_require("nightfox", function(nightfox)
-    nightfox.setup({})
+    nightfox.setup({
+      groups = {
+        all = {
+          -- Make and/or/not stand out more
+          TSKeywordOperator = { link = "TSKeyword" },
+        },
+      },
+    })
     vim.cmd("colorscheme duskfox")
     colorscheme_set = true
   end)
