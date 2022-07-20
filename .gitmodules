@@ -210,3 +210,6 @@
 [submodule "vimplugins/neotest-jest"]
 	path = vimplugins/neotest-jest
 	url = https://github.com/haydenmeade/neotest-jest.git
+[submodule "vimplugins/nightfox.nvim"]
+	path = vimplugins/nightfox.nvim
+	url = https://github.com/EdenEast/nightfox.nvim.git

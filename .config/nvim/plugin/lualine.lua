@@ -39,51 +39,53 @@ local function lsp_messages()
   return ret
 end
 
-safe_require("lualine").setup({
-  options = {
-    globalstatus = true,
-    icons_enabled = vim.g.devicons ~= false,
-    theme = "tokyonight",
-    section_separators = "",
-  },
-  sections = {
-    lualine_a = { "mode" },
-    lualine_b = { {
-      "filename",
-      file_status = true,
-      path = 1,
-    } },
-    lualine_c = {
-      {
-        "diagnostics",
-        sources = { "nvim_diagnostic" },
-        sections = { "error", "warn" },
+-- Defer to allow colorscheme to be set
+vim.defer_fn(function()
+  safe_require("lualine").setup({
+    options = {
+      globalstatus = true,
+      icons_enabled = vim.g.devicons ~= false,
+      section_separators = "",
+    },
+    sections = {
+      lualine_a = { "mode" },
+      lualine_b = { {
+        "filename",
+        file_status = true,
+        path = 1,
+      } },
+      lualine_c = {
+        {
+          "diagnostics",
+          sources = { "nvim_diagnostic" },
+          sections = { "error", "warn" },
+        },
+        arduino_status,
       },
-      arduino_status,
+      lualine_x = {
+        projects[0].lualine_message,
+        "GkeepStatus",
+        lsp_messages,
+        { "overseer", unique = true },
+        "filetype",
+      },
+      lualine_y = { "progress" },
+      lualine_z = { "location" },
     },
-    lualine_x = {
-      projects[0].lualine_message,
-      "GkeepStatus",
-      lsp_messages,
-      { "overseer", unique = true },
-      "filetype",
+    inactive_sections = {
+      lualine_a = {},
+      lualine_b = { {
+        "filename",
+        file_status = true,
+        path = 1,
+      } },
+      lualine_c = {
+        { "diagnostics", sources = { "nvim_diagnostic" }, sections = { "error", "warn" }, colored = false },
+      },
+      lualine_x = { "location" },
+      lualine_y = {},
+      lualine_z = {},
     },
-    lualine_y = { "progress" },
-    lualine_z = { "location" },
-  },
-  inactive_sections = {
-    lualine_a = {},
-    lualine_b = { {
-      "filename",
-      file_status = true,
-      path = 1,
-    } },
-    lualine_c = {
-      { "diagnostics", sources = { "nvim_diagnostic" }, sections = { "error", "warn" }, colored = false },
-    },
-    lualine_x = { "location" },
-    lualine_y = {},
-    lualine_z = {},
-  },
-  extensions = { "quickfix" },
-})
+    extensions = { "quickfix" },
+  })
+end, 10)
