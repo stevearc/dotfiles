@@ -19,6 +19,9 @@ end
 local function lsp_messages()
   local ret = ""
   for _, client in ipairs(vim.lsp.get_active_clients()) do
+    if client.name == "null-ls" then
+      goto continue
+    end
     for _, progress in pairs(client.messages.progress) do
       if not progress.done then
         ret = progress.title
@@ -31,6 +34,7 @@ local function lsp_messages()
         return ret
       end
     end
+    ::continue::
   end
   return ret
 end
