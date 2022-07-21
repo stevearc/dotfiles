@@ -54,6 +54,8 @@ if not is_tty then
         all = {
           -- Make and/or/not stand out more
           TSKeywordOperator = { link = "TSKeyword" },
+          -- The default barbar colors make modified non-visible buffers impossible to read
+          BufferInactiveMod = { link = "BufferVisibleMod" },
         },
       },
     })
