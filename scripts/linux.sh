@@ -110,10 +110,9 @@ install-language-go() {
 
   PATH="$HOME/.local/share/go/bin:$PATH"
   export GOPATH="$HOME/go"
-  if ! hascmd gopls; then
-    go install golang.org/x/tools/gopls@latest
-    go install golang.org/x/tools/cmd/goimports@latest
-  fi
+  hascmd gopls || go install golang.org/x/tools/gopls@latest
+  hascmd goimports || go install golang.org/x/tools/cmd/goimports@latest
+  hascmd dlv || go install github.com/go-delve/delve/cmd/dlv@latest
 }
 
 install-language-js() {

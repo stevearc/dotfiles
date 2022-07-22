@@ -213,3 +213,15 @@
 [submodule "vimplugins/nightfox.nvim"]
 	path = vimplugins/nightfox.nvim
 	url = https://github.com/EdenEast/nightfox.nvim.git
+[submodule "vimplugins/nvim-dap"]
+	path = vimplugins/nvim-dap
+	url = https://github.com/mfussenegger/nvim-dap.git
+[submodule "vimplugins/nvim-dap-ui"]
+	path = vimplugins/nvim-dap-ui
+	url = https://github.com/rcarriga/nvim-dap-ui.git
+[submodule "vimplugins/nvim-dap-virtual-text"]
+	path = vimplugins/nvim-dap-virtual-text
+	url = https://github.com/theHamsta/nvim-dap-virtual-text.git
+[submodule "vimplugins/nvim-dap-go"]
+	path = vimplugins/nvim-dap-go
+	url = https://github.com/leoluz/nvim-dap-go.git
