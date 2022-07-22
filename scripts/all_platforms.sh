@@ -38,6 +38,7 @@ configure-git() {
   git config --global alias.di 'diff --ignore-all-space'
   git config --global alias.dc 'diff --cached --ignore-all-space'
   git config --global alias.dm '!git diff --ignore-all-space $(git merge-base HEAD origin/$(git main)) HEAD'
+  git config --global alias.dms '!git diff --name-status $(git merge-base HEAD origin/$(git main)) HEAD'
   git config --global alias.ab 'rebase --abort'
   git config --global alias.abort 'rebase --abort'
   git config --global alias.rco 'rebase --continue'
