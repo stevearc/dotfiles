@@ -453,6 +453,9 @@ safe_require(
       discovery = {
         enabled = false,
       },
+      consumers = {
+        overseer = safe_require("neotest.consumers.overseer"),
+      },
       summary = {
         mappings = {
           attach = "a",
@@ -498,14 +501,14 @@ safe_require(
     hi! link NeotestAdapterName TSConstructor
     ]])
     vim.keymap.set("n", "<leader>tn", function()
-      neotest.run.run({ strategy = "overseer" })
+      neotest.run.run({})
     end)
     vim.keymap.set("n", "<leader>tt", function()
-      neotest.run.run({ vim.api.nvim_buf_get_name(0), strategy = "overseer" })
+      neotest.run.run({ vim.api.nvim_buf_get_name(0) })
     end)
     vim.keymap.set("n", "<leader>ta", function()
       for _, adapter_id in ipairs(neotest.run.adapters()) do
-        neotest.run.run({ suite = true, adapter = adapter_id, strategy = "overseer" })
+        neotest.run.run({ suite = true, adapter = adapter_id })
       end
     end)
     vim.keymap.set("n", "<leader>tl", function()
@@ -541,10 +544,17 @@ safe_require("overseer", function(overseer)
         "on_output_summarize",
         "on_exit_set_status",
         { "on_complete_notify", system = "unfocused" },
-        "on_restart_handler",
-        "dispose_delay",
+        "on_complete_dispose",
+      },
+      default_neotest = {
+        { "on_complete_notify", system = "unfocused", on_change = true },
+        "default",
       },
     },
+    -- pre_task_hook = function(task_defn, util)
+    --   util.add_component(task_defn, { "timeout", timeout = 19 })
+    --   -- util.remove_component(task_defn, "timeout")
+    -- end,
   })
   vim.api.nvim_create_user_command(
     "OverseerDebugParser",
