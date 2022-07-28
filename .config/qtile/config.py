@@ -144,6 +144,12 @@ try:
             desc="Spawn a command using a prompt widget",
         ),
         Key([mod], "l", lazy.spawn("s lock"), desc="Lock screen"),
+        Key(
+            [],
+            "F11",
+            lazy.window.toggle_fullscreen(),
+            desc="Toggle fullscreen",
+        ),
     ]
 
     groups = [Group(i) for i in "123456789"]
