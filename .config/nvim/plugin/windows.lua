@@ -4,7 +4,7 @@ vim.o.splitbelow = true
 vim.o.splitright = true
 
 vim.g.win_equal_size = true
-function stevearc.resize_windows()
+local function resize_windows()
   local buftype = vim.api.nvim_buf_get_option(0, "buftype")
   -- Ignore prompt & quickfix windows
   -- For some reason wincmd = inside the preview window doesn't play nice when
@@ -24,7 +24,7 @@ local function soft_set(dimension, value)
   end, 1)
 end
 
-function stevearc.set_win_size()
+local function set_win_size()
   local buftype = vim.api.nvim_buf_get_option(0, "buftype")
   -- Ignore prompt & quickfix windows
   if buftype == "prompt" or buftype == "quickfix" then
@@ -42,7 +42,7 @@ function stevearc.set_win_size()
   end
 end
 
-function stevearc.toggle_maximize()
+local function toggle_maximize()
   if pcall(vim.api.nvim_win_get_var, 0, "is_maximized") then
     vim.api.nvim_win_del_var(0, "is_maximized")
     vim.cmd("wincmd =")
@@ -52,18 +52,30 @@ function stevearc.toggle_maximize()
   end
 end
 
-vim.cmd([[augroup WinWidth
-au!
-  au WinEnter * lua stevearc.set_win_size()
-  au VimEnter,WinEnter,BufWinEnter * lua stevearc.resize_windows()
-augroup END
-]])
-vim.api.nvim_set_keymap(
-  "n",
-  "<C-w>+",
-  "<cmd>lua vim.g.win_equal_size = not vim.g.win_equal_size<CR>",
-  { silent = true }
-)
-vim.api.nvim_set_keymap("n", "<C-w>z", "<cmd>resize | vertical resize<CR>", { silent = true })
-vim.api.nvim_set_keymap("n", "<A-m>", "<cmd>lua stevearc.toggle_maximize()<CR>", { silent = true })
-vim.api.nvim_set_keymap("t", "<A-m>", "<cmd>lua stevearc.toggle_maximize()<CR>", { silent = true })
+local aug = vim.api.nvim_create_augroup("StevearcWinWidth", {})
+
+vim.api.nvim_create_autocmd({ "WinEnter" }, {
+  desc = "Resize the current window on enter",
+  pattern = "*",
+  callback = set_win_size,
+  group = aug,
+})
+
+vim.api.nvim_create_autocmd({ "VimEnter", "WinEnter", "BufWinEnter" }, {
+  desc = "Make all windows equal size when switching window",
+  pattern = "*",
+  callback = resize_windows,
+  group = aug,
+})
+
+vim.keymap.set("n", "<C-w>+", function()
+  vim.g.win_equal_size = not vim.g.win_equal_size
+  if vim.g.win_equal_size then
+    vim.notify("Window resizing ENABLED")
+  else
+    vim.notify("Window resizing DISABLED")
+  end
+end, {})
+vim.keymap.set("n", "<C-w>z", "<cmd>resize | vertical resize<CR>", {})
+vim.keymap.set("n", "<A-m>", toggle_maximize, {})
+vim.keymap.set("t", "<A-m>", toggle_maximize, {})
