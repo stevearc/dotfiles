@@ -113,7 +113,7 @@ _nvim_remote() {
 if command -v nvim >/dev/null; then
   if [ -n "${NVIM-$NVIM_LISTEN_ADDRESS}" ]; then
     alias vim="_nvim_remote"
-  elif [ -n "$INSIDE_NVIM" ] && command -v nvr >/dev/null; then
+  elif [ -n "$NVIM_LISTEN_ADDRESS" ] && command -v nvr >/dev/null; then
     alias vim="nvr -cc 'tabnew | let w:is_remote = v:true'"
   else
     alias vim="nvim"
@@ -123,7 +123,7 @@ fi
 
 # Default applications
 if command -v nvim >/dev/null; then
-  if [ -n "$INSIDE_NVIM" ] && command -v nvr >/dev/null; then
+  if [ -n "$NVIM_LISTEN_ADDRESS" ] && command -v nvr >/dev/null; then
     export EDITOR="nvr --remote-wait -cc 'tabnew | let w:is_remote = v:true'"
   else
     export EDITOR=nvim

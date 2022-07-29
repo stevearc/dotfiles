@@ -286,7 +286,7 @@ if vim.fn.has("win32") ~= 0 then
 end
 
 -- This lets our bash aliases know to use nvr instead of nvim
-vim.env.INSIDE_NVIM = 1
+vim.env.NVIM_LISTEN_ADDRESS = vim.v.servername
 
 -- For quick-n-dirty inspection
 function _G.dump(...)
