@@ -225,3 +225,6 @@
 [submodule "vimplugins/nvim-dap-go"]
 	path = vimplugins/nvim-dap-go
 	url = https://github.com/leoluz/nvim-dap-go.git
+[submodule "vimplugins/nvim-osc52"]
+	path = vimplugins/nvim-osc52
+	url = https://github.com/ojroques/nvim-osc52.git

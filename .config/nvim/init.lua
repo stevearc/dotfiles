@@ -416,6 +416,24 @@ safe_require("tags", function(tags)
     end,
   })
 end)
+safe_require("osc52", function(osc52)
+  local function copy(lines, _)
+    osc52.copy(table.concat(lines, "\n"))
+  end
+
+  local function paste()
+    return { vim.fn.split(vim.fn.getreg(""), "\n"), vim.fn.getregtype("") }
+  end
+
+  -- Only change the clipboard if we're in a SSH session
+  if os.getenv("SSH_CLIENT") then
+    vim.g.clipboard = {
+      name = "osc52",
+      copy = { ["+"] = copy, ["*"] = copy },
+      paste = { ["+"] = paste, ["*"] = paste },
+    }
+  end
+end)
 
 -- Todo:
 -- * Bug: Running tests on directory doesn't work if directory not in tree (but tree has subdirectories)
