@@ -65,6 +65,21 @@ function stevearc.pack(...)
   return { n = select("#", ...), ... }
 end
 
+-- Patch vim.keymap.set so that it reports errors
+local _keymap_set = vim.keymap.set
+vim.keymap.set = function(mode, lhs, rhs, opts)
+  local _rhs = rhs
+  if type(rhs) == "function" then
+    rhs = function()
+      local ok, err = pcall(_rhs)
+      if not ok then
+        vim.api.nvim_echo({ { err, "Error" } }, true, {})
+      end
+    end
+  end
+  _keymap_set(mode, lhs, rhs, opts)
+end
+
 vim.g.python3_host_prog = os.getenv("HOME") .. "/.envs/py3/bin/python"
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*")
