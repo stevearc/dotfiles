@@ -71,9 +71,11 @@ vim.keymap.set = function(mode, lhs, rhs, opts)
   local _rhs = rhs
   if type(rhs) == "function" then
     rhs = function()
-      local ok, err = pcall(_rhs)
-      if not ok then
-        vim.api.nvim_echo({ { err, "Error" } }, true, {})
+      local ok, res_or_err = pcall(_rhs)
+      if ok then
+        return res_or_err
+      else
+        vim.api.nvim_echo({ { res_or_err, "Error" } }, true, {})
       end
     end
   end
