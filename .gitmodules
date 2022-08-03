@@ -228,3 +228,6 @@
 [submodule "vimplugins/nvim-osc52"]
 	path = vimplugins/nvim-osc52
 	url = https://github.com/ojroques/nvim-osc52.git
+[submodule "vimplugins/profile.nvim"]
+	path = vimplugins/profile.nvim
+	url = https://github.com/stevearc/profile.nvim.git

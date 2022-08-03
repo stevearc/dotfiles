@@ -25,6 +25,8 @@ local function toggle_profile()
     prof.start("*")
   end
 end
+vim.keymap.set("", "<f1>", toggle_profile)
+
 function _G.safe_require(...)
   local args = { ... }
   local mods = {}
@@ -89,7 +91,6 @@ local aug = vim.api.nvim_create_augroup("StevearcNewConfig", {})
 
 local ftplugin = safe_require("ftplugin")
 local opts = { noremap = true, silent = true }
-vim.keymap.set({ "n", "i" }, "<f1>", toggle_profile)
 vim.api.nvim_set_keymap(
   "n",
   "<f2>",
