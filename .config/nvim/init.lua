@@ -484,7 +484,9 @@ safe_require(
           dap = { justMyCode = false },
         }),
         plenary_adapter,
-        jest_adapter,
+        jest_adapter({
+          cwd = jest_adapter.root,
+        }),
       },
       discovery = {
         enabled = false,
