@@ -231,3 +231,6 @@
 [submodule "vimplugins/profile.nvim"]
 	path = vimplugins/profile.nvim
 	url = https://github.com/stevearc/profile.nvim.git
+[submodule "vimplugins/nvim-jdtls"]
+	path = vimplugins/nvim-jdtls
+	url = https://github.com/mfussenegger/nvim-jdtls.git

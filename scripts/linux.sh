@@ -45,6 +45,17 @@ install-language-vim() {
   fi
 }
 
+install-language-java() {
+  [ -e ~/.local/share/jdtls ] && return
+  pushd /tmp >/dev/null
+  # This is kind of an old version, but the newer versions crash for me. Could have something to do with the version of java I'm using?
+  wget https://download.eclipse.org/jdtls/milestones/0.70.0/jdt-language-server-0.70.0-202103051608.tar.gz
+  mkdir -p ~/.local/share/jdtls
+  tar -xf jdt-language-server-*.tar.gz -C ~/.local/share/jdtls
+  rm -f jdt-language-server-*
+  popd >/dev/null
+}
+
 install-language-rust() {
   if ! rustc --version >/dev/null; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y -c rust-src
