@@ -462,12 +462,9 @@ end)
 -- * Bug: dir/file/namespace status should be set by children
 -- * Bug: Run last test doesn't work with marked tests (if ran all marked last)
 -- * Feat: If summary tree only has a single (file/dir) child, merge the display
--- * Feat: Set default strategy (b/c can't set my strategy on the summary panel runs)
 -- * Feat: Different bindings for expand/collapse
 -- * Feat: Can collapse tree on a child node
--- * Feat: Can't rerun on save
 -- * Feat: Can't rerun failed tests
--- * Feat: Populate test results as they come in
 -- * Feat: Configure adapters & discovery on a per-directory basis
 -- Investigate:
 -- * Does neotest have ability to throttle groups of individual test runs?
@@ -478,6 +475,7 @@ safe_require(
   "neotest-plenary",
   "neotest-jest",
   function(neotest, python_adapter, plenary_adapter, jest_adapter)
+    -- require("neotest.logging"):set_level("trace")
     neotest.setup({
       adapters = {
         python_adapter({
@@ -722,6 +720,11 @@ ftplugin.set_all({
     opt = {
       conceallevel = 2,
       formatoptions = "jqln",
+    },
+  },
+  ["neotest-summary"] = {
+    opt = {
+      wrap = false,
     },
   },
   python = {
