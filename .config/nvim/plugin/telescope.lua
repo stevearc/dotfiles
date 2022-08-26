@@ -58,9 +58,5 @@ safe_require("telescope", function(telescope)
   map("<leader>fs", "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>")
   map("<leader>fd", "<cmd>Telescope aerial<CR>")
   map("<leader>fn", "<cmd>Telescope gkeep<CR>")
-  map(
-    "<C-s>",
-    "<cmd>lua require('telescope').extensions.luasnip.luasnip(require('telescope.themes').get_cursor({}))<CR>",
-    "i"
-  )
+  map("<C-s>", "<cmd>lua require('telescope').extensions.luasnip.luasnip()<CR>", "i")
 end)

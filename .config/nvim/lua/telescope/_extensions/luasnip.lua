@@ -20,12 +20,7 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 -- SOFTWARE.
-
-local has_telescope, telescope = pcall(require, "telescope")
-if not has_telescope then
-  error("This plugins requires nvim-telescope/telescope.nvim")
-end
-
+local telescope = require("telescope")
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local finders = require("telescope.finders")
@@ -33,10 +28,6 @@ local pickers = require("telescope.pickers")
 local previewers = require("telescope.previewers")
 local entry_display = require("telescope.pickers.entry_display")
 local conf = require("telescope.config").values
-
-local filter_null = function(str, default)
-  return str and str or (default and default or "")
-end
 
 local filter_description = function(name, description)
   local result = ""
@@ -51,14 +42,21 @@ local filter_description = function(name, description)
   return result
 end
 
-local get_docstring = function(snippets, ft, context)
+local get_docstring = function(luasnip, ft, context)
   local docstring = {}
   if context then
-    local snips_for_ft = snippets[ft]
+    local snips_for_ft = luasnip.get_snippets(ft)
     if snips_for_ft then
       for _, snippet in pairs(snips_for_ft) do
         if context.name == snippet.name and context.trigger == snippet.trigger then
-          docstring = snippet:get_docstring()
+          local raw_docstring = snippet:get_docstring()
+          if type(raw_docstring) == "string" then
+            for chunk in string.gmatch(snippet:get_docstring(), "[^\n]+") do
+              table.insert(docstring, chunk)
+            end
+          else
+            docstring = raw_docstring
+          end
         end
       end
     end
@@ -100,14 +98,18 @@ local luasnip_fn = function(opts)
   local displayer = entry_display.create({
     separator = " ",
     items = {
+      { width = 12 },
       { width = 24 },
+      { width = 16 },
       { remaining = true },
     },
   })
 
   local make_display = function(entry)
     return displayer({
+      entry.value.ft,
       entry.value.context.name,
+      { entry.value.context.trigger, "TelescopeResultsNumber" },
       filter_description(entry.value.context.name, entry.value.context.description),
     })
   end
@@ -122,16 +124,16 @@ local luasnip_fn = function(opts)
           value = entry,
           display = make_display,
 
-          ordinal = entry.ft
-            .. " "
-            .. filter_null(entry.context.trigger)
-            .. " "
-            .. filter_null(entry.context.name)
-            .. " "
-            .. filter_description(entry.context.name, entry.context.description),
+          ordinal = string.format(
+            "%s %s %s %s",
+            entry.context.trigger,
+            entry.context.name,
+            entry.ft,
+            filter_description(entry.context.name, entry.context.description)
+          ),
 
-          preview_command = function(pvw_entry, bufnr)
-            local snippet = get_docstring(luasnip.snippets, entry.ft, entry.context)
+          preview_command = function(_, bufnr)
+            local snippet = get_docstring(luasnip, entry.ft, entry.context)
             vim.api.nvim_buf_set_option(bufnr, "filetype", entry.ft)
             vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, snippet)
           end,
@@ -162,6 +164,6 @@ local luasnip_fn = function(opts)
       return true
     end,
   }):find()
-end -- end custom function
+end
 
 return telescope.register_extension({ exports = { luasnip = luasnip_fn } })
