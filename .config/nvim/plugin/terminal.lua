@@ -54,18 +54,20 @@ local function open()
     bufnr = vim.api.nvim_create_buf(false, true)
     dir_to_buf[cwd] = bufnr
     open_term = true
-    vim.api.nvim_create_autocmd('BufLeave', {
-      desc = 'Close floating window when leaving terminal buffer',
+    vim.api.nvim_create_autocmd("BufLeave", {
+      desc = "Close floating window when leaving terminal buffer",
       buffer = bufnr,
+      once = true,
+      nested = true,
       callback = function()
         vim.defer_fn(function()
-          for _,winid in ipairs(vim.api.nvim_list_wins()) do
+          for _, winid in ipairs(vim.api.nvim_list_wins()) do
             if vim.api.nvim_win_get_buf(winid) == bufnr then
               vim.api.nvim_win_close(winid, true)
             end
           end
         end, 10)
-      end
+      end,
     })
   end
 
@@ -82,6 +84,20 @@ local function open()
     col = padding,
   })
   vim.api.nvim_win_set_option(winid, "winblend", 3)
+  local autocmd_id
+  autocmd_id = vim.api.nvim_create_autocmd("VimResized", {
+    desc = "Resize floating terminal on vim resize",
+    callback = function()
+      if vim.api.nvim_win_is_valid(winid) then
+        width = vim.o.columns - border - 2 * padding
+        height = vim.o.lines - vim.o.cmdheight - border - 2 * padding
+        vim.api.nvim_win_set_width(winid, width)
+        vim.api.nvim_win_set_height(winid, height)
+      else
+        vim.api.nvim_del_autocmd(autocmd_id)
+      end
+    end,
+  })
 
   if open_term then
     vim.fn.termopen(vim.o.shell, {
