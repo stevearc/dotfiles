@@ -29,7 +29,7 @@ local function lsp_messages()
           ret = ret .. " " .. progress.message
         end
         if progress.percentage then
-          ret = string.format("%s [%d%%]", ret, progress.percentage)
+          ret = string.format("%s %[%d%%]", ret, progress.percentage)
         end
         return ret
       end
