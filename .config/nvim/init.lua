@@ -358,7 +358,7 @@ safe_require("crates").setup()
 safe_require("dressing").setup({
   input = {
     insert_only = false,
-    relative = "editor",
+    -- relative = "editor",
   },
 })
 
@@ -394,7 +394,16 @@ safe_require("aerial", function(aerial)
   ftplugin.extend("aerial", { bindings = { "n", "<leader>a", "<CMD>AerialClose<CR>" } })
   aerial.setup({
     default_direction = "prefer_left",
-    close_behavior = "global",
+    layout = {
+      -- placement = "edge",
+    },
+    -- attach_mode = "global",
+    close_automatic_events = {
+      -- "unfocus",
+      -- "switch_buffer",
+      -- "unsupported",
+    },
+    -- open_automatic = true,
     highlight_on_jump = false,
     link_folds_to_tree = true,
     link_tree_to_folds = true,

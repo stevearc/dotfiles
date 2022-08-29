@@ -49,15 +49,17 @@ safe_require("lspconfig", function(lspconfig)
         local make_entry = require("telescope.make_entry")
         local conf = require("telescope.config").values
         local items = vim.lsp.util.locations_to_items(result, client.offset_encoding)
-        pickers.new(opts, {
-          prompt_title = "LSP Locations",
-          finder = finders.new_table({
-            results = items,
-            entry_maker = make_entry.gen_from_quickfix(opts),
-          }),
-          previewer = conf.qflist_previewer(opts),
-          sorter = conf.generic_sorter(opts),
-        }):find()
+        pickers
+          .new(opts, {
+            prompt_title = "LSP Locations",
+            finder = finders.new_table({
+              results = items,
+              entry_maker = make_entry.gen_from_quickfix(opts),
+            }),
+            previewer = conf.qflist_previewer(opts),
+            sorter = conf.generic_sorter(opts),
+          })
+          :find()
       else
         vim.fn.setqflist({}, " ", {
           title = "LSP locations",
