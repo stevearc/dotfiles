@@ -1,3 +1,4 @@
+local ftplugin = safe_require("ftplugin")
 vim.keymap.set("t", "\\\\", [[<C-\><C-N>]])
 for i = 1, 9 do
   vim.keymap.set("t", string.format([[\%d]], i), string.format([[<C-\><C-N>:BufferGoto %d<CR>]], i))
@@ -6,13 +7,45 @@ vim.keymap.set("t", [[\`]], [[<C-\><C-N>:BufferLast<CR>]])
 
 vim.cmd([[highlight TermCursor ctermfg=DarkRed guifg=red]])
 
-local aug = vim.api.nvim_create_augroup("TerminalDefaults", {})
-vim.api.nvim_create_autocmd("TermEnter", {
-  desc = "Set defaults for terminal window",
-  pattern = "*",
-  command = "setlocal nonumber norelativenumber signcolumn=no",
-  group = aug,
+local function is_floating_win(winid)
+  return vim.api.nvim_win_get_config(winid or 0).relative ~= ""
+end
+
+ftplugin.extend("terminal", {
+  opt = {
+    number = false,
+    relativenumber = false,
+    signcolumn = "no",
+  },
+  bindings = {
+    {
+      "n",
+      "<C-e>",
+      function()
+        local bufnr = vim.fn.bufadd(vim.fn.expand("<cWORD>"))
+        if is_floating_win(0) then
+          vim.api.nvim_win_close(0, false)
+        end
+        vim.api.nvim_win_set_buf(0, bufnr)
+      end,
+    },
+    {
+      "n",
+      "<C-t>",
+      "<CMD>tabnew <cWORD><CR>",
+    },
+  },
 })
+local function set_defaults()
+  if vim.bo.buftype ~= "terminal" then
+    return
+  end
+  vim.bo.number = false
+  vim.bo.relativenumber = false
+  vim.bo.signcolumn = "no"
+end
+
+local aug = vim.api.nvim_create_augroup("TerminalDefaults", {})
 vim.api.nvim_create_autocmd("TermOpen", {
   desc = "Auto enter insert mode when opening a terminal",
   pattern = "*",

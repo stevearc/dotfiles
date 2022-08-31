@@ -54,6 +54,20 @@ local builtin_win_opt_values = {
   wrap = true,
 }
 
+local function validate_bindings(bindings)
+  if not bindings then
+    return
+  end
+  vim.validate({
+    bindings = { bindings, "t" },
+  })
+  for _, v in ipairs(bindings) do
+    if type(v) ~= "table" then
+      error("ftplugin bindings must be an array of arrays")
+    end
+  end
+end
+
 local window_opts = {}
 for k in pairs(builtin_win_opt_values) do
   window_opts[k] = true
@@ -69,6 +83,7 @@ local default_win_opts = {}
 ---@param name string
 ---@param config FiletypeConfig
 M.set = function(name, config)
+  validate_bindings(config.bindings)
   configs[name] = config
 end
 
@@ -110,19 +125,21 @@ end
 ---@param name string
 ---@param new_config FiletypeConfig
 M.extend = function(name, new_config)
+  validate_bindings(new_config.bindings)
   local conf = configs[name] or {}
   conf.abbr = vim.tbl_deep_extend("force", conf.abbr or {}, new_config.abbr or {})
   conf.opt = vim.tbl_deep_extend("force", conf.opt or {}, new_config.opt or {})
   conf.bufvar = vim.tbl_deep_extend("force", conf.bufvar or {}, new_config.bufvar or {})
   conf.callback = merge_callbacks(conf.callback, new_config.callback)
   conf.bindings = merge_bindings(conf.bindings, new_config.bindings)
+  configs[name] = conf
 end
 
 ---Set many configs all at once
 ---@param confs table<string, FiletypeConfig>
 M.set_all = function(confs)
   for k, v in pairs(confs) do
-    configs[k] = v
+    M.set(k, v)
   end
 end
 
@@ -300,7 +317,26 @@ M.setup = function(opts)
       local winid = vim.api.nvim_get_current_win()
       local bufnr = vim.api.nvim_win_get_buf(winid)
       local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+      -- If we're in a terminal buffer, make the filetype "terminal"
+      if vim.api.nvim_buf_get_option(bufnr, "buftype") == "terminal" then
+        filetype = "terminal"
+      end
       M.apply_win(filetype, winid)
+    end,
+  })
+  vim.api.nvim_create_autocmd("TermEnter", {
+    desc = "Set terminal-specific options",
+    pattern = "*",
+    group = conf.augroup,
+    callback = function(params)
+      local winid = vim.api.nvim_get_current_win()
+      local bufnr = vim.api.nvim_win_get_buf(winid)
+      if vim.api.nvim_buf_get_option(bufnr, "buftype") ~= "terminal" then
+        return
+      end
+      print(string.format("apply terminal"))
+      M.apply("terminal", bufnr)
+      M.apply_win("terminal", winid)
     end,
   })
 end
