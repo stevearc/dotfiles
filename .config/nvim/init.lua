@@ -833,6 +833,43 @@ ftplugin.set_all({
   },
 })
 
+local function path_glob_to_regex(glob)
+  local pattern = string.gsub(glob, "%.", "[%./]")
+  pattern = string.gsub(pattern, "*", ".*")
+  return "^" .. pattern .. "$"
+end
+local function reload(module)
+  local pat = path_glob_to_regex(module)
+  local mods = {}
+  for k in pairs(package.loaded) do
+    if string.match(k, pat) then
+      table.insert(mods, k)
+    end
+  end
+  for _, name in ipairs(mods) do
+    package.loaded[k] = nil
+  end
+  for _, name in ipairs(mods) do
+    require(k)
+  end
+  vim.notify(string.format("Reloaded %d modules", vim.tbl_count(mods)))
+end
+vim.api.nvim_create_user_command("Reload", function(params)
+  local module = params.fargs[1]
+  if module == "" then
+    module = nil
+  end
+  if module then
+    reload(module)
+  else
+    vim.ui.input({ prompt = "reload module" }, function(name)
+      if name then
+        reload(name)
+      end
+    end)
+  end
+end, { nargs = "?" })
+
 -- vim-matchup
 vim.g.matchup_surround_enabled = 1
 vim.g.matchup_matchparen_nomode = "i"
