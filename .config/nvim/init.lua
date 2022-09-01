@@ -689,6 +689,12 @@ ftplugin.set_all({
       bufhidden = "wipe",
     },
   },
+  DressingInput = {
+    bindings = {
+      { "i", "<C-k>", '<CMD>lua require("dressing.input").history_prev()<CR>' },
+      { "i", "<C-j>", '<CMD>lua require("dressing.input").history_next()<CR>' },
+    },
+  },
   fugitiveblame = {
     bindings = {
       { "n", "gp", "<CMD>echo system('git findpr ' . expand('<cword>'))<CR>" },
