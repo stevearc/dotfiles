@@ -42,7 +42,7 @@
 	url = https://github.com/Shougo/defx.nvim.git
 [submodule "vimplugins/nvim-colorizer.lua"]
 	path = vimplugins/nvim-colorizer.lua
-	url = https://github.com/norcalli/nvim-colorizer.lua.git
+	url = https://github.com/NvChad/nvim-colorizer.lua.git
 	ignore = untracked
 [submodule "vimplugins/aerial.nvim"]
 	path = vimplugins/aerial.nvim
