@@ -645,6 +645,8 @@ safe_require("hlslens", function(hlslens)
   )
 end)
 
+safe_require("femaco").setup()
+
 if vim.g.nerd_font ~= false then
   safe_require("nvim-web-devicons").setup({
     default = true,
