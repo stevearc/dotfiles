@@ -337,6 +337,7 @@ function stevearc.setup_notify()
     notify.setup({
       stages = "fade",
       render = "minimal",
+      top_down = false,
     })
   end)
   for _, args in ipairs(pending_notifications) do
