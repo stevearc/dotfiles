@@ -25,6 +25,9 @@ local function soft_set(dimension, value)
 end
 
 local function set_win_size()
+  if not vim.g.win_equal_size then
+    return
+  end
   local buftype = vim.api.nvim_buf_get_option(0, "buftype")
   -- Ignore prompt & quickfix windows
   if buftype == "prompt" or buftype == "quickfix" then
