@@ -234,3 +234,6 @@
 [submodule "vimplugins/nvim-jdtls"]
 	path = vimplugins/nvim-jdtls
 	url = https://github.com/mfussenegger/nvim-jdtls.git
+[submodule "vimplugins/nvim-FeMaco.lua"]
+	path = vimplugins/nvim-FeMaco.lua
+	url = https://github.com/AckslD/nvim-FeMaco.lua.git

@@ -57,41 +57,6 @@ local function has_root_pattern(...)
   end)
 end
 
-local function sandbox_js_command(config, command, args)
-  local function prefix_args(prefix)
-    return function(params)
-      prefix = vim.list_extend({}, prefix)
-      if type(args) == "table" then
-        return vim.list_extend(prefix, args)
-      else
-        return vim.list_extend(prefix, args(params))
-      end
-    end
-  end
-  return config.with({
-    condition = function(utils)
-      if utils.root_has_file("yarn.lock") and is_exe("yarn") then
-        return config.with({
-          command = "yarn",
-          args = prefix_args({ "--silent", command }),
-        })
-      elseif utils.root_has_file("package.json") and is_exe("npx") then
-        return config.with({
-          command = "npx",
-          args = prefix_args({ command }),
-        })
-      elseif is_exe(command) then
-        return config.with({
-          command = command,
-          args = args,
-        })
-      else
-        return false
-      end
-    end,
-  })
-end
-
 null_ls.builtins.diagnostics.rstlint = h.make_builtin({
   method = DIAGNOSTICS,
   filetypes = { "rst" },
@@ -166,7 +131,7 @@ return {
     }),
 
     -- javascript and derivatives
-    sandbox_js_command(null_ls.builtins.formatting.prettier, "prettier"),
+    null_ls.builtins.formatting.prettier,
 
     -- lua
     null_ls.builtins.formatting.stylua.with({
