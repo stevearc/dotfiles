@@ -10,6 +10,7 @@ _nvenv-list() {
 
 _nvenv-deactivate() {
   export NVENV=
+  unalias nvim 2>/dev/null
   alias vim='nvim'
 }
 
@@ -20,15 +21,22 @@ _nvenv-activate() {
     return
   fi
   unalias vim 2>/dev/null
+  unalias nvim 2>/dev/null
+  alias nvim='_nvenv-nvim'
   alias vim='_nvenv-nvim'
   export NVENV="$name"
 }
 
 _nvenv-create() {
-  local name=${1?Usage: nvenv create <name>}
+  local name=${1?Usage: nvenv create <name> [<binary_name>]}
   local bin_name=${2-nvim}
   mkdir -p "$HOME/.local/share/nvenv/$name"
   echo "$bin_name" >"$HOME/.local/share/nvenv/$name/bin_name"
+}
+
+_nvenv-cd() {
+  local name="${1?Usage: nvenv cd <name>}"
+  cd "$HOME/.local/share/nvenv/$name"
 }
 
 _nvenv-nvim() {
@@ -40,15 +48,18 @@ _nvenv-nvim() {
   mkdir -p "$HOME/.local/share/nvenv/$NVENV/data"
   mkdir -p "$HOME/.local/share/nvenv/$NVENV/state"
   mkdir -p "$HOME/.local/share/nvenv/$NVENV/run"
+  mkdir -p "$HOME/.local/share/nvenv/$NVENV/cache"
   local bin_name
   bin_name="$(cat "$HOME/.local/share/nvenv/$NVENV/bin_name")"
   XDG_CONFIG_HOME="$HOME/.local/share/nvenv/$NVENV/config" \
     XDG_DATA_HOME="$HOME/.local/share/nvenv/$NVENV/data" \
     XDG_STATE_HOME="$HOME/.local/share/nvenv/$NVENV/state" \
     XDG_RUNTIME_DIR="$HOME/.local/share/nvenv/$NVENV/run" \
+    XDG_CACHE_HOME="$HOME/.local/share/nvenv/$NVENV/cache" \
     "$bin_name" "$@"
 }
 
+# Install a plugin
 _nvenv-install() {
   if [ -z "$NVENV" ]; then
     echo "Must activate nvenv first"
@@ -59,6 +70,7 @@ _nvenv-install() {
   git clone "$repo" "$HOME/.local/share/nvenv/$NVENV/data/nvim/site/pack/$name/start/$name"
 }
 
+# Link a plugin from the default nvim install
 _nvenv-link() {
   if [ -z "$NVENV" ]; then
     echo "Must activate nvenv first"
@@ -72,15 +84,18 @@ _nvenv-link() {
   done
 }
 
+# Edit the init file for a nvenv
 _nvenv-edit() {
-  if [ -z "$NVENV" ]; then
-    echo "Must activate nvenv first"
+  local name="${1-$NVENV}"
+  if [ -z "$name" ]; then
+    echo "Usage nvenv edit <name>"
     return
   fi
-  mkdir -p "$HOME/.local/share/nvenv/$NVENV/config/nvim"
-  nvim "$HOME/.local/share/nvenv/$NVENV/config/nvim/init.lua"
+  mkdir -p "$HOME/.local/share/nvenv/$name/config/nvim"
+  'nvim' "$HOME/.local/share/nvenv/$name/config/nvim/init.lua"
 }
 
+# Clone a nvenv
 _nvenv-clone() {
   local source="${1?Usage: nvenv clone <source> <target>}"
   local dest="${2?Usage: nvenv clone <source> <target>}"
