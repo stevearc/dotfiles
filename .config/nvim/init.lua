@@ -106,20 +106,11 @@ vim.g.debug_treesitter = false
 vim.g.mapleader = " "
 
 -- Options
-vim.o.autoindent = true
-vim.o.backspace = "indent,eol,start" -- Make backspace work properly
-vim.o.backupcopy = "yes" -- Minimal downsides and doesn't break file watchers
-vim.o.belloff = "all" -- Don't ring the bell
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
-vim.o.encoding = "utf-8" -- Set encoding to UTF
 vim.o.expandtab = true -- Turn tabs into spaces
-vim.o.fileformat = "unix" -- Set fileformat to Unix
 vim.o.formatoptions = "rqnlj"
 vim.o.gdefault = true -- Use 'g' flag by default with :s/foo/bar
-vim.o.history = 1000 -- Remember 1000 commands and search history
-vim.o.hlsearch = true -- Highlight search matches
 vim.o.ignorecase = true
-vim.o.incsearch = true -- Begin searching as soon as you start typing
 vim.o.laststatus = 3 -- Global statusline
 vim.o.mouse = "a" -- Enable use of mouse
 vim.o.path = "**" -- Use a recursive path (for :find)
@@ -131,7 +122,6 @@ vim.opt.shortmess:append("c") -- for nvim-cmp
 vim.opt.shortmess:append("I") -- Hide the startup screen
 vim.opt.shortmess:append("A") -- Ignore swap file messages
 vim.opt.shortmess:append("a") -- Shorter message formats
-vim.o.showcmd = true -- Display incomplete commands
 vim.o.showmatch = true -- When a bracket is inserted, briefly jump to the matching one
 vim.o.showtabline = 2 -- Always show tab line
 vim.o.smartcase = true
