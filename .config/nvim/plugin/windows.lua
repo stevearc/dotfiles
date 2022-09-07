@@ -3,7 +3,7 @@ vim.o.winheight = 1
 vim.o.splitbelow = true
 vim.o.splitright = true
 
-vim.g.win_equal_size = true
+vim.g.win_equal_size = false
 local function resize_windows()
   local buftype = vim.api.nvim_buf_get_option(0, "buftype")
   -- Ignore prompt & quickfix windows
