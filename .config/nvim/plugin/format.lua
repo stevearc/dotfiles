@@ -53,6 +53,10 @@ function stevearc.autoformat()
     return
   end
   local restore = lsp.save_win_positions(0)
-  vim.lsp.buf.formatting_sync(nil, 1000)
+  if vim.lsp.buf.format then
+    vim.lsp.buf.format()
+  else
+    vim.lsp.buf.formatting_sync(nil, 1000)
+  end
   restore()
 end

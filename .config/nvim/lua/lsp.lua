@@ -64,6 +64,7 @@ M.save_win_positions = function(bufnr)
   end
 end
 
+local autoformat_group = vim.api.nvim_create_augroup("LspAutoformat", { clear = true })
 M.on_attach = function(client, bufnr)
   adjust_formatting_capabilities(client, bufnr)
 
@@ -100,12 +101,24 @@ M.on_attach = function(client, bufnr)
     safemap("codeActionProvider", "v", "<leader>fa", ":<C-U>lua vim.lsp.buf.range_code_action()<CR>")
   end
   if client.server_capabilities.documentFormattingProvider then
-    vim.cmd([[aug LspAutoformat
-        au! * <buffer>
-        autocmd BufWritePre <buffer> lua stevearc.autoformat()
-        aug END
-      ]])
-    mapper("n", "=", "<cmd>lua vim.lsp.buf.formatting()<CR>")
+    vim.api.nvim_clear_autocmds({
+      buffer = bufnr,
+      group = autoformat_group,
+    })
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      callback = function()
+        stevearc.autoformat()
+      end,
+      buffer = bufnr,
+      group = autoformat_group,
+    })
+    vim.keymap.set("n", "=", function()
+      if vim.lsp.buf.format then
+        vim.lsp.buf.format({ async = true })
+      else
+        vim.lsp.buf.formatting()
+      end
+    end, { buffer = bufnr })
   end
   safemap("documentRangeFormattingProvider", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
   safemap("renameProvider", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
