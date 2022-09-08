@@ -587,10 +587,6 @@ safe_require("overseer", function(overseer)
         "default",
       },
     },
-    -- pre_task_hook = function(task_defn, util)
-    --   util.add_component(task_defn, { "timeout", timeout = 19 })
-    --   -- util.remove_component(task_defn, "timeout")
-    -- end,
   })
   vim.api.nvim_create_user_command(
     "OverseerDebugParser",
@@ -599,6 +595,7 @@ safe_require("overseer", function(overseer)
   )
   vim.keymap.set("n", "<leader>oo", "<cmd>OverseerToggle<CR>")
   vim.keymap.set("n", "<leader>or", "<cmd>OverseerRun<CR>")
+  vim.keymap.set("n", "<leader>oc", "<cmd>OverseerRunCmd<CR>")
   vim.keymap.set("n", "<leader>ol", "<cmd>OverseerLoadBundle<CR>")
   vim.keymap.set("n", "<leader>ob", "<cmd>OverseerBuild<CR>")
   vim.keymap.set("n", "<leader>od", "<cmd>OverseerQuickAction<CR>")
