@@ -125,8 +125,8 @@ M.on_attach = function(client, bufnr)
 
   mapper("n", "<CR>", "<cmd>lua vim.diagnostic.open_float(0, {scope='line', border='rounded'})<CR>")
 
-  if client.server_capabilities.documentHighlightProvider and client.name ~= "sorbet" then
-    vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+  if client.server_capabilities.documentHighlightProvider and client.name ~= "payserver_sorbet" then
+    vim.api.nvim_create_autocmd({ "CursorHold" }, {
       buffer = bufnr,
       callback = vim.lsp.buf.document_highlight,
     })
