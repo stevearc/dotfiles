@@ -869,3 +869,19 @@ vim.g.matchup_matchparen_deferred_hide_delay = 400
 vim.g.matchup_matchparen_offscreen = { method = "popup", scrolloff = 0 }
 vim.keymap.set({ "n", "x" }, "[", "<plug>(matchup-[%)")
 vim.keymap.set({ "n", "x" }, "]", "<plug>(matchup-]%)")
+
+-- :W and :H to set win width/height
+vim.api.nvim_create_user_command("W", function(params)
+  local width = tonumber(params.fargs[1])
+  if math.floor(width) ~= width then
+    width = math.floor(width * vim.o.columns)
+  end
+  vim.api.nvim_win_set_width(0, width)
+end, { nargs = 1 })
+vim.api.nvim_create_user_command("H", function(params)
+  local height = tonumber(params.fargs[1])
+  if math.floor(height) ~= height then
+    height = math.floor(height * vim.o.lines - vim.o.cmdheight)
+  end
+  vim.api.nvim_win_set_height(0, height)
+end, { nargs = 1 })
