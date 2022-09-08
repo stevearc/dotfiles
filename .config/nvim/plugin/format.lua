@@ -54,9 +54,9 @@ function stevearc.autoformat()
   end
   local restore = lsp.save_win_positions(0)
   if vim.lsp.buf.format then
-    vim.lsp.buf.format()
+    vim.lsp.buf.format({ timeout_ms = 500 })
   else
-    vim.lsp.buf.formatting_sync(nil, 1000)
+    vim.lsp.buf.formatting_sync(nil, 500)
   end
   restore()
 end
