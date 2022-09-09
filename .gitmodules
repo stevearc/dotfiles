@@ -10,12 +10,6 @@
 [submodule "vimplugins/vim-arduino"]
 	path = vimplugins/vim-arduino
 	url = https://github.com/stevearc/vim-arduino.git
-[submodule "vimplugins/vim-misc"]
-	path = vimplugins/vim-misc
-	url = https://github.com/xolox/vim-misc.git
-[submodule "vimplugins/vim-session"]
-	path = vimplugins/vim-session
-	url = https://github.com/romgrk/vim-session.git
 [submodule "parseargs"]
 	path = parseargs
 	url = https://github.com/stevearc/parseargs.git
@@ -238,3 +232,6 @@
 [submodule "vimplugins/nvim-FeMaco.lua"]
 	path = vimplugins/nvim-FeMaco.lua
 	url = https://github.com/AckslD/nvim-FeMaco.lua.git
+[submodule "vimplugins/resession.nvim"]
+	path = vimplugins/resession.nvim
+	url = https://github.com/stevearc/resession.nvim.git
