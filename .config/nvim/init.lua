@@ -453,9 +453,7 @@ safe_require("osc52", function(osc52)
   end
 end)
 safe_require("resession", function(resession)
-  resession.setup({
-    autosave_name = "last",
-  })
+  resession.setup({})
   vim.keymap.set("n", "<leader>ss", resession.save)
   vim.keymap.set("n", "<leader>so", resession.load)
   vim.keymap.set("n", "ZZ", function()
@@ -468,6 +466,12 @@ safe_require("resession", function(resession)
       pcall(resession.delete, "__quicksave__")
     end, 10)
   end
+  vim.api.nvim_create_autocmd("VimLeave", {
+    group = aug,
+    callback = function()
+      resession.save("last")
+    end,
+  })
 end)
 
 -- Todo:
