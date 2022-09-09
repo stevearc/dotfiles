@@ -64,17 +64,27 @@ M.save_win_positions = function(bufnr)
   end
 end
 
+local function cancelable(method)
+  return function()
+    local params = vim.lsp.util.make_position_params()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    vim.lsp.buf_request(0, method, params, function(...)
+      local new_cursor = vim.api.nvim_win_get_cursor(0)
+      if vim.api.nvim_get_current_buf() == bufnr and vim.deep_equal(cursor, new_cursor) then
+        vim.lsp.handlers[method](...)
+      end
+    end)
+  end
+end
+
 local autoformat_group = vim.api.nvim_create_augroup("LspAutoformat", { clear = true })
 M.on_attach = function(client, bufnr)
   adjust_formatting_capabilities(client, bufnr)
 
-  local function mapper(mode, key, result)
-    vim.api.nvim_buf_set_keymap(bufnr, mode, key, result, { noremap = true, silent = true })
-  end
-
   local function safemap(method, mode, key, result)
     if client.server_capabilities[method] then
-      mapper(mode, key, result)
+      vim.keymap.set(mode, key, result)
     end
   end
 
@@ -85,10 +95,10 @@ M.on_attach = function(client, bufnr)
   end
 
   -- Standard LSP
-  safemap("definitionProvider", "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
-  safemap("declarationProvider", "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
-  safemap("typeDefinitionProvider", "n", "gtd", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
-  safemap("implementationProvider", "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
+  safemap("definitionProvider", "n", "gd", cancelable("textDocument/definition"))
+  safemap("declarationProvider", "n", "gD", cancelable("textDocument/declaration"))
+  safemap("typeDefinitionProvider", "n", "<leader>D", cancelable("textDocument/typeDefinition"))
+  safemap("implementationProvider", "n", "gi", cancelable("textDocument/implementation"))
   safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
   -- Only map K if keywordprg is not ':help'
   if vim.api.nvim_buf_get_option(bufnr, "keywordprg") ~= ":help" then
@@ -123,7 +133,7 @@ M.on_attach = function(client, bufnr)
   safemap("documentRangeFormattingProvider", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
   safemap("renameProvider", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
 
-  mapper("n", "<CR>", "<cmd>lua vim.diagnostic.open_float(0, {scope='line', border='rounded'})<CR>")
+  vim.keymap.set("n", "<CR>", "<cmd>lua vim.diagnostic.open_float(0, {scope='line', border='rounded'})<CR>")
 
   if client.server_capabilities.documentHighlightProvider and client.name ~= "payserver_sorbet" then
     vim.api.nvim_create_autocmd({ "CursorHold" }, {
