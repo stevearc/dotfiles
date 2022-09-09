@@ -453,12 +453,19 @@ safe_require("osc52", function(osc52)
   end
 end)
 safe_require("resession", function(resession)
-  resession.setup({})
+  resession.setup({
+    extensions = { "overseer" },
+  })
   vim.keymap.set("n", "<leader>ss", resession.save)
   vim.keymap.set("n", "<leader>so", resession.load)
+  vim.keymap.set("n", "<leader>sd", resession.delete)
+  vim.api.nvim_create_user_command("SessionDetach", function()
+    resession.detach()
+  end, {})
   vim.keymap.set("n", "ZZ", function()
-    resession.save("__quicksave__")
-    vim.cmd("wqa")
+    resession.save("__quicksave__", { notify = false })
+    vim.cmd("wa")
+    vim.cmd("qa")
   end)
   if vim.tbl_contains(resession.list(), "__quicksave__") then
     vim.defer_fn(function()
@@ -466,7 +473,7 @@ safe_require("resession", function(resession)
       pcall(resession.delete, "__quicksave__")
     end, 10)
   end
-  vim.api.nvim_create_autocmd("VimLeave", {
+  vim.api.nvim_create_autocmd("VimLeavePre", {
     group = aug,
     callback = function()
       resession.save("last")
