@@ -453,7 +453,9 @@ safe_require("osc52", function(osc52)
   end
 end)
 safe_require("resession", function(resession)
-  resession.setup({})
+  resession.setup({
+    autosave_name = "last",
+  })
   vim.keymap.set("n", "<leader>ss", resession.save)
   vim.keymap.set("n", "<leader>so", resession.load)
   vim.keymap.set("n", "ZZ", function()
