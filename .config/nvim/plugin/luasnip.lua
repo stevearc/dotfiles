@@ -1,39 +1,39 @@
 safe_require("luasnip", function(luasnip)
   require("luasnip.loaders.from_vscode").lazy_load()
-  vim.api.nvim_set_keymap("s", "<Tab>", "<Plug>luasnip-jump-next", {})
-  vim.api.nvim_set_keymap("s", "<C-h>", "<Plug>luasnip-jump-prev", {})
-  vim.api.nvim_set_keymap("s", "<C-l>", "<Plug>luasnip-jump-next", {})
-  vim.api.nvim_set_keymap("i", "<C-k>", "<Plug>luasnip-prev-choice", {})
-  vim.api.nvim_set_keymap("i", "<C-j>", "<Plug>luasnip-next-choice", {})
-  vim.api.nvim_set_keymap("s", "<C-k>", "<Plug>luasnip-prev-choice", {})
-  vim.api.nvim_set_keymap("s", "<C-j>", "<Plug>luasnip-next-choice", {})
+  vim.keymap.set("s", "<Tab>", "<Plug>luasnip-jump-next")
+  vim.keymap.set("s", "<C-h>", "<Plug>luasnip-jump-prev")
+  vim.keymap.set("s", "<C-l>", "<Plug>luasnip-jump-next")
+  vim.keymap.set({ "i", "s" }, "<C-k>", function()
+    pcall(luasnip.change_choice, -1)
+  end)
+  vim.keymap.set({ "i", "s" }, "<C-j>", function()
+    pcall(luasnip.change_choice, 1)
+  end)
 
-  vim.cmd([[
-  aug ClearLuasnipSession
-    au!
-    " Can't use InsertLeave here because that fires when we go to select mode
-    au CursorHold * silent LuaSnipUnlinkCurrent
-  aug END
-  ]])
+  local aug = vim.api.nvim_create_augroup("ClearLuasnipSession", { clear = true })
+  vim.api.nvim_create_autocmd("CursorHold", {
+    pattern = "*",
+    -- Can't use InsertLeave here because that fires when we go to select mode
+    command = "silent! LuaSnipUnlinkCurrent",
+    group = aug,
+  })
 
-  vim.api.nvim_set_keymap("i", "<C-h>", "<cmd>lua stevearc.left_in_insert()<CR>", {})
-  vim.api.nvim_set_keymap("i", "<C-l>", "<cmd>lua stevearc.right_in_insert()<CR>", {})
-  function stevearc.left_in_insert()
+  vim.keymap.set("i", "<C-h>", function()
     if luasnip.get_active_snip() then
       luasnip.jump(-1)
     else
       local cur = vim.api.nvim_win_get_cursor(0)
       pcall(vim.api.nvim_win_set_cursor, 0, { cur[1], cur[2] - 1 })
     end
-  end
-  function stevearc.right_in_insert()
+  end)
+  vim.keymap.set("i", "<C-l>", function()
     if luasnip.get_active_snip() then
       luasnip.jump(1)
     else
       local cur = vim.api.nvim_win_get_cursor(0)
       pcall(vim.api.nvim_win_set_cursor, 0, { cur[1], cur[2] + 1 })
     end
-  end
+  end)
 
   -- Required to support nested placeholders
   -- From https://github.com/L3MON4D3/LuaSnip/wiki/Nice-Configs#imitate-vscodes-behaviour-for-nested-placeholders
