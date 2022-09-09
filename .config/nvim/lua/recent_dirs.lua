@@ -16,14 +16,28 @@ M.load_cache = function()
       dirs = vim.json.decode(data)
     end
     file:close()
+    local to_remove = {}
+    for k in pairs(dirs) do
+      if vim.fn.isdirectory(k) == 0 then
+        table.insert(to_remove, k)
+      end
+    end
+    if not vim.tbl_isempty(to_remove) then
+      for _, v in ipairs(to_remove) do
+        dirs[v] = nil
+      end
+      M.save_cache()
+    end
   end
 end
 
 M.save_cache = function()
   local filename = get_cache_file()
   local file = io.open(filename, "w")
-  file:write(vim.json.encode(dirs))
-  file:close()
+  if file then
+    file:write(vim.json.encode(dirs))
+    file:close()
+  end
 end
 
 M.record_dir = function(dir)
