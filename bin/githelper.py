@@ -337,6 +337,8 @@ def _add_cmd_stack(parser):
     next_parser = subparsers.add_parser('first')
     del_parser = subparsers.add_parser('delete')
     del_parser.add_argument('name', nargs='?')
+    rebase_parser = subparsers.add_parser('rebase')
+    rebase_parser.add_argument('target')
 
 def navigate_stack_relative(count: int):
     stack = get_stack(current_stack())
@@ -402,6 +404,12 @@ def cmd_stack(args, parser):
                 print(f"{url}/compare/{rel}...{branch}?expand=1")
             rel = branch
         stack.update_prs()
+    elif args.stack_cmd == 'rebase':
+        stack = get_stack('@')
+        if stack is None:
+            print("Could not find stack", args.branch)
+            sys.exit(1)
+        stack.rebase(args.target)
     elif args.stack_cmd == 'prev':
         navigate_stack_relative(-1 * args.count)
     elif args.stack_cmd == 'next':
