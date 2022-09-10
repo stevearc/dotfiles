@@ -454,6 +454,9 @@ safe_require("osc52", function(osc52)
 end)
 safe_require("resession", function(resession)
   resession.setup({
+    autosave = {
+      enabled = true,
+    },
     extensions = { "overseer" },
   })
   vim.keymap.set("n", "<leader>ss", resession.save)
@@ -469,7 +472,7 @@ safe_require("resession", function(resession)
   end)
   if vim.tbl_contains(resession.list(), "__quicksave__") then
     vim.defer_fn(function()
-      resession.load("__quicksave__")
+      resession.load("__quicksave__", { detach = true })
       pcall(resession.delete, "__quicksave__")
     end, 10)
   end
