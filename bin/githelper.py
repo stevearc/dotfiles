@@ -142,12 +142,12 @@ class PullRequest:
 
     def set_table(self, stack_prs: List['PullRequest']):
         rows = []
-        for pr in stack_prs:
-            row = {'PR': f'#{pr.number}', 'Title': pr.title}
+        for i, pr in enumerate(stack_prs):
+            row = {'PR': f'#{pr.number}', 'Title': pr.title, '': str(i+1)}
             if pr.number == self.number:
-                row['PR'] = '*'
+                row['PR'] = f'*{pr.number}'
             rows.append(row)
-        table = make_markdown_table(rows, ['PR', 'Title'])
+        table = make_markdown_table(rows, ['', 'PR', 'Title'])
         if table != self.table:
             new_body = table + '\r\n' + self.body
             gh('pr', 'edit', str(self.number), '-b', new_body, capture_output=False)
