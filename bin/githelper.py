@@ -326,6 +326,7 @@ def _add_cmd_stack(parser):
     subparsers.add_parser('clean')
     push_parser = subparsers.add_parser('push')
     push_parser.add_argument('branch', nargs='?')
+    push_parser.add_argument('-f', action="store_true")
     pr_parser = subparsers.add_parser('pr')
     pr_parser.add_argument('branch', nargs='?')
     prev_parser = subparsers.add_parser('prev')
@@ -381,7 +382,10 @@ def cmd_stack(args, parser):
         cur = current_branch()
         for branch in stack.children:
             switch_branch(branch)
-            git('push', '--force-with-lease', '-u', 'origin', branch, capture_output=False)
+            git_args = ['push', '-u', 'origin', branch]
+            if args.f:
+                git_args.insert(1, '--force-with-lease')
+            git(*git_args, capture_output=False)
         switch_branch(cur)
     elif args.stack_cmd == 'pr':
         url = get_repo_url()
