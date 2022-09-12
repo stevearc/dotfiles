@@ -39,6 +39,19 @@ local function lsp_messages()
   return ret
 end
 
+local function session_name()
+  return ""
+end
+safe_require("resession", function(resession)
+  session_name = function()
+    local session_name = resession.get_current()
+    if not session_name then
+      return ""
+    end
+    return string.format("session: %s", session_name)
+  end
+end)
+
 -- Defer to allow colorscheme to be set
 vim.defer_fn(function()
   safe_require("lualine").setup({
@@ -66,6 +79,7 @@ vim.defer_fn(function()
         projects[0].lualine_message,
         "GkeepStatus",
         lsp_messages,
+        session_name,
         { "overseer", unique = true },
         "filetype",
       },

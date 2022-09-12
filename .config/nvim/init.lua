@@ -457,10 +457,20 @@ safe_require("resession", function(resession)
     autosave = {
       enabled = true,
     },
-    extensions = { "overseer" },
+    tab_buf_filter = function(tabpage, bufnr)
+      local dir = vim.fn.getcwd(-1, vim.api.nvim_tabpage_get_number(tabpage))
+      return vim.startswith(vim.api.nvim_buf_get_name(bufnr), dir)
+    end,
+    extensions = { aerial = {}, overseer = {}, barbar = {}, quickfix = {} },
   })
   vim.keymap.set("n", "<leader>ss", resession.save)
+  vim.keymap.set("n", "<leader>st", function()
+    resession.save_tab()
+  end)
   vim.keymap.set("n", "<leader>so", resession.load)
+  vim.keymap.set("n", "<leader>sl", function()
+    resession.load(nil, { reset = false })
+  end)
   vim.keymap.set("n", "<leader>sd", resession.delete)
   vim.api.nvim_create_user_command("SessionDetach", function()
     resession.detach()
@@ -470,16 +480,28 @@ safe_require("resession", function(resession)
     vim.cmd("wa")
     vim.cmd("qa")
   end)
-  if vim.tbl_contains(resession.list(), "__quicksave__") then
-    vim.defer_fn(function()
-      resession.load("__quicksave__", { detach = true })
-      pcall(resession.delete, "__quicksave__")
-    end, 10)
-  end
+
+  vim.api.nvim_create_autocmd("VimEnter", {
+    group = aug,
+    callback = function()
+      if vim.tbl_contains(resession.list(), "__quicksave__") then
+        resession.load("__quicksave__", { attach = false })
+        local ok, err = pcall(resession.delete, "__quicksave__")
+        if not ok then
+          vim.notify(string.format("Error deleting quicksave session: %s", err), vim.log.levels.WARN)
+        end
+        -- Only load the session if nvim was started with no args
+      elseif vim.fn.argc(-1) == 0 then
+        -- Save these to a different directory, so our manual sessions don't get polluted
+        resession.load(vim.fn.getcwd(), { dir = "dirsession", silence_errors = true, attach = false })
+      end
+    end,
+  })
   vim.api.nvim_create_autocmd("VimLeavePre", {
     group = aug,
     callback = function()
-      resession.save("last")
+      -- resession.save("last")
+      resession.save(vim.fn.getcwd(), { dir = "dirsession", notify = false })
     end,
   })
 end)
