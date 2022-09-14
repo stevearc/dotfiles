@@ -135,7 +135,7 @@ M.apply_win = function(name, winid)
   local pieces = vim.split(name, ".", true)
   if #pieces > 1 then
     for _, ft in ipairs(pieces) do
-      vim.tbl_extend("force", win_overrides, _apply_win(ft, winid))
+      win_overrides = vim.tbl_extend("force", win_overrides, _apply_win(ft, winid))
     end
   else
     win_overrides = _apply_win(name, winid)
@@ -143,8 +143,14 @@ M.apply_win = function(name, winid)
 
   -- Restore other window options to the default value
   for opt, opt_info in pairs(vim.api.nvim_get_all_options_info()) do
-    if opt_info.scope == "win" and not win_overrides[k] then
-      vim.api.nvim_win_set_option(winid, opt, default_win_opts[opt])
+    if opt_info.scope == "win" and not win_overrides[opt] then
+      local ok, err = pcall(vim.api.nvim_win_set_option, winid, opt, default_win_opts[opt])
+      if not ok then
+        vim.notify(
+          string.format("Error restoring window option %s = %s: %s", opt, default_win_opts[opt], err),
+          vim.log.levels.ERROR
+        )
+      end
     end
   end
 end
