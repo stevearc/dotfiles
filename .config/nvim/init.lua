@@ -697,12 +697,17 @@ end
 vim.g.arduino_serial_cmd = "picocom {port} -b {baud} -l"
 
 local function run_file(cmd)
-  vim.cmd([[
-    write
-    silent! clear
-    botright split
-  ]])
-  vim.cmd(cmd)
+  vim.cmd("update")
+  local task = require("overseer").new_task({
+    cmd = cmd,
+    components = { "unique", "default" },
+  })
+  task:start()
+  local bufnr = task:get_bufnr()
+  if bufnr then
+    vim.cmd("botright split")
+    vim.api.nvim_win_set_buf(0, bufnr)
+  end
 end
 
 -- Filetype mappings and options
@@ -760,7 +765,8 @@ ftplugin.set_all({
   lua = {
     abbr = {
       ["!="] = "~=",
-      ["local"] = "local",
+      locla = "local",
+      vll = "vim.log.levels",
     },
     bindings = {
       { "n", "gh", "<CMD>exec 'help ' . expand('<cword>')<CR>" },
@@ -798,7 +804,7 @@ ftplugin.set_all({
       textwidth = 88,
     },
     callback = function(bufnr)
-      if vim.fn.executable("autoimport") then
+      if vim.fn.executable("autoimport") == 1 then
         vim.keymap.set("n", "<leader>o", function()
           vim.cmd("write")
           vim.cmd("silent !autoimport " .. vim.api.nvim_buf_get_name(0))
@@ -807,7 +813,7 @@ ftplugin.set_all({
         end, { buffer = bufnr })
       end
       vim.keymap.set("n", "<leader>e", function()
-        run_file("terminal python %")
+        run_file({ "python", vim.api.nvim_buf_get_name(0) })
       end, { buffer = bufnr })
     end,
   },
@@ -817,7 +823,7 @@ ftplugin.set_all({
     },
     callback = function(bufnr)
       vim.keymap.set("n", "<leader>e", function()
-        run_file("terminal cargo run")
+        run_file({ "cargo", "run" })
       end, { buffer = bufnr })
     end,
   },
@@ -829,7 +835,7 @@ ftplugin.set_all({
         hi link TSVariable Identifier
       ]])
       vim.keymap.set("n", "<leader>e", function()
-        run_file("terminal bash %")
+        run_file({ "bash", vim.api.nvim_buf_get_name(0) })
       end, { buffer = bufnr })
     end,
   },
