@@ -88,12 +88,6 @@ M.on_attach = function(client, bufnr)
     end
   end
 
-  for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-    if vim.api.nvim_win_is_valid(winid) and vim.api.nvim_win_get_buf(winid) == bufnr then
-      vim.api.nvim_win_set_option(winid, "signcolumn", "yes")
-    end
-  end
-
   -- Standard LSP
   safemap("definitionProvider", "n", "gd", cancelable("textDocument/definition"))
   safemap("declarationProvider", "n", "gD", cancelable("textDocument/declaration"))
