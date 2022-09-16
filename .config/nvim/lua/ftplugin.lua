@@ -172,7 +172,6 @@ M.apply_win = function(name, winid)
   end
   -- Restore other window options to the default value
   for _, opt in ipairs(_managed_win_opts) do
-    local opt_info = vim.api.nvim_get_option_info(opt)
     if not win_overrides[opt] then
       local ok, err = pcall(vim.api.nvim_win_set_option, winid, opt, get_default_opt(winid, opt))
       if not ok then
@@ -355,7 +354,6 @@ M.setup = function(opts)
       if vim.api.nvim_buf_get_option(bufnr, "buftype") ~= "terminal" then
         return
       end
-      print(string.format("apply terminal"))
       M.apply("terminal", bufnr)
       M.apply_win("terminal", winid)
     end,
