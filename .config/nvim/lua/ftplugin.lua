@@ -25,7 +25,21 @@ end
 local configs = {}
 
 ---@type table<string, any>
-local default_win_opts = {}
+local _default_win_opts = {}
+
+---@type string[]
+local _managed_win_opts = {}
+
+---@param winid integer
+---@param opt string
+local function get_default_opt(winid, opt)
+  local ret = _default_win_opts[opt]
+  if type(ret) == "function" then
+    return ret(winid)
+  else
+    return ret
+  end
+end
 
 ---Set the config for a filetype
 ---@param name string
@@ -142,12 +156,13 @@ M.apply_win = function(name, winid)
   end
 
   -- Restore other window options to the default value
-  for opt, opt_info in pairs(vim.api.nvim_get_all_options_info()) do
-    if opt_info.scope == "win" and not win_overrides[opt] then
-      local ok, err = pcall(vim.api.nvim_win_set_option, winid, opt, default_win_opts[opt])
+  for _, opt in ipairs(_managed_win_opts) do
+    local opt_info = vim.api.nvim_get_option_info(opt)
+    if not win_overrides[opt] then
+      local ok, err = pcall(vim.api.nvim_win_set_option, winid, opt, get_default_opt(winid, opt))
       if not ok then
         vim.notify(
-          string.format("Error restoring window option %s = %s: %s", opt, default_win_opts[opt], err),
+          string.format("Error restoring window option %s = %s: %s", opt, get_default_opt(winid, opt), err),
           vim.log.levels.ERROR
         )
       end
@@ -225,11 +240,63 @@ end
 M.setup = function(opts)
   local conf = vim.tbl_deep_extend("keep", opts or {}, {
     augroup = nil,
-    default_win_opts = {},
+    default_win_opts = {
+      scroll = 0, -- We won't get a good default value for this otherwise (will be 1/2 of current win height)
+    },
+    managed_win_opts = {
+      "cursorline",
+      "cursorlineopt",
+      "wrap",
+      "foldcolumn",
+      "foldenable",
+      "foldexpr",
+      "colorcolumn",
+      "foldlevel",
+      "foldmarker",
+      "virtualedit",
+      "linebreak",
+      "foldmethod",
+      "concealcursor",
+      "relativenumber",
+      "conceallevel",
+      "foldnestmax",
+      "list",
+      "fillchars",
+      "listchars",
+      "breakindent",
+      "breakindentopt",
+      "showbreak",
+      "winfixwidth",
+      "foldtext",
+      "foldminlines",
+      "numberwidth",
+      "winblend",
+      "foldignore",
+      "winhighlight",
+      "signcolumn",
+      "winfixheight",
+      "cursorbind",
+      "spell",
+      "number",
+      "cursorcolumn",
+    },
   })
+  conf.managed_win_opts = vim.tbl_filter(function(opt)
+    local opt_info = vim.api.nvim_get_option_info(opt)
+    if opt_info.scope == "win" then
+      return true
+    else
+      vim.notify(
+        string.format("[ftplugin] option '%s' is not window-scoped. Remove it from managed_win_opts", opt),
+        vim.log.levels.WARN
+      )
+      return false
+    end
+  end, conf.managed_win_opts)
   -- Pick up the existing option values
-  for opt, opt_info in pairs(vim.api.nvim_get_all_options_info()) do
-    if opt_info.scope == "win" and conf.default_win_opts[opt] == nil then
+  for _, opt in ipairs(conf.managed_win_opts) do
+    local opt_info = vim.api.nvim_get_option_info(opt)
+    if conf.default_win_opts[opt] == nil then
       if opt_info.global_local then
         conf.default_win_opts[opt] = vim.go[opt]
       else
@@ -237,7 +304,8 @@ M.setup = function(opts)
       end
     end
   end
-  default_win_opts = conf.default_win_opts
+  _default_win_opts = conf.default_win_opts
+  _managed_win_opts = conf.managed_win_opts
 
   vim.api.nvim_create_autocmd("FileType", {
     desc = "Set filetype-specific options",
