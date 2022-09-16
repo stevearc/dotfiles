@@ -34,6 +34,22 @@ _nvenv-create() {
   echo "$bin_name" >"$HOME/.local/share/nvenv/$name/bin_name"
 }
 
+_nvenv-delete() {
+  local name=${1?Usage: nvenv delete <name>}
+  rm -rf "$HOME/.local/share/nvenv/$name"
+}
+
+_nvenv-kickstart() {
+  local name="${1-$NVENV}"
+  if [ -z "$name" ]; then
+    echo "Usage nvenv kickstart <name>"
+    return
+  fi
+  mkdir -p "$HOME/.local/share/nvenv/$name/config/nvim"
+  curl -sL https://raw.githubusercontent.com/nvim-lua/kickstart.nvim/master/init.lua -o "$HOME/.local/share/nvenv/$name/config/nvim/init.lua"
+  'nvim' "$HOME/.local/share/nvenv/$name/config/nvim/init.lua"
+}
+
 _nvenv-cd() {
   local name="${1?Usage: nvenv cd <name>}"
   cd "$HOME/.local/share/nvenv/$name"
@@ -124,7 +140,7 @@ _nvenv-clone() {
 }
 
 nvenv() {
-  local usage="nvenv [create|list|activate|deactivate|install|link|edit]"
+  local usage="nvenv [create|delete|list|activate|deactivate|install|link|kickstart|edit]"
   local cmd="$1"
   if [ -z "$cmd" ]; then
     echo "$usage"
