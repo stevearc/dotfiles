@@ -1,17 +1,16 @@
-vim.o.winwidth = 1
-vim.o.winheight = 1
+local root_config = require("three.config")
+local M = {}
+
+local config = setmetatable({}, {
+  __index = function(_, key)
+    return root_config.windows[key]
+  end,
+})
+
+local enabled = true
+
 vim.o.splitbelow = true
 vim.o.splitright = true
-
-vim.g.win_equal_size = true
-
-local config = {
-  winwidth = function(winid)
-    local bufnr = vim.api.nvim_win_get_buf(winid)
-    return math.max(vim.api.nvim_buf_get_option(bufnr, "textwidth"), 80)
-  end,
-  winheight = 10,
-}
 
 local function set_winlayout_data(layout)
   local type = layout[1]
@@ -165,7 +164,7 @@ local function set_dimensions(layout)
 end
 
 local function resize_windows()
-  if not vim.g.win_equal_size then
+  if not enabled then
     return
   end
   local layout = vim.fn.winlayout()
@@ -175,21 +174,29 @@ local function resize_windows()
   set_dimensions(layout)
 end
 
-local aug = vim.api.nvim_create_augroup("StevearcWinWidth", {})
+---@return boolean
+M.toggle_enabled = function()
+  enabled = not enabled
+  return enabled
+end
 
-vim.api.nvim_create_autocmd({ "VimEnter", "WinEnter", "BufWinEnter", "VimResized" }, {
-  desc = "Make all windows equal size when switching window",
-  pattern = "*",
-  callback = resize_windows,
-  group = aug,
-})
+---@param new_enabled boolean
+M.set_enabled = function(new_enabled)
+  enabled = new_enabled
+end
 
-vim.keymap.set("n", "<C-w>+", function()
-  vim.g.win_equal_size = not vim.g.win_equal_size
-  if vim.g.win_equal_size then
-    vim.notify("Window resizing ENABLED")
-  else
-    vim.notify("Window resizing DISABLED")
-  end
-end, {})
-vim.keymap.set("n", "<C-w>z", "<cmd>resize | vertical resize<CR>", {})
+M.setup = function()
+  vim.o.winwidth = 1
+  vim.o.winheight = 1
+
+  local group = vim.api.nvim_create_augroup("Three.nvim.windows", {})
+
+  vim.api.nvim_create_autocmd({ "VimEnter", "WinEnter", "BufWinEnter", "VimResized" }, {
+    desc = "Keep all windows equal size",
+    pattern = "*",
+    callback = resize_windows,
+    group = group,
+  })
+end
+
+return M

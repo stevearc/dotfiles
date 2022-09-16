@@ -101,6 +101,7 @@ vim.api.nvim_set_keymap("n", "<f3>", [[<cmd>lua require'plenary.profile'.stop()<
 
 vim.g.nerd_font = true
 vim.g.debug_treesitter = false
+vim.g.barbar_disable = true
 
 -- Space is leader
 vim.g.mapleader = " "
@@ -126,6 +127,8 @@ vim.o.showmatch = true -- When a bracket is inserted, briefly jump to the matchi
 vim.o.showtabline = 2 -- Always show tab line
 vim.o.smartcase = true
 vim.o.softtabstop = 2
+vim.o.splitbelow = true
+vim.o.splitright = true
 vim.o.switchbuf = "useopen,uselast" -- Don't reopen buffers
 vim.o.synmaxcol = 300 -- Don't syntax highlight long lines
 vim.o.tabstop = 2
@@ -471,7 +474,7 @@ safe_require("resession", function(resession)
       local dir = vim.fn.getcwd(-1, vim.api.nvim_tabpage_get_number(tabpage))
       return vim.startswith(vim.api.nvim_buf_get_name(bufnr), dir)
     end,
-    extensions = { aerial = {}, overseer = {}, barbar = {}, quickfix = {} },
+    extensions = { aerial = {}, overseer = {}, quickfix = {}, three = {} },
   })
   vim.keymap.set("n", "<leader>ss", resession.save)
   vim.keymap.set("n", "<leader>st", function()
@@ -730,6 +733,46 @@ safe_require("quick_action").add("<CR>", {
     vim.diagnostic.open_float(0, { scope = "line", border = "rounded" })
   end,
 })
+
+if vim.g.barbar_disable then
+  safe_require("three", function(three)
+    three.setup({})
+    vim.keymap.set("n", "L", three.next)
+    vim.keymap.set("n", "H", three.prev)
+    vim.keymap.set("n", "<C-l>", three.move_right)
+    vim.keymap.set("n", "<C-h>", three.move_left)
+    vim.keymap.set("n", "<C-j>", three.wrap(three.next_tab, { wrap = true }))
+    vim.keymap.set("n", "<C-k>", three.wrap(three.prev_tab, { wrap = true }))
+    for i = 1, 9 do
+      vim.keymap.set("n", "<leader>" .. i, three.wrap(three.jump_to, i))
+    end
+    vim.keymap.set("n", "<leader>`", three.wrap(three.next, { delta = 100 }))
+    vim.keymap.set("n", "<leader>0", three.wrap(three.jump_to, 10))
+    vim.keymap.set("n", "<leader>c", three.smart_close, { desc = "Smart [c]lose" })
+    vim.keymap.set("n", "<leader>C", three.close_buffer, { desc = "[C]lose buffer" })
+    vim.keymap.set("n", "<leader>bh", three.hide_buffer, { desc = "[B]uffer [H]ide" })
+    vim.keymap.set("n", "<leader>bp", three.toggle_pin, { desc = "[B]uffer [P]in" })
+    vim.keymap.set("n", "<leader>bi", three.toggle_pin, { desc = "[B]uffer P[i]n" })
+    vim.keymap.set("n", "<leader>bm", function()
+      vim.ui.input({ prompt = "Move buffer to:" }, function(idx)
+        idx = idx and tonumber(idx)
+        if idx then
+          three.move_buffer(idx)
+        end
+      end)
+    end, { desc = "[B]uffer [M]ove" })
+    vim.keymap.set("n", "<C-w><C-t>", "<cmd>tabclose<CR>", { desc = "Close tab" })
+    vim.keymap.set("n", "<C-w><C-b>", three.clone_tab, { desc = "Clone tab" })
+    vim.keymap.set("n", "<C-w><C-n>", "<cmd>tabnew | set nobuflisted<CR>", { desc = "New tab" })
+    vim.keymap.set("n", "<C-w>`", three.toggle_scope_by_dir, { desc = "Toggle tab scoping by directory" })
+
+    vim.keymap.set("n", "<C-w>+", function()
+      local enabled = three.toggle_win_resize()
+      vim.notify("Window resizing " .. (enabled and "ENABLED" or "DISABLED"))
+    end, {})
+    vim.keymap.set("n", "<C-w>z", "<cmd>resize | vertical resize<CR>", {})
+  end)
+end
 
 if vim.g.nerd_font ~= false then
   safe_require("nvim-web-devicons").setup({
