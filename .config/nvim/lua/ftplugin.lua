@@ -4,6 +4,7 @@
 ---@field bufvar? table<string, any> Buffer-local variables
 ---@field callback? fun(bufnr: integer)
 ---@field opt? table<string, any> Buffer-local or window-local options
+---@field ignore_win_opts? boolean Don't manage the window-local options for this filetype
 
 local M = {}
 
@@ -80,7 +81,16 @@ local function merge_bindings(b1, b2)
   elseif not b2 then
     return b1
   end
-  return vim.list_extend(b1, b2)
+  local ret = vim.list_extend({}, b1)
+  return vim.list_extend(ret, b2)
+end
+
+local function coalesce(v1, v2)
+  if v1 == nil then
+    return v2
+  else
+    return v1
+  end
 end
 
 ---Extend the configuration for a filetype, overriding values that conflict
@@ -94,6 +104,7 @@ M.extend = function(name, new_config)
   conf.bufvar = vim.tbl_deep_extend("force", conf.bufvar or {}, new_config.bufvar or {})
   conf.callback = merge_callbacks(conf.callback, new_config.callback)
   conf.bindings = merge_bindings(conf.bindings, new_config.bindings)
+  conf.ignore_win_opts = coalesce(new_config.ignore_win_opts, conf.ignore_win_opts)
   configs[name] = conf
 end
 
@@ -155,6 +166,10 @@ M.apply_win = function(name, winid)
     win_overrides = _apply_win(name, winid)
   end
 
+  local conf = configs[name]
+  if conf and conf.ignore_win_opts then
+    return
+  end
   -- Restore other window options to the default value
   for _, opt in ipairs(_managed_win_opts) do
     local opt_info = vim.api.nvim_get_option_info(opt)

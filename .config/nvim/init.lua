@@ -382,7 +382,10 @@ ftplugin.set("GoogleKeepNote", {
 ftplugin.extend("norg", { bindings = gkeep_bindings })
 
 safe_require("aerial", function(aerial)
-  ftplugin.extend("aerial", { bindings = { { "n", "<leader>a", "<CMD>AerialClose<CR>" } } })
+  ftplugin.extend("aerial", {
+    bindings = { { "n", "<leader>a", "<CMD>AerialClose<CR>" } },
+    ignore_win_opts = true,
+  })
   aerial.setup({
     default_direction = "prefer_left",
     layout = {
