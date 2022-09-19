@@ -459,6 +459,7 @@ safe_require("resession", function(resession)
   resession.setup({
     autosave = {
       enabled = true,
+      notify = false,
     },
     tab_buf_filter = function(tabpage, bufnr)
       local dir = vim.fn.getcwd(-1, vim.api.nvim_tabpage_get_number(tabpage))
@@ -493,18 +494,13 @@ safe_require("resession", function(resession)
         if not ok then
           vim.notify(string.format("Error deleting quicksave session: %s", err), vim.log.levels.WARN)
         end
-        -- Only load the session if nvim was started with no args
-      elseif vim.fn.argc(-1) == 0 then
-        -- Save these to a different directory, so our manual sessions don't get polluted
-        resession.load(vim.fn.getcwd(), { dir = "dirsession", silence_errors = true, attach = false })
       end
     end,
   })
   vim.api.nvim_create_autocmd("VimLeavePre", {
     group = aug,
     callback = function()
-      -- resession.save("last")
-      resession.save(vim.fn.getcwd(), { dir = "dirsession", notify = false })
+      resession.save("last")
     end,
   })
 end)
