@@ -115,8 +115,10 @@ local function set_dimensions(layout)
   local type = layout[1]
   if type == "leaf" then
     local info = layout[2]
-    vim.api.nvim_win_set_width(info.winid, info.width)
-    vim.api.nvim_win_set_height(info.winid, info.height)
+    if vim.api.nvim_win_is_valid(info.winid) then
+      vim.api.nvim_win_set_width(info.winid, info.width)
+      vim.api.nvim_win_set_height(info.winid, info.height)
+    end
   else
     local sections = layout[2]
     if type == "row" then
