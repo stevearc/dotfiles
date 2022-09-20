@@ -816,6 +816,13 @@ ftplugin.set_all({
       end, { buffer = bufnr })
     end,
   },
+  qf = {
+    opt = {
+      winfixheight = true,
+      relativenumber = false,
+      buflisted = false,
+    },
+  },
   rust = {
     opt = {
       makeprg = "cargo $*",
