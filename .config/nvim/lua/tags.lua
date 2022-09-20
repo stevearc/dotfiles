@@ -6,17 +6,7 @@ local default_config = {
 
 local config = {}
 
-M.setup = function(opts)
-  config = vim.tbl_deep_extend("force", default_config, opts or {})
-  vim.cmd([[
-    augroup TagAttach
-      au!
-      autocmd FileType * call luaeval('require("tags")._try_attach(tonumber(_A))', expand('<abuf>'))
-    augroup END
-    ]])
-end
-
-M._try_attach = function(bufnr)
+local function try_attach(bufnr)
   local tagfiles = vim.fn.tagfiles()
   if #tagfiles == 0 then
     return
@@ -29,6 +19,18 @@ M._try_attach = function(bufnr)
     config.on_attach(bufnr)
   end
   vim.api.nvim_buf_set_var(bufnr, "tags_attached", true)
+end
+
+M.setup = function(opts)
+  config = vim.tbl_deep_extend("force", default_config, opts or {})
+
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = "*",
+    group = vim.api.nvim_create_augroup("TagAttach", {}),
+    callback = function(params)
+      try_attach(params.buf)
+    end,
+  })
 end
 
 local function tagjump(word, idx, regex)
@@ -49,10 +51,10 @@ local function gen_entry_maker(opts)
   if opts.show_line then
     table.insert(display_items, { width = 30 })
   end
-  local displayer = entry_display.create {
+  local displayer = entry_display.create({
     separator = " │ ",
     items = display_items,
-  }
+  })
 
   local make_display = function(entry)
     local filename = utils.transform_path(opts, entry.filename)
@@ -62,16 +64,16 @@ local function gen_entry_maker(opts)
       cmd = entry.cmd
     end
 
-    return displayer {
+    return displayer({
       entry.tag,
       filename,
       cmd,
-    }
+    })
   end
 
   return function(tag)
     return {
-      ordinal = tag.filename .. ': ' .. tag.name,
+      ordinal = tag.filename .. ": " .. tag.name,
       display = make_display,
       cmd = tag.cmd,
       tag = tag.name,
@@ -88,13 +90,13 @@ local function new_previewer(opts)
   local determine_jump = function(self, bufnr, entry)
     pcall(vim.fn.matchdelete, self.state.hl_id, self.state.winid)
     local search_pat = string.sub(entry.cmd, 2, #entry.cmd - 2)
-    vim.cmd "norm! gg"
+    vim.cmd("norm! gg")
     vim.fn.search(search_pat, "W")
-    vim.cmd "norm! zz"
+    vim.cmd("norm! zz")
     self.state.hl_id = vim.fn.matchadd("TelescopePreviewMatch", search_pat)
   end
 
-  return previewers.new_buffer_previewer {
+  return previewers.new_buffer_previewer({
     title = "Tags Preview",
     teardown = function(self)
       if self.state and self.state.hl_id then
@@ -120,13 +122,13 @@ local function new_previewer(opts)
         end,
       })
     end,
-  }
+  })
 end
 
 local function choose(word, candidates, callback)
-  local ok, pickers = pcall(require, 'telescope.pickers')
+  local ok, pickers = pcall(require, "telescope.pickers")
   if ok then
-    local actions = require('telescope.actions')
+    local actions = require("telescope.actions")
     local action_set = require("telescope.actions.set")
     local make_entry = require("telescope.make_entry")
     local finders = require("telescope.finders")
@@ -135,31 +137,33 @@ local function choose(word, candidates, callback)
     local conf = require("telescope.config").values
     local results = candidates
     local max_tag_len = vim.api.nvim_strwidth(word)
-    for _,tag in ipairs(candidates) do
+    for _, tag in ipairs(candidates) do
       local length = vim.api.nvim_strwidth(tag.name)
       if length > max_tag_len then
         max_tag_len = length
       end
     end
-    local opts = {max_tag_len = max_tag_len, show_line = false}
+    local opts = { max_tag_len = max_tag_len, show_line = false }
 
-    pickers.new(opts, {
-      prompt_title = string.format("Jump to %s", word),
-      finder = finders.new_table {
-        results = results,
-        entry_maker = gen_entry_maker(opts),
-      },
-      previewer = new_previewer(opts),
-      sorter = conf.generic_sorter(opts),
-      attach_mappings = function()
-        action_set.select:replace(function(prompt_bufnr)
-          local selection = action_state.get_selected_entry()
-          actions.close(prompt_bufnr)
-          callback(selection.index)
-        end)
-        return true
-      end,
-    }):find()
+    pickers
+      .new(opts, {
+        prompt_title = string.format("Jump to %s", word),
+        finder = finders.new_table({
+          results = results,
+          entry_maker = gen_entry_maker(opts),
+        }),
+        previewer = new_previewer(opts),
+        sorter = conf.generic_sorter(opts),
+        attach_mappings = function()
+          action_set.select:replace(function(prompt_bufnr)
+            local selection = action_state.get_selected_entry()
+            actions.close(prompt_bufnr)
+            callback(selection.index)
+          end)
+          return true
+        end,
+      })
+      :find()
   else
     vim.ui.select(candidates, {
       prompt = string.format("Jump to %s", word),
