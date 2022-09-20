@@ -82,27 +82,33 @@ local autoformat_group = vim.api.nvim_create_augroup("LspAutoformat", { clear = 
 M.on_attach = function(client, bufnr)
   adjust_formatting_capabilities(client, bufnr)
 
-  local function safemap(method, mode, key, result)
+  local function safemap(method, mode, key, rhs, desc)
     if client.server_capabilities[method] then
-      vim.keymap.set(mode, key, result)
+      vim.keymap.set(mode, key, rhs, { desc = desc })
     end
   end
 
   -- Standard LSP
-  safemap("definitionProvider", "n", "gd", cancelable("textDocument/definition"))
-  safemap("declarationProvider", "n", "gD", cancelable("textDocument/declaration"))
-  safemap("typeDefinitionProvider", "n", "<leader>D", cancelable("textDocument/typeDefinition"))
-  safemap("implementationProvider", "n", "gi", cancelable("textDocument/implementation"))
-  safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
+  safemap("definitionProvider", "n", "gd", cancelable("textDocument/definition"), "[G]oto [D]efinition")
+  safemap("declarationProvider", "n", "gD", cancelable("textDocument/declaration"), "[G]oto [D]eclaration")
+  safemap("typeDefinitionProvider", "n", "<leader>D", cancelable("textDocument/typeDefinition"), "Type [D]efinition")
+  safemap("implementationProvider", "n", "gi", cancelable("textDocument/implementation"), "[G]oto [I]mplementation")
+  safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", "[G]oto [R]eferences")
   -- Only map K if keywordprg is not ':help'
   if vim.api.nvim_buf_get_option(bufnr, "keywordprg") ~= ":help" then
-    safemap("hoverProvider", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
+    safemap("hoverProvider", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", "Show hover information")
   end
-  safemap("signatureHelpProvider", "i", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
+  safemap("signatureHelpProvider", "i", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", "Function signature help")
   -- This crashed omnisharp last I checked
   if client.name ~= "omnisharp" then
-    safemap("codeActionProvider", "n", "<leader>fa", "<cmd>lua vim.lsp.buf.code_action()<CR>")
-    safemap("codeActionProvider", "v", "<leader>fa", ":<C-U>lua vim.lsp.buf.range_code_action()<CR>")
+    safemap("codeActionProvider", "n", "<leader>fa", "<cmd>lua vim.lsp.buf.code_action()<CR>", "[F]ind Code [A]ction")
+    safemap(
+      "codeActionProvider",
+      "v",
+      "<leader>fa",
+      ":<C-U>lua vim.lsp.buf.range_code_action()<CR>",
+      "[F]ind Code [A]ction"
+    )
   end
   if client.server_capabilities.documentFormattingProvider then
     vim.api.nvim_clear_autocmds({

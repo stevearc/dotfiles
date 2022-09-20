@@ -432,7 +432,7 @@ end)
 safe_require("tags", function(tags)
   tags.setup({
     on_attach = function(bufnr)
-      vim.keymap.set("n", "gd", tags.goto_definition, { buffer = bufnr })
+      -- vim.keymap.set("n", "gd", tags.goto_definition, { buffer = bufnr })
       vim.keymap.set("n", "<C-]>", tags.goto_definition, { buffer = bufnr })
     end,
   })
