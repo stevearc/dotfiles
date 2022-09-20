@@ -6,12 +6,6 @@ local defaults = {
   autoformat_threshold = 10000,
   prettier_prefix = "yarn --silent ",
   ts_prettier_format = true,
-  lualine_message = function() return '' end,
-  find_files = function(opts)
-    opts = opts or {}
-    opts.previewer = false
-    require('telescope.builtin').find_files(opts)
-  end
 }
 
 local M = {
@@ -36,12 +30,11 @@ setmetatable(M, {
     local dirs = vim.tbl_keys(M)
     table.sort(dirs)
     local proj = vim.deepcopy(defaults)
-    for _,dir in ipairs(dirs) do
+    for _, dir in ipairs(dirs) do
       if string.sub(key, 0, string.len(dir)) == dir then
-        proj = vim.tbl_deep_extend('force', proj, M[dir])
+        proj = vim.tbl_deep_extend("force", proj, M[dir])
       end
     end
-
 
     return proj
   end,

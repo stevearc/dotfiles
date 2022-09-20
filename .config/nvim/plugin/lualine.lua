@@ -76,10 +76,9 @@ vim.defer_fn(function()
         arduino_status,
       },
       lualine_x = {
-        projects[0].lualine_message,
-        "GkeepStatus",
         lsp_messages,
         session_name,
+        "GkeepStatus",
         { "overseer", unique = true },
         "filetype",
       },
