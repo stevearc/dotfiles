@@ -758,6 +758,7 @@ ftplugin.set_all({
       { "n", "gd", "<C-]>" },
     },
     opt = {
+      list = false,
       textwidth = 80,
     },
   },
