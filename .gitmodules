@@ -235,3 +235,6 @@
 [submodule "vimplugins/resession.nvim"]
 	path = vimplugins/resession.nvim
 	url = https://github.com/stevearc/resession.nvim.git
+[submodule "vimplugins/fzf-lua"]
+	path = vimplugins/fzf-lua
+	url = https://github.com/ibhagwan/fzf-lua.git

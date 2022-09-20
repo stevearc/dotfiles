@@ -57,7 +57,7 @@ endfun
 
 fun! s:FindDirFiles() abort
   let l:path = s:GetDefxDir()
-  call luaeval("require('projects')[0].find_files({cwd = _A, hidden=true})", l:path)
+  call luaeval("stevearc.find_files({cwd = _A, hidden=true})", l:path)
 endfun
 
 fun! s:OpenTerm() abort
