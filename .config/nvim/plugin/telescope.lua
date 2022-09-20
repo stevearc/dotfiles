@@ -98,7 +98,7 @@ if vim.fn.executable("fzf") == 1 then
     })
     find_files = function(opts)
       opts = opts or {}
-      if not opts.cwd and vim.fn.finddir(".git", ".;") ~= "" then
+      if not opts.cwd and vim.fn.isdirectory(".git") == 1 then
         require("fzf-lua").git_files(opts)
       else
         require("fzf-lua").files(opts)
