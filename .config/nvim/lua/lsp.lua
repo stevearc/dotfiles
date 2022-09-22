@@ -133,8 +133,6 @@ M.on_attach = function(client, bufnr)
   safemap("documentRangeFormattingProvider", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
   safemap("renameProvider", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
 
-  vim.keymap.set("n", "<CR>", "<cmd>lua vim.diagnostic.open_float(0, {scope='line', border='rounded'})<CR>")
-
   if client.server_capabilities.documentHighlightProvider and client.name ~= "payserver_sorbet" then
     vim.api.nvim_create_autocmd({ "CursorHold" }, {
       buffer = bufnr,

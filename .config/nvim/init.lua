@@ -687,6 +687,44 @@ end)
 
 safe_require("femaco").setup()
 
+safe_require("ccc", function(ccc)
+  local mapping = ccc.mapping
+  ccc.setup({
+    inputs = {
+      ccc.input.hsl,
+      ccc.input.rgb,
+      -- ccc.input.cmyk,
+    },
+  })
+  safe_require("quick_action").add("<CR>", {
+    name = "Pick color",
+    condition = function()
+      local cword = vim.fn.expand("<cword>"):lower()
+      local len = cword:len()
+      return cword:match("^[a-f0-9]+$") == cword and (len == 6 or len == 3)
+    end,
+    action = function()
+      vim.cmd("CccPick")
+    end,
+  })
+end)
+
+-- Diagnostics
+safe_require("quick_action").add("<CR>", {
+  name = "Show diagnostics",
+  condition = function()
+    return not vim.tbl_isempty(
+      vim.diagnostic.get(
+        0,
+        { lnum = vim.api.nvim_win_get_cursor(0)[1] - 1, severity = { min = vim.diagnostic.severity.WARN } }
+      )
+    )
+  end,
+  action = function()
+    vim.diagnostic.open_float(0, { scope = "line", border = "rounded" })
+  end,
+})
+
 if vim.g.nerd_font ~= false then
   safe_require("nvim-web-devicons").setup({
     default = true,

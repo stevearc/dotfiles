@@ -238,3 +238,6 @@
 [submodule "vimplugins/fzf-lua"]
 	path = vimplugins/fzf-lua
 	url = https://github.com/ibhagwan/fzf-lua.git
+[submodule "vimplugins/ccc.nvim"]
+	path = vimplugins/ccc.nvim
+	url = https://github.com/uga-rosa/ccc.nvim.git
