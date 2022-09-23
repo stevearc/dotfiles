@@ -116,8 +116,17 @@ local function set_dimensions(layout)
   if type == "leaf" then
     local info = layout[2]
     if vim.api.nvim_win_is_valid(info.winid) then
+      local width = vim.api.nvim_win_get_width(info.winid)
+      local height = vim.api.nvim_win_get_height(info.winid)
+      local view
+      vim.api.nvim_win_call(info.winid, function()
+        view = vim.fn.winsaveview()
+      end)
       pcall(vim.api.nvim_win_set_width, info.winid, info.width)
       pcall(vim.api.nvim_win_set_height, info.winid, info.height)
+      vim.api.nvim_win_call(info.winid, function()
+        vim.fn.winrestview(view)
+      end)
     end
   else
     local sections = layout[2]
@@ -138,7 +147,7 @@ local function set_dimensions(layout)
       end
     else
       -- Adjust the height for the split borders
-      sections.height = sections.height - (#sections - 1)
+      sections.height = sections.height - #sections
       local flex = {}
       for _, v in ipairs(sections) do
         if not v[2].winfixheight then
