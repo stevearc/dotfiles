@@ -171,17 +171,21 @@ M.apply_win = function(name, winid)
     return
   end
   -- Restore other window options to the default value
-  for _, opt in ipairs(_managed_win_opts) do
-    if not win_overrides[opt] then
-      local ok, err = pcall(vim.api.nvim_win_set_option, winid, opt, get_default_opt(winid, opt))
-      if not ok then
-        vim.notify(
-          string.format("Error restoring window option %s = %s: %s", opt, get_default_opt(winid, opt), err),
-          vim.log.levels.ERROR
-        )
+  local has_prev, prev_win_opts = pcall(vim.api.nvim_win_get_var, winid, "ftplugin_set_opts")
+  if has_prev then
+    for _, prev_opt in ipairs(prev_win_opts) do
+      if not win_overrides[prev_opt] then
+        local ok, err = pcall(vim.api.nvim_win_set_option, winid, prev_opt, get_default_opt(winid, prev_opt))
+        if not ok then
+          vim.notify(
+            string.format("Error restoring window option %s = %s: %s", prev_opt, get_default_opt(winid, prev_opt), err),
+            vim.log.levels.ERROR
+          )
+        end
       end
     end
   end
+  vim.api.nvim_win_set_var(winid, "ftplugin_set_opts", vim.tbl_keys(win_overrides))
 end
 
 ---Apply all filetype configs for a buffer
@@ -258,8 +262,6 @@ M.setup = function(opts)
       scroll = 0, -- We won't get a good default value for this otherwise (will be 1/2 of current win height)
     },
     managed_win_opts = {
-      "cursorline",
-      "cursorlineopt",
       "wrap",
       "foldcolumn",
       "foldenable",
@@ -294,9 +296,13 @@ M.setup = function(opts)
       "number",
       "cursorcolumn",
     },
+    exclude_win_opts = {},
   })
   conf.managed_win_opts = vim.tbl_filter(function(opt)
     local opt_info = vim.api.nvim_get_option_info(opt)
+    if vim.tbl_contains(opts.exclude_win_opts, opt) then
+      return false
+    end
     if opt_info.scope == "win" then
       return true
     else
@@ -319,6 +325,7 @@ M.setup = function(opts)
     end
   end
   _default_win_opts = conf.default_win_opts
+  -- TODO: do we need this anymore?
   _managed_win_opts = conf.managed_win_opts
 
   vim.api.nvim_create_autocmd("FileType", {
