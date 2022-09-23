@@ -135,10 +135,12 @@ M.on_attach = function(client, bufnr)
 
   if client.server_capabilities.documentHighlightProvider and client.name ~= "payserver_sorbet" then
     vim.api.nvim_create_autocmd({ "CursorHold" }, {
+      desc = "LSP highlight document word",
       buffer = bufnr,
       callback = vim.lsp.buf.document_highlight,
     })
     vim.api.nvim_create_autocmd({ "CursorMoved", "WinLeave" }, {
+      desc = "Clear LSP cursor word highlights",
       buffer = bufnr,
       callback = vim.lsp.buf.clear_references,
     })
