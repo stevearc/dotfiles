@@ -28,9 +28,6 @@ local configs = {}
 ---@type table<string, any>
 local _default_win_opts = {}
 
----@type string[]
-local _managed_win_opts = {}
-
 ---@param winid integer
 ---@param opt string
 local function get_default_opt(winid, opt)
@@ -261,62 +258,10 @@ M.setup = function(opts)
     default_win_opts = {
       scroll = 0, -- We won't get a good default value for this otherwise (will be 1/2 of current win height)
     },
-    managed_win_opts = {
-      "wrap",
-      "foldcolumn",
-      "foldenable",
-      "foldexpr",
-      "colorcolumn",
-      "foldlevel",
-      "foldmarker",
-      "virtualedit",
-      "linebreak",
-      "foldmethod",
-      "concealcursor",
-      "relativenumber",
-      "conceallevel",
-      "foldnestmax",
-      "list",
-      "fillchars",
-      "listchars",
-      "breakindent",
-      "breakindentopt",
-      "showbreak",
-      "winfixwidth",
-      "foldtext",
-      "foldminlines",
-      "numberwidth",
-      "winblend",
-      "foldignore",
-      "winhighlight",
-      "signcolumn",
-      "winfixheight",
-      "cursorbind",
-      "spell",
-      "number",
-      "cursorcolumn",
-    },
-    exclude_win_opts = {},
   })
-  conf.managed_win_opts = vim.tbl_filter(function(opt)
-    local opt_info = vim.api.nvim_get_option_info(opt)
-    if vim.tbl_contains(opts.exclude_win_opts, opt) then
-      return false
-    end
-    if opt_info.scope == "win" then
-      return true
-    else
-      vim.notify(
-        string.format("[ftplugin] option '%s' is not window-scoped. Remove it from managed_win_opts", opt),
-        vim.log.levels.WARN
-      )
-      return false
-    end
-  end, conf.managed_win_opts)
   -- Pick up the existing option values
-  for _, opt in ipairs(conf.managed_win_opts) do
-    local opt_info = vim.api.nvim_get_option_info(opt)
-    if conf.default_win_opts[opt] == nil then
+  for opt, opt_info in pairs(vim.api.nvim_get_all_options_info()) do
+    if opt_info.scope == "win" and conf.default_win_opts[opt] == nil then
       if opt_info.global_local then
         conf.default_win_opts[opt] = vim.go[opt]
       else
@@ -325,8 +270,6 @@ M.setup = function(opts)
     end
   end
   _default_win_opts = conf.default_win_opts
-  -- TODO: do we need this anymore?
-  _managed_win_opts = conf.managed_win_opts
 
   vim.api.nvim_create_autocmd("FileType", {
     desc = "Set filetype-specific options",
