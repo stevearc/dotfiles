@@ -82,10 +82,6 @@
 	path = vimplugins/defx-icons
 	url = https://github.com/kristijanhusak/defx-icons.git
 	ignore = untracked
-[submodule "vimplugins/barbar.nvim"]
-	path = vimplugins/barbar.nvim
-	url = https://github.com/stevearc/barbar.nvim.git
-	ignore = untracked
 [submodule "vimplugins/qf_helper.nvim"]
 	path = vimplugins/qf_helper.nvim
 	url = https://github.com/stevearc/qf_helper.nvim.git
