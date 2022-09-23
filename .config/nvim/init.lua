@@ -233,6 +233,12 @@ end
 vim.opt.fillchars = {
   fold = " ",
   vert = "┃",
+  horiz = "━",
+  horizup = "┻",
+  horizdown = "┳",
+  vertleft = "┫",
+  vertright = "┣",
+  verthoriz = "╋",
 }
 vim.o.foldtext = [[v:lua.stevearc.foldtext()")]]
 
