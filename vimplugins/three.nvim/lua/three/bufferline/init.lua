@@ -121,7 +121,7 @@ local function set_colors()
 end
 
 M.setup = function(config)
-  local group = vim.api.nvim_create_augroup("Three.nvim", { clear = true })
+  local group = vim.api.nvim_create_augroup("three.nvim", { clear = true })
   vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     pattern = "*",
     group = group,

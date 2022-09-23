@@ -4,6 +4,17 @@ M.is_windows = vim.loop.os_uname().version:match("Windows")
 
 M.sep = M.is_windows and "\\" or "/"
 
+M.join = function(...)
+  return table.concat({ ... }, M.sep)
+end
+
+---@param glob string
+---@return string
+M.glob_to_pattern = function(glob)
+  local pattern = glob:gsub("%.", "%%."):gsub("*", ".*")
+  return pattern
+end
+
 ---@return nil|integer
 M.tbl_index = function(tbl, needle)
   for i, v in ipairs(tbl) do

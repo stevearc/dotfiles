@@ -19,6 +19,16 @@ local default_config = {
     end,
     winheight = 10,
   },
+  projects = {
+    enabled = true,
+    filename = "projects.json",
+    autoadd = true,
+    allowlist = {},
+    blocklist = {},
+    filter_dir = function(dir)
+      return true
+    end,
+  },
 }
 
 M.setup = function(opts)

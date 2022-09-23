@@ -784,6 +784,11 @@ safe_require("three", function(three)
     vim.notify("Window resizing " .. (enabled and "ENABLED" or "DISABLED"))
   end, {})
   vim.keymap.set("n", "<C-w>z", "<cmd>resize | vertical resize<CR>", {})
+
+  vim.keymap.set("n", "<leader>fp", three.open_project)
+  vim.api.nvim_create_user_command("ProjectDelete", function()
+    three.remove_project()
+  end, {})
 end)
 
 if vim.g.nerd_font ~= false then

@@ -16,6 +16,7 @@ local function lazy(mod, fn)
   end
 end
 
+-- BUFFERLINE
 M.save_state = lazy("bufferline.state", "save")
 M.restore_state = lazy("bufferline.state", "restore")
 ---@param bufnr integer
@@ -72,17 +73,30 @@ M.toggle_scope_by_dir = lazy("bufferline.state", "toggle_scope_by_dir")
 ---@param scope_by_dir boolean
 M.set_scope_by_dir = lazy("bufferline.state", "set_scope_by_dir")
 
+-- WINDOWS
 M.toggle_win_resize = lazy("windows", "toggle_enabled")
 M.set_win_resize = lazy("windows", "set_enabled")
+
+-- PROJECTS
+---@param project nil|string
+M.open_project = lazy("projects", "open_project")
+---@param project string
+M.add_project = lazy("projects", "add_project")
+---@param project nil|string
+M.remove_project = lazy("projects", "remove_project")
+---@param opts table See :help vim.ui.select
+---@param callback fun(project: nil|string)
+M.select_project = lazy("projects", "select_project")
+---@return string[]
+M.list_projects = lazy("projects", "list_projects")
 
 M.setup = function(opts)
   local config = require("three.config")
   config.setup(opts)
-  if config.bufferline.enabled then
-    require("three.bufferline").setup(config.bufferline)
-  end
-  if config.windows.enabled then
-    require("three.windows").setup(config.windows)
+  for _, module in ipairs({ "bufferline", "windows", "projects" }) do
+    if config[module].enabled then
+      require("three." .. module).setup(config[module])
+    end
   end
 end
 

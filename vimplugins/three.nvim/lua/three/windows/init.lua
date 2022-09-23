@@ -189,7 +189,7 @@ M.setup = function()
   vim.o.winwidth = 1
   vim.o.winheight = 1
 
-  local group = vim.api.nvim_create_augroup("Three.nvim.windows", {})
+  local group = vim.api.nvim_create_augroup("three.windows", {})
 
   vim.api.nvim_create_autocmd({ "VimEnter", "WinEnter", "BufWinEnter", "VimResized" }, {
     desc = "Keep all windows equal size",
