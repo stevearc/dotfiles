@@ -79,17 +79,21 @@ local function any_match(patterns, needle)
 end
 
 ---@param project string
-M.add_project = function(project)
-  load()
-  if not vim.tbl_isempty(config.allowlist) then
-    if not any_match(config.allowlist, project) then
-      return
-    end
+---@return boolean
+local function should_add_project(project)
+  if any_match(config.allowlist, project) then
+    return true
   end
   if any_match(config.blocklist, project) then
-    return
+    return false
   end
-  if not config.filter_dir(project) then
+  return config.filter_dir(project)
+end
+
+---@param project string
+M.add_project = function(project)
+  load()
+  if not should_add_project(project) then
     return
   end
   if not vim.tbl_contains(projects, project) then
@@ -179,8 +183,6 @@ M.setup = function(config)
       end,
     })
   end
-  config.allowlist = vim.tbl_map(util.glob_to_pattern, config.allowlist)
-  config.blocklist = vim.tbl_map(util.glob_to_pattern, config.blocklist)
 end
 
 return M

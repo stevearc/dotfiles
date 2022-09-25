@@ -22,9 +22,13 @@ local default_config = {
   projects = {
     enabled = true,
     filename = "projects.json",
+    -- When true, automatically add directories entered as projects
     autoadd = true,
+    -- List of lua patterns. If any match the directory, it will be allowed as a project
     allowlist = {},
+    -- List of lua patterns. If any match the directory, it will be ignored as a project
     blocklist = {},
+    -- Return true to allow a directory as a project
     filter_dir = function(dir)
       return true
     end,
