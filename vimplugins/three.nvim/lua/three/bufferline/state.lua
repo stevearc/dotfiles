@@ -453,6 +453,39 @@ M.smart_close = function()
   end
 end
 
+---@param filter nil|fun(state: three.BufferState): boolean
+---@param force nil|boolean
+M.close_all = function(filter, force)
+  if not filter then
+    filter = function()
+      return true
+    end
+  end
+  local ts = tabstate[0]
+  local close = vim.tbl_filter(function(bufnr)
+    return filter(ts.buf_info[bufnr])
+  end, ts.buffers)
+  for _, bufnr in ipairs(close) do
+    M.close_buffer(bufnr, force)
+  end
+end
+
+---@param filter nil|fun(state: three.BufferState): boolean
+M.hide_all = function(filter)
+  if not filter then
+    filter = function()
+      return true
+    end
+  end
+  local ts = tabstate[0]
+  local hide = vim.tbl_filter(function(bufnr)
+    return filter(ts.buf_info[bufnr])
+  end, ts.buffers)
+  for _, bufnr in ipairs(hide) do
+    M.hide_buffer(bufnr)
+  end
+end
+
 M.hide_buffer = function(bufnr)
   if not bufnr or bufnr == 0 then
     bufnr = vim.api.nvim_get_current_buf()

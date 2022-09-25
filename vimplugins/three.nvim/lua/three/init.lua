@@ -72,6 +72,11 @@ M.hide_buffer = lazy("bufferline.state", "hide_buffer")
 M.toggle_scope_by_dir = lazy("bufferline.state", "toggle_scope_by_dir")
 ---@param scope_by_dir boolean
 M.set_scope_by_dir = lazy("bufferline.state", "set_scope_by_dir")
+---@param filter nil|fun(state: three.BufferState): boolean
+---@param force nil|boolean
+M.close_all_buffers = lazy("bufferline.state", "close_all")
+---@param filter nil|fun(state: three.BufferState): boolean
+M.hide_all_buffers = lazy("bufferline.state", "hide_all")
 
 -- WINDOWS
 M.toggle_win_resize = lazy("windows", "toggle_enabled")
