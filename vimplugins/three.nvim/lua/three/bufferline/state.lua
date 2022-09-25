@@ -405,6 +405,22 @@ M.toggle_pin = function()
   end
 end
 
+---@param bufnrs integer|integer[]
+---@param pinned boolean
+M.set_pinned = function(bufnrs, pinned)
+  local ts = tabstate[0]
+  if type(bufnrs) ~= "table" then
+    bufnrs = { bufnrs }
+  end
+  for _, bufnr in ipairs(bufnrs) do
+    if ts.buf_info[bufnr] then
+      ts.buf_info[bufnr].pinned = pinned
+    end
+  end
+  apply_sorting()
+  util.rerender()
+end
+
 M.clone_tab = function()
   local tabpage = vim.api.nvim_get_current_tabpage()
   local ts = tabstate[tabpage]

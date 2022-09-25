@@ -62,6 +62,10 @@ M.jump_to = lazy("bufferline.state", "jump_to")
 M.close_buffer = lazy("bufferline.state", "close_buffer")
 ---Toggle the pinned status of the current buffer
 M.toggle_pin = lazy("bufferline.state", "toggle_pin")
+---Set the pinned status of a buffer or buffers
+---@param bufnrs integer|integer[]
+---@param pinned boolean
+M.set_pinned = lazy("bufferline.state", "set_pinned")
 ---Clone the current tab into a new tab
 M.clone_tab = lazy("bufferline.state", "clone_tab")
 ---Close the current window or buffer
