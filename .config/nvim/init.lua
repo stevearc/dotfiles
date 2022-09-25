@@ -749,7 +749,21 @@ vim.api.nvim_create_autocmd("BufEnter", {
   group = aug,
 })
 safe_require("three", function(three)
-  three.setup({})
+  local is_windows = vim.loop.os_uname().version:match("Windows")
+
+  local sep = is_windows and "\\" or "/"
+  three.setup({
+    projects = {
+      filter_dir = function(dir)
+        local dotgit = dir .. sep .. ".git"
+        if vim.fn.isdirectory(dotgit) == 1 or vim.fn.filereadable(dotgit) == 1 then
+          return true
+        end
+        -- If this is the child directory of a .git directory, ignore
+        return vim.fn.finddir(".git", dir .. ";") == ""
+      end,
+    },
+  })
   vim.keymap.set("n", "L", three.next)
   vim.keymap.set("n", "H", three.prev)
   vim.keymap.set("n", "<C-l>", three.move_right)
