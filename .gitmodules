@@ -66,9 +66,6 @@
 [submodule "vimplugins/popup.nvim"]
 	path = vimplugins/popup.nvim
 	url = https://github.com/nvim-lua/popup.nvim.git
-[submodule "vimplugins/startuptime"]
-	path = vimplugins/startuptime
-	url = https://github.com/tweekmonster/startuptime.vim.git
 [submodule "vimplugins/scnvim"]
 	path = vimplugins/scnvim
 	url = https://github.com/stevearc/scnvim.git
@@ -237,3 +234,6 @@
 [submodule "vimplugins/ccc.nvim"]
 	path = vimplugins/ccc.nvim
 	url = https://github.com/uga-rosa/ccc.nvim.git
+[submodule "vimplugins/vim-startuptime"]
+	path = vimplugins/vim-startuptime
+	url = https://github.com/dstein64/vim-startuptime.git
