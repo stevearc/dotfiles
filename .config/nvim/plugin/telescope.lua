@@ -59,26 +59,29 @@ safe_require("telescope", function(telescope)
   pcall(telescope.load_extension, "gkeep")
   pcall(telescope.load_extension, "luasnip")
 
-  local function map(lhs, rhs, mode)
-    vim.api.nvim_set_keymap(mode or "n", lhs, rhs, { noremap = true, silent = true })
-  end
-
   find_files = function(opts)
     opts = vim.tbl_deep_extend("keep", opts or {}, {
       previewer = false,
     })
     require("telescope.builtin").find_files(opts)
   end
-  map("<leader>bb", "<cmd>lua require('telescope.builtin').buffers({previewer=false, only_cwd=true})<cr>")
-  map("<leader>ba", "<cmd>lua require('telescope.builtin').buffers({previewer=false})<cr>")
-  map("<leader>fg", "<cmd>Telescope live_grep<CR>")
-  map("<leader>fb", "<cmd>lua require('telescope.builtin').live_grep({grep_open_files = true})<cr>")
-  map("<leader>fh", "<cmd>Telescope help_tags<CR>")
-  map("<leader>fc", "<cmd>Telescope commands<CR>")
-  map("<leader>fs", "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>")
-  map("<leader>fd", "<cmd>Telescope aerial<CR>")
-  map("<leader>fn", "<cmd>Telescope gkeep<CR>")
-  map("<C-s>", "<cmd>lua require('telescope').extensions.luasnip.luasnip()<CR>", "i")
+  vim.keymap.set(
+    "n",
+    "<leader>bb",
+    "<cmd>lua require('telescope.builtin').buffers({previewer=false, only_cwd=true})<cr>"
+  )
+  vim.keymap.set("n", "<leader>ba", "<cmd>lua require('telescope.builtin').buffers({previewer=false})<cr>")
+  vim.keymap.set("n", "<leader>fg", "<cmd>Telescope live_grep<CR>")
+  vim.keymap.set("n", "<leader>fb", "<cmd>lua require('telescope.builtin').live_grep({grep_open_files = true})<cr>")
+  vim.keymap.set("n", "<leader>fh", "<cmd>Telescope help_tags<CR>")
+  vim.keymap.set("n", "<leader>fc", "<cmd>Telescope commands<CR>")
+  vim.keymap.set("n", "<leader>fs", "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>")
+  vim.keymap.set("n", "<leader>fd", "<cmd>Telescope aerial<CR>")
+  vim.keymap.set("n", "<leader>fn", "<cmd>Telescope gkeep<CR>")
+  vim.keymap.set("n", "<leader>fq", function()
+    require("qf_stack").qf.set_list()
+  end)
+  vim.keymap.set("i", "<C-s>", "<cmd>lua require('telescope').extensions.luasnip.luasnip()<CR>")
 end)
 
 if vim.fn.executable("fzf") == 1 then
@@ -87,7 +90,7 @@ if vim.fn.executable("fzf") == 1 then
       files = {
         previewer = false,
       },
-      -- This is required to support older version of fzf on remote devboxes
+      -- This is required to support older version of fzf
       fzf_opts = { ["--border"] = false },
       git = {
         files = {
