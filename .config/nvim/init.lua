@@ -1095,3 +1095,8 @@ vim.api.nvim_create_user_command("H", function(params)
   end
   vim.api.nvim_win_set_height(0, height)
 end, { nargs = 1 })
+
+-- Generate helptags after startup
+vim.defer_fn(function()
+  vim.cmd("helptags ALL")
+end, 1000)
