@@ -53,18 +53,8 @@ local function create_module(list_type, getlist)
       return
     end
     local target = getlist({ id = id, nr = 0 }).nr
-    local current = getlist({ nr = 0 }).nr
-    local diff = target - current
-    local cmd
-    if diff == 0 then
-      return
-    elseif diff < 0 then
-      cmd = "colder"
-      diff = -1 * diff
-    else
-      cmd = "cnewer"
-    end
-    vim.cmd(string.format("%s %s", cmd, diff))
+    local prefix = list_type == "quickfix" and "c" or "l"
+    vim.cmd(string.format("%d%shistory", prefix, target))
   end
 
   return submod
