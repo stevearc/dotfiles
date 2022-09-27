@@ -49,7 +49,7 @@ end
 ---@param candidate string
 ---@return boolean
 M.is_subdir = function(root, candidate)
-  return candidate ~= "" and candidate:find(root) == 1
+  return candidate ~= "" and candidate:sub(0, root:len()) == root
 end
 
 ---@param winid integer
