@@ -1,6 +1,8 @@
 local projects = require("projects")
 local lsp = require("lsp")
 
+local M = {}
+
 vim.g.smartformat_enabled = true
 vim.cmd([[command! FormatDisable let g:smartformat_enabled = v:false]])
 vim.cmd([[command! FormatEnable let g:smartformat_enabled = v:true]])
@@ -39,7 +41,7 @@ local function has_format_directive()
   return true
 end
 
-function stevearc.autoformat()
+M.format = function()
   local project = projects[0]
   if
     not vim.g.smartformat_enabled
@@ -60,3 +62,5 @@ function stevearc.autoformat()
   end
   restore()
 end
+
+return M

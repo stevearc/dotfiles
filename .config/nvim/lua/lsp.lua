@@ -117,7 +117,7 @@ M.on_attach = function(client, bufnr)
     })
     vim.api.nvim_create_autocmd("BufWritePre", {
       callback = function()
-        stevearc.autoformat()
+        safe_require("autoformat").format()
       end,
       buffer = bufnr,
       group = autoformat_group,

@@ -311,6 +311,20 @@ function _G.dump(...)
   return ...
 end
 
+local on_enter_mods = { "plugins.lsp", "plugins.completion", "plugins.luasnip" }
+vim.api.nvim_create_autocmd("VimEnter", {
+  desc = "Complete config setup after VimEnter",
+  group = aug,
+  callback = function()
+    vim.defer_fn(function()
+      for _, mod in ipairs(on_enter_mods) do
+        require(mod)
+      end
+    end, 100)
+  end,
+})
+local function delay_setup(module) end
+
 -- quickfix
 vim.cmd([[
 command! -bar Cclear call setqflist([])
