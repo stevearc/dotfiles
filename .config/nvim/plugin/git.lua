@@ -68,7 +68,7 @@ function TermDash:_update()
   end
 end
 
-function stevearc.toggle_git_terms()
+local function toggle_git_terms()
   local tabpage = get_git_tabpage()
   if tabpage then
     vim.cmd(string.format("tabclose %d", tabpage))
@@ -109,4 +109,4 @@ function stevearc.toggle_git_terms()
   dash:_update()
 end
 
-vim.api.nvim_set_keymap("n", "<leader>gt", [[<cmd>lua stevearc.toggle_git_terms()<CR>]], { silent = true })
+vim.keymap.set("n", "<leader>gt", toggle_git_terms)

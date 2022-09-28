@@ -63,9 +63,6 @@ function _G.safe_require(...)
   end
   return first_mod
 end
-function stevearc.pack(...)
-  return { n = select("#", ...), ... }
-end
 
 -- Patch vim.keymap.set so that it reports errors
 local _keymap_set = vim.keymap.set
@@ -338,25 +335,28 @@ vim.api.nvim_set_keymap("n", "<leader>l", "<cmd>LLToggle!<CR>", opts)
 local pending_notifications = {}
 local old_notify = vim.notify
 vim.notify = function(...)
-  table.insert(pending_notifications, stevearc.pack(...))
+  table.insert(pending_notifications, { ... })
 end
--- We have to set this up after we apply our colorscheme
-vim.cmd([[autocmd ColorScheme * ++once lua stevearc.setup_notify()]])
-function stevearc.setup_notify()
-  vim.notify = old_notify
-  safe_require("notify", function(notify)
-    vim.notify = notify
-    notify.setup({
-      stages = "fade",
-      render = "minimal",
-      top_down = false,
-    })
-  end)
-  for _, args in ipairs(pending_notifications) do
-    vim.notify(unpack(args))
-  end
-  pending_notifications = nil
-end
+vim.api.nvim_create_autocmd("ColorScheme", {
+  pattern = "*",
+  once = true,
+  callback = function()
+    -- We have to set this up after we apply our colorscheme
+    vim.notify = old_notify
+    safe_require("notify", function(notify)
+      vim.notify = notify
+      notify.setup({
+        stages = "fade",
+        render = "minimal",
+        top_down = false,
+      })
+    end)
+    for _, args in ipairs(pending_notifications) do
+      vim.notify(unpack(args))
+    end
+    pending_notifications = nil
+  end,
+})
 
 safe_require("pair-ls").setup({
   cmd = { "pair-ls", "lsp" },

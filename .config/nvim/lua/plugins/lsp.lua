@@ -238,7 +238,7 @@ safe_require("lspconfig", function(lspconfig)
             traceLocalSet = true,
           },
           diagnostics = {
-            globals = { "describe", "it", "before_each", "after_each", "vim", "stevearc", "safe_require" },
+            globals = { "describe", "it", "before_each", "after_each", "vim", "safe_require" },
           },
           telemetry = {
             enable = false,
@@ -260,7 +260,7 @@ safe_require("lspconfig", function(lspconfig)
   --         path = vim.split(package.path, ";"),
   --       },
   --       diagnostics = {
-  --         globals = { "vim", "stevearc", "safe_require", "it", "describe", "before_each", "after_each" },
+  --         globals = { "vim", "safe_require", "it", "describe", "before_each", "after_each" },
   --       },
   --       workspace = {
   --         -- Make the server aware of Neovim runtime files
