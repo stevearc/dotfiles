@@ -31,9 +31,6 @@
 [submodule "vimplugins/vim-autoswap"]
 	path = vimplugins/vim-autoswap
 	url = https://github.com/gioele/vim-autoswap.git
-[submodule "vimplugins/defx.nvim"]
-	path = vimplugins/defx.nvim
-	url = https://github.com/Shougo/defx.nvim.git
 [submodule "vimplugins/nvim-colorizer.lua"]
 	path = vimplugins/nvim-colorizer.lua
 	url = https://github.com/NvChad/nvim-colorizer.lua.git
@@ -75,10 +72,6 @@
 [submodule "vimplugins/lualine.nvim"]
 	path = vimplugins/lualine.nvim
 	url = https://github.com/nvim-lualine/lualine.nvim.git
-[submodule "vimplugins/defx-icons"]
-	path = vimplugins/defx-icons
-	url = https://github.com/kristijanhusak/defx-icons.git
-	ignore = untracked
 [submodule "vimplugins/qf_helper.nvim"]
 	path = vimplugins/qf_helper.nvim
 	url = https://github.com/stevearc/qf_helper.nvim.git
@@ -240,3 +233,6 @@
 [submodule "vimplugins/nvim-treesitter-context"]
 	path = vimplugins/nvim-treesitter-context
 	url = https://github.com/nvim-treesitter/nvim-treesitter-context.git
+[submodule "vimplugins/lir.nvim"]
+	path = vimplugins/lir.nvim
+	url = https://github.com/tamago324/lir.nvim.git
