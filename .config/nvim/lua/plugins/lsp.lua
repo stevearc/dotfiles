@@ -278,11 +278,12 @@ safe_require("lspconfig", function(lspconfig)
   --   on_attach = lsp.on_attach,
   -- })
 
-  lspconfig.sorbet.setup({
-    capabilities = lsp.capabilities,
-    cmd = { "bundle", "exec", "srb", "tc", "--lsp" },
-    on_attach = lsp.on_attach,
-  })
+  -- conflicts with work
+  -- lspconfig.sorbet.setup({
+  --   capabilities = lsp.capabilities,
+  --   cmd = { "bundle", "exec", "srb", "tc", "--lsp" },
+  --   on_attach = lsp.on_attach,
+  -- })
 
   safe_require("null-ls", function(null_ls)
     null_ls.setup(vim.tbl_extend("keep", {
