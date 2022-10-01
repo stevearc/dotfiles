@@ -236,3 +236,6 @@
 [submodule "vimplugins/lir.nvim"]
 	path = vimplugins/lir.nvim
 	url = https://github.com/tamago324/lir.nvim.git
+[submodule "vimplugins/three.nvim"]
+	path = vimplugins/three.nvim
+	url = https://github.com/stevearc/three.nvim.git

@@ -778,12 +778,12 @@ safe_require("three", function(three)
       end,
     },
   })
-  vim.keymap.set("n", "L", three.next)
-  vim.keymap.set("n", "H", three.prev)
-  vim.keymap.set("n", "<C-l>", three.move_right)
-  vim.keymap.set("n", "<C-h>", three.move_left)
-  vim.keymap.set("n", "<C-j>", three.wrap(three.next_tab, { wrap = true }))
-  vim.keymap.set("n", "<C-k>", three.wrap(three.prev_tab, { wrap = true }))
+  vim.keymap.set("n", "L", three.next, { desc = "Next buffer" })
+  vim.keymap.set("n", "H", three.prev, { desc = "Previous buffer" })
+  vim.keymap.set("n", "<C-l>", three.move_right, { desc = "Move buffer right" })
+  vim.keymap.set("n", "<C-h>", three.move_left, { desc = "Move buffer left" })
+  vim.keymap.set("n", "<C-j>", three.wrap(three.next_tab, { wrap = true }, { desc = "[G]oto next [T]ab" }))
+  vim.keymap.set("n", "<C-k>", three.wrap(three.prev_tab, { wrap = true }, { desc = "[G]oto prev [T]ab" }))
   for i = 1, 9 do
     vim.keymap.set("n", "<leader>" .. i, three.wrap(three.jump_to, i))
   end
@@ -839,7 +839,7 @@ safe_require("three", function(three)
   end, {})
   vim.keymap.set("n", "<C-w>z", "<cmd>resize | vertical resize<CR>", {})
 
-  vim.keymap.set("n", "<leader>fp", three.open_project)
+  vim.keymap.set("n", "<leader>fp", three.open_project, { desc = "[F]ind [P]roject" })
   vim.api.nvim_create_user_command("ProjectDelete", function()
     three.remove_project()
   end, {})
