@@ -861,6 +861,14 @@ safe_require(
     vim.keymap.set("n", "-", function()
       require("lir.float").init()
     end)
+    vim.keymap.set("n", "_", function()
+      require("lir.float").init(".")
+    end)
+    local function close_float()
+      if vim.api.nvim_win_get_config(0).relative ~= "" then
+        vim.api.nvim_win_close(0, true)
+      end
+    end
     local lvim = require("lir.vim")
     local function open_terminal()
       local ctx = lvim.get_context()
@@ -869,12 +877,12 @@ safe_require(
     end
     local function find_files()
       local ctx = lvim.get_context()
-      vim.api.nvim_win_close(0, true)
+      close_float()
       stevearc.find_files({ cwd = ctx.dir, hidden = true })
     end
     local function open_tab()
       local ctx = lvim.get_context()
-      vim.api.nvim_win_close(0, true)
+      close_float()
       vim.cmd("tabnew")
       vim.bo.buflisted = false
       vim.bo.bufhidden = "wipe"
@@ -882,12 +890,12 @@ safe_require(
     end
     local function livegrep()
       local ctx = lvim.get_context()
-      vim.api.nvim_win_close(0, true)
+      close_float()
       require("telescope.builtin").live_grep({ cwd = ctx.dir })
     end
     local function subgrep()
       local ctx = lvim.get_context()
-      vim.api.nvim_win_close(0, true)
+      close_float()
       vim.ui.input({ prompt = "grep " .. ctx.dir }, function(query)
         if query then
           vim.cmd(string.format("silent grep '%s' '%s'", query, ctx.dir))
@@ -914,6 +922,7 @@ safe_require(
         ["d"] = actions.mkdir,
         ["M"] = actions.mkdir,
         ["N"] = actions.newfile,
+        ["%"] = actions.newfile,
         ["r"] = actions.rename,
         ["R"] = actions.rename,
         ["`"] = actions.cd,
