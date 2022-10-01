@@ -948,6 +948,12 @@ safe_require(
     })
   end
 )
+vim.api.nvim_create_autocmd("ColorScheme", {
+  desc = "nvim-treesitter-context highlights",
+  pattern = "*",
+  command = "highlight link TreesitterContextLineNumber NormalFloat",
+  group = aug,
+})
 
 if vim.g.nerd_font ~= false then
   safe_require("nvim-web-devicons").setup({
