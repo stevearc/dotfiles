@@ -50,9 +50,7 @@ safe_require("telescope", function(telescope)
       gkeep = {
         find_method = "title",
       },
-      aerial = {
-        show_nesting = false,
-      },
+      aerial = {},
     },
   })
   pcall(telescope.load_extension, "aerial")
