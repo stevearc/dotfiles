@@ -649,8 +649,16 @@ safe_require("overseer", function(overseer)
         level = vim.log.levels.DEBUG,
       },
     },
+    task_launcher = {
+      bindings = {
+        n = {
+          ["<leader>c"] = "Cancel",
+        },
+      },
+    },
     component_aliases = {
       default = {
+        { "display_duration", detail_level = 2 },
         "on_output_summarize",
         "on_exit_set_status",
         { "on_complete_notify", system = "unfocused" },
