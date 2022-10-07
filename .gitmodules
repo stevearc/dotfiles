@@ -239,3 +239,6 @@
 [submodule "vimplugins/three.nvim"]
 	path = vimplugins/three.nvim
 	url = https://github.com/stevearc/three.nvim.git
+[submodule "vimplugins/nvim-config-local"]
+	path = vimplugins/nvim-config-local
+	url = https://github.com/klen/nvim-config-local.git

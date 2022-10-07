@@ -526,6 +526,13 @@ safe_require("resession", function(resession)
     end,
   })
 end)
+safe_require("config-local").setup({
+  config_files = { ".vimrc.lua" },
+  autocommands_create = true,
+  commands_create = true,
+  silent = false,
+  lookup_parents = false,
+})
 
 -- Todo:
 -- * Bug: Running tests on directory doesn't work if directory not in tree (but tree has subdirectories)
