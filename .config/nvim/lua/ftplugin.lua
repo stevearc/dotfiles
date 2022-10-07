@@ -6,6 +6,7 @@
 ---@field opt? table<string, any> Buffer-local or window-local options
 ---@field ignore_win_opts? boolean Don't manage the window-local options for this filetype
 
+local did_setup = false
 local M = {}
 
 local function validate_bindings(bindings)
@@ -90,6 +91,12 @@ local function coalesce(v1, v2)
   end
 end
 
+M.reapply_all_bufs = function()
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+    M.apply(vim.bo[bufnr].filetype, bufnr)
+  end
+end
+
 ---Extend the configuration for a filetype, overriding values that conflict
 ---@param name string
 ---@param new_config FiletypeConfig
@@ -103,6 +110,9 @@ M.extend = function(name, new_config)
   conf.bindings = merge_bindings(conf.bindings, new_config.bindings)
   conf.ignore_win_opts = coalesce(new_config.ignore_win_opts, conf.ignore_win_opts)
   configs[name] = conf
+  if did_setup then
+    M.reapply_all_bufs()
+  end
 end
 
 ---Set many configs all at once
@@ -308,6 +318,7 @@ M.setup = function(opts)
       M.apply_win("terminal", winid)
     end,
   })
+  did_setup = true
 end
 
 return M
