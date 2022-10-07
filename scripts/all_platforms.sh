@@ -99,12 +99,18 @@ configure-git() {
   git config --global alias.up '!python ~/.local/bin/githelper.py update'
   git config --global alias.mine '!git log --author=$(git config --get user.email) --pretty=medium --compact-summary'
 
-  git config --global core.excludesFile '~/.config/global-git-ignore'
   git config --global color.decorate.HEAD 'bold red'
   git config --global color.decorate.branch green
   git config --global color.decorate.remoteBranch cyan
   git config --global color.decorate.tag 'bold yellow'
   git config --global color.decorate.stash green
+  git config --global core.excludesFile '~/.config/global-git-ignore'
+  mkdir -p ~/.config
+  touch ~/.config/global-git-ignore
+  grep tags ~/.config/global-git-ignore >/dev/null 2>&1 || echo tags >> ~/.config/global-git-ignore
+  grep .DS_Store ~/.config/global-git-ignore >/dev/null 2>&1 || echo .DS_Store >> ~/.config/global-git-ignore
+  grep .vimrc.lua ~/.config/global-git-ignore >/dev/null 2>&1 || echo .vimrc.lua >> ~/.config/global-git-ignore
+  grep __pycache__ ~/.config/global-git-ignore >/dev/null 2>&1 || echo __pycache__ >> ~/.config/global-git-ignore
 
   if hascmd fzf; then
     git config --global alias.fb '!git sk list | fzf | xargs git checkout'
