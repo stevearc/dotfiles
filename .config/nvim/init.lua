@@ -531,7 +531,7 @@ safe_require("config-local").setup({
   autocommands_create = true,
   commands_create = true,
   silent = false,
-  lookup_parents = false,
+  lookup_parents = true,
 })
 
 -- Todo:
