@@ -62,5 +62,6 @@ local config = {
 }
 
 if vim.fn.executable("java") == 1 and launcher ~= "" then
-  safe_require("jdtls").start_or_attach(config)
+  -- TODO disable this memory hog for now
+  -- safe_require("jdtls").start_or_attach(config)
 end
