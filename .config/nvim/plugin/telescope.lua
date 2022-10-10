@@ -84,6 +84,7 @@ end)
 if vim.fn.executable("fzf") == 1 then
   safe_require("fzf-lua", function(fzf)
     fzf.setup({
+      global_git_icons = false,
       files = {
         previewer = false,
       },
