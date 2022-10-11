@@ -2,7 +2,7 @@
 set -e
 
 hascmd() {
-  if command -v "$1" > /dev/null 2>&1; then
+  if command -v "$1" >/dev/null 2>&1; then
     return 0
   else
     return 1
@@ -27,7 +27,6 @@ main() {
       win32yank.exe -o
     fi
   else
-    # TODO check for clipper
     if [ $copy ]; then
       xsel -ib <&0
     else

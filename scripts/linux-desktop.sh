@@ -175,28 +175,6 @@ setup-mopidy() {
 }
 
 # shellcheck disable=SC2034
-DC_INSTALL_CLIPPER_DOC="Clipper (networked clipboard sharing)"
-dc-install-clipper() {
-  if ! nc -z localhost 8377; then
-    install-language-go
-    go get github.com/wincent/clipper
-    go build github.com/wincent/clipper
-    sudo cp "$GOPATH/bin/clipper" /usr/local/bin
-    if hascmd systemctl; then
-      mkdir -p ~/.config/systemd/user
-      cp "$GOPATH/src/github.com/wincent/clipper/contrib/linux/systemd-service/clipper.service" ~/.config/systemd/user
-      sed -ie 's|^ExecStart.*|ExecStart=/usr/local/bin/clipper -l /var/log/clipper.log -e xsel -f "-bi"|' ~/.config/systemd/user/clipper.service
-      systemctl --user daemon-reload
-      systemctl --user enable clipper.service
-      systemctl --user start clipper.service
-    else
-      sudo cp clipper.conf /etc/init
-      sudo service clipper start
-    fi
-  fi
-}
-
-# shellcheck disable=SC2034
 DC_INSTALL_XPADNEO_DOC="Drivers for Xbox controller"
 dc-install-xpadneo() {
   pushd /tmp >/dev/null
