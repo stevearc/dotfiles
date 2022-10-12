@@ -99,6 +99,23 @@ vim.defer_fn(function()
       lualine_y = {},
       lualine_z = {},
     },
-    extensions = { "quickfix" },
+    winbar = {
+      lualine_a = {},
+      lualine_b = { "filename" },
+      lualine_c = {},
+      lualine_x = {},
+      lualine_y = {},
+      lualine_z = {},
+    },
+
+    inactive_winbar = {
+      lualine_a = {},
+      lualine_b = {},
+      lualine_c = { "filename" },
+      lualine_x = {},
+      lualine_y = {},
+      lualine_z = {},
+    },
+    extensions = { "aerial", "fzf", "nvim-dap-ui", "quickfix", "overseer" },
   })
 end, 10)
