@@ -297,5 +297,5 @@ safe_require("lspconfig", function(lspconfig)
     }, require("nullconfig")))
   end)
 
-  vim.cmd("LspStart")
+  vim.cmd("silent! LspStart")
 end)
