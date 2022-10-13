@@ -3,20 +3,52 @@ set -e
 
 if [ -z "$1" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
   echo "$0 {Lock,logOut,Suspend,Hibernate,shutDown,Reboot}"
+
 elif [ "$1" == "l" ] || [ "$1" == "lock" ]; then
-  i3lock -t -f -e -i ~/.config/backgrounds/805740.png
+  if [[ $XDG_CURRENT_DESKTOP =~ "KDE" ]]; then
+    qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock
+  else
+    i3lock -t -f -e -i ~/.config/backgrounds/805740.png
+  fi
+
 elif [ "$1" == "o" ] || [ "$1" == "logout" ]; then
-  qtile shell -c "shutdown()"
+  if [[ $XDG_CURRENT_DESKTOP =~ "KDE" ]]; then
+    # qdbus org.kde.ksmserver /KSMServer org.kde.KSMServerInterface.logout 0 0 2
+    qdbus org.kde.Shutdown /Shutdown logout
+  else
+    qtile shell -c "shutdown()"
+  fi
+
 elif [ "$1" == "s" ] || [ "$1" == "suspend" ]; then
-  SUDO_ASKPASS="$HOME/.local/bin/askpass.sh" sudo -A pm-suspend
-  $0 lock
+  if [[ $XDG_CURRENT_DESKTOP =~ "KDE" ]]; then
+    systemctl suspend
+  else
+    SUDO_ASKPASS="$HOME/.local/bin/askpass.sh" sudo -A pm-suspend
+    $0 lock
+  fi
+
 elif [ "$1" == "h" ] || [ "$1" == "hibernate" ]; then
-  SUDO_ASKPASS="$HOME/.local/bin/askpass.sh" sudo -A pm-hibernate
-  $0 lock
+  if [[ $XDG_CURRENT_DESKTOP =~ "KDE" ]]; then
+    systemctl hibernate
+  else
+    SUDO_ASKPASS="$HOME/.local/bin/askpass.sh" sudo -A pm-hibernate
+    $0 lock
+  fi
+
 elif [ "$1" == "d" ] || [ "$1" == "shutdown" ]; then
-  shutdown -h now
+  if [[ $XDG_CURRENT_DESKTOP =~ "KDE" ]]; then
+    qdbus org.kde.Shutdown /Shutdown logoutAndShutdown
+  else
+    shutdown -h now
+  fi
+
 elif [ "$1" == "r" ] || [ "$1" == "reboot" ]; then
-  reboot
+  if [[ $XDG_CURRENT_DESKTOP =~ "KDE" ]]; then
+    qdbus org.kde.Shutdown /Shutdown logoutAndReboot
+  else
+    reboot
+  fi
+
 elif [ "$1" == "screenoff" ]; then
   xset dpms force off
 elif [ "$1" == "screenon" ]; then
