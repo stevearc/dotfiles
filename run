@@ -189,7 +189,7 @@ dotcmd-upgrade-lsp() {
   hascmd typescript-language-server && yarn global upgrade -s typescript-language-server
   if [ -e ~/.local/share/nvim/language-servers/lua-language-server ]; then
     rm -rf ~/.local/share/nvim/language-servers/lua-language-server
-    install-language-lua
+    install-lua-utils
   fi
 }
 

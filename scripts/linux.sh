@@ -177,6 +177,10 @@ install-lua-utils() {
   if [ ! -d lua-language-server ]; then
     git clone https://github.com/sumneko/lua-language-server
     cd lua-language-server
+    git fetch --tags
+    local latest_version
+    latest_version=$(curl -s https://api.github.com/repos/sumneko/lua-language-server/releases/latest | jq -r .name)
+    git checkout "$latest_version"
     git submodule update --init --recursive
     cd 3rd/luamake
     ninja -f compile/ninja/linux.ninja
