@@ -380,6 +380,7 @@ dotcmd-desktop() {
     sudo apt install -yq dconf-cli
     setup-gnome
   elif [[ $XDG_CURRENT_DESKTOP =~ "KDE" ]]; then
+    sudo apt install -yq plasma-nm
     setup-kde
   else
     echo "ERROR: Not sure what desktop environment this is."

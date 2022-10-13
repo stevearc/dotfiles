@@ -98,6 +98,12 @@ setup-kde() {
       mirror "$src" "$dest" 1
     fi
   done
+  if hascmd ufw; then
+    sudo ufw allow proto udp from 192.168.1.0/24 to any port 1714:1764 comment 'kdeconnect'
+    sudo ufw allow proto tcp from 192.168.1.0/24 to any port 1714:1764 comment 'kdeconnect'
+    # sudo ufw allow proto udp from 2a02:xxxx:xxxx:xxxx::/64 to any port 1714:1764 comment 'kdeconnect'
+    # sudo ufw allow proto tcp from 2a02:xxxx:xxxx:xxxx::/64 to any port 1714:1764 comment 'kdeconnect'
+  fi
 }
 
 # shellcheck disable=SC2034
