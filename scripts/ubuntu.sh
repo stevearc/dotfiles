@@ -21,8 +21,8 @@ install-language-python() {
     python3-venv \
     python3-dev \
     python3-pip
-    # ipython3 \
-    # python3-restructuredtext-lint
+  # ipython3 \
+  # python3-restructuredtext-lint
   if [ "$1" != "--bare" ]; then
     if ! hascmd pyright; then
       dc-install-nvm
@@ -379,6 +379,8 @@ dotcmd-desktop() {
   if [[ $XDG_CURRENT_DESKTOP =~ "GNOME" ]]; then
     sudo apt install -yq dconf-cli
     setup-gnome
+  elif [[ $XDG_CURRENT_DESKTOP =~ "KDE" ]]; then
+    setup-kde
   else
     echo "ERROR: Not sure what desktop environment this is."
   fi

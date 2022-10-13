@@ -1,2 +1,13 @@
 [$Version]
 update_info=kwinrules.upd:replace-placement-string-to-enum
+
+[1]
+Description=No titlebars
+noborder=true
+noborderrule=2
+wmclass=.*
+wmclasscomplete=false
+wmclassmatch=3
+
+[General]
+count=1

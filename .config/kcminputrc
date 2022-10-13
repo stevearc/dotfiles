@@ -8,7 +8,7 @@ RepeatDelay=600
 RepeatRate=25
 
 [Mouse]
-cursorTheme=KDE_Classic
+cursorTheme=breeze_cursors
 
 [Tmp]
 update_info=delete_cursor_old_default_size.upd:DeleteCursorOldDefaultSize

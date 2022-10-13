@@ -1,11 +1,12 @@
 [ActivityManager]
 _k_friendly_name=Activity Manager
+switch-to-activity-25c315cc-6f58-4503-b15b-c2584c4fc163=none,none,Switch to activity "Default"
 switch-to-activity-cdbb8533-395c-4202-9ef3-109ecc26e148=none,none,Switch to activity "Default"
 
 [KDE Keyboard Layout Switcher]
 Switch keyboard layout to English (US)=none,none,Switch keyboard layout to English (US)
 Switch to Next Keyboard Layout=Ctrl+Alt+K,none,Switch to Next Keyboard Layout
-_k_friendly_name=Keyboard Layout Switcher
+_k_friendly_name=KDE Daemon
 
 [kaccess]
 Toggle Screen Reader On and Off=Meta+Alt+S,Meta+Alt+S,Toggle Screen Reader On and Off
@@ -15,7 +16,7 @@ _k_friendly_name=Accessibility
 Disable Touchpad=Touchpad Off,Touchpad Off,Disable Touchpad
 Enable Touchpad=Touchpad On,Touchpad On,Enable Touchpad
 Toggle Touchpad=Touchpad Toggle,Touchpad Toggle,Toggle Touchpad
-_k_friendly_name=Touchpad
+_k_friendly_name=KDE Daemon
 
 [kded5]
 Show System Activity=Ctrl+Esc,Ctrl+Esc,Show System Activity
@@ -23,10 +24,16 @@ _k_friendly_name=KDE Daemon
 display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
-_k_friendly_name=Custom Shortcuts Service
+_k_friendly_name=KDE Daemon
+{3266e259-e66d-4ae2-b7bd-b013fb04b811}=Alt+Shift+R,none,Rofi run
 {686a288d-cf2e-4345-bc3d-bde3b6aa2229}=Ctrl+Alt+T,none,Launch Konsole
-{6b5c0aeb-f76a-48c4-b890-e997d33083ec}=Alt+Shift+Return,none,Alacritty
+{6b5c0aeb-f76a-48c4-b890-e997d33083ec}=Alt+Shift+Return,none,Kitty
+{94d72d73-7359-4a07-bf76-1be49f4b577c}=Alt+Shift+P,none,Rofi drun
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
+
+[kitty.desktop]
+_k_friendly_name=Launch kitty
+_launch=,none,Launch kitty
 
 [kmix]
 _k_friendly_name=Audio Volume
@@ -34,8 +41,13 @@ decrease_microphone_volume=Microphone Volume Down,Microphone Volume Down,Decreas
 decrease_volume=Volume Down,Volume Down,Decrease Volume
 increase_microphone_volume=Microphone Volume Up,Microphone Volume Up,Increase Microphone Volume
 increase_volume=Volume Up,Volume Up,Increase Volume
-mic_mute=Microphone Mute\tMeta+Volume Mute,Microphone Mute\tMeta+Volume Mute,Mute Microphone
+mic_mute=Microphone Mute\tMeta+Volume Mute,Microphone Mute,Mute Microphone
 mute=Volume Mute,Volume Mute,Mute
+
+[krunner.desktop]
+RunClipboard=,Alt+Shift+F2,Run command on clipboard contents
+_k_friendly_name=KRunner
+_launch=\t\t,Alt+Space\tAlt+F2\tSearch,KRunner
 
 [ksmserver]
 Halt Without Confirmation=none,none,Halt Without Confirmation
@@ -43,7 +55,7 @@ Lock Session=Meta+L\tCtrl+Alt+L\tScreensaver,Meta+L\tCtrl+Alt+L\tScreensaver,Loc
 Log Out=Ctrl+Alt+Del,Ctrl+Alt+Del,Log Out
 Log Out Without Confirmation=none,none,Log Out Without Confirmation
 Reboot Without Confirmation=none,none,Reboot Without Confirmation
-_k_friendly_name=Session Management
+_k_friendly_name=ksmserver
 
 [kwin]
 Activate Window Demanding Attention=Ctrl+Alt+A,Ctrl+Alt+A,Activate Window Demanding Attention
@@ -51,6 +63,8 @@ Decrease Opacity=none,none,Decrease Opacity of Active Window by 5 %
 Expose=Ctrl+F9,Ctrl+F9,Toggle Present Windows (Current desktop)
 ExposeAll=Ctrl+F10\tLaunch (C),Ctrl+F10\tLaunch (C),Toggle Present Windows (All desktops)
 ExposeClass=Ctrl+F7,Ctrl+F7,Toggle Present Windows (Window class)
+FlipSwitchAll=none,none,Toggle Flip Switch (All desktops)
+FlipSwitchCurrent=none,none,Toggle Flip Switch (Current desktop)
 Increase Opacity=none,none,Increase Opacity of Active Window by 5 %
 Invert Screen Colors=none,none,Invert Screen Colors
 Kill Window=Ctrl+Alt+Esc,Ctrl+Alt+Esc,Kill Window
@@ -132,10 +146,10 @@ Window Minimize=Meta+Alt+Down,Meta+PgDown,Minimize Window
 Window Move=none,none,Move Window
 Window No Border=none,none,Hide Window Border
 Window On All Desktops=none,none,Keep Window on All Desktops
-Window One Desktop Down=Meta+Ctrl+Shift+Down,Meta+Ctrl+Shift+Down,Window One Desktop Down
-Window One Desktop Up=Meta+Ctrl+Shift+Up,Meta+Ctrl+Shift+Up,Window One Desktop Up
-Window One Desktop to the Left=Meta+Ctrl+Shift+Left,Meta+Ctrl+Shift+Left,Window One Desktop to the Left
-Window One Desktop to the Right=Meta+Ctrl+Shift+Right,Meta+Ctrl+Shift+Right,Window One Desktop to the Right
+Window One Desktop Down=Meta+Ctrl+Shift+Down,none,Window One Desktop Down
+Window One Desktop Up=Meta+Ctrl+Shift+Up,none,Window One Desktop Up
+Window One Desktop to the Left=Meta+Ctrl+Shift+Left,none,Window One Desktop to the Left
+Window One Desktop to the Right=Meta+Ctrl+Shift+Right,none,Window One Desktop to the Right
 Window Operations Menu=Alt+F3,Alt+F3,Window Operations Menu
 Window Pack Down=none,none,Pack Window Down
 Window Pack Left=none,none,Pack Window to the Left
@@ -175,9 +189,9 @@ Window to Desktop 7=none,none,Window to Desktop 7
 Window to Desktop 8=none,none,Window to Desktop 8
 Window to Desktop 9=none,none,Window to Desktop 9
 Window to Next Desktop=none,none,Window to Next Desktop
-Window to Next Screen=,Meta+Shift+Right,Window to Next Screen
+Window to Next Screen=,none,Window to Next Screen
 Window to Previous Desktop=none,none,Window to Previous Desktop
-Window to Previous Screen=,Meta+Shift+Left,Window to Previous Screen
+Window to Previous Screen=,none,Window to Previous Screen
 Window to Screen 0=none,none,Window to Screen 0
 Window to Screen 1=none,none,Window to Screen 1
 Window to Screen 2=none,none,Window to Screen 2
@@ -190,6 +204,15 @@ _k_friendly_name=KWin
 view_actual_size=,Meta+0,Actual Size
 view_zoom_in=Meta+=,Meta+=,Zoom In
 view_zoom_out=Meta+-,Meta+-,Zoom Out
+
+[mediacontrol]
+_k_friendly_name=Media Controller
+mediavolumedown=none,none,Media volume down
+mediavolumeup=none,none,Media volume up
+nextmedia=Media Next,Media Next,Media playback next
+playpausemedia=Media Play,Media Play,Play/Pause media playback
+previousmedia=Media Previous,Media Previous,Media playback previous
+stopmedia=Media Stop,Media Stop,Stop media playback
 
 [org.kde.dolphin.desktop]
 _k_friendly_name=Dolphin
@@ -206,7 +229,7 @@ _launch=Meta+.,Meta+.,Emoji Selector
 
 [org.kde.spectacle.desktop]
 ActiveWindowScreenShot=Meta+Print,Meta+Print,Capture Active Window
-CurrentMonitorScreenShot=,,Capture Current Monitor
+CurrentMonitorScreenShot=,none,Capture Current Monitor
 FullScreenScreenShot=Shift+Print,Shift+Print,Capture Entire Desktop
 RectangularRegionScreenShot=Meta+Shift+Print,Meta+Shift+Print,Capture Rectangular Region
 WindowUnderCursorScreenShot=Meta+Ctrl+Print,Meta+Ctrl+Print,Capture Window Under Cursor
@@ -239,12 +262,13 @@ activate task manager entry 7=Meta+7,Meta+7,Activate Task Manager Entry 7
 activate task manager entry 8=Meta+8,Meta+8,Activate Task Manager Entry 8
 activate task manager entry 9=Meta+9,Meta+9,Activate Task Manager Entry 9
 activate widget 2=Alt+F1,none,Activate Application Launcher Widget
+activate widget 8=none,none,Activate System Tray Widget
 clear-history=none,none,Clear Clipboard History
 clipboard_action=Ctrl+Alt+X,Ctrl+Alt+X,Enable Clipboard Actions
 cycleNextAction=none,none,Next History Item
 cyclePrevAction=none,none,Previous History Item
 edit_clipboard=none,none,Edit Contents...
-manage activities=Meta+Q,Meta+Q,Show Activity Switcher
+manage activities=Meta+Q,Meta+Q,Activities...
 next activity=Meta+Tab,Meta+Tab,Walk through activities
 previous activity=Meta+Shift+Tab,Meta+Shift+Tab,Walk through activities (Reverse)
 repeat_action=Ctrl+Alt+R,Ctrl+Alt+R,Manually Invoke Action on Current Clipboard
@@ -259,11 +283,11 @@ toggle do not disturb=none,none,Toggle do not disturb
 [systemsettings.desktop]
 _k_friendly_name=System Settings
 _launch=Tools,Tools,System Settings
-kcm-kscreen=,,Display Configuration
-kcm-lookandfeel=,,Global Theme
-kcm-users=,,Users
-powerdevilprofilesconfig=,,Energy Saving
-screenlocker=,,Screen Locking
+kcm-kscreen=,none,Display Configuration
+kcm-lookandfeel=,none,Global Theme
+kcm-users=,none,Users
+powerdevilprofilesconfig=,none,Energy Saving
+screenlocker=,none,Screen Locking
 
 [yakuake]
 _k_friendly_name=Yakuake
