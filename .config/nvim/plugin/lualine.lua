@@ -101,7 +101,11 @@ vim.defer_fn(function()
     },
     winbar = {
       lualine_a = {},
-      lualine_b = { "filename" },
+      lualine_b = { {
+        "filename",
+        file_status = true,
+        path = 1,
+      } },
       lualine_c = {},
       lualine_x = {},
       lualine_y = {},
@@ -111,7 +115,11 @@ vim.defer_fn(function()
     inactive_winbar = {
       lualine_a = {},
       lualine_b = {},
-      lualine_c = { "filename" },
+      lualine_c = { {
+        "filename",
+        file_status = true,
+        path = 1,
+      } },
       lualine_x = {},
       lualine_y = {},
       lualine_z = {},
