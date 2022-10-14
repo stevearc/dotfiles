@@ -409,8 +409,8 @@ safe_require("aerial", function(aerial)
     ignore_win_opts = true,
   })
   aerial.setup({
-    default_direction = "prefer_left",
     layout = {
+      default_direction = "prefer_left",
       -- placement = "edge",
     },
     -- attach_mode = "global",
@@ -420,7 +420,7 @@ safe_require("aerial", function(aerial)
       -- "unsupported",
     },
     -- open_automatic = true,
-    highlight_on_jump = false,
+    -- highlight_on_jump = false,
     link_folds_to_tree = true,
     link_tree_to_folds = true,
     manage_folds = true,
