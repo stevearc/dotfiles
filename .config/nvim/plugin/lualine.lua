@@ -52,6 +52,17 @@ safe_require("resession", function(resession)
   end
 end)
 
+local function make_ft_extension(...)
+  local ext = {
+    sections = { lualine_a = { "filetype" } },
+    sections_inactive = { lualine_a = { "filetype" } },
+    winbar = { lualine_b = { "filetype" } },
+    winbar_inactive = { lualine_c = { "filetype" } },
+    filetypes = { ... },
+  }
+  return ext
+end
+
 -- Defer to allow colorscheme to be set
 vim.defer_fn(function()
   safe_require("lualine").setup({
@@ -124,6 +135,11 @@ vim.defer_fn(function()
       lualine_y = {},
       lualine_z = {},
     },
-    extensions = { "aerial", "fzf", "nvim-dap-ui", "quickfix", "overseer" },
+    extensions = {
+      "fzf",
+      "nvim-dap-ui",
+      "quickfix",
+      make_ft_extension("dagger", "aerial", "OverseerList"),
+    },
   })
 end, 10)
