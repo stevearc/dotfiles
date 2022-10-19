@@ -605,21 +605,6 @@ safe_require(
         enabled = true,
       },
     })
-    vim.cmd([[
-    hi! link NeotestPassed String
-    hi! link NeotestFailed DiagnosticError
-    hi! link NeotestRunning Constant
-    hi! link NeotestSkipped DiagnosticInfo
-    hi! link NeotestTest Normal
-    hi! link NeotestNamespace TSKeyword
-    hi! link NeotestMarked Bold
-    hi! link NeotestFocused QuickFixLine
-    hi! link NeotestFile Keyword
-    hi! link NeotestDir Keyword
-    hi! link NeotestIndent Conceal
-    hi! link NeotestExpandMarker Conceal
-    hi! link NeotestAdapterName TSConstructor
-    ]])
     vim.keymap.set("n", "<leader>tn", function()
       neotest.run.run({})
     end)
