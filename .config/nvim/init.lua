@@ -511,11 +511,13 @@ safe_require("resession", function(resession)
     group = aug,
     callback = function()
       if vim.tbl_contains(resession.list(), "__quicksave__") then
-        resession.load("__quicksave__", { attach = false })
-        local ok, err = pcall(resession.delete, "__quicksave__")
-        if not ok then
-          vim.notify(string.format("Error deleting quicksave session: %s", err), vim.log.levels.WARN)
-        end
+        vim.defer_fn(function()
+          resession.load("__quicksave__", { attach = false })
+          local ok, err = pcall(resession.delete, "__quicksave__")
+          if not ok then
+            vim.notify(string.format("Error deleting quicksave session: %s", err), vim.log.levels.WARN)
+          end
+        end, 50)
       end
     end,
   })
