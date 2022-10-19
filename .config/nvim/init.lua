@@ -87,14 +87,8 @@ vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*
 local aug = vim.api.nvim_create_augroup("StevearcNewConfig", {})
 
 local ftplugin = safe_require("ftplugin")
-local opts = { noremap = true, silent = true }
-vim.api.nvim_set_keymap(
-  "n",
-  "<f2>",
-  [[<cmd>lua require'plenary.profile'.start("profile.log", {flame = true})<cr>]],
-  opts
-)
-vim.api.nvim_set_keymap("n", "<f3>", [[<cmd>lua require'plenary.profile'.stop()<cr>]], opts)
+vim.keymap.set("n", "<f2>", [[<cmd>lua require'plenary.profile'.start("profile.log", {flame = true})<cr>]])
+vim.keymap.set("n", "<f3>", [[<cmd>lua require'plenary.profile'.stop()<cr>]])
 
 vim.g.nerd_font = true
 vim.g.debug_treesitter = false
@@ -179,26 +173,26 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 })
 
 -- Add bash shortcuts for command line
-vim.api.nvim_set_keymap("c", "<C-a>", "<Home>", opts)
-vim.api.nvim_set_keymap("c", "<C-b>", "<Left>", opts)
-vim.api.nvim_set_keymap("c", "<C-f>", "<Right>", opts)
-vim.api.nvim_set_keymap("c", "<C-d>", "<Delete>", opts)
-vim.api.nvim_set_keymap("c", "<M-b>", "<S-Left>", opts)
-vim.api.nvim_set_keymap("c", "<M-f>", "<S-Right>", opts)
-vim.api.nvim_set_keymap("c", "<M-d>", "<S-right><Delete>", opts)
-vim.api.nvim_set_keymap("c", "<Esc>b", "<S-Left>", opts)
-vim.api.nvim_set_keymap("c", "<Esc>f", "<S-Right>", opts)
-vim.api.nvim_set_keymap("c", "<Esc>d", "<S-right><Delete>", opts)
-vim.api.nvim_set_keymap("c", "<C-g>", "<C-c>", opts)
+vim.keymap.set("c", "<C-a>", "<Home>")
+vim.keymap.set("c", "<C-b>", "<Left>")
+vim.keymap.set("c", "<C-f>", "<Right>")
+vim.keymap.set("c", "<C-d>", "<Delete>")
+vim.keymap.set("c", "<M-b>", "<S-Left>")
+vim.keymap.set("c", "<M-f>", "<S-Right>")
+vim.keymap.set("c", "<M-d>", "<S-right><Delete>")
+vim.keymap.set("c", "<Esc>b", "<S-Left>")
+vim.keymap.set("c", "<Esc>f", "<S-Right>")
+vim.keymap.set("c", "<Esc>d", "<S-right><Delete>")
+vim.keymap.set("c", "<C-g>", "<C-c>")
 
 -- Save jumps > 5 lines to the jumplist
 -- Jumps <= 5 respect line wraps
-vim.api.nvim_set_keymap("n", "j", [[(v:count > 5 ? "m'" . v:count . 'j' : 'gj')]], { noremap = true, expr = true })
-vim.api.nvim_set_keymap("n", "k", [[(v:count > 5 ? "m'" . v:count . 'k' : 'gk')]], { noremap = true, expr = true })
+vim.keymap.set("n", "j", [[(v:count > 5 ? "m'" . v:count . 'j' : 'gj')]], { expr = true })
+vim.keymap.set("n", "k", [[(v:count > 5 ? "m'" . v:count . 'k' : 'gk')]], { expr = true })
 
 -- Paste last text that was yanked, not deleted
-vim.api.nvim_set_keymap("n", "<leader>p", '"0p', opts)
-vim.api.nvim_set_keymap("n", "<leader>P", '"0P', opts)
+vim.keymap.set("n", "<leader>p", '"0p')
+vim.keymap.set("n", "<leader>P", '"0P')
 
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "WinNew", "VimResized" }, {
   desc = "Always keep the cursor vertically centered",
@@ -242,10 +236,10 @@ vim.opt.fillchars = {
 vim.o.foldtext = [[v:lua.stevearc.foldtext()")]]
 
 -- Use my universal clipboard tool to copy with <leader>y
-vim.api.nvim_set_keymap("n", "<leader>y", '<cmd>call system("clip", @0)<CR>', opts)
+vim.keymap.set("n", "<leader>y", '<cmd>call system("clip", @0)<CR>')
 
 -- Map leader-r to do a global replace of a word
-vim.api.nvim_set_keymap("n", "<leader>r", [[*N:s//<C-R>=expand("<cword>")<CR>]], { noremap = true })
+vim.keymap.set("n", "<leader>r", [[*N:s//<C-R>=expand("<cword>")<CR>]])
 
 -- Expand %% to current directory in command mode
 vim.cmd([[
@@ -266,7 +260,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 })
 
 -- Enter paste mode with <C-v> in insert mode
-vim.api.nvim_set_keymap("i", "<C-v>", "<cmd>set paste<CR>", opts)
+vim.keymap.set("i", "<C-v>", "<cmd>set paste<CR>")
 vim.api.nvim_create_autocmd("InsertLeave", {
   desc = "Leave paste mode when leaving insert",
   pattern = "*",
@@ -283,8 +277,8 @@ vim.api.nvim_create_autocmd({ "CursorMovedI", "InsertLeave" }, {
 })
 
 -- BASH-style movement in insert mode
-vim.api.nvim_set_keymap("i", "<C-a>", "<C-o>^", opts)
-vim.api.nvim_set_keymap("i", "<C-e>", "<C-o>$", opts)
+vim.keymap.set("i", "<C-a>", "<C-o>^")
+vim.keymap.set("i", "<C-e>", "<C-o>$")
 
 vim.cmd("command! GitHistory Git! log -- %")
 
@@ -327,10 +321,10 @@ vim.cmd([[
 command! -bar Cclear call setqflist([])
 command! -bar Lclear call setloclist(0, [])
 ]])
-vim.api.nvim_set_keymap("n", "<C-N>", "<cmd>QNext<CR>", opts)
-vim.api.nvim_set_keymap("n", "<C-P>", "<cmd>QPrev<CR>", opts)
-vim.api.nvim_set_keymap("n", "<leader>q", "<cmd>QFToggle!<CR>", opts)
-vim.api.nvim_set_keymap("n", "<leader>l", "<cmd>LLToggle!<CR>", opts)
+vim.keymap.set("n", "<C-N>", "<cmd>QNext<CR>")
+vim.keymap.set("n", "<C-P>", "<cmd>QPrev<CR>")
+vim.keymap.set("n", "<leader>q", "<cmd>QFToggle!<CR>")
+vim.keymap.set("n", "<leader>l", "<cmd>LLToggle!<CR>")
 
 local pending_notifications = {}
 local old_notify = vim.notify
@@ -375,7 +369,7 @@ safe_require("dressing").setup({
   },
 })
 
-vim.api.nvim_set_keymap("n", "<leader>n", "<cmd>GkeepToggle<CR>", { noremap = true })
+vim.keymap.set("n", "<leader>n", "<cmd>GkeepToggle<CR>")
 -- vim.g.gkeep_sync_dir = '~/notes'
 -- vim.g.gkeep_sync_archived = true
 vim.g.gkeep_log_levels = {
@@ -448,8 +442,8 @@ safe_require("lightspeed", function(lightspeed)
     safe_labels = {},
   })
   -- Not sure which of these mappings I prefer yet
-  vim.api.nvim_set_keymap("", "<leader>s", "<Plug>Lightspeed_omni_s", {})
-  vim.api.nvim_set_keymap("", "gs", "<Plug>Lightspeed_omni_s", {})
+  vim.keymap.set("", "<leader>s", "<Plug>Lightspeed_omni_s")
+  vim.keymap.set("", "gs", "<Plug>Lightspeed_omni_s")
 end)
 safe_require("tags", function(tags)
   tags.setup({
