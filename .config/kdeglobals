@@ -153,8 +153,30 @@ LookAndFeelPackage=org.kde.breezedark.desktop
 contrast=4
 widgetStyle=Breeze
 
+[KFileDialog Settings]
+Allow Expansion=false
+Automatically select filename extension=true
+Breadcrumb Navigation=true
+Decoration position=2
+LocationCombo Completionmode=5
+PathCombo Completionmode=5
+Show Bookmarks=false
+Show Full Path=false
+Show Inline Previews=true
+Show Preview=false
+Show Speedbar=true
+Show hidden files=false
+Sort by=Date
+Sort directories first=true
+Sort reversed=true
+Speedbar Width=150
+View Style=DetailTree
+
 [KShortcutsDialog Settings]
 Dialog Size=600,480
+
+[Shortcuts]
+FullScreen=F11
 
 [WM]
 activeBackground=49,54,59
