@@ -1,5 +1,3 @@
-local projects = require("projects")
-
 local function arduino_status()
   local ft = vim.api.nvim_buf_get_option(0, "ft")
   if ft ~= "arduino" then
