@@ -77,7 +77,7 @@ setup-gnome() {
   dconf write "/org/gnome/terminal/legacy/profiles:/:$term_profile/use-system-font" false
   dconf write "/org/gnome/terminal/legacy/profiles:/:$term_profile/audible-bell" false
   dconf write "/org/gnome/terminal/legacy/profiles:/:$term_profile/text-blink-mode" '"never"'
-  dconf write "/org/gnome/terminal/legacy/profiles:/:$term_profile/font" '"Hack Nerd Font 12"'
+  dconf write "/org/gnome/terminal/legacy/profiles:/:$term_profile/font" '"UbuntuMono Nerd Font 12"'
 
   if [ "$(dconf read "/org/gnome/terminal/legacy/profiles:/$term_profile/use-theme-colors")" == "true" ]; then
     pushd /tmp
@@ -208,13 +208,8 @@ DC_INSTALL_NERD_FONT_DOC="Font with icons"
 dc-install-nerd-font() {
   mkdir -p ~/.local/share/fonts
   pushd ~/.local/share/fonts >/dev/null
-  if [ ! -e Hack.zip ]; then
-    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/Hack.zip
-    unzip Hack.zip
-  fi
-  rm -f Hack.zip
   if [ ! -e UbuntuMono.zip ]; then
-    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/UbuntuMono.zip
+    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/UbuntuMono.zip
     unzip UbuntuMono.zip
   fi
   popd >/dev/null

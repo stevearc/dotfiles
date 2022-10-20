@@ -35,7 +35,7 @@ vim.g.firenvim_config = {
 }
 
 if vim.g.started_by_firenvim then
-  vim.api.nvim_set_option("guifont", "Hack Nerd Font:h11")
+  vim.api.nvim_set_option("guifont", "UbuntuMono Nerd Font:h11")
   local group = vim.api.nvim_create_augroup("FireNvimFT", {})
   vim.api.nvim_create_autocmd("BufEnter", {
     pattern = "github.com_*.txt",
