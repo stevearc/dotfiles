@@ -5,8 +5,6 @@ for i = 1, 9 do
 end
 vim.keymap.set("t", [[\`]], [[<C-\><C-N>:BufferLast<CR>]])
 
-vim.cmd([[highlight TermCursor ctermfg=DarkRed guifg=red]])
-
 local function is_floating_win(winid)
   return vim.api.nvim_win_get_config(winid or 0).relative ~= ""
 end
@@ -36,16 +34,15 @@ ftplugin.extend("terminal", {
     },
   },
 })
-local function set_defaults()
-  if vim.bo.buftype ~= "terminal" then
-    return
-  end
-  vim.bo.number = false
-  vim.bo.relativenumber = false
-  vim.bo.signcolumn = "no"
-end
 
 local aug = vim.api.nvim_create_augroup("TerminalDefaults", {})
+vim.cmd([[highlight TermCursor ctermfg=DarkRed guifg=red]])
+vim.api.nvim_create_autocmd("ColorScheme", {
+  pattern = "*",
+  group = aug,
+  command = "highlight TermCursor ctermfg=DarkRed guifg=red",
+})
+
 vim.api.nvim_create_autocmd("TermOpen", {
   desc = "Auto enter insert mode when opening a terminal",
   pattern = "*",

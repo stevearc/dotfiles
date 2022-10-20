@@ -92,6 +92,7 @@ vim.keymap.set("n", "<f3>", [[<cmd>lua require'plenary.profile'.stop()<cr>]])
 
 vim.g.nerd_font = true
 vim.g.debug_treesitter = false
+vim.g.sidebar_filetypes = { "dagger", "aerial", "OverseerList", "neotest-summary" }
 
 -- Space is leader
 vim.g.mapleader = " "
