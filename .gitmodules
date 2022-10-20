@@ -242,3 +242,6 @@
 [submodule "vimplugins/nvim-config-local"]
 	path = vimplugins/nvim-config-local
 	url = https://github.com/klen/nvim-config-local.git
+[submodule "vimplugins/nvim-luaref"]
+	path = vimplugins/nvim-luaref
+	url = https://github.com/milisims/nvim-luaref.git
