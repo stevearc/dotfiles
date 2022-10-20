@@ -2,7 +2,7 @@ configuration {
 modi: "window,run,ssh,drun,combi";
 combi-modi: "run,drun";
 kb-cancel: "Escape,Control+g,Control+c,Control+bracketleft";
-font: "UbuntuMono Nerd Font Medium 14";
+font: "Hack Nerd Font Medium 14";
 show-icons: true;
 combi-hide-mode-prefix: true;
 /* Needs newer version than in ubuntu repos */

@@ -53,8 +53,13 @@ dc-install-neovim() {
 DC_INSTALL_NERD_FONT_DOC="Font with icons"
 dc-install-nerd-font() {
   pushd /Library/Fonts/ >/dev/null
+  if [ ! -e Hack.zip ]; then
+    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/Hack.zip
+    unzip Hack.zip
+  fi
+  rm -f Hack.zip
   if [ ! -e UbuntuMono.zip ]; then
-    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/UbuntuMono.zip
+    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/UbuntuMono.zip
     unzip UbuntuMono.zip
   fi
   rm -f UbuntuMono.zip
