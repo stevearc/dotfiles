@@ -98,6 +98,7 @@ configure-git() {
   git config --global alias.sk '!python ~/.local/bin/githelper.py stack'
   git config --global alias.up '!python ~/.local/bin/githelper.py update'
   git config --global alias.mine '!git log --author=$(git config --get user.email) --pretty=medium --compact-summary'
+  git config --global alias.touch 'commit --amend --reset-author --no-edit'
 
   git config --global color.decorate.HEAD 'bold red'
   git config --global color.decorate.branch green
