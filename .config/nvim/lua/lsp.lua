@@ -147,8 +147,6 @@ M.on_attach = function(client, bufnr)
   end
 
   vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-
-  safe_require("aerial").on_attach(client, bufnr)
 end
 
 M.capabilities = vim.lsp.protocol.make_client_capabilities()

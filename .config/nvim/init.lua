@@ -400,15 +400,17 @@ ftplugin.extend("norg", { bindings = gkeep_bindings })
 
 safe_require("aerial", function(aerial)
   ftplugin.extend("aerial", {
-    bindings = { { "n", "<leader>a", "<CMD>AerialClose<CR>" } },
     ignore_win_opts = true,
   })
   aerial.setup({
+    show_guides = true,
     layout = {
+      max_width = { 80, 0.2 },
       default_direction = "prefer_left",
       -- placement = "edge",
     },
     -- attach_mode = "global",
+    highlight_on_hover = true,
     close_automatic_events = {
       -- "unfocus",
       -- "switch_buffer",
@@ -418,22 +420,25 @@ safe_require("aerial", function(aerial)
     -- highlight_on_jump = false,
     link_folds_to_tree = true,
     link_tree_to_folds = true,
-    manage_folds = true,
+    manage_folds = {
+      ["_"] = true,
+    },
     nerd_font = vim.g.nerd_font,
-    max_width = { 80, 0.2 },
 
     -- backends = { "treesitter", "markdown" },
     -- backends = { "lsp", "markdown" },
     -- backends = { "lsp", "treesitter", "markdown" },
     -- filter_kind = false,
     on_attach = function(bufnr)
-      vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>")
-      vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>")
-      vim.keymap.set("v", "{", "<cmd>AerialPrev<CR>")
-      vim.keymap.set("n", "}", "<cmd>AerialNext<CR>")
-      vim.keymap.set("v", "}", "<cmd>AerialNext<CR>")
+      vim.keymap.set({ "n", "v" }, "{", aerial.prev, { buffer = bufnr })
+      vim.keymap.set({ "n", "v" }, "}", aerial.next, { buffer = bufnr })
+      vim.keymap.set({ "n", "v" }, "[s", aerial.prev, { buffer = bufnr })
+      vim.keymap.set({ "n", "v" }, "]s", aerial.next, { buffer = bufnr })
+      vim.keymap.set({ "n", "v" }, "[u", aerial.prev_up, { buffer = bufnr })
+      vim.keymap.set({ "n", "v" }, "]u", aerial.next_up, { buffer = bufnr })
     end,
   })
+  vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>")
 end)
 
 vim.g.lightspeed_no_default_keymaps = true
@@ -1208,8 +1213,8 @@ vim.g.matchup_matchparen_deferred = 1
 vim.g.matchup_matchparen_deferred_show_delay = 400
 vim.g.matchup_matchparen_deferred_hide_delay = 400
 vim.g.matchup_matchparen_offscreen = {}
-vim.keymap.set({ "n", "x" }, "[", "<plug>(matchup-[%)")
-vim.keymap.set({ "n", "x" }, "]", "<plug>(matchup-]%)")
+vim.keymap.set({ "n", "x" }, "[[", "<plug>(matchup-[%)")
+vim.keymap.set({ "n", "x" }, "]]", "<plug>(matchup-]%)")
 
 -- :W and :H to set win width/height
 vim.api.nvim_create_user_command("W", function(params)
