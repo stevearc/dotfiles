@@ -741,41 +741,6 @@
                         ]
                     },
                     {
-                        "description": "Ctrl+Shift+v to paste in terminal",
-                        "manipulators": [
-                            {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "io.alacritty",
-                                            "com.apple.Terminal"
-                                        ],
-                                        "type": "frontmost_application_if"
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "v",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "left_control",
-                                            "left_shift"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "v",
-                                        "modifiers": [
-                                            "left_gui"
-                                        ],
-                                        "repeat": false
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "Chrome Ctrl/Cmd swap",
                         "manipulators": [
                             {
@@ -897,14 +862,51 @@
                         ]
                     },
                     {
+                        "description": "Ctrl+Shift+v to paste in terminal",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "org.alacritty",
+                                            "com.apple.Terminal",
+                                            "com.googlecode.iterm2"
+                                        ],
+                                        "type": "frontmost_application_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "v",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "left_control",
+                                            "left_shift"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "v",
+                                        "modifiers": [
+                                            "left_gui"
+                                        ],
+                                        "repeat": false
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "System Ctrl/Cmd swap",
                         "manipulators": [
                             {
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "io.alacritty",
-                                            "com.apple.Terminal"
+                                            "org.alacritty",
+                                            "com.apple.Terminal",
+                                            "com.googlecode.iterm2"
                                         ],
                                         "description": "",
                                         "type": "frontmost_application_unless"
@@ -933,8 +935,9 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "io.alacritty",
-                                            "com.apple.Terminal"
+                                            "org.alacritty",
+                                            "com.apple.Terminal",
+                                            "com.googlecode.iterm2"
                                         ],
                                         "description": "",
                                         "type": "frontmost_application_unless"
@@ -963,8 +966,9 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "io.alacritty",
-                                            "com.apple.Terminal"
+                                            "org.alacritty",
+                                            "com.apple.Terminal",
+                                            "com.googlecode.iterm2"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -992,8 +996,9 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "io.alacritty",
-                                            "com.apple.Terminal"
+                                            "org.alacritty",
+                                            "com.apple.Terminal",
+                                            "com.googlecode.iterm2"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1021,8 +1026,9 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "io.alacritty",
-                                            "com.apple.Terminal"
+                                            "org.alacritty",
+                                            "com.apple.Terminal",
+                                            "com.googlecode.iterm2"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1050,8 +1056,9 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "io.alacritty",
-                                            "com.apple.Terminal"
+                                            "org.alacritty",
+                                            "com.apple.Terminal",
+                                            "com.googlecode.iterm2"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1081,8 +1088,9 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "io.alacritty",
-                                            "com.apple.Terminal"
+                                            "org.alacritty",
+                                            "com.apple.Terminal",
+                                            "com.googlecode.iterm2"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1110,8 +1118,9 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "io.alacritty",
-                                            "com.apple.Terminal"
+                                            "org.alacritty",
+                                            "com.apple.Terminal",
+                                            "com.googlecode.iterm2"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1248,6 +1257,34 @@
                         "is_pointing_device": true,
                         "product_id": 617,
                         "vendor_id": 76
+                    },
+                    "ignore": true,
+                    "manipulate_caps_lock_led": false,
+                    "simple_modifications": [],
+                    "treat_as_built_in_keyboard": false
+                },
+                {
+                    "disable_built_in_keyboard_if_exists": false,
+                    "fn_function_keys": [],
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "is_pointing_device": false,
+                        "product_id": 6190,
+                        "vendor_id": 4152
+                    },
+                    "ignore": false,
+                    "manipulate_caps_lock_led": true,
+                    "simple_modifications": [],
+                    "treat_as_built_in_keyboard": false
+                },
+                {
+                    "disable_built_in_keyboard_if_exists": false,
+                    "fn_function_keys": [],
+                    "identifiers": {
+                        "is_keyboard": false,
+                        "is_pointing_device": true,
+                        "product_id": 6190,
+                        "vendor_id": 4152
                     },
                     "ignore": true,
                     "manipulate_caps_lock_led": false,
