@@ -132,6 +132,7 @@ setup-xfce() {
 
 setup-desktop-generic() {
   flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+  flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
   if [ ! -e ~/.config/backgrounds ]; then
     mkdir -p ~/.config/backgrounds
     cd ~/.config/backgrounds
