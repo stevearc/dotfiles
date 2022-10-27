@@ -426,19 +426,20 @@ safe_require("aerial", function(aerial)
     nerd_font = vim.g.nerd_font,
 
     -- backends = { "treesitter", "markdown" },
-    -- backends = { "lsp", "markdown" },
+    -- backends = { "lsp", "treesitter" },
+    lazy_load = true,
     -- backends = { "lsp", "treesitter", "markdown" },
     -- filter_kind = false,
     on_attach = function(bufnr)
       vim.keymap.set({ "n", "v" }, "{", aerial.prev, { buffer = bufnr })
       vim.keymap.set({ "n", "v" }, "}", aerial.next, { buffer = bufnr })
-      vim.keymap.set({ "n", "v" }, "[s", aerial.prev, { buffer = bufnr })
-      vim.keymap.set({ "n", "v" }, "]s", aerial.next, { buffer = bufnr })
-      vim.keymap.set({ "n", "v" }, "[u", aerial.prev_up, { buffer = bufnr })
-      vim.keymap.set({ "n", "v" }, "]u", aerial.next_up, { buffer = bufnr })
     end,
   })
   vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>")
+  vim.keymap.set({ "n", "v" }, "[s", aerial.prev)
+  vim.keymap.set({ "n", "v" }, "]s", aerial.next)
+  vim.keymap.set({ "n", "v" }, "[u", aerial.prev_up)
+  vim.keymap.set({ "n", "v" }, "]u", aerial.next_up)
 end)
 
 vim.g.lightspeed_no_default_keymaps = true
