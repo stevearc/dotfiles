@@ -536,7 +536,6 @@ safe_require("config-local").setup({
   silent = false,
   lookup_parents = true,
 })
-require("neodev").setup({})
 
 -- Todo:
 -- * Bug: Running tests on directory doesn't work if directory not in tree (but tree has subdirectories)

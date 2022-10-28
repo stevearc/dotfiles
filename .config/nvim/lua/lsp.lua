@@ -149,6 +149,31 @@ M.on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 end
 
+---@param name string
+---@param config nil|table
+M.safe_setup = function(name, config)
+  local ok, lspconfig = pcall(require, "lspconfig")
+  if not ok then
+    return
+  end
+  config = config or {}
+
+  local has_config, server_config = pcall(require, "lspconfig.server_configurations." .. name)
+  if has_config then
+    local cmd = config.cmd or server_config.default_config.cmd
+    if type(cmd) == "table" and type(cmd[1]) == "string" then
+      local exe = cmd[1]
+      if vim.fn.executable(exe) == 0 then
+        return
+      end
+    end
+  end
+  lspconfig[name].setup(vim.tbl_extend("keep", config or {}, {
+    on_attach = M.on_attach,
+    capabilities = M.capabilities,
+  }))
+end
+
 M.capabilities = vim.lsp.protocol.make_client_capabilities()
 safe_require("cmp_nvim_lsp", function(cmp_nvim_lsp)
   M.capabilities = cmp_nvim_lsp.update_capabilities(M.capabilities)

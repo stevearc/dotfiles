@@ -136,14 +136,9 @@ safe_require("lspconfig", function(lspconfig)
     "zls",
   }
   for _, server in ipairs(lspservers) do
-    lspconfig[server].setup({
-      capabilities = lsp.capabilities,
-      on_attach = lsp.on_attach,
-    })
+    lsp.safe_setup(server)
   end
-  lspconfig.yamlls.setup({
-    capabilities = lsp.capabilities,
-    on_attach = lsp.on_attach,
+  lsp.safe_setup("yamlls", {
     settings = {
       yaml = {
         schemas = safe_require("schemastore").json.schemas(),
@@ -164,16 +159,12 @@ safe_require("lspconfig", function(lspconfig)
     end
     return false
   end
-  lspconfig.pyright.setup({
-    capabilities = lsp.capabilities,
-    on_attach = lsp.on_attach,
+  lsp.safe_setup("pyright", {
     -- pyright is real noisy when we're using sqlalchemy
     diagnostics = not is_using_sqlalchemy(),
   })
-  lspconfig.jsonls.setup({
+  lsp.safe_setup("jsonls", {
     filetypes = { "json", "jsonc", "json5" },
-    capabilities = lsp.capabilities,
-    on_attach = lsp.on_attach,
     settings = {
       json = {
         schemas = safe_require("schemastore").json.schemas(),
@@ -181,8 +172,7 @@ safe_require("lspconfig", function(lspconfig)
     },
   })
 
-  lspconfig.tsserver.setup({
-    capabilities = lsp.capabilities,
+  lsp.safe_setup("tsserver", {
     root_dir = function(fname)
       local util = require("lspconfig.util")
       -- Disable tsserver on js files when a flow project is detected
@@ -199,10 +189,8 @@ safe_require("lspconfig", function(lspconfig)
       end
       return nil
     end,
-    on_attach = lsp.on_attach,
   })
-  lspconfig.flow.setup({
-    capabilities = lsp.capabilities,
+  lsp.safe_setup("flow", {
     root_dir = function(fname)
       local util = require("lspconfig.util")
       -- Disable flow when a typescript project is detected
@@ -225,10 +213,11 @@ safe_require("lspconfig", function(lspconfig)
       },
     },
   })
+
+  safe_require("neodev").setup({})
   local sumneko_root_path = os.getenv("HOME") .. "/.local/share/nvim/language-servers/lua-language-server"
   local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
-  lspconfig.sumneko_lua.setup({
-    capabilities = lsp.capabilities,
+  lsp.safe_setup("sumneko_lua", {
     cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
     settings = {
       Lua = {
@@ -243,8 +232,6 @@ safe_require("lspconfig", function(lspconfig)
         },
       },
     },
-
-    on_attach = lsp.on_attach,
   })
 
   -- conflicts with work
