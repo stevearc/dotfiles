@@ -109,4 +109,8 @@ local function toggle_git_terms()
   dash:_update()
 end
 
-vim.keymap.set("n", "<leader>gt", toggle_git_terms)
+vim.keymap.set("n", "<leader>gt", toggle_git_terms, { desc = "[G]it [T]erminal interface" })
+vim.keymap.set("n", "<leader>gh", "<cmd>GitHistory<CR>", { desc = "[G]it [H]istory" })
+vim.keymap.set("n", "<leader>gb", "<cmd>Git blame<CR>", { desc = "[G]it [B]lame" })
+vim.keymap.set("n", "<leader>gc", "<cmd>GBrowse!<CR>", { desc = "[G]it [C]opy link" })
+vim.keymap.set("v", "<leader>gc", ":GBrowse!<CR>", { desc = "[G]it [C]opy link" })
