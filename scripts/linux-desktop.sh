@@ -102,9 +102,9 @@ setup-kde() {
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{6b5c0aeb-f76a-48c4-b890-e997d33083ec}' "Alt+Shift+Return,none,Kitty"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{94d72d73-7359-4a07-bf76-1be49f4b577c}' "Alt+Shift+P,none,Rofi drun"
 
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Close' "Alt+F4\tAlt+W,Alt+F4,Close Window"
+  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Close' "Alt+W,Alt+F4,Close Window"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Fullscreen' "F11,none,Make Window Fullscreen"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Maximize' "Alt+Return\tMeta+W,Meta+PgUp,Maximize Window"
+  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Maximize' "Alt+Return,none,Maximize Window"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom' "Meta+Down,Meta+Down,Quick Tile Window to the Bottom"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom Left' "Meta+Shift+Left,none,Quick Tile Window to the Bottom Left"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom Right' "Meta+Shift+Down,none,Quick Tile Window to the Bottom Right"
@@ -113,15 +113,15 @@ setup-kde() {
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top' "Meta+Up,Meta+Up,Quick Tile Window to the Top"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top Left' "Meta+Shift+Up,none,Quick Tile Window to the Top Left"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top Right' "Meta+Shift+Right,none,Quick Tile Window to the Top Right"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 1' "Alt+1\tCtrl+F1,Ctrl+F1,Switch to Desktop 1"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 2' "Ctrl+F2\tAlt+2,Ctrl+F2,Switch to Desktop 2"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 3' "Alt+3\tCtrl+F3,Ctrl+F3,Switch to Desktop 3"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 4' "Ctrl+F4\tAlt+4,Ctrl+F4,Switch to Desktop 4"
+  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 1' "Alt+1,Ctrl+F1,Switch to Desktop 1"
+  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 2' "Alt+2,Ctrl+F2,Switch to Desktop 2"
+  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 3' "Alt+3,Ctrl+F3,Switch to Desktop 3"
+  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 4' "Alt+4,Ctrl+F4,Switch to Desktop 4"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 1' "Alt+!,none,Window to Desktop 1"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 2' "Alt+@,none,Window to Desktop 2"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 3' "Alt+#,none,Window to Desktop 3"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 4' "Alt+$,none,Window to Desktop 4"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group ksmserver --key "Lock Session" "Meta+L\tCtrl+Alt+L\tScreensaver,Meta+L\tCtrl+Alt+L\tScreensaver,Lock Session"
+  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 4' 'Alt+$,none,Window to Desktop 4'
+  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group ksmserver --key "Lock Session" "$(echo -e "Meta+L\tCtrl+Alt+L\tScreensaver,Meta+L\tCtrl+Alt+L\tScreensaver,Lock Session")"
 
   # Make capslock control
   kwriteconfig5 --file ~/.config/kxkbrc --group Layout Options "caps:ctrl_modifier"
@@ -131,6 +131,9 @@ setup-kde() {
 
   # Reload changes
   qdbus org.kde.KWin /KWin reconfigure
+  qdbus org.kde.keyboard /modules/khotkeys reread_configuration
+  kquitapp5 plasmashell
+  kstart5 plasmashell
 }
 
 # shellcheck disable=SC2034

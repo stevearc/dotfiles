@@ -334,12 +334,6 @@ dotcmd-desktop() {
     vlc \
     xbindkeys \
     zenity
-  if ! hascmd youtube-dl; then
-    pushd ~/.local/bin >/dev/null
-    wget -O youtube-dl https://yt-dl.org/latest/youtube-dl
-    chmod +x youtube-dl
-    popd >/dev/null
-  fi
   if ! hascmd alacritty; then
     install-language-rust
     sudo apt install -yq libxcb-shape0-dev libxcb-xfixes0-dev libxcb-render0-dev
