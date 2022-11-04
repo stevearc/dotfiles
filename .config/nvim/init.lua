@@ -443,6 +443,10 @@ safe_require("aerial", function(aerial)
       vim.keymap.set({ "n", "v" }, "{", aerial.prev, { buffer = bufnr })
       vim.keymap.set({ "n", "v" }, "}", aerial.next, { buffer = bufnr })
     end,
+    keymaps = {
+      ["<"] = "actions.tree_decrease_fold_level",
+      [">"] = "actions.tree_increase_fold_level",
+    },
   })
   vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>")
   vim.keymap.set({ "n", "v" }, "[s", aerial.prev)
