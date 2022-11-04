@@ -144,6 +144,15 @@ vim.o.number = true -- Except for current line
 vim.o.relativenumber = true -- Relative line numbers
 vim.opt.showbreak = "↳ " -- DOWNWARDS ARROW WITH TIP RIGHTWARDS (U+21B3, UTF-8: E2 86 B3)
 
+vim.filetype.add({
+  extension = {
+    sky = "python", -- starlark
+  },
+  pattern = {
+    [".*/%.vscode/.*%.json"] = "json5", -- These json files frequently have comments
+  },
+})
+
 vim.api.nvim_create_autocmd({ "VimEnter", "WinEnter", "BufWinEnter" }, {
   desc = "Highlight the cursor line in the active window",
   pattern = "*",
