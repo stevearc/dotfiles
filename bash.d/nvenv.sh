@@ -41,11 +41,13 @@ _nvenv-delete() {
 
 _nvenv-kickstart() {
   local name="${1-$NVENV}"
+  local bin_name=${2-nvim}
   if [ -z "$name" ]; then
     echo "Usage nvenv kickstart <name>"
     return
   fi
   mkdir -p "$HOME/.local/share/nvenv/$name/config/nvim"
+  echo "$bin_name" >"$HOME/.local/share/nvenv/$name/bin_name"
   curl -sL https://raw.githubusercontent.com/nvim-lua/kickstart.nvim/master/init.lua -o "$HOME/.local/share/nvenv/$name/config/nvim/init.lua"
   'nvim' "$HOME/.local/share/nvenv/$name/config/nvim/init.lua"
 }
