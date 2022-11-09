@@ -199,10 +199,6 @@ safe_require("lspconfig", function(lspconfig)
       end
       return util.root_pattern(".flowconfig")(fname)
     end,
-    on_attach = function(client, bufnr)
-      safe_require("flow").on_attach(client, bufnr)
-      lsp.on_attach(client, bufnr)
-    end,
     cmd = { "flow", "lsp", "--lazy" },
     settings = {
       flow = {
@@ -238,7 +234,6 @@ safe_require("lspconfig", function(lspconfig)
   -- lspconfig.sorbet.setup({
   --   capabilities = lsp.capabilities,
   --   cmd = { "bundle", "exec", "srb", "tc", "--lsp" },
-  --   on_attach = lsp.on_attach,
   -- })
 
   safe_require("null-ls", function(null_ls)
@@ -253,5 +248,15 @@ safe_require("lspconfig", function(lspconfig)
     }, require("nullconfig")))
   end)
 
+  local group = vim.api.nvim_create_augroup("LspSetup", {})
+  vim.api.nvim_create_autocmd("LspAttach", {
+    desc = "My custom attach behavior",
+    pattern = "*",
+    group = group,
+    callback = function(args)
+      local client = vim.lsp.get_client_by_id(args.data.client_id)
+      lsp.on_attach(client, args.buf)
+    end,
+  })
   vim.cmd("silent! LspStart")
 end)

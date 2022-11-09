@@ -123,17 +123,13 @@ M.on_attach = function(client, bufnr)
       group = autoformat_group,
     })
     vim.keymap.set("n", "=", function()
-      if vim.lsp.buf.format then
-        vim.lsp.buf.format({ async = true })
-      else
-        vim.lsp.buf.formatting()
-      end
+      vim.lsp.buf.format({ async = true })
     end, { buffer = bufnr })
   end
   safemap("documentRangeFormattingProvider", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
   safemap("renameProvider", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
 
-  if client.server_capabilities.documentHighlightProvider and client.name ~= "payserver_sorbet" then
+  if client.server_capabilities.documentHighlightProvider and not string.match(client.name, "sorbet$") then
     vim.api.nvim_create_autocmd({ "CursorHold" }, {
       desc = "LSP highlight document word",
       buffer = bufnr,
@@ -169,7 +165,6 @@ M.safe_setup = function(name, config)
     end
   end
   lspconfig[name].setup(vim.tbl_extend("keep", config or {}, {
-    on_attach = M.on_attach,
     capabilities = M.capabilities,
   }))
 end

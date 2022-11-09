@@ -4,8 +4,33 @@ local lsp = require("lsp")
 local M = {}
 
 vim.g.smartformat_enabled = true
-vim.cmd([[command! FormatDisable let g:smartformat_enabled = v:false]])
-vim.cmd([[command! FormatEnable let g:smartformat_enabled = v:true]])
+---@param buflocal boolean
+---@param enabled boolean
+local function set_format_enabled(buflocal, enabled)
+  if buflocal then
+    vim.b.smartformat_enabled = enabled
+  else
+    vim.g.smartformat_enabled = enabled
+  end
+end
+vim.api.nvim_create_user_command("FormatEnable", function(params)
+  set_format_enabled(params.bang, true)
+end, {
+  bang = true,
+})
+vim.api.nvim_create_user_command("FormatDisable", function(params)
+  set_format_enabled(params.bang, false)
+end, {
+  bang = true,
+})
+
+local function is_enabled()
+  local ok, enabled = pcall(vim.api.nvim_buf_get_var, 0, "smartformat_enabled")
+  if ok then
+    return enabled
+  end
+  return vim.g.smartformat_enabled
+end
 
 local function php_has_format()
   for i = 2, vim.api.nvim_buf_line_count(0) do
@@ -44,7 +69,7 @@ end
 M.format = function()
   local project = projects[0]
   if
-    not vim.g.smartformat_enabled
+    not is_enabled()
     or not project.autoformat
     or vim.g.started_by_firenvim
     or vim.api.nvim_buf_line_count(0) > project.autoformat_threshold
@@ -55,11 +80,7 @@ M.format = function()
     return
   end
   local restore = lsp.save_win_positions(0)
-  if vim.lsp.buf.format then
-    vim.lsp.buf.format({ timeout_ms = 500 })
-  else
-    vim.lsp.buf.formatting_sync(nil, 500)
-  end
+  vim.lsp.buf.format({ timeout_ms = 500 })
   restore()
 end
 
