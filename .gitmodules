@@ -47,7 +47,7 @@
 [submodule "vimplugins/nvim-lspconfig"]
 	path = vimplugins/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig
-	ignore = all
+	ignore = untracked
 [submodule "vimplugins/flow-coverage.nvim"]
 	path = vimplugins/flow-coverage.nvim
 	url = https://github.com/stevearc/flow-coverage.nvim.git
