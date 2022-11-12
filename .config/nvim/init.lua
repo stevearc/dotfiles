@@ -678,11 +678,7 @@ safe_require("overseer", function(overseer)
       },
     },
   })
-  vim.api.nvim_create_user_command(
-    "OverseerDebugParser",
-    'lua require("overseer.parser.debug").start_debug_session()',
-    {}
-  )
+  vim.api.nvim_create_user_command("OverseerDebugParser", 'lua require("overseer").debug_parser()', {})
   vim.keymap.set("n", "<leader>oo", "<cmd>OverseerToggle<CR>")
   vim.keymap.set("n", "<leader>or", "<cmd>OverseerRun<CR>")
   vim.keymap.set("n", "<leader>oc", "<cmd>OverseerRunCmd<CR>")
@@ -1247,5 +1243,7 @@ end, { nargs = 1 })
 
 -- Generate helptags after startup
 vim.defer_fn(function()
-  vim.cmd("helptags ALL")
+  if not vim.bo.filetype:match("^git") then
+    vim.cmd("helptags ALL")
+  end
 end, 1000)
