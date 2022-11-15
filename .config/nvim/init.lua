@@ -646,6 +646,7 @@ safe_require(
 
 safe_require("overseer", function(overseer)
   overseer.setup({
+    strategy = { "jobstart", preserve_output = true },
     log = {
       {
         type = "echo",
