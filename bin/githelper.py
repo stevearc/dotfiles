@@ -45,7 +45,7 @@ def git_lines(*args, **kwargs) -> List[str]:
 def remote_main_branch() -> str:
     proc = subprocess.run(['git', 'symbolic-ref', 'refs/remotes/origin/HEAD'], capture_output=True, check=False)
     if proc.returncode == 0:
-        return proc.stdout.decode('utf-8').split('/')[-1]
+        return proc.stdout.decode('utf-8').split('/')[-1].strip()
     return 'master'
 
 MASTER = remote_main_branch()
