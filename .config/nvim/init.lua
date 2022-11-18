@@ -736,7 +736,7 @@ safe_require("ccc", function(ccc)
     condition = function()
       local cword = vim.fn.expand("<cword>"):lower()
       local len = cword:len()
-      return cword:match("^[a-f0-9]+$") == cword and (len == 6 or len == 3)
+      return cword:match("^#[a-f0-9]+$") or (cword:match("^[a-f0-9]+$") == cword and (len == 6 or len == 3))
     end,
     action = function()
       vim.cmd("CccPick")
