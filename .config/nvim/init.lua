@@ -148,6 +148,9 @@ vim.filetype.add({
   extension = {
     sky = "python", -- starlark
   },
+  filename = {
+    [".nvimrc"] = "lua",
+  },
   pattern = {
     [".*/%.vscode/.*%.json"] = "json5", -- These json files frequently have comments
   },
@@ -543,7 +546,7 @@ safe_require("resession", function(resession)
   })
 end)
 safe_require("config-local").setup({
-  config_files = { ".vimrc.lua" },
+  config_files = { ".vimrc.lua", ".nvimrc" },
   autocommands_create = true,
   commands_create = true,
   silent = false,
