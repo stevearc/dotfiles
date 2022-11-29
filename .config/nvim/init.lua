@@ -728,7 +728,6 @@ end)
 safe_require("femaco").setup()
 
 safe_require("ccc", function(ccc)
-  local mapping = ccc.mapping
   ccc.setup({
     inputs = {
       ccc.input.hsl,
@@ -740,8 +739,8 @@ safe_require("ccc", function(ccc)
     name = "Pick color",
     condition = function()
       local cword = vim.fn.expand("<cword>"):lower()
-      local len = cword:len()
-      return cword:match("^#[a-f0-9]+$") or (cword:match("^[a-f0-9]+$") == cword and (len == 6 or len == 3))
+      local match = cword:match("^#([a-f0-9]+)$") or cword:match("^[a-f0-9]+$")
+      return match and (match:len() == 6 or match:len() == 3)
     end,
     action = function()
       vim.cmd("CccPick")
