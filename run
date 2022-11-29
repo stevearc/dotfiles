@@ -7,9 +7,10 @@ source "$HERE/scripts/utils.sh"
 source "$HERE/scripts/all_platforms.sh"
 if [ $UBUNTU ]; then
   source "$HERE/scripts/ubuntu.sh"
-fi
-if [ $MANJARO ]; then
-  source "$HERE/scripts/manjaro.sh"
+elif [ $MANJARO ]; then
+  source "$HERE/scripts/arch.sh"
+elif [ $ARCHOS ]; then
+  source "$HERE/scripts/arch.sh"
 fi
 if [ $WSL ]; then
   source "$HERE/scripts/wsl.sh"

@@ -25,6 +25,8 @@ if hascmd apt-get; then
   export UBUNTU=1
 elif hascmd pamac; then
   export MANJARO=1
+elif hascmd pacman; then
+  export ARCHOS=1
 fi
 
 command -v realpath >/dev/null 2>&1 || realpath() {

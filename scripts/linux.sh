@@ -13,7 +13,7 @@ dc-install-nvm() {
   fi
   hascmd nvm && nvm current && return
   local nvm_dir="${XDG_DATA_HOME-$HOME/.local/share}/nvm"
-  if [ ! -d "$nvm_dir" ]; then
+  if [ ! -e "$nvm_dir" ]; then
     mkdir -p "$nvm_dir"
     local latest
     latest=$(

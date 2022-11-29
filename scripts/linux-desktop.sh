@@ -183,32 +183,9 @@ EOF
     curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o ~/.local/bin/yt-dlp
     chmod +x ~/.local/bin/yt-dlp
   fi
-  setup-mopidy
+  flatpak install --user --noninteractive flathub com.spotify.Client com.discordapp.Discord com.google.Chrome org.signal.Signal
   dc-install-kitty
   dc-install-rclone
-}
-
-setup-mopidy() {
-  local conf="$HOME/.config/mopidy/mopidy.conf"
-  if [ ! -e "$conf" ]; then
-    cp "$HERE/static/mopidy.conf" "$conf"
-    read -r -p "Spotify password: " pw
-    sed -i -e "s/^password =.*/password = $pw/" "$conf"
-    open https://mopidy.com/ext/spotify/
-    echo "Authenticate with spotify then come back"
-    read -r -p "Spotify client_id: " pw
-    sed -i -e "s/^client_id =.*/client_id = $pw/" "$conf"
-    read -r -p "Spotify client_secret: " pw
-    sed -i -e "s/^client_secret =.*/client_secret = $pw/" "$conf"
-  fi
-  sudo rm -f /lib/systemd/system/mopidy.service
-  local service="$HOME/.config/systemd/user/mopidy.service"
-  if [ ! -e "$service" ]; then
-    cp "$HERE/static/mopidy.service" "$service"
-    systemctl --user daemon-reload
-    systemctl --user enable mopidy.service
-    systemctl --user start mopidy.service
-  fi
 }
 
 # shellcheck disable=SC2034

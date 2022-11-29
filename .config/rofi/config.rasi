@@ -5,14 +5,12 @@ kb-cancel: "Escape,Control+g,Control+c,Control+bracketleft";
 font: "UbuntuMono Nerd Font Medium 14";
 show-icons: true;
 combi-hide-mode-prefix: true;
-/* Needs newer version than in ubuntu repos */
-/* drun { */
-/*   display-name: " "; */
-/* } */
-/**/
-/* run { */
-/*   display-name: " "; */
-/* } */
+drun {
+  display-name: " ";
+}
+run {
+  display-name: " ";
+}
 }
 
 * {
@@ -21,6 +19,7 @@ combi-hide-mode-prefix: true;
   green:      #9ece6a;
   yellow:     #e0af68;
   blue:       #7aa2f7;
+  purple:     #847af7;
   mangenta:   #bb9af7;
   cyan:       #7dcfff;
   emphasis:   #3d59a1;
@@ -77,11 +76,10 @@ element {
   border-radius: 3px;
 }
 
-/* Not recognized by outdated version in ubuntu repos */
-/* element-icon { */
-/*   padding: 10px; */
-/*   size: 1.7ch; */
-/* } */
+element-icon {
+  padding: 1px;
+  size: 1.5em;
+}
 
 element selected {
   background-color: @emphasis;
