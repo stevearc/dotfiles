@@ -860,6 +860,14 @@ safe_require("three", function(three)
     three.remove_project()
   end, {})
 end)
+safe_require("fidget").setup({
+  text = {
+    spinner = "dots",
+  },
+  window = {
+    relative = "editor",
+  },
+})
 safe_require(
   "lir",
   "lir.actions",

@@ -14,29 +14,6 @@ local function arduino_status()
   return line
 end
 
-local function lsp_messages()
-  local ret = ""
-  for _, client in ipairs(vim.lsp.get_active_clients()) do
-    if client.name == "null-ls" then
-      goto continue
-    end
-    for _, progress in pairs(client.messages.progress) do
-      if not progress.done then
-        ret = progress.title
-        if progress.message then
-          ret = ret .. " " .. progress.message
-        end
-        if progress.percentage then
-          ret = string.format("%s %[%d%%]", ret, progress.percentage)
-        end
-        return ret
-      end
-    end
-    ::continue::
-  end
-  return ret
-end
-
 local function session_name()
   return ""
 end
@@ -74,7 +51,6 @@ vim.defer_fn(function()
         arduino_status,
       },
       lualine_x = {
-        lsp_messages,
         session_name,
         "GkeepStatus",
         { "overseer", unique = true },

@@ -245,3 +245,6 @@
 [submodule "vimplugins/nvim-treesitter-textobjects"]
 	path = vimplugins/nvim-treesitter-textobjects
 	url = https://github.com/nvim-treesitter/nvim-treesitter-textobjects.git
+[submodule "vimplugins/fidget.nvim"]
+	path = vimplugins/fidget.nvim
+	url = https://github.com/j-hui/fidget.nvim
