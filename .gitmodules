@@ -100,9 +100,6 @@
 [submodule "vimplugins/vim-matchup"]
 	path = vimplugins/vim-matchup
 	url = https://github.com/andymass/vim-matchup.git
-[submodule "vimplugins/nvim-treesitter-textsubjects"]
-	path = vimplugins/nvim-treesitter-textsubjects
-	url = https://github.com/RRethy/nvim-treesitter-textsubjects.git
 [submodule "vimplugins/null-ls.nvim"]
 	path = vimplugins/null-ls.nvim
 	url = https://github.com/jose-elias-alvarez/null-ls.nvim.git
@@ -245,3 +242,6 @@
 [submodule "vimplugins/nvim-luaref"]
 	path = vimplugins/nvim-luaref
 	url = https://github.com/milisims/nvim-luaref.git
+[submodule "vimplugins/nvim-treesitter-textobjects"]
+	path = vimplugins/nvim-treesitter-textobjects
+	url = https://github.com/nvim-treesitter/nvim-treesitter-textobjects.git
