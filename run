@@ -231,7 +231,7 @@ main() {
   done
   shift $((OPTIND - 1))
   if [ "$(git status --porcelain | wc -l)" == "0" ]; then
-    git submodule update --init --recursive
+    git submodule update --init --recursive --jobs 8
   fi
   if hascmd platform-setup; then
     platform-setup
