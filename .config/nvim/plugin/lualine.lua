@@ -34,6 +34,9 @@ vim.defer_fn(function()
       globalstatus = true,
       icons_enabled = vim.g.devicons ~= false,
       section_separators = "",
+      disabled_filetypes = {
+        winbar = { "qf" },
+      },
     },
     sections = {
       lualine_a = { "mode" },
@@ -49,8 +52,14 @@ vim.defer_fn(function()
           sections = { "error", "warn" },
         },
         arduino_status,
+        function()
+          return require("projects")[0].status_c()
+        end,
       },
       lualine_x = {
+        function()
+          return require("projects")[0].status_x()
+        end,
         session_name,
         "GkeepStatus",
         { "overseer", unique = true },
