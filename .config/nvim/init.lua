@@ -558,7 +558,6 @@ safe_require("config-local").setup({
 -- * Bug: No output or debug info if test fails to run (e.g. try running tests in cpython)
 -- * Bug: Sometimes issues with running python tests (dir position stuck in running state)
 -- * Bug: Files shouldn't appear in summary if they contain no tests (e.g. python file named 'test_*.py')
--- * Bug: default colors are not in-colorscheme
 -- * Bug: dir/file/namespace status should be set by children
 -- * Bug: Run last test doesn't work with marked tests (if ran all marked last)
 -- * Feat: If summary tree only has a single (file/dir) child, merge the display
@@ -609,6 +608,9 @@ safe_require(
         running = " ",
         failed = " ",
         unknown = " ",
+        running_animated = vim.tbl_map(function(s)
+          return s .. " "
+        end, { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }),
       },
       diagnostic = {
         enabled = true,
