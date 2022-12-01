@@ -181,6 +181,10 @@ fi
 
 export DOCKER_GUI="--net=host --env=DISPLAY --volume=$HOME/.Xauthority:/root/.Xauthority:rw"
 
+if command -v starship >/dev/null; then
+  eval "$(starship init bash)"
+fi
+
 if [ -n "$PROFILE_STARTUP" ]; then
   set +x
   exec 2>&3 3>&-
