@@ -52,6 +52,7 @@ dc-install-common() {
     ripgrep \
     rsync \
     shellcheck \
+    starship \
     tmux \
     tree \
     unzip \
@@ -112,11 +113,13 @@ dotcmd-desktop() {
     return
   fi
   sudo pacman -Syq --noconfirm \
+    bluedevil \
     blueman \
     bluez \
     dolphin-emu \
     ffmpeg \
     flatpak \
+    gtk2 \
     kitty \
     libnotify \
     mupen64plus \
@@ -124,6 +127,7 @@ dotcmd-desktop() {
     steam \
     vlc \
     zenity
+  yay -S --noconfirm tomb # gtk2 above is a dependency
   setup-desktop-generic
   if [[ $XDG_CURRENT_DESKTOP =~ "GNOME" ]]; then
     sudo pacman -Syq --noconfirm dconf
