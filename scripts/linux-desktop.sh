@@ -97,10 +97,11 @@ setup-kde() {
   kwriteconfig5 --file ~/.config/kdeglobals --group KDE --key AnimationDurationFactor 0.125
 
   # Global shortcuts
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{3266e259-e66d-4ae2-b7bd-b013fb04b811}' "Alt+Shift+R,none,Rofi run"
+  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{3266e259-e66d-4ae2-b7bd-b013fb04b811}' "Alt+Shift+R,none,KRunner"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{686a288d-cf2e-4345-bc3d-bde3b6aa2229}' "Ctrl+Alt+T,none,Launch Konsole"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{6b5c0aeb-f76a-48c4-b890-e997d33083ec}' "Alt+Shift+Return,none,Kitty"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{94d72d73-7359-4a07-bf76-1be49f4b577c}' "Alt+Shift+P,none,Rofi drun"
+  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{94d72d73-7359-4a07-bf76-1be49f4b577c}' "Alt+Shift+P,none,KRunner"
+  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group org.kde.krunner.desktop --key '_launch' "$(echo -e "Search\tAlt+Space\tAlt+Shift+P,Alt+Space\tAlt+F2\tSearch,KRunner")"
 
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Close' "Alt+W,Alt+F4,Close Window"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Fullscreen' "F11,none,Make Window Fullscreen"
@@ -122,6 +123,13 @@ setup-kde() {
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 3' "Alt+#,none,Window to Desktop 3"
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 4' 'Alt+$,none,Window to Desktop 4'
   kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group ksmserver --key "Lock Session" "$(echo -e "Meta+L\tCtrl+Alt+L\tScreensaver,Meta+L\tCtrl+Alt+L\tScreensaver,Lock Session")"
+
+  # Krunner
+  kwriteconfig5 --file ~/.config/krunnerrc --group General --key "FreeFloating" "true"
+  kwriteconfig5 --file ~/.config/krunnerrc --group Plugins --key "bookmarksEnabled" "false"
+  kwriteconfig5 --file ~/.config/krunnerrc --group Plugins --key "calculatorEnabled" "false"
+  kwriteconfig5 --file ~/.config/krunnerrc --group Plugins --key "recentdocumentsEnabled" "false"
+  kwriteconfig5 --file ~/.config/krunnerrc --group Plugins --key "webshortcutsEnabled" "false"
 
   # Make capslock control
   kwriteconfig5 --file ~/.config/kxkbrc --group Layout Options "caps:ctrl_modifier"

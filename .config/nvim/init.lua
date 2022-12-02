@@ -443,8 +443,8 @@ safe_require("aerial", function(aerial)
     -- backends = { "lsp", "treesitter", "markdown" },
     -- filter_kind = false,
     on_attach = function(bufnr)
-      vim.keymap.set({ "n", "v" }, "{", aerial.prev, { buffer = bufnr })
-      vim.keymap.set({ "n", "v" }, "}", aerial.next, { buffer = bufnr })
+      -- vim.keymap.set({ "n", "v" }, "{", aerial.prev, { buffer = bufnr })
+      -- vim.keymap.set({ "n", "v" }, "}", aerial.next, { buffer = bufnr })
     end,
     keymaps = {
       ["<"] = "actions.tree_decrease_fold_level",
