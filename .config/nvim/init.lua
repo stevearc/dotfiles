@@ -102,6 +102,7 @@ vim.opt.completeopt = { "menu", "menuone", "noselect" }
 vim.o.expandtab = true -- Turn tabs into spaces
 vim.o.formatoptions = "rqnlj"
 vim.o.gdefault = true -- Use 'g' flag by default with :s/foo/bar
+vim.o.guifont = "UbuntuMono Nerd Font:h10"
 vim.o.ignorecase = true
 vim.o.laststatus = 3 -- Global statusline
 vim.o.mouse = "a" -- Enable use of mouse
