@@ -111,7 +111,7 @@ configure-git() {
   grep tags ~/.config/global-git-ignore >/dev/null 2>&1 || echo tags >> ~/.config/global-git-ignore
   grep .DS_Store ~/.config/global-git-ignore >/dev/null 2>&1 || echo .DS_Store >> ~/.config/global-git-ignore
   grep .vimrc.lua ~/.config/global-git-ignore >/dev/null 2>&1 || echo .vimrc.lua >> ~/.config/global-git-ignore
-  grep .nvimrc ~/.config/global-git-ignore >/dev/null 2>&1 || echo .nvimrc >> ~/.config/global-git-ignore
+  grep .nvimrc.lua ~/.config/global-git-ignore >/dev/null 2>&1 || echo .nvimrc.lua >> ~/.config/global-git-ignore
   grep __pycache__ ~/.config/global-git-ignore >/dev/null 2>&1 || echo __pycache__ >> ~/.config/global-git-ignore
 
   if hascmd fzf; then

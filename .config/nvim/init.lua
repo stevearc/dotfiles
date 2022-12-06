@@ -547,7 +547,7 @@ safe_require("resession", function(resession)
   })
 end)
 safe_require("config-local").setup({
-  config_files = { ".vimrc.lua", ".nvimrc", ".nvimrc.lua" },
+  config_files = { ".nvimrc.lua", ".vimrc.lua", ".nvimrc" },
   autocommands_create = true,
   commands_create = true,
   silent = false,
@@ -756,7 +756,7 @@ safe_require("ccc", function(ccc)
       end,
     },
   })
-  safe_require("quick_action").add("<CR>", {
+  safe_require("quick_action").add("menu", {
     name = "Pick color",
     condition = function()
       local pickers = require("ccc.config").get("pickers")
@@ -789,21 +789,21 @@ safe_require("ccc", function(ccc)
   })
 end)
 
--- Diagnostics
-safe_require("quick_action").add("<CR>", {
-  name = "Show diagnostics",
-  condition = function()
-    return not vim.tbl_isempty(
-      vim.diagnostic.get(
-        0,
-        { lnum = vim.api.nvim_win_get_cursor(0)[1] - 1, severity = { min = vim.diagnostic.severity.WARN } }
+safe_require("quick_action", function(quick_action)
+  quick_action.set_keymap("n", "<CR>", "menu")
+  quick_action.add("menu", {
+    name = "Show diagnostics",
+    condition = function()
+      local lnum = vim.api.nvim_win_get_cursor(0)[1] - 1
+      return not vim.tbl_isempty(
+        vim.diagnostic.get(0, { lnum = lnum, severity = { min = vim.diagnostic.severity.WARN } })
       )
-    )
-  end,
-  action = function()
-    vim.diagnostic.open_float(0, { scope = "line", border = "rounded" })
-  end,
-})
+    end,
+    action = function()
+      vim.diagnostic.open_float(0, { scope = "line", border = "rounded" })
+    end,
+  })
+end)
 
 vim.api.nvim_create_autocmd("BufEnter", {
   desc = "Pin buffer to window if opened from remote",

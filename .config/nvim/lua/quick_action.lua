@@ -6,17 +6,20 @@ local M = {}
 ---@field action fun()
 
 ---@type table<string, QuickAction>
-local bindings = {}
+local registered_actions = {}
 
-local autocmd_id
-
----@param lhs string
-local function run_action(lhs)
+---@param name string
+---@param fallback nil|string
+M.run_action = function(name, fallback)
+  name = name:lower()
   local actions = vim.tbl_filter(function(action)
     return not action.condition or action.condition()
-  end, bindings[lhs])
+  end, registered_actions[name])
 
   if #actions == 0 then
+    if fallback then
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(fallback, true, true, true), "n", false)
+    end
     return
   elseif #actions == 1 then
     actions[1].action()
@@ -34,30 +37,27 @@ local function run_action(lhs)
   end
 end
 
+---@param mode string|string[]
 ---@param lhs string
+---@param name string
+---@param opts table
+M.set_keymap = function(mode, lhs, name, opts)
+  opts = vim.tbl_deep_extend("keep", opts or {}, {
+    desc = string.format("Run action %s", name),
+  })
+  vim.keymap.set(mode, lhs, function()
+    M.run_action(name, lhs)
+  end, opts)
+end
+
+---@param name string
 ---@param action QuickAction
-M.add = function(lhs, action)
-  lhs = lhs:lower()
-  if not bindings[lhs] then
-    bindings[lhs] = {}
+M.add = function(name, action)
+  name = name:lower()
+  if not registered_actions[name] then
+    registered_actions[name] = {}
   end
-  table.insert(bindings[lhs], action)
-  if not autocmd_id then
-    autocmd_id = vim.api.nvim_create_autocmd("FileType", {
-      desc = "Set up quick actions in normal buffers",
-      pattern = "*",
-      callback = function(params)
-        if vim.bo[params.buf].buftype ~= "" then
-          return
-        end
-        for lhs in pairs(bindings) do
-          vim.keymap.set("n", lhs, function()
-            run_action(lhs)
-          end, { buffer = params.buf, desc = "Action picker" })
-        end
-      end,
-    })
-  end
+  table.insert(registered_actions[name], action)
 end
 
 return M
