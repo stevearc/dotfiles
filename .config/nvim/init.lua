@@ -547,7 +547,7 @@ safe_require("resession", function(resession)
   })
 end)
 safe_require("config-local").setup({
-  config_files = { ".vimrc.lua", ".nvimrc" },
+  config_files = { ".vimrc.lua", ".nvimrc", ".nvimrc.lua" },
   autocommands_create = true,
   commands_create = true,
   silent = false,
