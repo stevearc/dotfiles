@@ -72,6 +72,4 @@ else
   if chosen then
     vim.cmd(string.format("colorscheme %s", chosen))
   end
-
-  safe_require("colorizer").setup()
 end

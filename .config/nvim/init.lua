@@ -452,11 +452,11 @@ safe_require("aerial", function(aerial)
       [">"] = "actions.tree_increase_fold_level",
     },
   })
-  vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>")
-  vim.keymap.set({ "n", "v" }, "[s", aerial.prev)
-  vim.keymap.set({ "n", "v" }, "]s", aerial.next)
-  vim.keymap.set({ "n", "v" }, "[u", aerial.prev_up)
-  vim.keymap.set({ "n", "v" }, "]u", aerial.next_up)
+  vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>", { desc = "[A]erial toggle" })
+  vim.keymap.set({ "n", "v" }, "[s", aerial.prev, { desc = "Previous aerial symbol" })
+  vim.keymap.set({ "n", "v" }, "]s", aerial.next, { desc = "Next aerial symbol" })
+  vim.keymap.set({ "n", "v" }, "[u", aerial.prev_up, { desc = "Previous aerial parent symbol" })
+  vim.keymap.set({ "n", "v" }, "]u", aerial.next_up, { desc = "Next aerial parent symbol" })
 end)
 
 vim.g.lightspeed_no_default_keymaps = true
@@ -466,14 +466,14 @@ safe_require("lightspeed", function(lightspeed)
     safe_labels = {},
   })
   -- Not sure which of these mappings I prefer yet
-  vim.keymap.set("", "<leader>s", "<Plug>Lightspeed_omni_s")
-  vim.keymap.set("", "gs", "<Plug>Lightspeed_omni_s")
+  vim.keymap.set("", "<leader>s", "<Plug>Lightspeed_omni_s", { desc = "Lightspeed search" })
+  vim.keymap.set("", "gs", "<Plug>Lightspeed_omni_s", { desc = "Lightspeed search" })
 end)
 safe_require("tags", function(tags)
   tags.setup({
     on_attach = function(bufnr)
       -- vim.keymap.set("n", "gd", tags.goto_definition, { buffer = bufnr })
-      vim.keymap.set("n", "<C-]>", tags.goto_definition, { buffer = bufnr })
+      vim.keymap.set("n", "<C-]>", tags.goto_definition, { buffer = bufnr, desc = "Goto tag" })
     end,
   })
 end)
@@ -507,15 +507,15 @@ safe_require("resession", function(resession)
     end,
     extensions = { aerial = {}, overseer = {}, quickfix = {}, three = {} },
   })
-  vim.keymap.set("n", "<leader>ss", resession.save)
+  vim.keymap.set("n", "<leader>ss", resession.save, { desc = "[S]ession [S]ave" })
   vim.keymap.set("n", "<leader>st", function()
     resession.save_tab()
-  end)
-  vim.keymap.set("n", "<leader>so", resession.load)
+  end, { desc = "[S]ession save [T]ab" })
+  vim.keymap.set("n", "<leader>so", resession.load, { desc = "[S]ession [O]pen" })
   vim.keymap.set("n", "<leader>sl", function()
     resession.load(nil, { reset = false })
-  end)
-  vim.keymap.set("n", "<leader>sd", resession.delete)
+  end, { desc = "[S]ession [L]oad without reset" })
+  vim.keymap.set("n", "<leader>sd", resession.delete, { desc = "[S]ession [D]elete" })
   vim.api.nvim_create_user_command("SessionDetach", function()
     resession.detach()
   end, {})
@@ -652,7 +652,7 @@ safe_require(
 
 safe_require("overseer", function(overseer)
   overseer.setup({
-    strategy = { "jobstart", preserve_output = true },
+    strategy = { "jobstart" },
     log = {
       {
         type = "echo",
@@ -733,15 +733,55 @@ safe_require("ccc", function(ccc)
     inputs = {
       ccc.input.hsl,
       ccc.input.rgb,
-      -- ccc.input.cmyk,
+    },
+    highlighter = {
+      auto_enable = true,
+      filetypes = { "html", "css", "sass", "less", "javascript", "typescript", "javascriptreact", "typescriptreact" },
+    },
+    recognize = {
+      input = true,
+      output = true,
+    },
+    mappings = {
+      ["?"] = function()
+        print("i - Toggle input mode")
+        print("o - Toggle output mode")
+        print("a - Toggle alpha slider")
+        print("g - Toggle palette")
+        print("w - Go to next color in palette")
+        print("b - Go to prev color in palette")
+        print("l/d/, - Increase slider")
+        print("h/s/m - Decrease slider")
+        print("1-9 - Set slider value")
+      end,
     },
   })
   safe_require("quick_action").add("<CR>", {
     name = "Pick color",
     condition = function()
-      local cword = vim.fn.expand("<cword>"):lower()
-      local match = cword:match("^#([a-f0-9]+)$") or cword:match("^[a-f0-9]+$")
-      return match and (match:len() == 6 or match:len() == 3)
+      local pickers = require("ccc.config").get("pickers")
+      local cursor = vim.api.nvim_win_get_cursor(0)
+      local lnum = cursor[1]
+      local line = vim.api.nvim_buf_get_lines(0, lnum - 1, lnum, true)[1]
+      local parse_col = 1
+      while true do
+        local start, end_, RGB
+        for _, picker in ipairs(pickers) do
+          local s_, e_, rgb = picker:parse_color(line, parse_col)
+          if s_ and s_ <= cursor[2] + 1 and e_ and e_ >= cursor[2] + 1 then
+            return true
+          elseif s_ and (start == nil or s_ < start) then
+            start = s_
+            end_ = e_
+            RGB = rgb
+          end
+        end
+        if RGB == nil then
+          break
+        end
+        parse_col = end_ + 1
+      end
+      return false
     end,
     action = function()
       vim.cmd("CccPick")

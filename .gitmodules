@@ -31,10 +31,6 @@
 [submodule "vimplugins/vim-autoswap"]
 	path = vimplugins/vim-autoswap
 	url = https://github.com/gioele/vim-autoswap.git
-[submodule "vimplugins/nvim-colorizer.lua"]
-	path = vimplugins/nvim-colorizer.lua
-	url = https://github.com/NvChad/nvim-colorizer.lua.git
-	ignore = untracked
 [submodule "vimplugins/aerial.nvim"]
 	path = vimplugins/aerial.nvim
 	url = https://github.com/stevearc/aerial.nvim.git
