@@ -69,7 +69,7 @@ safe_require("telescope", function(telescope)
     "<cmd>lua require('telescope.builtin').buffers({previewer=false, only_cwd=true})<cr>"
   )
   vim.keymap.set("n", "<leader>ba", "<cmd>lua require('telescope.builtin').buffers({previewer=false})<cr>")
-  vim.keymap.set("n", "<leader>fg", "<cmd>Telescope live_grep<CR>")
+  vim.keymap.set("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", { desc = "[F]ind by [G]rep" })
   vim.keymap.set("n", "<leader>fb", "<cmd>lua require('telescope.builtin').live_grep({grep_open_files = true})<cr>")
   vim.keymap.set("n", "<leader>fh", "<cmd>Telescope help_tags<CR>")
   vim.keymap.set("n", "<leader>fc", "<cmd>Telescope commands<CR>")
@@ -98,11 +98,12 @@ if vim.fn.executable("fzf") == 1 then
     })
     find_files = function(opts)
       opts = opts or {}
-      if not opts.cwd and vim.fn.isdirectory(".git") == 1 then
-        require("fzf-lua").git_files(opts)
-      else
-        require("fzf-lua").files(opts)
-      end
+      -- git_files fails to find new files, which I often want
+      -- if not opts.cwd and vim.fn.isdirectory(".git") == 1 then
+      --   require("fzf-lua").git_files(opts)
+      -- else
+      require("fzf-lua").files(opts)
+      -- end
     end
   end)
 end
