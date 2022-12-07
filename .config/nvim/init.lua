@@ -380,6 +380,9 @@ safe_require("dressing").setup({
   input = {
     insert_only = false,
     -- relative = "editor",
+    win_options = {
+      sidescrolloff = 4,
+    },
   },
 })
 
@@ -505,7 +508,7 @@ safe_require("resession", function(resession)
       local dir = vim.fn.getcwd(-1, vim.api.nvim_tabpage_get_number(tabpage))
       return vim.startswith(vim.api.nvim_buf_get_name(bufnr), dir)
     end,
-    extensions = { aerial = {}, overseer = {}, quickfix = {}, three = {} },
+    extensions = { aerial = {}, overseer = {}, quickfix = {}, three = {}, config_local = {} },
   })
   vim.keymap.set("n", "<leader>ss", resession.save, { desc = "[S]ession [S]ave" })
   vim.keymap.set("n", "<leader>st", function()
@@ -546,13 +549,15 @@ safe_require("resession", function(resession)
     end,
   })
 end)
-safe_require("config-local").setup({
-  config_files = { ".nvimrc.lua", ".vimrc.lua", ".nvimrc" },
-  autocommands_create = true,
-  commands_create = true,
-  silent = false,
-  lookup_parents = true,
-})
+safe_require("config-local", function(config_local)
+  config_local.setup({
+    config_files = { ".nvimrc.lua", ".vimrc.lua", ".nvimrc" },
+    autocommands_create = true,
+    commands_create = true,
+    silent = false,
+    lookup_parents = true,
+  })
+end)
 
 -- Todo:
 -- * Bug: Running tests on directory doesn't work if directory not in tree (but tree has subdirectories)
