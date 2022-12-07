@@ -125,7 +125,6 @@ safe_require("lspconfig", function(lspconfig)
   -- Configure the LSP servers
   local lspservers = {
     "bashls",
-    "clangd",
     "cssls",
     "gdscript",
     "gopls",
@@ -162,6 +161,9 @@ safe_require("lspconfig", function(lspconfig)
   lsp.safe_setup("pyright", {
     -- pyright is real noisy when we're using sqlalchemy
     diagnostics = not is_using_sqlalchemy(),
+  })
+  lsp.safe_setup("clangd", {
+    filetypes = { "c", "cpp", "objc", "objcpp" },
   })
   lsp.safe_setup("jsonls", {
     filetypes = { "json", "jsonc", "json5" },
