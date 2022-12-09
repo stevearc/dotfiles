@@ -307,7 +307,6 @@ end
 lazy.load("aerial.nvim")
 lazy.load("closetag")
 lazy.load("comment.nvim")
-lazy.load("conjoin.nvim")
 lazy.load("dressing.nvim")
 lazy.load("editorconfig-vim")
 lazy.load("fzf-lua")

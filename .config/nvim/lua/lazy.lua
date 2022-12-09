@@ -175,11 +175,19 @@ M.keymap = function(package, modes, lhs, rhs, opts)
 end
 
 ---@param package string
+local function packadd(package)
+  local ok, err = pcall(vim.cmd.packadd, { args = { package }, bang = not vim.v.vim_did_enter })
+  if not ok then
+    vim.notify_once(string.format("Error loading package %s: %s", package, err), vim.log.levels.ERROR)
+  end
+end
+
+---@param package string
 M.load = function(package)
   local opts = lazy_packages[package]
   if not opts then
     if not M.loaded[package] then
-      vim.cmd.packadd({ args = { package }, bang = not vim.v.vim_did_enter })
+      packadd(package)
       M.loaded[package] = true
     end
     return
@@ -204,7 +212,7 @@ M.load = function(package)
   for _, cb in ipairs(opts.pre_config) do
     cb()
   end
-  vim.cmd.packadd({ args = { package }, bang = not vim.v.vim_did_enter })
+  packadd(package)
   local module
   local call_post_config = true
   if opts.req then
