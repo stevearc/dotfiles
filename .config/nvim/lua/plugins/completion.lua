@@ -1,3 +1,12 @@
+local lazy = require("lazy")
+lazy.load("nvim-cmp")
+lazy.load("cmp-buffer")
+lazy.load("cmp-nvim-lsp")
+lazy.load("cmp-nvim-lua")
+lazy.load("cmp-path")
+lazy.load("cmp-vsnip")
+lazy.load("cmp_luasnip")
+
 safe_require("cmp", function(cmp)
   local luasnip = require("luasnip")
 

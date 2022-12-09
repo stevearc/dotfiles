@@ -1,4 +1,9 @@
 local lsp = require("lsp")
+local lazy = require("lazy")
+lazy.load("SchemaStore.nvim")
+lazy.load("flow-coverage.nvim")
+lazy.load("fidget.nvim")
+
 safe_require("lspconfig", function(lspconfig)
   -- vim.lsp.set_log_level("debug")
 
@@ -212,24 +217,30 @@ safe_require("lspconfig", function(lspconfig)
     },
   })
 
-  safe_require("neodev").setup({})
-  local sumneko_root_path = os.getenv("HOME") .. "/.local/share/nvim/language-servers/lua-language-server"
-  local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
-  lsp.safe_setup("sumneko_lua", {
-    cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
-    settings = {
-      Lua = {
-        IntelliSense = {
-          traceLocalSet = true,
+  lazy("lua-dev.nvim", {
+    req = "neodev",
+    filetypes = "lua",
+    post_config = function(neodev)
+      neodev.setup({})
+      local sumneko_root_path = os.getenv("HOME") .. "/.local/share/nvim/language-servers/lua-language-server"
+      local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
+      lsp.safe_setup("sumneko_lua", {
+        cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
+        settings = {
+          Lua = {
+            IntelliSense = {
+              traceLocalSet = true,
+            },
+            diagnostics = {
+              globals = { "vim", "safe_require", "it", "describe", "before_each", "after_each" },
+            },
+            telemetry = {
+              enable = false,
+            },
+          },
         },
-        diagnostics = {
-          globals = { "vim", "safe_require", "it", "describe", "before_each", "after_each" },
-        },
-        telemetry = {
-          enable = false,
-        },
-      },
-    },
+      })
+    end,
   })
 
   -- conflicts with work

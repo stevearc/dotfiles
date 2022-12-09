@@ -1,3 +1,4 @@
+local lazy = require("lazy")
 local timer = nil
 local function throttle_write(delay)
   local bufnr = vim.api.nvim_get_current_buf()
@@ -35,6 +36,7 @@ vim.g.firenvim_config = {
 }
 
 if vim.g.started_by_firenvim then
+  lazy.load("firenvim")
   vim.api.nvim_set_option("guifont", "UbuntuMono Nerd Font:h11")
   local group = vim.api.nvim_create_augroup("FireNvimFT", {})
   vim.api.nvim_create_autocmd("BufEnter", {
@@ -51,6 +53,7 @@ if vim.g.started_by_firenvim then
       local buf_group = vim.api.nvim_create_augroup("FireNvimWrite", {})
       vim.api.nvim_create_autocmd({ "FocusLost", "TextChanged", "TextChangedI" }, {
         buffer = vim.api.nvim_get_current_buf(),
+        group = buf_group,
         nested = true,
         callback = function(params)
           local delay = params.event == "FocusLost" and 10 or 1000
@@ -63,7 +66,7 @@ if vim.g.started_by_firenvim then
       for _, name in ipairs(unnecessary_groups) do
         local ok, err = pcall(vim.api.nvim_del_augroup_by_name, name)
         if not ok then
-          vim.notify(string.format("Could not delete augroup '%s'", name), vim.log.levels.WARN)
+          vim.notify(string.format("Could not delete augroup '%s': %s", name, err), vim.log.levels.WARN)
         end
       end
     end,

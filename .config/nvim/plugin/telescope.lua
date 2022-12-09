@@ -1,3 +1,4 @@
+local lazy = require("lazy")
 local function find_files()
   vim.notify("No fuzzy finder installed", vim.log.levels.ERROR)
 end
@@ -53,8 +54,6 @@ safe_require("telescope", function(telescope)
       aerial = {},
     },
   })
-  pcall(telescope.load_extension, "aerial")
-  pcall(telescope.load_extension, "gkeep")
   pcall(telescope.load_extension, "luasnip")
 
   find_files = function(opts)
@@ -75,8 +74,18 @@ safe_require("telescope", function(telescope)
   vim.keymap.set("n", "<leader>fc", "<cmd>Telescope commands<CR>")
   vim.keymap.set("n", "<leader>fk", "<cmd>Telescope keymaps<CR>")
   vim.keymap.set("n", "<leader>fs", "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>")
-  vim.keymap.set("n", "<leader>fd", "<cmd>Telescope aerial<CR>")
-  vim.keymap.set("n", "<leader>fn", "<cmd>Telescope gkeep<CR>")
+  lazy("aerial.nvim", {
+    keymaps = { { "n", "<leader>fd", "<cmd>Telescope aerial<CR>", { desc = "[F]ind [D]ocument symbol" } } },
+    post_config = function()
+      pcall(telescope.load_extension, "aerial")
+    end,
+  })
+  lazy("gkeep.nvim", {
+    keymaps = { { "n", "<leader>fn", "<cmd>Telescope gkeep<CR>", { desc = "[F]ind [N]ote" } } },
+    post_config = function()
+      pcall(telescope.load_extension, "gkeep")
+    end,
+  })
   vim.keymap.set("n", "<leader>fq", "<cmd>Telescope quickfixhistory<CR>")
   vim.keymap.set("i", "<C-s>", "<cmd>lua require('telescope').extensions.luasnip.luasnip()<CR>")
 end)

@@ -1,8 +1,10 @@
 _G.stevearc = {}
+local lazy = require("lazy")
 
 -- Profiling
 local should_profile = os.getenv("NVIM_PROFILE")
 if should_profile then
+  lazy.load("profile.nvim")
   require("profile").instrument_autocmds()
   if should_profile:lower():match("^start") then
     require("profile").start("*")
@@ -25,44 +27,9 @@ local function toggle_profile()
     prof.start("*")
   end
 end
-vim.keymap.set("", "<f1>", toggle_profile)
+lazy.keymap("profile.nvim", "", "<f1>", toggle_profile, { desc = "Toggle profiling" })
 
-function _G.safe_require(...)
-  local args = { ... }
-  local mods = {}
-  local first_mod
-  for _, arg in ipairs(args) do
-    if type(arg) == "function" then
-      arg(unpack(mods))
-      break
-    end
-    local ok, mod = pcall(require, arg)
-    if ok then
-      if not first_mod then
-        first_mod = mod
-      end
-      table.insert(mods, mod)
-    else
-      -- Don't bother notifying if we're in a nvenv
-      if not os.getenv("NVENV") then
-        vim.notify_once(string.format("Missing module: %s", arg), vim.log.levels.WARN)
-      end
-      -- Return a dummy item that returns functions, so we can do things like
-      -- safe_require("module").setup()
-      local dummy = {}
-      setmetatable(dummy, {
-        __call = function()
-          return dummy
-        end,
-        __index = function()
-          return dummy
-        end,
-      })
-      return dummy
-    end
-  end
-  return first_mod
-end
+_G.safe_require = lazy.require
 
 -- Patch vim.keymap.set so that it reports errors
 local _keymap_set = vim.keymap.set
@@ -86,7 +53,7 @@ vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*")
 local aug = vim.api.nvim_create_augroup("StevearcNewConfig", {})
 
-local ftplugin = safe_require("ftplugin")
+local ftplugin = lazy.require("ftplugin")
 vim.keymap.set("n", "<f2>", [[<cmd>lua require'plenary.profile'.start("profile.log", {flame = true})<cr>]])
 vim.keymap.set("n", "<f3>", [[<cmd>lua require'plenary.profile'.stop()<cr>]])
 
@@ -210,7 +177,7 @@ vim.keymap.set("n", "<leader>P", '"0P')
 
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "WinNew", "VimResized" }, {
   desc = "Always keep the cursor vertically centered",
-  pattern = "*,*.*",
+  pattern = "*",
   command = 'let &l:scrolloff=1+winheight(win_getid())/2")',
   group = aug,
 })
@@ -296,9 +263,6 @@ vim.keymap.set("i", "<C-e>", "<C-o>$")
 
 vim.cmd("command! GitHistory Git! log -- %")
 
-vim.g.scnvim_no_mappings = 1
-vim.g.scnvim_eval_flash_repeats = 1
-
 if vim.fn.has("win32") ~= 0 then
   vim.o.shell = "powershell"
   vim.opt.shellcmdflag:remove("command")
@@ -308,13 +272,6 @@ end
 
 -- This lets our bash aliases know to use nvr instead of nvim
 vim.env.NVIM_LISTEN_ADDRESS = vim.v.servername
-
--- For quick-n-dirty inspection
-function _G.dump(...)
-  local objects = vim.tbl_map(vim.inspect, { ... })
-  print(unpack(objects))
-  return ...
-end
 
 local on_enter_mods = { "plugins.lsp", "plugins.completion", "plugins.luasnip" }
 vim.api.nvim_create_autocmd("VimEnter", {
@@ -328,7 +285,6 @@ vim.api.nvim_create_autocmd("VimEnter", {
     end, 100)
   end,
 })
-local function delay_setup(module) end
 
 -- quickfix
 vim.cmd([[
@@ -345,13 +301,83 @@ local old_notify = vim.notify
 vim.notify = function(...)
   table.insert(pending_notifications, { ... })
 end
+
+-- PLUGINS START
+
+lazy.load("aerial.nvim")
+lazy.load("closetag")
+lazy.load("comment.nvim")
+lazy.load("conjoin.nvim")
+lazy.load("dressing.nvim")
+lazy.load("editorconfig-vim")
+lazy.load("fzf-lua")
+lazy.load("lir.nvim")
+lazy.load("lspkind-nvim")
+lazy.load("lualine.nvim")
+lazy.load("luasnip")
+lazy.load("luv-vimdocs")
+lazy.load("neotest")
+lazy.load("neotest-jest")
+lazy.load("neotest-plenary")
+lazy.load("neotest-python")
+lazy.load("nightfox.nvim")
+lazy.load("null-ls.nvim")
+lazy.load("nvim-config-local")
+lazy.load("nvim-dap")
+lazy.load("nvim-dap-go")
+lazy.load("nvim-dap-ui")
+lazy.load("nvim-dap-virtual-text")
+lazy.load("nvim-hlslens")
+lazy("nvim-jdtls", { filetypes = "java" })
+lazy.load("nvim-lspconfig")
+lazy.load("nvim-luaref")
+lazy.load("nvim-notify")
+lazy.load("nvim-osc52")
+lazy.load("nvim-treesitter")
+lazy.load("nvim-treesitter-context")
+lazy.load("nvim-treesitter-textobjects")
+lazy.load("nvim-web-devicons")
+lazy.load("overseer.nvim")
+lazy.load("plenary.nvim")
+lazy.load("popup.nvim")
+lazy.load("qf_helper.nvim")
+lazy.load("quickfix-reflector.vim")
+lazy.load("resession.nvim")
+lazy("scnvim", {
+  filetypes = "supercollider",
+  pre_config = function()
+    vim.g.scnvim_no_mappings = 1
+    vim.g.scnvim_eval_flash_repeats = 1
+  end,
+})
+lazy.load("stickybuf.nvim")
+lazy("suda.vim", {
+  commands = { "SudaRead", "SudaWrite" },
+})
+lazy.load("tabular")
+lazy.load("targets.vim")
+lazy.load("telescope.nvim")
+lazy.load("three.nvim")
+lazy.load("tokyonight.nvim")
+lazy("vim-arduino", { filetypes = "arduino" })
+lazy.load("vim-autoswap")
+lazy.load("vim-endwise")
+lazy.load("vim-eunuch")
+lazy.load("vim-fugitive")
+lazy.load("vim-matchup")
+lazy.load("vim-repeat")
+lazy.load("vim-rhubarb")
+lazy.load("vim-startuptime")
+lazy.load("vim-surround")
+lazy.load("vim-vscode-snippets")
+
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
   once = true,
   callback = function()
     -- We have to set this up after we apply our colorscheme
     vim.notify = old_notify
-    safe_require("notify", function(notify)
+    lazy.require("notify", function(notify)
       vim.notify = notify
       notify.setup({
         stages = "fade",
@@ -366,17 +392,29 @@ vim.api.nvim_create_autocmd("ColorScheme", {
   end,
 })
 
-safe_require("pair-ls").setup({
-  cmd = { "pair-ls", "lsp" },
-  -- cmd = { "pair-ls", "lsp", "-port", "8080" },
-  -- cmd = { "pair-ls", "lsp", "-port", "8081" },
-  -- cmd = { "pair-ls", "lsp", "-signal", "wss://localhost:8080" },
-  -- cmd = { "pair-ls", "lsp", "-forward", "wss://localhost:8080" },
+lazy("pair-ls.nvim", {
+  commands = { "Pair", "PairConnect" },
+  req = "pair-ls",
+  post_config = function(pairls)
+    pairls.setup({
+      cmd = { "pair-ls", "lsp" },
+      -- cmd = { "pair-ls", "lsp", "-port", "8080" },
+      -- cmd = { "pair-ls", "lsp", "-port", "8081" },
+      -- cmd = { "pair-ls", "lsp", "-signal", "wss://localhost:8080" },
+      -- cmd = { "pair-ls", "lsp", "-forward", "wss://localhost:8080" },
+    })
+  end,
 })
-safe_require("qf_helper").setup()
-safe_require("Comment").setup()
-safe_require("crates").setup()
-safe_require("dressing").setup({
+lazy.require("qf_helper").setup()
+lazy.require("Comment").setup()
+lazy("crates.nvim", {
+  req = "crates",
+  filetypes = "toml",
+  function(crates)
+    crates.setup()
+  end,
+})
+lazy.require("dressing").setup({
   input = {
     insert_only = false,
     -- relative = "editor",
@@ -386,13 +424,6 @@ safe_require("dressing").setup({
   },
 })
 
-vim.keymap.set("n", "<leader>n", "<cmd>GkeepToggle<CR>")
--- vim.g.gkeep_sync_dir = '~/notes'
--- vim.g.gkeep_sync_archived = true
-vim.g.gkeep_log_levels = {
-  gkeep = "debug",
-  gkeepapi = "warning",
-}
 local gkeep_bindings = {
   { "n", "<leader>m", "<CMD>GkeepEnter menu<CR>" },
   { "n", "<leader>l", "<CMD>GkeepEnter list<CR>" },
@@ -413,8 +444,21 @@ ftplugin.set("GoogleKeepNote", {
   }, gkeep_bindings),
 })
 ftplugin.extend("norg", { bindings = gkeep_bindings })
+lazy("gkeep.nvim", {
+  commands = { "GkeepToggle", "GkeepEnter" },
+  keymaps = { { "n", "<leader>n", "<cmd>GkeepToggle<CR>", { desc = "[N]otes" } } },
+  modules = { "^telescope._extensions.gkeep$" },
+  pre_config = function()
+    -- vim.g.gkeep_sync_dir = '~/notes'
+    -- vim.g.gkeep_sync_archived = true
+    vim.g.gkeep_log_levels = {
+      gkeep = "debug",
+      gkeepapi = "warning",
+    }
+  end,
+})
 
-safe_require("aerial", function(aerial)
+lazy.require("aerial", function(aerial)
   ftplugin.extend("aerial", {
     ignore_win_opts = true,
   })
@@ -462,25 +506,30 @@ safe_require("aerial", function(aerial)
   vim.keymap.set({ "n", "v" }, "]u", aerial.next_up, { desc = "Next aerial parent symbol" })
 end)
 
-vim.g.lightspeed_no_default_keymaps = true
-safe_require("lightspeed", function(lightspeed)
-  lightspeed.setup({
-    jump_to_unique_chars = false,
-    safe_labels = {},
-  })
-  -- Not sure which of these mappings I prefer yet
-  vim.keymap.set("", "<leader>s", "<Plug>Lightspeed_omni_s", { desc = "Lightspeed search" })
-  vim.keymap.set("", "gs", "<Plug>Lightspeed_omni_s", { desc = "Lightspeed search" })
-end)
-safe_require("tags", function(tags)
+lazy("lightspeed.nvim", {
+  keymaps = {
+    { "", "<leader>s", "<Plug>Lightspeed_omni_s", { desc = "Lightspeed search" } },
+    { "", "gs", "<Plug>Lightspeed_omni_s", { desc = "Lightspeed search" } },
+  },
+  pre_config = function()
+    vim.g.lightspeed_no_default_keymaps = true
+  end,
+  req = "lightspeed",
+  post_config = function(lightspeed)
+    lightspeed.setup({
+      jump_to_unique_chars = false,
+      safe_labels = {},
+    })
+  end,
+})
+lazy.require("tags", function(tags)
   tags.setup({
     on_attach = function(bufnr)
-      -- vim.keymap.set("n", "gd", tags.goto_definition, { buffer = bufnr })
       vim.keymap.set("n", "<C-]>", tags.goto_definition, { buffer = bufnr, desc = "Goto tag" })
     end,
   })
 end)
-safe_require("osc52", function(osc52)
+lazy.require("osc52", function(osc52)
   local function copy(lines, _)
     osc52.copy(table.concat(lines, "\n"))
   end
@@ -498,7 +547,7 @@ safe_require("osc52", function(osc52)
     }
   end
 end)
-safe_require("resession", function(resession)
+lazy.require("resession", function(resession)
   resession.setup({
     autosave = {
       enabled = true,
@@ -549,7 +598,7 @@ safe_require("resession", function(resession)
     end,
   })
 end)
-safe_require("config-local", function(config_local)
+lazy.require("config-local", function(config_local)
   config_local.setup({
     config_files = { ".nvimrc.lua", ".vimrc.lua", ".nvimrc" },
     autocommands_create = true,
@@ -574,7 +623,7 @@ end)
 -- Investigate:
 -- * Does neotest have ability to throttle groups of individual test runs?
 -- * Tangential, but also check out https://github.com/andythigpen/nvim-coverage
-safe_require(
+lazy.require(
   "neotest",
   "neotest-python",
   "neotest-plenary",
@@ -595,7 +644,7 @@ safe_require(
         enabled = false,
       },
       consumers = {
-        overseer = safe_require("neotest.consumers.overseer"),
+        overseer = lazy.require("neotest.consumers.overseer"),
       },
       summary = {
         mappings = {
@@ -655,7 +704,7 @@ safe_require(
   end
 )
 
-safe_require("overseer", function(overseer)
+lazy.require("overseer", function(overseer)
   overseer.setup({
     strategy = { "jobstart" },
     log = {
@@ -699,7 +748,7 @@ safe_require("overseer", function(overseer)
   vim.keymap.set("n", "<leader>od", "<cmd>OverseerQuickAction<CR>")
   vim.keymap.set("n", "<leader>os", "<cmd>OverseerTaskAction<CR>")
 end)
-safe_require("hlslens", function(hlslens)
+lazy.require("hlslens", function(hlslens)
   hlslens.setup({
     calm_down = true,
     nearest_only = true,
@@ -731,70 +780,84 @@ safe_require("hlslens", function(hlslens)
   )
 end)
 
-safe_require("femaco").setup()
+lazy("nvim-FeMaco.lua", {
+  commands = { "FeMaco" },
+  req = "femaco",
+  post_config = function(femaco)
+    femaco.setup()
+  end,
+})
 
-safe_require("ccc", function(ccc)
-  ccc.setup({
-    inputs = {
-      ccc.input.hsl,
-      ccc.input.rgb,
-    },
-    highlighter = {
-      auto_enable = true,
-      filetypes = { "html", "css", "sass", "less", "javascript", "typescript", "javascriptreact", "typescriptreact" },
-    },
-    recognize = {
-      input = true,
-      output = true,
-    },
-    mappings = {
-      ["?"] = function()
-        print("i - Toggle input mode")
-        print("o - Toggle output mode")
-        print("a - Toggle alpha slider")
-        print("g - Toggle palette")
-        print("w - Go to next color in palette")
-        print("b - Go to prev color in palette")
-        print("l/d/, - Increase slider")
-        print("h/s/m - Decrease slider")
-        print("1-9 - Set slider value")
-      end,
-    },
-  })
-  safe_require("quick_action").add("menu", {
-    name = "Pick color",
-    condition = function()
-      local pickers = require("ccc.config").get("pickers")
-      local cursor = vim.api.nvim_win_get_cursor(0)
-      local lnum = cursor[1]
-      local line = vim.api.nvim_buf_get_lines(0, lnum - 1, lnum, true)[1]
-      local parse_col = 1
-      while true do
-        local start, end_, RGB
-        for _, picker in ipairs(pickers) do
-          local s_, e_, rgb = picker:parse_color(line, parse_col)
-          if s_ and s_ <= cursor[2] + 1 and e_ and e_ >= cursor[2] + 1 then
-            return true
-          elseif s_ and (start == nil or s_ < start) then
-            start = s_
-            end_ = e_
-            RGB = rgb
-          end
+local ccc_filetypes =
+  { "html", "css", "sass", "less", "javascript", "typescript", "javascriptreact", "typescriptreact" }
+lazy("ccc.nvim", {
+  filetypes = ccc_filetypes,
+  req = "ccc",
+  modules = { "^ccc" },
+  commands = { "CccPick" },
+  post_config = function(ccc)
+    ccc.setup({
+      inputs = {
+        ccc.input.hsl,
+        ccc.input.rgb,
+      },
+      highlighter = {
+        auto_enable = true,
+        filetypes = ccc_filetypes,
+      },
+      recognize = {
+        input = true,
+        output = true,
+      },
+      mappings = {
+        ["?"] = function()
+          print("i - Toggle input mode")
+          print("o - Toggle output mode")
+          print("a - Toggle alpha slider")
+          print("g - Toggle palette")
+          print("w - Go to next color in palette")
+          print("b - Go to prev color in palette")
+          print("l/d/, - Increase slider")
+          print("h/s/m - Decrease slider")
+          print("1-9 - Set slider value")
+        end,
+      },
+    })
+  end,
+})
+lazy.require("quick_action").add("menu", {
+  name = "Pick color",
+  condition = function()
+    local pickers = require("ccc.config").get("pickers")
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    local lnum = cursor[1]
+    local line = vim.api.nvim_buf_get_lines(0, lnum - 1, lnum, true)[1]
+    local parse_col = 1
+    while true do
+      local start, end_, RGB
+      for _, picker in ipairs(pickers) do
+        local s_, e_, rgb = picker:parse_color(line, parse_col)
+        if s_ and s_ <= cursor[2] + 1 and e_ and e_ >= cursor[2] + 1 then
+          return true
+        elseif s_ and (start == nil or s_ < start) then
+          start = s_
+          end_ = e_
+          RGB = rgb
         end
-        if RGB == nil then
-          break
-        end
-        parse_col = end_ + 1
       end
-      return false
-    end,
-    action = function()
-      vim.cmd("CccPick")
-    end,
-  })
-end)
+      if RGB == nil then
+        break
+      end
+      parse_col = end_ + 1
+    end
+    return false
+  end,
+  action = function()
+    vim.cmd("CccPick")
+  end,
+})
 
-safe_require("quick_action", function(quick_action)
+lazy.require("quick_action", function(quick_action)
   quick_action.set_keymap("n", "<CR>", "menu")
   quick_action.add("menu", {
     name = "Show diagnostics",
@@ -825,7 +888,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
   end,
   group = aug,
 })
-safe_require("three", function(three)
+lazy.require("three", function(three)
   local is_windows = vim.loop.os_uname().version:match("Windows")
 
   local sep = is_windows and "\\" or "/"
@@ -907,15 +970,21 @@ safe_require("three", function(three)
     three.remove_project()
   end, {})
 end)
-safe_require("fidget").setup({
-  text = {
-    spinner = "dots",
-  },
-  window = {
-    relative = "editor",
-  },
+lazy("fidget.nvim", {
+  req = "fidget",
+  modules = { "^fidget" },
+  post_config = function(fidget)
+    fidget.setup({
+      text = {
+        spinner = "dots",
+      },
+      window = {
+        relative = "editor",
+      },
+    })
+  end,
 })
-safe_require(
+lazy.require(
   "lir",
   "lir.actions",
   "lir.mark.actions",
@@ -1028,6 +1097,47 @@ safe_require(
     })
   end
 )
+
+lazy("distant.nvim", {
+  commands = { "DistantConnect", "DistantLaunch", "DistantInstall" },
+  req = "distant",
+  post_config = function(distant)
+    local actions = require("distant.nav.actions")
+
+    -- TODO remaining features that I need:
+    -- * cd into project dirs
+    -- * telescope
+    --   * find files
+    --   * live grep
+    -- * grep workflow (:grep and gw)
+    -- * toggleterm
+    -- * (optional) better dir view, closer to defx
+
+    distant.setup({
+      ["*"] = {
+        mode = "ssh",
+        file = {
+          mappings = {
+            ["-"] = actions.up,
+          },
+        },
+        dir = {
+          mappings = {
+            ["<Return>"] = actions.edit,
+            ["-"] = actions.up,
+            ["d"] = actions.mkdir,
+            ["%"] = actions.newfile,
+            ["r"] = actions.rename,
+            ["D"] = actions.remove,
+          },
+        },
+      },
+    })
+  end,
+})
+lazy("playground", {
+  commands = { "TSPlaygroundToggle" },
+})
 vim.api.nvim_create_autocmd("ColorScheme", {
   desc = "nvim-treesitter-context highlights",
   pattern = "*",
@@ -1036,7 +1146,7 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 })
 
 if vim.g.nerd_font ~= false then
-  safe_require("nvim-web-devicons").setup({
+  lazy.require("nvim-web-devicons").setup({
     default = true,
   })
 end
