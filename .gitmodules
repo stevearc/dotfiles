@@ -56,9 +56,6 @@
 [submodule "vimplugins/plenary.nvim"]
 	path = vimplugins/plenary.nvim
 	url = https://github.com/nvim-lua/plenary.nvim.git
-[submodule "vimplugins/popup.nvim"]
-	path = vimplugins/popup.nvim
-	url = https://github.com/nvim-lua/popup.nvim.git
 [submodule "vimplugins/scnvim"]
 	path = vimplugins/scnvim
 	url = https://github.com/stevearc/scnvim.git

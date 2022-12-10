@@ -375,7 +375,6 @@ lazy.load("nvim-treesitter-textobjects")
 lazy.load("nvim-web-devicons")
 lazy.load("overseer.nvim")
 lazy.load("plenary.nvim")
-lazy.load("popup.nvim")
 lazy.load("qf_helper.nvim")
 lazy("quickfix-reflector.vim", {
   autocmds = {
