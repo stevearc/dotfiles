@@ -6,7 +6,6 @@ return function(cmp)
   lazy.load("cmp-nvim-lsp")
   lazy.load("cmp-nvim-lua")
   lazy.load("cmp-path")
-  lazy.load("cmp-vsnip")
   lazy.load("cmp_luasnip")
 
   lazy.require("luasnip", function(luasnip)
