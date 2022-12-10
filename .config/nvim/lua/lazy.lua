@@ -4,6 +4,11 @@ local raw_require = require
 -- Map of lua modules to name of lazy package
 local lazy_mods = {}
 local patched_require = function(path)
+  -- If module is already loaded, return it (performance optimization)
+  local ret = package.loaded[path]
+  if ret then
+    return ret
+  end
   for pat, package in pairs(lazy_mods) do
     if path:match(pat) then
       M.load(package)
@@ -14,6 +19,11 @@ local patched_require = function(path)
 end
 
 _G.require = patched_require
+
+local default_opts = {
+  disable = false,
+}
+local gopts = vim.deepcopy(default_opts)
 
 -- Set of packages that have been loaded
 M.loaded = {}
@@ -55,6 +65,45 @@ local function maybe_load_filetype(filetype)
   end
 end
 
+local function call_post_config(req, post_configs)
+  local module
+  local call_cb = true
+  if req then
+    local ok, mod = pcall(require, req)
+    if ok then
+      module = mod
+    else
+      vim.notify_once(string.format("Missing module: %s", req), vim.log.levels.WARN)
+      call_cb = false
+    end
+  end
+  if call_cb then
+    for _, cb in ipairs(post_configs) do
+      if type(cb) == "string" then
+        local found_cb, mod_cb = pcall(require, cb)
+        if found_cb then
+          mod_cb(module)
+        else
+          vim.notify(string.format("Error requiring post_config callback '%s' for package %s", cb, package))
+        end
+      else
+        cb(module)
+      end
+    end
+  end
+end
+
+---@param package string
+---@return boolean
+local function packadd(package)
+  -- print("Loading", package)
+  local ok, err = pcall(vim.cmd.packadd, { args = { package }, bang = not vim.v.vim_did_enter })
+  if not ok then
+    vim.notify_once(string.format("Error loading package %s: %s", package, err), vim.log.levels.ERROR)
+  end
+  return ok
+end
+
 ---@param package string
 ---@param opts table
 ---    commands nil|string[]
@@ -67,7 +116,27 @@ end
 ---    req nil|string
 ---    post_config nil|string|fun() Function or name of lua module that returns a function. Called after packadd
 local function lazy(package, opts)
-  if M.loaded[package] then
+  if gopts.disable then
+    if opts.dependencies then
+      for _, dep in ipairs(opts.dependencies) do
+        M.load(dep)
+      end
+    end
+    packadd(package)
+    for _, conf in ipairs(opts.keymaps or {}) do
+      local mode, lhs, rhs, keyopts = unpack(conf)
+      vim.keymap.set(mode, lhs, rhs, keyopts)
+    end
+    if opts.post_config then
+      call_post_config(opts.req, { opts.post_config })
+    end
+    return
+  elseif M.loaded[package] then
+    if opts.dependencies then
+      for _, dep in ipairs(opts.dependencies) do
+        M.load(dep)
+      end
+    end
     if opts.pre_config then
       vim.notify(
         string.format("Cannot run pre_config for package %s: package already loaded", package),
@@ -75,24 +144,21 @@ local function lazy(package, opts)
       )
     end
     if opts.post_config then
-      local module
-      if opts.req then
-        local ok, mod = pcall(require, opts.req)
-        if ok then
-          module = mod
-        end
+      call_post_config(opts.req, { opts.post_config })
+      for _, conf in ipairs(opts.keymaps or {}) do
+        local mode, lhs, rhs, keyopts = unpack(conf)
+        vim.keymap.set(mode, lhs, rhs, keyopts)
       end
-      opts.post_config(module)
     end
     return
   end
 
   local autocmd_ids = {}
   if opts.autocmds then
-    for autocmd, config in pairs(opts.autocmds) do
+    for autocmd, conf in pairs(opts.autocmds) do
       local autocmd_id = vim.api.nvim_create_autocmd(
         autocmd,
-        vim.tbl_extend("keep", config, {
+        vim.tbl_extend("keep", conf, {
           desc = string.format("Lazily load %s", package),
           callback = function()
             M.load(package)
@@ -186,6 +252,10 @@ local function lazy(package, opts)
   maybe_load_filetype(vim.bo.filetype)
 end
 
+M.setup = function(opts)
+  gopts = vim.tbl_deep_extend("keep", opts or {}, default_opts)
+end
+
 ---@param package string
 ---@param modes string|string[]
 ---@param lhs string
@@ -201,16 +271,6 @@ M.keymap = function(package, modes, lhs, rhs, opts)
     M.load(package)
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(lhs, true, true, true), "t", false)
   end, opts)
-end
-
----@param package string
----@return boolean
-local function packadd(package)
-  local ok, err = pcall(vim.cmd.packadd, { args = { package }, bang = not vim.v.vim_did_enter })
-  if not ok then
-    vim.notify_once(string.format("Error loading package %s: %s", package, err), vim.log.levels.ERROR)
-  end
-  return ok
 end
 
 ---@param package string
@@ -248,31 +308,7 @@ M.load = function(package)
   if not packadd(package) then
     return
   end
-  local module
-  local call_post_config = true
-  if opts.req then
-    local ok, mod = pcall(require, opts.req)
-    if ok then
-      module = mod
-    else
-      vim.notify_once(string.format("Missing module: %s", opts.req), vim.log.levels.WARN)
-      call_post_config = false
-    end
-  end
-  if call_post_config then
-    for _, cb in ipairs(opts.post_config) do
-      if type(cb) == "string" then
-        local found_cb, mod_cb = pcall(require, cb)
-        if found_cb then
-          mod_cb(module)
-        else
-          vim.notify(string.format("Error requiring post_config callback '%s' for package %s", cb, package))
-        end
-      else
-        cb(module)
-      end
-    end
-  end
+  call_post_config(opts.req, opts.post_config)
 end
 
 ---@param opts table
