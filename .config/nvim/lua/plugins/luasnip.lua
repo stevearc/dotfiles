@@ -1,4 +1,4 @@
-safe_require("luasnip", function(luasnip)
+return function(luasnip)
   require("luasnip.loaders.from_vscode").lazy_load()
   vim.keymap.set("s", "<Tab>", "<Plug>luasnip-jump-next")
   vim.keymap.set("s", "<C-h>", "<Plug>luasnip-jump-prev")
@@ -94,4 +94,4 @@ safe_require("luasnip", function(luasnip)
       return snippet
     end,
   })
-end)
+end

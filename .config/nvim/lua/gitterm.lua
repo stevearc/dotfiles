@@ -1,3 +1,5 @@
+local M = {}
+
 local function get_git_tabpage()
   for _, tabpage in ipairs(vim.api.nvim_list_tabpages()) do
     if pcall(vim.api.nvim_tabpage_get_var, tabpage, "is_git_main") then
@@ -68,7 +70,7 @@ function TermDash:_update()
   end
 end
 
-local function toggle_git_terms()
+M.toggle = function()
   local tabpage = get_git_tabpage()
   if tabpage then
     vim.cmd(string.format("tabclose %d", tabpage))
@@ -109,8 +111,4 @@ local function toggle_git_terms()
   dash:_update()
 end
 
-vim.keymap.set("n", "<leader>gt", toggle_git_terms, { desc = "[G]it [T]erminal interface" })
-vim.keymap.set("n", "<leader>gh", "<cmd>GitHistory<CR>", { desc = "[G]it [H]istory" })
-vim.keymap.set("n", "<leader>gb", "<cmd>Git blame<CR>", { desc = "[G]it [B]lame" })
-vim.keymap.set("n", "<leader>gc", "<cmd>GBrowse!<CR>", { desc = "[G]it [C]opy link" })
-vim.keymap.set("v", "<leader>gc", ":GBrowse!<CR>", { desc = "[G]it [C]opy link" })
+return M

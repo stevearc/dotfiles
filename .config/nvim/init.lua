@@ -273,7 +273,7 @@ end
 -- This lets our bash aliases know to use nvr instead of nvim
 vim.env.NVIM_LISTEN_ADDRESS = vim.v.servername
 
-local on_enter_mods = { "plugins.lsp", "plugins.completion", "plugins.luasnip" }
+local on_enter_mods = { "plugins.lsp" }
 vim.api.nvim_create_autocmd("VimEnter", {
   desc = "Complete config setup after VimEnter",
   group = aug,
@@ -308,12 +308,39 @@ lazy.load("aerial.nvim")
 lazy.load("closetag")
 lazy.load("comment.nvim")
 lazy.load("dressing.nvim")
+lazy("firenvim", {
+  post_config = "plugins.firenvim",
+})
+if vim.g.started_by_firenvim then
+  lazy.load("firenvim")
+end
 lazy.load("editorconfig-vim")
-lazy.load("fzf-lua")
 lazy.load("lir.nvim")
 lazy.load("lspkind-nvim")
-lazy.load("lualine.nvim")
-lazy.load("luasnip")
+lazy("lualine.nvim", {
+  req = "lualine",
+  autocmds = {
+    VimEnter = { pattern = "*" },
+  },
+  post_config = "plugins.lualine",
+})
+lazy("luasnip", {
+  modules = { "^luasnip" },
+  autocmds = {
+    InsertEnter = { pattern = "*" },
+  },
+  req = "luasnip",
+  post_config = "plugins.luasnip",
+})
+lazy("nvim-cmp", {
+  modules = { "^cmp%." },
+  autocmds = {
+    InsertEnter = { pattern = "*" },
+  },
+  dependencies = { "luasnip" },
+  req = "cmp",
+  post_config = "plugins.completion",
+})
 lazy.load("luv-vimdocs")
 lazy.load("neotest")
 lazy.load("neotest-jest")
@@ -322,12 +349,22 @@ lazy.load("neotest-python")
 lazy.load("nightfox.nvim")
 lazy.load("null-ls.nvim")
 lazy.load("nvim-config-local")
+lazy("nvim-dap", {
+  req = "dap",
+  keymaps = {
+    { "n", "<leader>dc", "<cmd>lua require'dap'.continue()<CR>", { desc = "[D]ebug [C]ontinue" } },
+    { "n", "<leader>dj", "<cmd>lua require'dap'.step_over()<CR>", { desc = "[D]ebug step over" } },
+    { "n", "<leader>di", "<cmd>lua require'dap'.step_into()<CR>", { desc = "[D]ebug step [I]nto" } },
+    { "n", "<leader>do", "<cmd>lua require'dap'.step_out()<CR>", { desc = "[D]ebug step [O]ut" } },
+    { "n", "<leader>dl", "<cmd>lua require'dap'.run_last()<CR>", { desc = "[D]ebug run [L]ast" } },
+    { "n", "<leader>dr", "<cmd>lua require'dap'.repl.open()<CR>", { desc = "[D]ebug open [R]epl" } },
+    { "n", "<leader>dq", "<cmd>lua require'dap'.terminate()<CR>", { desc = "[D]ebug [Q]uit" } },
+  },
+  post_config = "plugins.dap",
+})
 lazy.load("nvim-dap")
-lazy.load("nvim-dap-go")
-lazy.load("nvim-dap-ui")
-lazy.load("nvim-dap-virtual-text")
 lazy.load("nvim-hlslens")
-lazy("nvim-jdtls", { filetypes = "java" })
+lazy("nvim-jdtls", { filetypes = "java", modules = { "^jdtls" } })
 lazy.load("nvim-lspconfig")
 lazy.load("nvim-luaref")
 lazy.load("nvim-notify")
@@ -340,7 +377,11 @@ lazy.load("overseer.nvim")
 lazy.load("plenary.nvim")
 lazy.load("popup.nvim")
 lazy.load("qf_helper.nvim")
-lazy.load("quickfix-reflector.vim")
+lazy("quickfix-reflector.vim", {
+  autocmds = {
+    QuickFixCmdPost = { pattern = "*" },
+  },
+})
 lazy.load("resession.nvim")
 lazy("scnvim", {
   filetypes = "supercollider",
@@ -353,16 +394,121 @@ lazy.load("stickybuf.nvim")
 lazy("suda.vim", {
   commands = { "SudaRead", "SudaWrite" },
 })
-lazy.load("tabular")
+lazy("tabular", { commands = { "Tabularize" } })
 lazy.load("targets.vim")
-lazy.load("telescope.nvim")
+function stevearc.find_files(...)
+  if stevearc._find_files_impl then
+    stevearc._find_files_impl(...)
+  else
+    vim.notify("No fuzzy finder installed", vim.log.levels.ERROR)
+  end
+end
+local function find_dotfiles()
+  stevearc.find_files({
+    cwd = string.format("%s/.config/nvim/", os.getenv("HOME")),
+    follow = true,
+    hidden = true,
+    previewer = false,
+  })
+end
+local function find_local_files()
+  stevearc.find_files({
+    cwd = string.format("%s/.local/share/nvim-local/", os.getenv("HOME")),
+    follow = true,
+    hidden = true,
+    previewer = false,
+  })
+end
+lazy("telescope.nvim", {
+  req = "telescope",
+  commands = { "Telescope" },
+  modules = { "^telescope" },
+  keymaps = {
+    { "n", "<leader>f.", find_dotfiles, { desc = "[F]ind [.]otfiles" } },
+    { "n", "<leader>fl", find_local_files, { desc = "[F]ind [L]ocal nvim files" } },
+    { "n", "<leader>bb", "<cmd>lua require('telescope.builtin').buffers({previewer=false, only_cwd=true})<cr>" },
+    { "n", "<leader>ba", "<cmd>lua require('telescope.builtin').buffers({previewer=false})<cr>" },
+    { "n", "<leader>fg", "<cmd>Telescope live_grep<CR>", { desc = "[F]ind by [G]rep" } },
+    { "n", "<leader>fb", "<cmd>lua require('telescope.builtin').live_grep({grep_open_files = true})<cr>" },
+    { "n", "<leader>fh", "<cmd>Telescope help_tags<CR>" },
+    { "n", "<leader>fc", "<cmd>Telescope commands<CR>" },
+    { "n", "<leader>fk", "<cmd>Telescope keymaps<CR>" },
+    { "n", "<leader>fs", "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>" },
+    { "n", "<leader>fq", "<cmd>Telescope quickfixhistory<CR>" },
+  },
+  post_config = "plugins.telescope",
+})
+lazy.multi("telescope.nvim", "fzf-lua", {
+  keymaps = { { "n", "<leader>ff", stevearc.find_files, { desc = "[F]ind [F]iles" } } },
+})
+lazy.multi("telescope.nvim", "aerial.nvim", {
+  keymaps = { { "n", "<leader>fd", "<cmd>Telescope aerial<CR>", { desc = "[F]ind [D]ocument symbol" } } },
+  post_config = function()
+    pcall(lazy.require("telescope").load_extension, "aerial")
+  end,
+})
+lazy.multi("telescope.nvim", "gkeep.nvim", {
+  keymaps = { { "n", "<leader>fn", "<cmd>Telescope gkeep<CR>", { desc = "[F]ind [N]ote" } } },
+  post_config = function()
+    pcall(lazy.require("telescope").load_extension, "gkeep")
+  end,
+})
+lazy.multi("luasnip", {
+  keymaps = {
+    { "i", "<C-s>", "<cmd>lua require('telescope').extensions.luasnip.luasnip()<CR>", { desc = "[S]nippets" } },
+  },
+  post_config = function()
+    pcall(lazy.require("telescope").load_extension, "luasnip")
+  end,
+})
+lazy("fzf-lua", {
+  modules = { "^fzf-lua" },
+  req = "fzf-lua",
+  post_config = function(fzf)
+    fzf.setup({
+      global_git_icons = false,
+      files = {
+        previewer = false,
+      },
+      -- This is required to support older version of fzf
+      fzf_opts = { ["--border"] = false },
+      git = {
+        files = {
+          previewer = false,
+        },
+      },
+    })
+    if vim.fn.executable("fzf") == 1 then
+      stevearc._find_files_impl = function(opts)
+        opts = opts or {}
+        -- git_files fails to find new files, which I often want
+        -- if not opts.cwd and vim.fn.isdirectory(".git") == 1 then
+        --   require("fzf-lua").git_files(opts)
+        -- else
+        require("fzf-lua").files(opts)
+        -- end
+      end
+    end
+  end,
+})
 lazy.load("three.nvim")
 lazy.load("tokyonight.nvim")
 lazy("vim-arduino", { filetypes = "arduino" })
 lazy.load("vim-autoswap")
 lazy.load("vim-endwise")
 lazy.load("vim-eunuch")
+lazy("vim-fugitive", {
+  keymaps = {
+    { "n", "<leader>gh", "<cmd>GitHistory<CR>", { desc = "[G]it [H]istory" } },
+    { "n", "<leader>gb", "<cmd>Git blame<CR>", { desc = "[G]it [B]lame" } },
+    { "n", "<leader>gc", "<cmd>GBrowse!<CR>", { desc = "[G]it [C]opy link" } },
+    { "v", "<leader>gc", ":GBrowse!<CR>", { desc = "[G]it [C]opy link" } },
+  },
+})
 lazy.load("vim-fugitive")
+vim.keymap.set("n", "<leader>gt", function()
+  require("gitterm").toggle()
+end, { desc = "[G]it [T]erminal interface" })
 lazy.load("vim-matchup")
 lazy.load("vim-repeat")
 lazy.load("vim-rhubarb")
@@ -444,7 +590,6 @@ ftplugin.set("GoogleKeepNote", {
 })
 ftplugin.extend("norg", { bindings = gkeep_bindings })
 lazy("gkeep.nvim", {
-  commands = { "GkeepToggle", "GkeepEnter" },
   keymaps = { { "n", "<leader>n", "<cmd>GkeepToggle<CR>", { desc = "[N]otes" } } },
   modules = { "^telescope._extensions.gkeep$" },
   pre_config = function()

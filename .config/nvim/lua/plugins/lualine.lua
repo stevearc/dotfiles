@@ -1,35 +1,35 @@
-local function arduino_status()
-  local ft = vim.api.nvim_buf_get_option(0, "ft")
-  if ft ~= "arduino" then
-    return ""
-  end
-  local port = vim.fn["arduino#GetPort"]()
-  local line = string.format("[%s]", vim.g.arduino_board)
-  if vim.g.arduino_programmer ~= "" then
-    line = line .. string.format(" [%s]", vim.g.arduino_programmer)
-  end
-  if port ~= 0 then
-    line = line .. string.format(" (%s:%s)", port, vim.g.arduino_serial_baud)
-  end
-  return line
-end
-
-local function session_name()
-  return ""
-end
-safe_require("resession", function(resession)
-  session_name = function()
-    local current_session = resession.get_current()
-    if not current_session then
+local lazy = require("lazy")
+return function(lualine)
+  local function arduino_status()
+    local ft = vim.api.nvim_buf_get_option(0, "ft")
+    if ft ~= "arduino" then
       return ""
     end
-    return string.format("session: %s", current_session)
+    local port = vim.fn["arduino#GetPort"]()
+    local line = string.format("[%s]", vim.g.arduino_board)
+    if vim.g.arduino_programmer ~= "" then
+      line = line .. string.format(" [%s]", vim.g.arduino_programmer)
+    end
+    if port ~= 0 then
+      line = line .. string.format(" (%s:%s)", port, vim.g.arduino_serial_baud)
+    end
+    return line
   end
-end)
 
--- Defer to allow colorscheme to be set
-vim.defer_fn(function()
-  safe_require("lualine").setup({
+  local function session_name()
+    return ""
+  end
+  lazy.require("resession", function(resession)
+    session_name = function()
+      local current_session = resession.get_current()
+      if not current_session then
+        return ""
+      end
+      return string.format("session: %s", current_session)
+    end
+  end)
+
+  lualine.setup({
     options = {
       globalstatus = true,
       icons_enabled = vim.g.devicons ~= false,
@@ -120,4 +120,4 @@ vim.defer_fn(function()
       },
     },
   })
-end, 10)
+end
