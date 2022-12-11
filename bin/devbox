@@ -141,10 +141,10 @@ def cmd_up(args):
             image=snap["id"],
             ssh_keys=load_ssh_keys(),
             # TODO make this configurable
-            user_data = """#cloud-config
+            user_data="""#cloud-config
 runcmd:
   - 'curl https://raw.githubusercontent.com/stevearc/dotfiles/master/bootstrap/bootstrap-cloud.sh | /bin/bash -s'
-            """
+            """,
         )
         if not resp:
             raise Exception("No response from create droplet")
@@ -191,7 +191,10 @@ def update_ssh_config(name: str, ip: str):
         with open(config_file, "w", encoding="utf-8") as ofile:
             ofile.writelines(new_lines)
 
+
 NO_DEFAULT = object()
+
+
 def prompt(msg, default=NO_DEFAULT, validate=None):
     """Prompt user for input"""
     while True:
@@ -233,6 +236,7 @@ def promptyn(msg, default=None):
         elif not confirm and default is not None:
             return default
 
+
 def cmd_down(args):
     droplet = get_devbox(args.name)
     if not droplet:
@@ -266,24 +270,30 @@ def cmd_snapshot(args):
         action = resp["action"]
     print("Snapshot %s" % action["status"])
 
+
 def cmd_action_add_args(parser):
-    parser.add_argument("action", help="The droplet action to perform", choices=(
-        'enable_backups',
-        'disable_backups',
-        'reboot',
-        'power_cycle',
-        'shutdown',
-        'power_off',
-        'power_on',
-        # 'restore',
-        'password_reset',
-        # 'resize',
-        # 'rebuild',
-        # 'rename',
-        # 'change_kernel',
-        # 'enable_ipv6',
-        # 'snapshot',
-    ))
+    parser.add_argument(
+        "action",
+        help="The droplet action to perform",
+        choices=(
+            "enable_backups",
+            "disable_backups",
+            "reboot",
+            "power_cycle",
+            "shutdown",
+            "power_off",
+            "power_on",
+            # 'restore',
+            "password_reset",
+            # 'resize',
+            # 'rebuild',
+            # 'rename',
+            # 'change_kernel',
+            # 'enable_ipv6',
+            # 'snapshot',
+        ),
+    )
+
 
 def cmd_action(args):
     droplet = get_devbox(args.name)
@@ -299,13 +309,58 @@ def cmd_gc(args):
     snaps = get_matching_snapshots(args.name)
     print("Found %d snapshots" % len(snaps))
     for snap in snaps:
-        print("%s %s" % (snap['created_at'], snap['name']))
+        print("%s %s" % (snap["created_at"], snap["name"]))
     for snap in snaps[1:]:
-        if promptyn("Delete snapshot %s from %s?" % (snap['name'], snap['created_at'])):
+        if promptyn("Delete snapshot %s from %s?" % (snap["name"], snap["created_at"])):
             snap_id = snap["id"]
-            print("Deleting snapshot %s [%s]" % (snap['name'], snap_id))
+            print("Deleting snapshot %s [%s]" % (snap["name"], snap_id))
             call(f"/v2/images/{snap_id}", "DELETE")
     print("Done")
+
+
+def cmd_sizes_add_args(parser):
+    parser.add_argument(
+        "-r",
+        "--region",
+        help="The DO region (default %(default)s)",
+        default=os.getenv("DO_REGION", "sfo"),
+    )
+
+
+def cmd_sizes(args):
+    resp = call("/v2/sizes", per_page=200)
+    if not resp:
+        print("Bad response")
+        return
+    entries = []
+    from pprint import pprint
+
+    for image in resp["sizes"]:
+        if not image["available"]:
+            continue
+        if not any(map(lambda r: r.startswith(args.region), image["regions"])):
+            continue
+        entries.append(
+            (
+                image["slug"],
+                "{}c".format(image["vcpus"]),
+                "{:.0f}m".format(image["memory"] / 1024),
+                "${:1.2f}/hr".format(image["price_hourly"]),
+                image["description"],
+            )
+        )
+        # pprint(image)
+        # print(lines[-1])
+    max_len = [len(e) for e in entries[0]]
+    for entry in entries:
+        for i, e in enumerate(entry):
+            max_len[i] = max(max_len[i], len(e))
+    lines = []
+    for entry in entries:
+        lines.append(" ".join([e.ljust(max_len[i]) for i, e in enumerate(entry)]))
+    lines.sort()
+    for line in lines:
+        print(line)
 
 
 def _setup_logging(args: argparse.Namespace) -> None:
@@ -342,7 +397,12 @@ def main() -> None:
     subparsers.add_parser("down", help="Destroy the DO droplet")
     subparsers.add_parser("snapshot", help="Take a snapshot of the DO droplet")
     subparsers.add_parser("gc", help="Delete all snapshots but the most recent")
-    cmd_action_add_args(subparsers.add_parser("action", help="Perform an action on the droplet"))
+    cmd_sizes_add_args(
+        subparsers.add_parser("sizes", help="List all droplet sizes for the region")
+    )
+    cmd_action_add_args(
+        subparsers.add_parser("action", help="Perform an action on the droplet")
+    )
     args = parser.parse_args()
     _setup_logging(args)
 
@@ -356,6 +416,8 @@ def main() -> None:
         cmd_gc(args)
     elif args.cmd == "action":
         cmd_action(args)
+    elif args.cmd == "sizes":
+        cmd_sizes(args)
     else:
         parser.print_help()
 
