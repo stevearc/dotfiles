@@ -65,31 +65,35 @@ local function maybe_load_filetype(filetype)
   end
 end
 
+---@param req nil|string|string[]
+---@param post_configs nil|string|fun()|string[]|fun()[] Function or name of lua module that returns a function. Called after packadd
 local function call_post_config(req, post_configs)
-  local module
-  local call_cb = true
-  if req then
-    local ok, mod = pcall(require, req)
-    if ok then
-      module = mod
-    else
-      vim.notify_once(string.format("Missing module: %s", req), vim.log.levels.WARN)
-      call_cb = false
-    end
+  if not post_configs then
+    return
   end
-  if call_cb then
+  local function do_setup(...)
+    if type(post_configs) ~= "table" then
+      post_configs = { post_configs }
+    end
     for _, cb in ipairs(post_configs) do
       if type(cb) == "string" then
         local found_cb, mod_cb = pcall(require, cb)
         if found_cb then
-          mod_cb(module)
+          mod_cb(...)
         else
-          vim.notify(string.format("Error requiring post_config callback '%s' for package %s", cb, package))
+          vim.notify(string.format("Error requiring post_config callback '%s'", cb))
         end
       else
-        cb(module)
+        cb(...)
       end
     end
+  end
+  if not req then
+    do_setup()
+  elseif type(req) == "string" then
+    M.require(req, do_setup)
+  else
+    M.require(unpack(req), do_setup)
   end
 end
 
@@ -113,7 +117,7 @@ end
 ---    autocmds nil|table<string, table> Mapping of autocmd names to autocmd configs
 ---    dependencies nil|string[] Packages that must be loaded first
 ---    pre_config nil|fun() Function to be called before packadd
----    req nil|string
+---    req nil|string|string[] module(s) to require and pass in to post_config
 ---    post_config nil|string|fun() Function or name of lua module that returns a function. Called after packadd
 local function lazy(package, opts)
   if gopts.disable then
@@ -127,9 +131,7 @@ local function lazy(package, opts)
       local mode, lhs, rhs, keyopts = unpack(conf)
       vim.keymap.set(mode, lhs, rhs, keyopts)
     end
-    if opts.post_config then
-      call_post_config(opts.req, { opts.post_config })
-    end
+    call_post_config(opts.req, opts.post_config)
     return
   elseif M.loaded[package] then
     if opts.dependencies then
@@ -143,12 +145,10 @@ local function lazy(package, opts)
         vim.log.levels.WARN
       )
     end
-    if opts.post_config then
-      call_post_config(opts.req, { opts.post_config })
-      for _, conf in ipairs(opts.keymaps or {}) do
-        local mode, lhs, rhs, keyopts = unpack(conf)
-        vim.keymap.set(mode, lhs, rhs, keyopts)
-      end
+    call_post_config(opts.req, opts.post_config)
+    for _, conf in ipairs(opts.keymaps or {}) do
+      local mode, lhs, rhs, keyopts = unpack(conf)
+      vim.keymap.set(mode, lhs, rhs, keyopts)
     end
     return
   end
@@ -274,14 +274,21 @@ M.keymap = function(package, modes, lhs, rhs, opts)
 end
 
 ---@param package string
-M.load = function(package)
+M.load = function(package, ...)
+  if select("#", ...) > 0 then
+    M.load(package)
+    for _, p in ipairs({ ... }) do
+      M.load(p)
+    end
+    return M
+  end
   local opts = lazy_packages[package]
   if not opts then
     if not M.loaded[package] then
       packadd(package)
       M.loaded[package] = true
     end
-    return
+    return M
   end
   lazy_packages[package] = nil
   M.loaded[package] = true
@@ -306,13 +313,15 @@ M.load = function(package)
     cb()
   end
   if not packadd(package) then
-    return
+    return M
   end
   call_post_config(opts.req, opts.post_config)
+  return M
 end
 
 ---@param opts table
 ---    keymaps nil|table[] List of {mode, lhs, rhs, [opts]}
+---    req nil|string|string[] module(s) to require and pass in to post_config
 ---    post_config nil|string|fun() Function or name of lua module that returns a function. Called after packadd
 M.multi = function(...)
   local packages = { ... }
@@ -333,22 +342,11 @@ M.multi = function(...)
       end
       for _, package in ipairs(packages) do
         M.load(package)
-      end
-      if opts.post_config then
-        local cb = opts.post_config
-        if type(cb) == "string" then
-          local found_cb, mod_cb = pcall(require, cb)
-          if found_cb then
-            mod_cb()
-          else
-            vim.notify(
-              string.format("Error requiring post_config callback '%s' for packages %s", cb, vim.inspect(packages))
-            )
-          end
-        else
-          cb()
+        if not M.loaded[package] then
+          return
         end
       end
+      call_post_config(opts.req, opts.post_config)
     end
 
     for _, conf in ipairs(opts.keymaps) do
@@ -362,6 +360,9 @@ M.multi = function(...)
         end, keyopts)
       end
     end
+  end
+  if all_loaded then
+    call_post_config(opts.req, opts.post_config)
   end
 end
 
@@ -389,7 +390,7 @@ M.require = function(...)
     else
       vim.notify_once(string.format("Missing module: %s", arg), vim.log.levels.WARN)
       -- Return a dummy item that returns functions, so we can do things like
-      -- safe_require("module").setup()
+      -- lazy.require("module").setup()
       local dummy = {}
       setmetatable(dummy, {
         __call = function()
