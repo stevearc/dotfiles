@@ -7,6 +7,8 @@ vim.notify = function(...)
   table.insert(pending_notifications, { ... })
 end
 
+local use_oil = true
+
 lazy.load("plenary.nvim")
 lazy.load("nvim-treesitter")
 lazy.load("nvim-treesitter-context")
@@ -205,6 +207,34 @@ lazy("gkeep.nvim", {
   end,
 })
 
+if use_oil then
+  lazy.load("oil.nvim").require("oil", function(oil)
+    oil.setup()
+    vim.keymap.set("n", "-", oil.open_parent, { desc = "Open parent directory" })
+    vim.keymap.set("n", "_", function()
+      oil.open_in_dir(vim.fn.getcwd())
+    end, { desc = "Open cwd" })
+    local function find_files()
+      local dir = oil.get_current_dir()
+      stevearc.find_files({ cwd = dir, hidden = true })
+    end
+    local function livegrep()
+      local dir = oil.get_current_dir()
+      require("telescope.builtin").live_grep({ cwd = dir })
+    end
+    ftplugin.set("oil", {
+      bindings = {
+        n = {
+          ["<leader>ff"] = find_files,
+          ["<leader>fg"] = livegrep,
+        },
+      },
+    })
+  end)
+else
+  lazy.load("lir.nvim").require("plugins.lir")
+end
+
 lazy.load("aerial.nvim").require("plugins.aerial")
 lazy("lightspeed.nvim", {
   keymaps = {
@@ -347,7 +377,6 @@ lazy("fidget.nvim", {
     })
   end,
 })
-lazy.load("lir.nvim").require("plugins.lir")
 lazy.require("plugins.resession")
 
 require("plugins.distant")
