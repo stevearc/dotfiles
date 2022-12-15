@@ -7,9 +7,10 @@ if should_profile then
   lazy.load("profile.nvim")
   require("profile").instrument_autocmds()
   if should_profile:lower():match("^start") then
-    require("profile").start("*")
+    local pat = vim.split(should_profile, ":")[2] or "*"
+    require("profile").start(pat)
   else
-    require("profile").instrument("*")
+    require("profile").instrument(should_profile)
   end
 end
 
