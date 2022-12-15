@@ -192,6 +192,9 @@ ftplugin.extend("norg", { bindings = gkeep_bindings })
 lazy("gkeep.nvim", {
   keymaps = { { "n", "<leader>n", "<cmd>GkeepToggle<CR>", { desc = "[N]otes" } } },
   modules = { "^telescope._extensions.gkeep$" },
+  autocmds = {
+    BufReadPre = { pattern = "gkeep://*" },
+  },
   pre_config = function()
     -- vim.g.gkeep_sync_dir = '~/notes'
     -- vim.g.gkeep_sync_archived = true

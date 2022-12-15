@@ -10,6 +10,7 @@ lazy.require("aerial", function(aerial)
       max_width = { 80, 0.2 },
       default_direction = "prefer_left",
       -- placement = "edge",
+      preserve_equality = true,
     },
     -- attach_mode = "global",
     highlight_on_hover = true,
