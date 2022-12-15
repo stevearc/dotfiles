@@ -67,7 +67,14 @@ safe_require("nvim-treesitter", function()
           ["]l"] = "@loop.outer",
           ["]i"] = "@conditional.outer",
         },
-        goto_next_end = {},
+        goto_next_end = {
+          ["]F"] = "@function.outer",
+          ["]C"] = "@class.outer",
+          ["]A"] = "@parameter.inner",
+          ["]B"] = "@block.outer",
+          ["]L"] = "@loop.outer",
+          ["]I"] = "@conditional.outer",
+        },
         goto_previous_start = {
           ["[f"] = "@function.outer",
           ["[c"] = "@class.outer",
@@ -76,7 +83,14 @@ safe_require("nvim-treesitter", function()
           ["[l"] = "@loop.outer",
           ["[i"] = "@conditional.outer",
         },
-        goto_previous_end = {},
+        goto_previous_end = {
+          ["[F"] = "@function.outer",
+          ["[C"] = "@class.outer",
+          ["[A"] = "@parameter.inner",
+          ["[B"] = "@block.outer",
+          ["[L"] = "@loop.outer",
+          ["[I"] = "@conditional.outer",
+        },
       },
     },
   })
