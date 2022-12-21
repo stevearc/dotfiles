@@ -4,7 +4,7 @@ lazy.load("SchemaStore.nvim")
 lazy.load("flow-coverage.nvim")
 lazy.load("fidget.nvim")
 
-safe_require("lspconfig", function(lspconfig)
+lazy.require("lspconfig", function(lspconfig)
   -- vim.lsp.set_log_level("debug")
 
   vim.diagnostic.config({
@@ -145,7 +145,7 @@ safe_require("lspconfig", function(lspconfig)
   lsp.safe_setup("yamlls", {
     settings = {
       yaml = {
-        schemas = safe_require("schemastore").json.schemas(),
+        schemas = lazy.require("schemastore").json.schemas(),
       },
     },
   })
@@ -174,7 +174,7 @@ safe_require("lspconfig", function(lspconfig)
     filetypes = { "json", "jsonc", "json5" },
     settings = {
       json = {
-        schemas = safe_require("schemastore").json.schemas(),
+        schemas = lazy.require("schemastore").json.schemas(),
       },
     },
   })
@@ -232,7 +232,7 @@ safe_require("lspconfig", function(lspconfig)
               traceLocalSet = true,
             },
             diagnostics = {
-              globals = { "vim", "safe_require", "it", "describe", "before_each", "after_each" },
+              globals = { "vim", "it", "describe", "before_each", "after_each", "a" },
             },
             telemetry = {
               enable = false,
@@ -249,7 +249,7 @@ safe_require("lspconfig", function(lspconfig)
   --   cmd = { "bundle", "exec", "srb", "tc", "--lsp" },
   -- })
 
-  safe_require("null-ls", function(null_ls)
+  lazy.require("null-ls", function(null_ls)
     null_ls.setup(vim.tbl_extend("keep", {
       capabilities = lsp.capabilities,
       root_dir = function(fname)

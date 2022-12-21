@@ -16,15 +16,30 @@ lazy.load("nvim-treesitter-textobjects")
 lazy.load("closetag")
 lazy.load("resession.nvim")
 lazy.load("comment.nvim").require("Comment").setup()
-lazy.load("dressing.nvim").require("dressing").setup({
-  input = {
-    insert_only = false,
-    -- relative = "editor",
-    win_options = {
-      sidescrolloff = 4,
+lazy.load("dressing.nvim").require("dressing", function(dressing)
+  dressing.setup({
+    input = {
+      insert_only = false,
+      -- relative = "editor",
+      win_options = {
+        sidescrolloff = 4,
+      },
     },
-  },
-})
+  })
+  vim.keymap.set("n", "z=", function()
+    local word = vim.fn.expand("<cword>")
+    local suggestions = vim.fn.spellsuggest(word)
+    vim.ui.select(
+      suggestions,
+      {},
+      vim.schedule_wrap(function(selected)
+        if selected then
+          vim.cmd.normal({ args = { "ciw" .. selected }, bang = true })
+        end
+      end)
+    )
+  end)
+end)
 lazy("firenvim", {
   post_config = "plugins.firenvim",
 })
