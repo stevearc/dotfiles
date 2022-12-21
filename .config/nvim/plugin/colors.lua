@@ -16,6 +16,8 @@ local colorschemes = {
           ["@keyword.operator"] = { link = "@keyword" },
           -- Make markdown links stand out
           ["@text.reference"] = { link = "@keyword" },
+          ["@text.emphasis"] = { italic = true },
+          ["@text.strong"] = { bold = true },
         },
       },
     })
