@@ -81,7 +81,7 @@ vim.o.ruler = true -- Show the row, column of the cursor
 vim.o.shiftwidth = 2
 vim.opt.shortmess:append("c") -- for nvim-cmp
 vim.opt.shortmess:append("I") -- Hide the startup screen
--- vim.opt.shortmess:append("A") -- Ignore swap file messages
+vim.opt.shortmess:append("A") -- Ignore swap file messages
 vim.opt.shortmess:append("a") -- Shorter message formats
 vim.o.showmatch = true -- When a bracket is inserted, briefly jump to the matching one
 vim.o.showtabline = 2 -- Always show tab line
