@@ -225,24 +225,28 @@ lazy("gkeep.nvim", {
 if use_oil then
   lazy.load("oil.nvim").require("oil", function(oil)
     oil.setup()
-    vim.keymap.set("n", "-", oil.open_parent, { desc = "Open parent directory" })
+    vim.keymap.set("n", "-", oil.open_float, { desc = "Open parent directory" })
     vim.keymap.set("n", "_", function()
-      oil.open_in_dir(vim.fn.getcwd())
+      oil.open(vim.fn.getcwd())
     end, { desc = "Open cwd" })
     local function find_files()
       local dir = oil.get_current_dir()
+      if vim.api.nvim_win_get_config(0).relative ~= "" then
+        vim.api.nvim_win_close(0, true)
+      end
       stevearc.find_files({ cwd = dir, hidden = true })
     end
     local function livegrep()
       local dir = oil.get_current_dir()
+      if vim.api.nvim_win_get_config(0).relative ~= "" then
+        vim.api.nvim_win_close(0, true)
+      end
       require("telescope.builtin").live_grep({ cwd = dir })
     end
     ftplugin.set("oil", {
       bindings = {
-        n = {
-          ["<leader>ff"] = find_files,
-          ["<leader>fg"] = livegrep,
-        },
+        { "n", "<leader>ff", find_files, { desc = "[F]ind [F]iles in dir" } },
+        { "n", "<leader>fg", livegrep, { desc = "[F]ind by [G]rep in dir" } },
       },
     })
   end)

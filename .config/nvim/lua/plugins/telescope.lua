@@ -8,7 +8,7 @@ function stevearc.find_files(...)
 end
 vim.keymap.set("n", "<leader>ff", function()
   stevearc.find_files()
-end, { desc = "[F]ind [.]otfiles" })
+end, { desc = "[F]ind [F]iles" })
 lazy.require("telescope", function(telescope)
   telescope.setup({
     defaults = {
