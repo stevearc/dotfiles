@@ -23,21 +23,11 @@ local function adjust_formatting_capabilities(client, bufnr)
       if other_client.id ~= client.id then
         other_client.server_capabilities.documentFormattingProvider = nil
         other_client.server_capabilities.documentRangeFormattingProvider = nil
-        -- For backwards compatibility. Remove in neovim 0.7.1
-        if rawget(other_client, "resolved_capabilities") then
-          other_client.resolved_capabilities.document_formatting = false
-          other_client.resolved_capabilities.document_range_formatting = false
-        end
       end
     end
   else
     client.server_capabilities.documentFormattingProvider = nil
     client.server_capabilities.documentRangeFormattingProvider = nil
-    -- For backwards compatibility. Remove in neovim 0.7.1
-    if rawget(client, "resolved_capabilities") then
-      client.resolved_capabilities.document_formatting = false
-      client.resolved_capabilities.document_range_formatting = false
-    end
   end
 end
 
