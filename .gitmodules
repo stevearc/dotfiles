@@ -220,9 +220,6 @@
 [submodule "vimplugins/nvim-treesitter-context"]
 	path = vimplugins/nvim-treesitter-context
 	url = https://github.com/nvim-treesitter/nvim-treesitter-context.git
-[submodule "vimplugins/lir.nvim"]
-	path = vimplugins/lir.nvim
-	url = https://github.com/tamago324/lir.nvim.git
 [submodule "vimplugins/three.nvim"]
 	path = vimplugins/three.nvim
 	url = https://github.com/stevearc/three.nvim.git
