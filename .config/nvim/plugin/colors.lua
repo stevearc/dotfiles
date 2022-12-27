@@ -10,14 +10,17 @@ local priority = {
 local colorschemes = {
   nightfox = function(nightfox)
     nightfox.setup({
+      options = {
+        dim_inactive = true,
+      },
       groups = {
         all = {
           -- Make and/or/not stand out more
           ["@keyword.operator"] = { link = "@keyword" },
           -- Make markdown links stand out
           ["@text.reference"] = { link = "@keyword" },
-          ["@text.emphasis"] = { italic = true },
-          ["@text.strong"] = { bold = true },
+          ["@text.emphasis"] = { style = "italic" },
+          ["@text.strong"] = { style = "bold" },
         },
       },
     })
