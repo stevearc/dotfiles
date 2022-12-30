@@ -1,4 +1,5 @@
-safe_require("nvim-treesitter", function()
+local lazy = require("lazy")
+lazy.require("nvim-treesitter", function()
   local queries = require("nvim-treesitter.query")
   local parsers = require("nvim-treesitter.parsers")
 
@@ -23,8 +24,7 @@ safe_require("nvim-treesitter", function()
     indent = {
       enable = true,
       disable = function(lang, bufnr)
-        -- The python indent is driving me insane
-        if lang == "lua" or lang == "python" then
+        if lang == "lua" then -- or lang == "python" then
           return true
         else
           return should_disable(lang, bufnr)
