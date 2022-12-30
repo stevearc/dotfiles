@@ -230,7 +230,7 @@ lazy.load("oil.nvim").require("oil", function(oil)
         callback = function()
           local config = require("oil.config")
           if #config.columns == 1 then
-            oil.set_columns({ "icon", "size", "mtime" })
+            oil.set_columns({ "icon", "permissions", "size", "mtime" })
           else
             oil.set_columns({ "icon" })
           end
