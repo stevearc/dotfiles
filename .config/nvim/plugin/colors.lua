@@ -10,9 +10,6 @@ local priority = {
 local colorschemes = {
   nightfox = function(nightfox)
     nightfox.setup({
-      options = {
-        dim_inactive = true,
-      },
       groups = {
         all = {
           -- Make and/or/not stand out more
