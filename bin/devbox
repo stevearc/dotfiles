@@ -420,6 +420,25 @@ def cmd_list_keys(args):
         print("{name:} {fingerprint:}".format(**key))
 
 
+def cmd_del_key_add_args(parser):
+    parser.add_argument(
+        "-n",
+        "--name",
+        required=True,
+        help="The name of the key",
+    )
+
+
+def cmd_del_key(args):
+    ssh_keys = api_get_ssh_keys()
+    if ssh_keys is not None:
+        for key in ssh_keys:
+            if key["name"] == args.name:
+                call("/v2/account/keys/%d" % key["id"], method="DELETE")
+                return
+    print(f"No key '{args.name}' found")
+
+
 def _setup_logging(args: argparse.Namespace) -> None:
     handler = logging.StreamHandler(sys.stdout)
     formatter = logging.Formatter("%(levelname)s %(asctime)s [%(name)s] %(message)s")
@@ -461,9 +480,10 @@ def main() -> None:
         subparsers.add_parser("action", help="Perform an action on the droplet")
     )
     cmd_add_key_add_args(
-        subparsers.add_parser("add_key", help="Add ssh key to account")
+        subparsers.add_parser("add-key", help="Add ssh key to account")
     )
-    subparsers.add_parser("list_keys", help="List all ssh keys")
+    subparsers.add_parser("list-keys", help="List all ssh keys")
+    cmd_del_key_add_args(subparsers.add_parser("del-key", help="Delete an ssh key"))
     args = parser.parse_args()
     _setup_logging(args)
 
@@ -479,10 +499,12 @@ def main() -> None:
         cmd_action(args)
     elif args.cmd == "sizes":
         cmd_sizes(args)
-    elif args.cmd == "list_keys":
+    elif args.cmd == "list-keys":
         cmd_list_keys(args)
-    elif args.cmd == "add_key":
+    elif args.cmd == "add-key":
         cmd_add_key(args)
+    elif args.cmd == "del-key":
+        cmd_del_key(args)
     else:
         parser.print_help()
 
