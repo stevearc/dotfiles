@@ -9,31 +9,50 @@ import sys
 import time
 from datetime import datetime
 from pprint import pformat, pprint
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Iterator, Any
 
 import requests
 
 log = logging.getLogger("devbox")
 
 
-def load_ssh_keys() -> List[str]:
+def fingerprint_key(filename: str) -> str:
+    proc = subprocess.run(
+        ["ssh-keygen", "-f", filename, "-l", "-E", "md5"],
+        capture_output=True,
+        check=True,
+        encoding="utf-8",
+    )
+    output = proc.stdout.strip()
+    pieces = output.split()
+    fingerprint = pieces[1]
+    if fingerprint.startswith("MD5:"):
+        fingerprint = fingerprint[4:]
+    return fingerprint
+
+
+def iter_public_keys() -> Iterator[str]:
     ssh_dir = os.path.join(os.getenv("HOME", ""), ".ssh")
-    ret = []
     for filename in os.listdir(ssh_dir):
         if filename.endswith(".pub"):
-            keyfile = os.path.join(ssh_dir, os.path.splitext(filename)[0])
-            proc = subprocess.run(
-                ["ssh-keygen", "-f", keyfile, "-l", "-E", "md5"],
-                capture_output=True,
-                check=True,
-                encoding="utf-8",
-            )
-            output = proc.stdout.strip()
-            pieces = output.split()
-            fingerprint = pieces[1]
-            if fingerprint.startswith("MD5:"):
-                fingerprint = fingerprint[4:]
+            yield os.path.join(ssh_dir, filename)
+
+
+def load_ssh_keys() -> List[str]:
+    account_keys = set()
+    ssh_keys = api_get_ssh_keys()
+    if ssh_keys is None:
+        raise Exception("No ssh keys found for account")
+    for key in ssh_keys:
+        account_keys.add(key["fingerprint"])
+    ret = []
+    for public_key in iter_public_keys():
+        keyfile = os.path.splitext(public_key)[0]
+        fingerprint = fingerprint_key(keyfile)
+        if fingerprint in account_keys:
             ret.append(fingerprint)
+    if not ret:
+        raise Exception("No matching ssh keys found for account")
     return ret
 
 
@@ -363,6 +382,44 @@ def cmd_sizes(args):
         print(line)
 
 
+def cmd_add_key_add_args(parser):
+    parser.add_argument(
+        "-f",
+        "--file",
+        help="The public key file to use",
+    )
+    parser.add_argument(
+        "-n",
+        "--name",
+        help="The name of the new key (default %(default)s)",
+        default=os.getenv("HOSTNAME"),
+    )
+
+
+def cmd_add_key(args):
+    if not args.file:
+        args.file = next(iter_public_keys())
+    with open(args.file, "r", encoding="utf-8") as ifile:
+        public_key = ifile.read()
+    call("/v2/account/keys", method="POST", public_key=public_key, name=args.name)
+
+
+def api_get_ssh_keys() -> Optional[List[Any]]:
+    resp = call("/v2/account/keys", per_page=200)
+    if not resp:
+        return
+    return resp["ssh_keys"]
+
+
+def cmd_list_keys(args):
+    ssh_keys = api_get_ssh_keys()
+    if not ssh_keys:
+        print("Bad response")
+        return
+    for key in ssh_keys:
+        print("{name:} {fingerprint:}".format(**key))
+
+
 def _setup_logging(args: argparse.Namespace) -> None:
     handler = logging.StreamHandler(sys.stdout)
     formatter = logging.Formatter("%(levelname)s %(asctime)s [%(name)s] %(message)s")
@@ -403,6 +460,10 @@ def main() -> None:
     cmd_action_add_args(
         subparsers.add_parser("action", help="Perform an action on the droplet")
     )
+    cmd_add_key_add_args(
+        subparsers.add_parser("add_key", help="Add ssh key to account")
+    )
+    subparsers.add_parser("list_keys", help="List all ssh keys")
     args = parser.parse_args()
     _setup_logging(args)
 
@@ -418,6 +479,10 @@ def main() -> None:
         cmd_action(args)
     elif args.cmd == "sizes":
         cmd_sizes(args)
+    elif args.cmd == "list_keys":
+        cmd_list_keys(args)
+    elif args.cmd == "add_key":
+        cmd_add_key(args)
     else:
         parser.print_help()
 
