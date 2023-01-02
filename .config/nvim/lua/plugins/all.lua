@@ -279,6 +279,11 @@ lazy.load("oil.nvim").require("oil", function(oil)
       end, {
         desc = "Empty the trash directory",
       })
+      vim.api.nvim_buf_create_user_command(bufnr, "OpenTerminal", function(params)
+        require("oil.adapters.ssh").open_terminal()
+      end, {
+        desc = "Open the debug terminal for ssh connections",
+      })
     end,
   })
 end)
