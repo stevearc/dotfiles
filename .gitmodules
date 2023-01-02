@@ -237,4 +237,4 @@
 	url = https://github.com/j-hui/fidget.nvim
 [submodule "vimplugins/oil.nvim"]
 	path = vimplugins/oil.nvim
-	url = git@github.com:stevearc/oil.nvim.git
+	url = https://github.com/stevearc/oil.nvim.git

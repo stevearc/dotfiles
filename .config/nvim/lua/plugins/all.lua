@@ -224,7 +224,10 @@ lazy.load("oil.nvim").require("oil", function(oil)
   oil.setup({
     trash = false,
     skip_confirm_for_simple_edits = true,
+    restore_win_options = false,
     keymaps = {
+      ["`"] = "actions.tcd",
+      ["~"] = "actions.cd",
       ["gd"] = {
         desc = "Toggle detail view",
         callback = function()
@@ -249,6 +252,7 @@ lazy.load("oil.nvim").require("oil", function(oil)
     end
     stevearc.find_files({ cwd = dir, hidden = true })
   end
+
   local function livegrep()
     local dir = oil.get_current_dir()
     if vim.api.nvim_win_get_config(0).relative ~= "" then
@@ -256,6 +260,7 @@ lazy.load("oil.nvim").require("oil", function(oil)
     end
     require("telescope.builtin").live_grep({ cwd = dir })
   end
+
   ftplugin.set("oil", {
     bindings = {
       { "n", "<leader>ff", find_files, { desc = "[F]ind [F]iles in dir" } },
