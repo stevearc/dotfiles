@@ -18,6 +18,7 @@ local colorschemes = {
           ["@text.reference"] = { link = "@keyword" },
           ["@text.emphasis"] = { style = "italic" },
           ["@text.strong"] = { style = "bold" },
+          ["@text.literal"] = { style = "" }, -- Don't italicize
         },
       },
     })
