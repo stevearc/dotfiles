@@ -183,9 +183,6 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "WinNew", "VimResized" }, 
   group = aug,
 })
 
-vim.g.treesitter_languages = "all"
-vim.g.treesitter_languages_blacklist = { "supercollider", "phpdoc" }
-
 -- Start with folds open
 vim.o.foldlevelstart = 99
 vim.o.foldlevel = 99

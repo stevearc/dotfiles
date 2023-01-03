@@ -15,8 +15,9 @@ lazy.require("nvim-treesitter", function()
   end
 
   require("nvim-treesitter.configs").setup({
-    ensure_installed = vim.g.treesitter_languages,
-    ignore_install = vim.g.treesitter_languages_blacklist,
+    ensure_installed = { "lua", "markdown", "markdown_inline", "help", "bash" },
+    ignore_install = { "supercollider", "phpdoc" },
+    auto_install = true,
     highlight = {
       enable = true,
       disable = should_disable,
