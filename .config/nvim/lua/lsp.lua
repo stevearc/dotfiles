@@ -161,9 +161,8 @@ M.safe_setup = function(name, config)
 end
 
 M.capabilities = vim.lsp.protocol.make_client_capabilities()
-lazy.load("cmp-nvim-lsp")
-safe_require("cmp_nvim_lsp", function(cmp_nvim_lsp)
-  M.capabilities = cmp_nvim_lsp.update_capabilities(M.capabilities)
+lazy.load("cmp-nvim-lsp").require("cmp_nvim_lsp", function(cmp_nvim_lsp)
+  M.capabilities = cmp_nvim_lsp.default_capabilities
 end)
 
 return M

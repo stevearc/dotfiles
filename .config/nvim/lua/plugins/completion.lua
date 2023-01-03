@@ -100,7 +100,6 @@ return function(cmp)
       formatting = formatting,
 
       sources = {
-        { name = "overseer" },
         { name = "crates" },
         { name = "nvim_lua" },
         { name = "nvim_lsp" },

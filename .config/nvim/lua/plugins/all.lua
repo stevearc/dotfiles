@@ -55,6 +55,7 @@ lazy("luasnip", {
   req = "luasnip",
   post_config = "plugins.luasnip",
 })
+lazy.load("crates.nvim").require("crates").setup()
 lazy("nvim-cmp", {
   modules = { "^cmp%." },
   autocmds = {
@@ -174,13 +175,6 @@ lazy("pair-ls.nvim", {
       -- cmd = { "pair-ls", "lsp", "-signal", "wss://localhost:8080" },
       -- cmd = { "pair-ls", "lsp", "-forward", "wss://localhost:8080" },
     })
-  end,
-})
-lazy("crates.nvim", {
-  req = "crates",
-  filetypes = "toml",
-  function(crates)
-    crates.setup()
   end,
 })
 
