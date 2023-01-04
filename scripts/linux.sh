@@ -102,6 +102,8 @@ install-language-zig() {
     if ! hascmd zstd; then
       if hascmd apt; then
         sudo apt install -yq zstd
+      elif hascmd pacman; then
+        sudo pacman -Syq --noconfirm zstd
       else
         echo "TODO need to install zstd"
       fi

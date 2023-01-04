@@ -188,6 +188,7 @@ dotcmd-upgrade-lsp() {
   hascmd pyright && yarn global upgrade -s pyright
   hascmd flow && yarn global upgrade -s flow-bin
   hascmd typescript-language-server && yarn global upgrade -s typescript-language-server
+  hascmd zls && rm -f "$(which zls)" && dotcmd-language zig
   if [ -e ~/.local/share/nvim/language-servers/lua-language-server ]; then
     rm -rf ~/.local/share/nvim/language-servers/lua-language-server
     install-lua-utils
