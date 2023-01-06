@@ -251,12 +251,10 @@ dc-install-common() {
     bsdmainutils \
     direnv \
     htop \
-    glances \
     inotify-tools \
     iotop \
     jq \
     lsof \
-    mercurial \
     netcat \
     openssh-client \
     rsync \

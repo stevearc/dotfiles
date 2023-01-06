@@ -40,14 +40,12 @@ install-language-lua() {
 DC_INSTALL_COMMON_DOC="Common unix utilities like tmux, netcat, etc"
 dc-install-common() {
   sudo pacman -Syq --noconfirm \
-    glances \
     gnu-netcat \
     htop \
     inotify-tools \
     iotop \
     jq \
     lsof \
-    mercurial \
     openssh \
     ripgrep \
     rsync \
