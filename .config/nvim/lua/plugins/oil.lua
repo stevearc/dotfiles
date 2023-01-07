@@ -9,6 +9,7 @@ lazy.require("oil", function(oil)
     keymaps = {
       ["`"] = "actions.tcd",
       ["~"] = "actions.cd",
+      ["<C-t>"] = "actions.open_terminal",
       ["gd"] = {
         desc = "Toggle detail view",
         callback = function()
