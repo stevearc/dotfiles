@@ -52,6 +52,91 @@ _nvenv-kickstart() {
   'nvim' "$HOME/.local/share/nvenv/$name/config/nvim/init.lua"
 }
 
+_nvenv-lazy() {
+  local name="${1-$NVENV}"
+  local bin_name=${2-nvim}
+  if [ -z "$name" ]; then
+    echo "Usage nvenv lazy <name>"
+    return
+  fi
+  mkdir -p "$HOME/.local/share/nvenv/$name/config/nvim"
+  echo "$bin_name" >"$HOME/.local/share/nvenv/$name/bin_name"
+  cat >"$HOME/.local/share/nvenv/$name/config/nvim/init.lua" <<EOF
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+vim.g.mapleader = " "
+vim.opt.completeopt = { "menu", "menuone", "noselect" }
+vim.o.expandtab = true -- Turn tabs into spaces
+vim.o.shiftwidth = 2
+vim.opt.shortmess:append("c") -- for nvim-cmp
+vim.opt.shortmess:append("I") -- Hide the startup screen
+vim.opt.shortmess:append("A") -- Ignore swap file messages
+vim.opt.shortmess:append("a") -- Shorter message formats
+vim.o.softtabstop = 2
+vim.o.splitbelow = true
+vim.o.splitright = true
+vim.o.textwidth = 100 -- Line width of 100
+vim.o.updatetime = 400 -- CursorHold time default is 4s. Way too long
+vim.o.wildmenu = true
+vim.o.wildmode = "longest,list,full"
+vim.opt.list = true -- show whitespace
+vim.opt.listchars = {
+  nbsp = "⦸", -- CIRCLED REVERSE SOLIDUS (U+29B8, UTF-8: E2 A6 B8)
+  extends = "»", -- RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK (U+00BB, UTF-8: C2 BB)
+  precedes = "«", -- LEFT-POINTING DOUBLE ANGLE QUOTATION MARK (U+00AB, UTF-8: C2 AB)
+  tab = "▷⋯", -- WHITE RIGHT-POINTING TRIANGLE (U+25B7, UTF-8: E2 96 B7) + MIDLINE HORIZONTAL ELLIPSIS (U+22EF, UTF-8: E2 8B AF)
+}
+vim.o.number = true -- Except for current line
+vim.o.relativenumber = true -- Relative line numbers
+vim.opt.showbreak = "↳ " -- DOWNWARDS ARROW WITH TIP RIGHTWARDS (U+21B3, UTF-8: E2 86 B3)
+
+-- install plugins
+local plugins = {
+  "folke/tokyonight.nvim",
+  { "stevearc/aerial.nvim", config = true },
+  { "stevearc/oil.nvim", config = function()
+      local oil = require("oil")
+      oil.setup()
+      vim.keymap.set("n", "-", oil.open)
+    end
+  },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = { "c", "lua" },
+        auto_install = true,
+        highlight = { enable = true },
+      })
+    end,
+  },
+  -- add any other plugins here
+}
+require("lazy").setup(plugins, {
+  dev = {
+    path = "~/dotfiles/vimplugins",
+    patterns = {"stevearc"}
+  }
+})
+
+vim.cmd.colorscheme("tokyonight")
+-- add anything else here
+EOF
+  'nvim' "$HOME/.local/share/nvenv/$name/config/nvim/init.lua"
+}
+
 _nvenv-cd() {
   local name="${1?Usage: nvenv cd <name>}"
   cd "$HOME/.local/share/nvenv/$name"
@@ -142,7 +227,7 @@ _nvenv-clone() {
 }
 
 nvenv() {
-  local usage="nvenv [create|delete|list|activate|deactivate|install|link|kickstart|edit]"
+  local usage="nvenv [create|delete|list|activate|deactivate|install|link|kickstart|lazy|edit]"
   local cmd="$1"
   if [ -z "$cmd" ]; then
     echo "$usage"
