@@ -102,7 +102,6 @@ Opts:
     esac
   done
   shift $((OPTIND - 1))
-  hascmd dc-install-common && dc-install-common
 
   if [ $symbolic ]; then
     for dotfile in $CLI_DOTFILES; do

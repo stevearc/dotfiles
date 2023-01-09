@@ -246,7 +246,6 @@ dc-install-neovim() {
 # shellcheck disable=SC2034
 DC_INSTALL_COMMON_DOC="Common unix utilities like tmux, netcat, etc"
 dc-install-common() {
-  has-checkpoint cli && return
   sudo apt-get install -y -q \
     bsdmainutils \
     direnv \
@@ -265,8 +264,6 @@ dc-install-common() {
     unzip \
     wmctrl \
     xsel
-
-  checkpoint cli
 }
 
 # shellcheck disable=SC2034
