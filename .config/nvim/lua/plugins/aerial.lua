@@ -10,7 +10,7 @@ lazy.require("aerial", function(aerial)
       max_width = { 80, 0.2 },
       default_direction = "prefer_left",
       -- placement = "edge",
-      preserve_equality = true,
+      -- preserve_equality = true,
     },
     -- attach_mode = "global",
     highlight_on_hover = true,
@@ -33,10 +33,6 @@ lazy.require("aerial", function(aerial)
     lazy_load = true,
     -- backends = { "lsp", "treesitter", "markdown" },
     -- filter_kind = false,
-    on_attach = function(bufnr)
-      -- vim.keymap.set({ "n", "v" }, "{", aerial.prev, { buffer = bufnr })
-      -- vim.keymap.set({ "n", "v" }, "}", aerial.next, { buffer = bufnr })
-    end,
     keymaps = {
       ["<"] = "actions.tree_decrease_fold_level",
       [">"] = "actions.tree_increase_fold_level",

@@ -73,14 +73,4 @@ lazy.require("oil", function(oil)
       })
     end,
   })
-
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = "oil_preview",
-    callback = function(args)
-      vim.keymap.set("n", "D", function()
-        vim.api.nvim_win_close(0, true)
-        oil.discard_all_changes()
-      end, { buffer = args.buf })
-    end,
-  })
 end)
