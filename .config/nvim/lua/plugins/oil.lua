@@ -53,6 +53,7 @@ lazy.require("oil", function(oil)
       concealcursor = "n",
       list = false,
       wrap = false,
+      signcolumn = "no",
     },
     callback = function(bufnr)
       vim.api.nvim_buf_create_user_command(bufnr, "Save", function(params)
