@@ -109,6 +109,12 @@ def get_matching_snapshots(name: str) -> List[Dict]:
 
 def cmd_up_add_args(parser):
     parser.add_argument(
+        "-n",
+        "--name",
+        help="The name of the droplet to start (also used to match snapshot)",
+        default=os.getenv("DO_DROPLET_NAME", "devi"),
+    )
+    parser.add_argument(
         "-r",
         "--region",
         help="The DO region (default %(default)s)",
@@ -120,7 +126,7 @@ def cmd_up_add_args(parser):
     parser.add_argument(
         "--default-image",
         help="The default image to use if no snapshot is present (default Ubuntu 22.04 LTS)",
-        default="106926987",
+        default="112929454",
     )
 
 
@@ -189,7 +195,7 @@ runcmd:
 
 def update_ssh_config(name: str, ip: str):
     config_file = os.path.join(os.getenv("HOME", ""), ".ssh", "config")
-    lines = [f"Host {name}\n", f"  hostname {ip}\n", "  ForwardAgent yes"]
+    lines = [f"Host {name}\n", f"  hostname {ip}\n", "  ForwardAgent yes\n"]
     if not os.path.exists(config_file):
         fd = os.open(config_file, os.O_CREAT | os.O_WRONLY, 0o700)
         with open(fd, "w", encoding="utf-8") as ofile:
@@ -255,6 +261,13 @@ def promptyn(msg, default=None):
         elif not confirm and default is not None:
             return default
 
+def cmd_down_add_args(parser):
+    parser.add_argument(
+        "-n",
+        "--name",
+        help="The name of the droplet to start (also used to match snapshot)",
+        default=os.getenv("DO_DROPLET_NAME", "devi"),
+    )
 
 def cmd_down(args):
     droplet = get_devbox(args.name)
@@ -268,6 +281,13 @@ def cmd_down(args):
     )
     print(f"Deleted droplet {args.name}")
 
+def cmd_snapshot_add_args(parser):
+    parser.add_argument(
+        "-n",
+        "--name",
+        help="The name of the droplet to start (also used to match snapshot)",
+        default=os.getenv("DO_DROPLET_NAME", "devi"),
+    )
 
 def cmd_snapshot(args):
     droplet = get_devbox(args.name)
@@ -291,6 +311,12 @@ def cmd_snapshot(args):
 
 
 def cmd_action_add_args(parser):
+    parser.add_argument(
+        "-n",
+        "--name",
+        help="The name of the droplet to start (also used to match snapshot)",
+        default=os.getenv("DO_DROPLET_NAME", "devi"),
+    )
     parser.add_argument(
         "action",
         help="The droplet action to perform",
@@ -323,6 +349,13 @@ def cmd_action(args):
     resp = call(f"/v2/droplets/{drop_id}/actions", "POST", type=args.action)
     pprint(resp)
 
+def cmd_gc_add_args(parser):
+    parser.add_argument(
+        "-n",
+        "--name",
+        help="The name of the droplet to start (also used to match snapshot)",
+        default=os.getenv("DO_DROPLET_NAME", "devi"),
+    )
 
 def cmd_gc(args):
     snaps = get_matching_snapshots(args.name)
@@ -352,7 +385,6 @@ def cmd_sizes(args):
         print("Bad response")
         return
     entries = []
-    from pprint import pprint
 
     for image in resp["sizes"]:
         if not image["available"]:
@@ -368,18 +400,37 @@ def cmd_sizes(args):
                 image["description"],
             )
         )
-        # pprint(image)
-        # print(lines[-1])
-    max_len = [len(e) for e in entries[0]]
-    for entry in entries:
-        for i, e in enumerate(entry):
-            max_len[i] = max(max_len[i], len(e))
-    lines = []
-    for entry in entries:
-        lines.append(" ".join([e.ljust(max_len[i]) for i, e in enumerate(entry)]))
-    lines.sort()
-    for line in lines:
-        print(line)
+    entries.sort()
+    print_table(entries)
+
+def cmd_images_add_args(parser):
+    parser.add_argument(
+        "-r",
+        "--region",
+        help="The DO region (default %(default)s)",
+        default=os.getenv("DO_REGION", "sfo"),
+    )
+
+def cmd_images(args):
+    resp = call("/v2/images", per_page=200)
+    if not resp:
+        print("Bad response")
+        return
+    entries = []
+
+    for image in resp["images"]:
+        if image["status"] != 'available':
+            continue
+        if not any(map(lambda r: r.startswith(args.region), image["regions"])):
+            continue
+        entries.append(
+            (
+                str(image["id"]),
+                image['description'],
+            )
+        )
+    entries.sort()
+    print_table(entries)
 
 
 def cmd_add_key_add_args(parser):
@@ -438,6 +489,16 @@ def cmd_del_key(args):
                 return
     print(f"No key '{args.name}' found")
 
+def print_table(table: List[List[str]]):
+    max_len = [len(e) for e in table[0]]
+    for entry in table:
+        for i, e in enumerate(entry):
+            max_len[i] = max(max_len[i], len(e))
+    lines = []
+    for entry in table:
+        lines.append(" ".join([e.ljust(max_len[i]) for i, e in enumerate(entry)]))
+    for line in lines:
+        print(line)
 
 def _setup_logging(args: argparse.Namespace) -> None:
     handler = logging.StreamHandler(sys.stdout)
@@ -461,20 +522,17 @@ def main() -> None:
         default=logging.WARNING,
         help="Stdout logging level (default 'warning')",
     )
-    parser.add_argument(
-        "-n",
-        "--name",
-        help="The name of the droplet to start (also used to match snapshot)",
-        default=os.getenv("DO_DROPLET_NAME", "devi"),
-    )
 
     subparsers = parser.add_subparsers(dest="cmd")
     cmd_up_add_args(subparsers.add_parser("up", help="Start the DO droplet"))
-    subparsers.add_parser("down", help="Destroy the DO droplet")
-    subparsers.add_parser("snapshot", help="Take a snapshot of the DO droplet")
-    subparsers.add_parser("gc", help="Delete all snapshots but the most recent")
+    cmd_down_add_args(subparsers.add_parser("down", help="Destroy the DO droplet"))
+    cmd_snapshot_add_args(subparsers.add_parser("snapshot", help="Take a snapshot of the DO droplet"))
+    cmd_gc_add_args(subparsers.add_parser("gc", help="Delete all snapshots but the most recent"))
     cmd_sizes_add_args(
         subparsers.add_parser("sizes", help="List all droplet sizes for the region")
+    )
+    cmd_images_add_args(
+        subparsers.add_parser("images", help="List all images for the region")
     )
     cmd_action_add_args(
         subparsers.add_parser("action", help="Perform an action on the droplet")
@@ -499,6 +557,8 @@ def main() -> None:
         cmd_action(args)
     elif args.cmd == "sizes":
         cmd_sizes(args)
+    elif args.cmd == "images":
+        cmd_images(args)
     elif args.cmd == "list-keys":
         cmd_list_keys(args)
     elif args.cmd == "add-key":
