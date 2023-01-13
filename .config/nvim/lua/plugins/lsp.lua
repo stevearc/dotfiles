@@ -1,11 +1,10 @@
 return {
   {
     "neovim/nvim-lspconfig",
+    event = "VeryLazy",
     dependencies = {
-      { "folke/neodev.nvim", opts = { experimental = { pathStrict = true } }, config = true },
       "hrsh7th/cmp-nvim-lsp",
       "b0o/SchemaStore.nvim",
-      "stevearc/flow-coverage.nvim",
       {
         "j-hui/fidget.nvim",
         opts = {
@@ -208,25 +207,6 @@ return {
         },
       })
 
-      local sumneko_root_path = os.getenv("HOME") .. "/.local/share/nvim/language-servers/lua-language-server"
-      local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
-      lsp.safe_setup("sumneko_lua", {
-        cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
-        settings = {
-          Lua = {
-            IntelliSense = {
-              traceLocalSet = true,
-            },
-            diagnostics = {
-              globals = { "vim", "it", "describe", "before_each", "after_each", "a" },
-            },
-            telemetry = {
-              enable = false,
-            },
-          },
-        },
-      })
-
       -- conflicts with work
       -- lspconfig.sorbet.setup({
       --   capabilities = lsp.capabilities,
@@ -248,7 +228,43 @@ return {
   },
 
   {
+    "stevearc/flow-coverage.nvim",
+    ft = { "javascript", "javascript.jsx", "javascriptreact" },
+  },
+
+  {
+    "folke/neodev.nvim",
+    opts = { experimental = { pathStrict = true } },
+    ft = "lua",
+    dependencies = { "neovim/nvim-lspconfig" },
+    config = function(_, opts)
+      require("neodev").setup(opts)
+      local lsp = require("lsp")
+      local sumneko_root_path = os.getenv("HOME") .. "/.local/share/nvim/language-servers/lua-language-server"
+      local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
+      lsp.safe_setup("sumneko_lua", {
+        cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
+        settings = {
+          Lua = {
+            IntelliSense = {
+              traceLocalSet = true,
+            },
+            diagnostics = {
+              globals = { "vim", "it", "describe", "before_each", "after_each", "a" },
+            },
+            telemetry = {
+              enable = false,
+            },
+          },
+        },
+      })
+    end,
+  },
+
+  {
     "jose-elias-alvarez/null-ls.nvim",
+    dependencies = { "neovim/nvim-lspconfig" },
+    event = "VeryLazy",
     config = function()
       local null_ls = require("null-ls")
       null_ls.setup(vim.tbl_extend("keep", {

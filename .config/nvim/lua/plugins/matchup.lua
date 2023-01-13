@@ -1,5 +1,6 @@
 return {
   "andymass/vim-matchup",
+  event = "VeryLazy",
   config = function()
     vim.keymap.set({ "n", "x" }, "[[", "<plug>(matchup-[%)")
     vim.keymap.set({ "n", "x" }, "]]", "<plug>(matchup-]%)")

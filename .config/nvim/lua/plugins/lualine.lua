@@ -2,7 +2,6 @@ return {
   "nvim-lualine/lualine.nvim",
   dependencies = { "kyazdani42/nvim-web-devicons" },
   config = function()
-    local p = require("p")
     local lualine = require("lualine")
     local function arduino_status()
       local ft = vim.api.nvim_buf_get_option(0, "ft")
@@ -21,17 +20,15 @@ return {
     end
 
     local function session_name()
+      local has_resession, resession = pcall(require, "resession")
+      if has_resession then
+        local current_session = resession.get_current()
+        if current_session then
+          return string.format("session: %s", current_session)
+        end
+      end
       return ""
     end
-    p.require("resession", function(resession)
-      session_name = function()
-        local current_session = resession.get_current()
-        if not current_session then
-          return ""
-        end
-        return string.format("session: %s", current_session)
-      end
-    end)
 
     lualine.setup({
       options = {

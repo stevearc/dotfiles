@@ -1,7 +1,7 @@
-local has_qf_helper, config = pcall(require, "qf_helper.config")
 local aug = vim.api.nvim_create_augroup("StevearcDiagnosticConfig", {})
 
 local function set_loclist_win_height(bufnr, winid, loclist_winid)
+  local has_qf_helper, config = pcall(require, "qf_helper.config")
   local total = vim.tbl_count(vim.diagnostic.get(bufnr, { severity = { min = vim.diagnostic.severity.W } }))
   local height
   if has_qf_helper then

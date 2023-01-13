@@ -3,7 +3,7 @@ return {
   "stevearc/gkeep.nvim",
   enabled = not is_mac,
   event = "BufReadPre gkeep://*",
-  cmd = { "UpdateRemotePlugins", "GkeepToggle", "GkeepNew", "GkeepOpen", "GkeepLogin", "GkeepLogout" },
+  cmd = { "GkeepToggle", "GkeepNew", "GkeepOpen", "GkeepLogin", "GkeepLogout" },
   keys = {
     {
       "<leader>n",

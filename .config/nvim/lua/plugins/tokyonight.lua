@@ -1,6 +1,6 @@
 return {
   "folke/tokyonight.nvim",
-  enabled = false,
+  lazy = true,
   priority = 1000,
   opts = {
     style = "night",
@@ -30,8 +30,5 @@ return {
       highlights.TabLineDividerModifiedSel = { fg = c.warning, bg = c.warning }
     end,
   },
-  config = function(_, opts)
-    require("tokyonight").setup(opts)
-    vim.cmd.colorscheme({ args = { "tokyonight" } })
-  end,
+  config = true,
 }

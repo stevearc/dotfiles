@@ -345,6 +345,7 @@ local specs = {
   { import = "plugins" },
   {
     "rcarriga/nvim-notify",
+    event = "VeryLazy",
     config = function()
       -- We have to set this up after we apply our colorscheme
       vim.notify = old_notify
@@ -395,3 +396,12 @@ require("lazy").setup({
     },
   },
 })
+
+local is_tty = os.getenv("XDG_SESSION_TYPE") == "tty" and os.getenv("SSH_TTY") == ""
+if is_tty then
+  vim.opt.termguicolors = false
+  vim.cmd("colorscheme darkblue")
+else
+  vim.opt.termguicolors = true
+  vim.cmd.colorscheme({ args = { "duskfox" } })
+end

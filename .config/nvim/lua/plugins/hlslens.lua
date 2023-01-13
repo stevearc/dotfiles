@@ -4,6 +4,7 @@ return {
     calm_down = true,
     nearest_only = true,
   },
+  event = "VeryLazy",
   config = function(_, opts)
     require("hlslens").setup(opts)
 

@@ -15,7 +15,7 @@ return {
   "tpope/vim-repeat",
   "tpope/vim-endwise",
   "tpope/vim-surround",
-  "docunext/closetag.vim",
+  { "docunext/closetag.vim", event = "InsertEnter *" },
   "nanotee/luv-vimdocs",
   "editorconfig/editorconfig-vim",
   {
@@ -56,7 +56,7 @@ return {
   {
     "ojroques/nvim-osc52",
     -- Only change the clipboard if we're in a SSH session
-    enabled = os.getenv("SSH_CLIENT"),
+    enabled = os.getenv("SSH_CLIENT") ~= nil,
     config = function()
       local osc52 = require("osc52")
       local function copy(lines, _)

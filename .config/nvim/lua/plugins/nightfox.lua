@@ -1,6 +1,7 @@
 return {
   "EdenEast/nightfox.nvim",
   priority = 1000,
+  lazy = true,
   opts = {
     groups = {
       all = {
@@ -14,8 +15,5 @@ return {
       },
     },
   },
-  config = function(_, opts)
-    require("nightfox").setup(opts)
-    vim.cmd.colorscheme({ args = { "duskfox" } })
-  end,
+  config = true,
 }
