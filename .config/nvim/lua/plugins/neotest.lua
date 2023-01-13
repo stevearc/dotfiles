@@ -68,6 +68,9 @@ lazy.require(
       status = {
         enabled = true,
       },
+      quickfix = {
+        open = false,
+      },
     })
     vim.keymap.set("n", "<leader>tn", function()
       neotest.run.run({})
