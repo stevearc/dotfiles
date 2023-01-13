@@ -20,6 +20,7 @@ return {
       end,
       extensions = { aerial = {}, overseer = {}, quickfix = {}, three = {}, config_local = {} },
     })
+
     vim.keymap.set("n", "<leader>ss", resession.save, { desc = "[S]ession [S]ave" })
     vim.keymap.set("n", "<leader>st", function()
       resession.save_tab()

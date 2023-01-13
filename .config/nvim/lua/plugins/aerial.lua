@@ -1,6 +1,21 @@
+local lazy_aerial = setmetatable({}, {
+  __index = function(_, k)
+    return function(...)
+      require("aerial")[k](...)
+    end
+  end,
+})
 return {
   "stevearc/aerial.nvim",
   dependencies = { "nvim-treesitter/nvim-treesitter" },
+  cmd = { "AerialToggle", "AerialOpen" },
+  keys = {
+    { "<leader>a", "<cmd>AerialToggle!<CR>", desc = "[A]erial toggle", mode = "n" },
+    { "[s", lazy_aerial.prev, desc = "Previous aerial symbol", mode = { "n", "v" } },
+    { "]s", lazy_aerial.next, desc = "Next aerial symbol", mode = { "n", "v" } },
+    { "[u", lazy_aerial.prev_up, desc = "Previous aerial parent symbol", mode = { "n", "v" } },
+    { "]u", lazy_aerial.next_up, desc = "Next aerial parent symbol", mode = { "n", "v" } },
+  },
   opts = {
     show_guides = true,
     layout = {
@@ -27,7 +42,7 @@ return {
 
     -- backends = { "treesitter", "markdown" },
     -- backends = { "lsp", "treesitter" },
-    lazy_load = true,
+    lazy_load = false,
     -- backends = { "lsp", "treesitter", "markdown" },
     -- filter_kind = false,
     keymaps = {
@@ -36,14 +51,7 @@ return {
     },
   },
   config = function(_, opts)
-    local aerial = require("aerial")
-    aerial.setup(opts)
-    vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>", { desc = "[A]erial toggle" })
-    vim.keymap.set({ "n", "v" }, "[s", aerial.prev, { desc = "Previous aerial symbol" })
-    vim.keymap.set({ "n", "v" }, "]s", aerial.next, { desc = "Next aerial symbol" })
-    vim.keymap.set({ "n", "v" }, "[u", aerial.prev_up, { desc = "Previous aerial parent symbol" })
-    vim.keymap.set({ "n", "v" }, "]u", aerial.next_up, { desc = "Next aerial parent symbol" })
-
+    require("aerial").setup(opts)
     local p = require("p")
     local ftplugin = p.require("ftplugin")
     ftplugin.extend("aerial", {
