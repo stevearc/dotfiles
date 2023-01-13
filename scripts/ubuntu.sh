@@ -4,17 +4,18 @@ set -e
 platform-setup() {
   has-checkpoint platform-setup && return
   sudo apt-get update -qq
-  sudo apt-get install -y -q \
-    python3-pycurl \
-    software-properties-common \
-    wget \
-    curl
+  hascmd wget || sudo apt-get install -yq wget
+  hascmd curl || sudo apt-get install -yq curl
+  # TODO do I still need these? What for?
+  # sudo apt-get install -y -q \
+  #   python3-pycurl \
+  #   software-properties-common
   checkpoint platform-setup
 }
 
 install-language-python() {
   cp "$HERE/.pylintrc" "$HOME"
-  sudo apt-get install -y -q \
+  sudo apt-get install -yq \
     python3 \
     python-is-python3 \
     python3-distutils \
