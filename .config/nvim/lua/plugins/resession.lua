@@ -38,20 +38,16 @@ return {
       vim.cmd("qa")
     end)
 
-    vim.api.nvim_create_autocmd("VimEnter", {
-      group = aug,
-      callback = function()
-        if vim.tbl_contains(resession.list(), "__quicksave__") then
-          vim.defer_fn(function()
-            resession.load("__quicksave__", { attach = false })
-            local ok, err = pcall(resession.delete, "__quicksave__")
-            if not ok then
-              vim.notify(string.format("Error deleting quicksave session: %s", err), vim.log.levels.WARN)
-            end
-          end, 50)
+    if vim.tbl_contains(resession.list(), "__quicksave__") then
+      vim.defer_fn(function()
+        resession.load("__quicksave__", { attach = false })
+        local ok, err = pcall(resession.delete, "__quicksave__")
+        if not ok then
+          vim.notify(string.format("Error deleting quicksave session: %s", err), vim.log.levels.WARN)
         end
-      end,
-    })
+      end, 50)
+    end
+
     vim.api.nvim_create_autocmd("VimLeavePre", {
       group = aug,
       callback = function()
