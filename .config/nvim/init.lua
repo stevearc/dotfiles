@@ -52,9 +52,6 @@ if not vim.loop.fs_stat(vim.g.python3_host_prog) then
   -- Disable the python provider if the virtualenv isn't found
   vim.g.loaded_python3_provider = 0
 end
--- Add nvim-local to the runtimepath so we can extend the configuration
-vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
-vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*")
 local aug = vim.api.nvim_create_augroup("StevearcNewConfig", {})
 
 local ftplugin = p.require("ftplugin")
@@ -143,12 +140,8 @@ vim.api.nvim_create_autocmd("WinLeave", {
 
 -- built-in ftplugins should not change my keybindings
 vim.g.no_plugin_maps = true
-vim.cmd([[
-syntax enable
-syntax on
-filetype plugin on
-filetype plugin indent on
-]])
+vim.cmd.filetype({ args = { "plugin", "on" } })
+vim.cmd.filetype({ args = { "plugin", "indent", "on" } })
 
 vim.api.nvim_create_autocmd("BufReadPost", {
   desc = "Return to last edit position when opening files",
@@ -262,35 +255,8 @@ vim.api.nvim_create_autocmd({ "CursorMovedI", "InsertLeave" }, {
 vim.keymap.set("i", "<C-a>", "<C-o>^")
 vim.keymap.set("i", "<C-e>", "<C-o>$")
 
-vim.cmd("command! GitHistory Git! log -- %")
-
 -- This lets our bash aliases know to use nvr instead of nvim
 vim.env.NVIM_LISTEN_ADDRESS = vim.v.servername
-
-local on_enter_mods = { "plugins.lsp" }
-vim.api.nvim_create_autocmd("VimEnter", {
-  desc = "Complete config setup after VimEnter",
-  group = aug,
-  callback = function()
-    vim.defer_fn(function()
-      for _, mod in ipairs(on_enter_mods) do
-        require(mod)
-      end
-    end, 100)
-  end,
-})
-
--- quickfix
-vim.cmd([[
-command! -bar Cclear call setqflist([])
-command! -bar Lclear call setloclist(0, [])
-]])
-vim.keymap.set("n", "<C-N>", "<cmd>QNext<CR>")
-vim.keymap.set("n", "<C-P>", "<cmd>QPrev<CR>")
-vim.keymap.set("n", "<leader>q", "<cmd>QFToggle!<CR>")
-vim.keymap.set("n", "<leader>l", "<cmd>LLToggle!<CR>")
-
-require("plugins.all")
 
 vim.api.nvim_create_autocmd("BufEnter", {
   desc = "Pin buffer to window if opened from remote",
@@ -316,44 +282,15 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 
 -- Filetype mappings and options
 ftplugin.setup({ augroup = aug })
-require("plugins.filetype_config")
+require("filetype_config")
 
-local function path_glob_to_regex(glob)
-  local pattern = string.gsub(glob, "%.", "[%./]")
-  pattern = string.gsub(pattern, "*", ".*")
-  return "^" .. pattern .. "$"
-end
-local function reload(module)
-  local pat = path_glob_to_regex(module)
-  local mods = {}
-  for k in pairs(package.loaded) do
-    if string.match(k, pat) then
-      table.insert(mods, k)
-    end
-  end
-  for _, name in ipairs(mods) do
-    package.loaded[name] = nil
-  end
-  for _, name in ipairs(mods) do
-    require(name)
-  end
-  vim.notify(string.format("Reloaded %d modules", vim.tbl_count(mods)))
-end
-vim.api.nvim_create_user_command("Reload", function(params)
-  local module = params.fargs[1]
-  if module == "" then
-    module = nil
-  end
-  if module then
-    reload(module)
-  else
-    vim.ui.input({ prompt = "reload module" }, function(name)
-      if name then
-        reload(name)
-      end
-    end)
-  end
-end, { nargs = "?" })
+p.require("tags", function(tags)
+  tags.setup({
+    on_attach = function(bufnr)
+      vim.keymap.set("n", "<C-]>", tags.goto_definition, { buffer = bufnr, desc = "Goto tag" })
+    end,
+  })
+end)
 
 -- :W and :H to set win width/height
 vim.api.nvim_create_user_command("W", function(params)
@@ -380,6 +317,81 @@ end, { nargs = 1 })
 -- Generate helptags after startup
 vim.defer_fn(function()
   if not vim.bo.filetype:match("^git") then
-    vim.cmd("helptags ALL")
+    vim.cmd.helptags({ args = { "ALL" } })
   end
 end, 1000)
+
+-- bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
+
+local pending_notifications = {}
+local old_notify = vim.notify
+vim.notify = function(...)
+  table.insert(pending_notifications, vim.F.pack_len(...))
+end
+
+local specs = {
+  { import = "plugins" },
+  {
+    "rcarriga/nvim-notify",
+    config = function()
+      -- We have to set this up after we apply our colorscheme
+      vim.notify = old_notify
+      local notify = require("notify")
+      vim.notify = notify
+      notify.setup({
+        stages = "fade",
+        render = "minimal",
+        top_down = false,
+      })
+      for _, args in ipairs(pending_notifications) do
+        vim.notify(vim.F.unpack_len(args))
+      end
+      pending_notifications = nil
+    end,
+  },
+}
+local localpath = vim.fn.stdpath("data") .. "-local"
+if vim.loop.fs_stat(localpath) then
+  table.insert(specs, { import = "local_plugins" })
+end
+
+require("lazy").setup({
+  spec = specs,
+  install = { colorscheme = { "nightfox", "habamax" } },
+  dev = {
+    path = "~/dotfiles/vimplugins",
+    patterns = { "stevearc" },
+  },
+  checker = { enabled = false },
+  performance = {
+    rtp = {
+      paths = {
+        -- Add nvim-local to the runtimepath so we can extend the configuration
+        localpath,
+      },
+      -- disable some rtp plugins
+      disabled_plugins = {
+        "gzip",
+        "matchit",
+        "matchparen",
+        -- "netrwPlugin",
+        "tarPlugin",
+        "tohtml",
+        "tutor",
+        "zipPlugin",
+      },
+    },
+  },
+})

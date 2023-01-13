@@ -1,4 +1,3 @@
-local p = require("p")
 -- Todo:
 -- * Bug: Running tests on directory doesn't work if directory not in tree (but tree has subdirectories)
 -- * Bug: No output or debug info if test fails to run (e.g. try running tests in cpython)
@@ -14,28 +13,86 @@ local p = require("p")
 -- Investigate:
 -- * Does neotest have ability to throttle groups of individual test runs?
 -- * Tangential, but also check out https://github.com/andythigpen/nvim-coverage
-p.require(
-  "neotest",
-  "neotest-python",
-  "neotest-plenary",
-  "neotest-jest",
-  function(neotest, python_adapter, plenary_adapter, jest_adapter)
+return {
+  "nvim-neotest/neotest",
+  dependencies = {
+    "nvim-neotest/neotest-python",
+    "nvim-neotest/neotest-plenary",
+    "haydenmeade/neotest-jest",
+    "stevearc/overseer.nvim",
+    "nvim-lua/plenary.nvim",
+  },
+  keys = {
+    {
+      "<leader>tn",
+      function()
+        require("neotest").run.run({})
+      end,
+      mode = "n",
+    },
+    {
+      "<leader>tt",
+      function()
+        require("neotest").run.run({ vim.api.nvim_buf_get_name(0) })
+      end,
+      mode = "n",
+    },
+    {
+      "<leader>ta",
+      function()
+        for _, adapter_id in ipairs(require("neotest").run.adapters()) do
+          require("neotest").run.run({ suite = true, adapter = adapter_id })
+        end
+      end,
+      mode = "n",
+    },
+    {
+      "<leader>tl",
+      function()
+        require("neotest").run.run_last()
+      end,
+      mode = "n",
+    },
+    {
+      "<leader>td",
+      function()
+        require("neotest").run.run({ strategy = "dap" })
+      end,
+      mode = "n",
+    },
+    {
+      "<leader>tp",
+      function()
+        require("neotest").summary.toggle()
+      end,
+      mode = "n",
+    },
+    {
+      "<leader>to",
+      function()
+        require("neotest").output.open({ short = true })
+      end,
+      mode = "n",
+    },
+  },
+  config = function()
+    local neotest = require("neotest")
     -- require("neotest.logging"):set_level("trace")
     neotest.setup({
       adapters = {
-        python_adapter({
+        require("neotest-python")({
           dap = { justMyCode = false },
         }),
-        plenary_adapter,
-        jest_adapter({
-          cwd = jest_adapter.root,
+        require("neotest-plenary"),
+        require("neotest-jest")({
+          cwd = require("neotest-jest").root,
         }),
       },
       discovery = {
         enabled = false,
       },
       consumers = {
-        overseer = p.require("neotest.consumers.overseer"),
+        overseer = require("neotest.consumers.overseer"),
       },
       summary = {
         mappings = {
@@ -95,5 +152,5 @@ p.require(
     vim.keymap.set("n", "<leader>to", function()
       neotest.output.open({ short = true })
     end)
-  end
-)
+  end,
+}

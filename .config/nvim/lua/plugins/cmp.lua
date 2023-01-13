@@ -1,14 +1,19 @@
-local p = require("p")
-
-return function(cmp)
-  p.load("nvim-cmp")
-  p.load("cmp-buffer")
-  p.load("cmp-nvim-lsp")
-  p.load("cmp-nvim-lua")
-  p.load("cmp-path")
-  p.load("cmp_luasnip")
-
-  p.require("luasnip", function(luasnip)
+return {
+  "hrsh7th/nvim-cmp",
+  dependencies = {
+    "hrsh7th/cmp-nvim-lsp",
+    "hrsh7th/cmp-buffer",
+    "hrsh7th/cmp-path",
+    "hrsh7th/cmp-nvim-lua",
+    "saadparwaiz1/cmp_luasnip",
+    "onsails/lspkind-nvim",
+    "L3MON4D3/LuaSnip",
+  },
+  event = "InsertEnter *",
+  config = function()
+    local p = require("p")
+    local cmp = require("cmp")
+    local luasnip = require("luasnip")
     local MAX_INDEX_FILE_SIZE = 4000
 
     local has_words_before = function()
@@ -133,5 +138,5 @@ return function(cmp)
         native_menu = false,
       },
     })
-  end)
-end
+  end,
+}

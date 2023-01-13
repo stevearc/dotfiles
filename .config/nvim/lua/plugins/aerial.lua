@@ -1,10 +1,7 @@
-local p = require("p")
-local ftplugin = p.require("ftplugin")
-p.require("aerial", function(aerial)
-  ftplugin.extend("aerial", {
-    ignore_win_opts = true,
-  })
-  aerial.setup({
+return {
+  "stevearc/aerial.nvim",
+  dependencies = { "nvim-treesitter/nvim-treesitter" },
+  opts = {
     show_guides = true,
     layout = {
       max_width = { 80, 0.2 },
@@ -37,10 +34,20 @@ p.require("aerial", function(aerial)
       ["<"] = "actions.tree_decrease_fold_level",
       [">"] = "actions.tree_increase_fold_level",
     },
-  })
-  vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>", { desc = "[A]erial toggle" })
-  vim.keymap.set({ "n", "v" }, "[s", aerial.prev, { desc = "Previous aerial symbol" })
-  vim.keymap.set({ "n", "v" }, "]s", aerial.next, { desc = "Next aerial symbol" })
-  vim.keymap.set({ "n", "v" }, "[u", aerial.prev_up, { desc = "Previous aerial parent symbol" })
-  vim.keymap.set({ "n", "v" }, "]u", aerial.next_up, { desc = "Next aerial parent symbol" })
-end)
+  },
+  config = function(_, opts)
+    local aerial = require("aerial")
+    aerial.setup(opts)
+    vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>", { desc = "[A]erial toggle" })
+    vim.keymap.set({ "n", "v" }, "[s", aerial.prev, { desc = "Previous aerial symbol" })
+    vim.keymap.set({ "n", "v" }, "]s", aerial.next, { desc = "Next aerial symbol" })
+    vim.keymap.set({ "n", "v" }, "[u", aerial.prev_up, { desc = "Previous aerial parent symbol" })
+    vim.keymap.set({ "n", "v" }, "]u", aerial.next_up, { desc = "Next aerial parent symbol" })
+
+    local p = require("p")
+    local ftplugin = p.require("ftplugin")
+    ftplugin.extend("aerial", {
+      ignore_win_opts = true,
+    })
+  end,
+}
