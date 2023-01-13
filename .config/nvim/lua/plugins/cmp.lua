@@ -9,6 +9,7 @@ return {
     "onsails/lspkind-nvim",
     "L3MON4D3/LuaSnip",
   },
+  cmd = { "CmpInfo" },
   event = "InsertEnter *",
   config = function()
     local p = require("p")
@@ -138,5 +139,9 @@ return {
         native_menu = false,
       },
     })
+
+    vim.api.nvim_create_user_command("CmpInfo", function()
+      cmp.status()
+    end, {})
   end,
 }
