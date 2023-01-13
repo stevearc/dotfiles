@@ -1,3 +1,39 @@
+if vim.fn.executable("rg") == 1 then
+  vim.o.grepprg = "rg --vimgrep --no-heading --smart-case"
+  vim.o.grepformat = "%f:%l:%c:%m,%f:%l:%m"
+elseif vim.fn.executable("ag") == 1 then
+  vim.o.grepprg = "ag --vimgrep $*"
+  vim.o.grepformat = "%f:%l:%c:%m"
+elseif vim.fn.executable("ack") == 1 then
+  vim.o.grepprg = "ack --nogroup --nocolor"
+elseif require("lspconfig.util").find_git_ancestor(vim.fn.getcwd()) then
+  vim.o.grepprg = "git --no-pager grep --no-color -n $*"
+  vim.o.grepformat = "%f:%l:%m,%m %f match%ts,%f"
+else
+  vim.o.grepprg = "grep -nIR $* ."
+end
+
+local function bufgrep(text)
+  vim.cmd.cclose()
+  vim.cmd("%argd")
+  local bufnr = vim.api.nvim_get_current_buf()
+  vim.cmd.bufdo({ args = { "argadd", "%" } })
+  vim.api.nvim_set_current_buf(bufnr)
+  vim.cmd.vimgrep({ args = { string.format("/%s/gj", text), "##" }, mods = { silent = true } })
+  vim.cmd("QFOpen!")
+end
+
+vim.keymap.set("n", "gw", "<cmd>cclose | silent grep! <cword> | QFOpen!<CR>")
+vim.keymap.set("n", "gbw", function()
+  bufgrep(vim.fn.expand("<cword>"))
+end)
+vim.keymap.set("n", "gbW", function()
+  bufgrep(vim.fn.expand("<cWORD>"))
+end)
+vim.api.nvim_create_user_command("Bufgrep", function(params)
+  bufgrep(params.args)
+end, { nargs = "+" })
+
 return {
   {
     "stefandtw/quickfix-reflector.vim",
@@ -5,7 +41,20 @@ return {
   },
   {
     "stevearc/qf_helper.nvim",
-    cmd = { "Cclear", "Lclear" },
+    cmd = {
+      "Cclear",
+      "Lclear",
+      "QNext",
+      "QPrev",
+      "QFNext",
+      "QFPrev",
+      "LLNext",
+      "LLPrev",
+      "QFOpen",
+      "LLOpen",
+      "QFToggle",
+      "LLToggle",
+    },
     keys = {
       { "<C-N>", "<cmd>QNext<CR>", mode = "n" },
       { "<C-P>", "<cmd>QPrev<CR>", mode = "n" },
