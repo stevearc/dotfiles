@@ -20,7 +20,7 @@ vim.keymap.set("n", "<leader>fd", function()
 end, { desc = "[F]ind [D]ocument symbol" })
 vim.keymap.set("i", "<C-s>", function()
   require("telescope").load_extension("luasnip")
-  vim.cmd("<cmd>lua require('telescope').extensions.luasnip.luasnip()<CR>")
+  require("telescope").extensions.luasnip.luasnip()
 end, { desc = "[S]nippets" })
 
 local function find_dotfiles()
