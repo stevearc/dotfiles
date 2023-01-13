@@ -4,7 +4,7 @@ local p = require("p")
 -- Profiling
 local should_profile = os.getenv("NVIM_PROFILE")
 if should_profile then
-  p.load("profile.nvim")
+  vim.opt.runtimepath:append("~/dotfiles/vimplugins/profile.nvim")
   require("profile").instrument_autocmds()
   if should_profile:lower():match("^start") then
     local pat = vim.split(should_profile, ":")[2] or "*"

@@ -1,158 +1,33 @@
-[submodule "vimplugins/vim-fugitive"]
-	path = vimplugins/vim-fugitive
-	url = https://github.com/tpope/vim-fugitive.git
 [submodule "vimplugins/ultisnips"]
 	path = vimplugins/ultisnips
 	url = https://github.com/SirVer/ultisnips.git
-[submodule "vimplugins/vim-repeat"]
-	path = vimplugins/vim-repeat
-	url = https://github.com/tpope/vim-repeat.git
 [submodule "vimplugins/vim-arduino"]
 	path = vimplugins/vim-arduino
 	url = https://github.com/stevearc/vim-arduino.git
 [submodule "parseargs"]
 	path = parseargs
 	url = https://github.com/stevearc/parseargs.git
-[submodule "vimplugins/closetag"]
-	path = vimplugins/closetag
-	url = https://github.com/docunext/closetag.vim
-[submodule "vimplugins/vim-eunuch"]
-	path = vimplugins/vim-eunuch
-	url = https://github.com/tpope/vim-eunuch.git
-[submodule "vimplugins/vim-surround"]
-	path = vimplugins/vim-surround
-	url = https://github.com/tpope/vim-surround.git
-[submodule "vimplugins/editorconfig-vim"]
-	path = vimplugins/editorconfig-vim
-	url = https://github.com/editorconfig/editorconfig-vim.git
-[submodule "vimplugins/vim-endwise"]
-	path = vimplugins/vim-endwise
-	url = https://github.com/tpope/vim-endwise
-[submodule "vimplugins/vim-autoswap"]
-	path = vimplugins/vim-autoswap
-	url = https://github.com/gioele/vim-autoswap.git
 [submodule "vimplugins/aerial.nvim"]
 	path = vimplugins/aerial.nvim
 	url = https://github.com/stevearc/aerial.nvim.git
-[submodule "vimplugins/targets.vim"]
-	path = vimplugins/targets.vim
-	url = https://github.com/wellle/targets.vim.git
-[submodule "vimplugins/quickfix-reflector.vim"]
-	path = vimplugins/quickfix-reflector.vim
-	url = https://github.com/stefandtw/quickfix-reflector.vim.git
-[submodule "vimplugins/nvim-lspconfig"]
-	path = vimplugins/nvim-lspconfig
-	url = https://github.com/neovim/nvim-lspconfig
-	ignore = untracked
 [submodule "vimplugins/flow-coverage.nvim"]
 	path = vimplugins/flow-coverage.nvim
 	url = https://github.com/stevearc/flow-coverage.nvim.git
-[submodule "vimplugins/nvim-treesitter"]
-	path = vimplugins/nvim-treesitter
-	url = https://github.com/nvim-treesitter/nvim-treesitter
-[submodule "vimplugins/telescope.nvim"]
-	path = vimplugins/telescope.nvim
-	url = https://github.com/nvim-telescope/telescope.nvim.git
-[submodule "vimplugins/plenary.nvim"]
-	path = vimplugins/plenary.nvim
-	url = https://github.com/nvim-lua/plenary.nvim.git
 [submodule "vimplugins/scnvim"]
 	path = vimplugins/scnvim
 	url = https://github.com/stevearc/scnvim.git
-[submodule "vimplugins/nvim-web-devicons"]
-	path = vimplugins/nvim-web-devicons
-	url = https://github.com/kyazdani42/nvim-web-devicons.git
-[submodule "vimplugins/lualine.nvim"]
-	path = vimplugins/lualine.nvim
-	url = https://github.com/nvim-lualine/lualine.nvim.git
 [submodule "vimplugins/qf_helper.nvim"]
 	path = vimplugins/qf_helper.nvim
 	url = https://github.com/stevearc/qf_helper.nvim.git
-[submodule "vimplugins/tabular"]
-	path = vimplugins/tabular
-	url = https://github.com/godlygeek/tabular.git
-[submodule "vimplugins/tokyonight.nvim"]
-	path = vimplugins/tokyonight.nvim
-	url = https://github.com/folke/tokyonight.nvim.git
-[submodule "vimplugins/lightspeed.nvim"]
-	path = vimplugins/lightspeed.nvim
-	url = https://github.com/ggandor/lightspeed.nvim.git
-	ignore = untracked
-[submodule "vimplugins/playground"]
-	path = vimplugins/playground
-	url = https://github.com/nvim-treesitter/playground.git
 [submodule "vimplugins/stickybuf.nvim"]
 	path = vimplugins/stickybuf.nvim
 	url = https://github.com/stevearc/stickybuf.nvim.git
-[submodule "vimplugins/suda.vim"]
-	path = vimplugins/suda.vim
-	url = https://github.com/lambdalisue/suda.vim.git
 [submodule "vimplugins/gkeep.nvim"]
 	path = vimplugins/gkeep.nvim
 	url = https://github.com/stevearc/gkeep.nvim.git
-[submodule "vimplugins/vim-matchup"]
-	path = vimplugins/vim-matchup
-	url = https://github.com/andymass/vim-matchup.git
-[submodule "vimplugins/null-ls.nvim"]
-	path = vimplugins/null-ls.nvim
-	url = https://github.com/jose-elias-alvarez/null-ls.nvim.git
-[submodule "vimplugins/nvim-cmp"]
-	path = vimplugins/nvim-cmp
-	url = https://github.com/hrsh7th/nvim-cmp.git
-	ignore = untracked
-[submodule "vimplugins/cmp-nvim-lua"]
-	path = vimplugins/cmp-nvim-lua
-	url = https://github.com/hrsh7th/cmp-nvim-lua.git
-[submodule "vimplugins/cmp-nvim-lsp"]
-	path = vimplugins/cmp-nvim-lsp
-	url = https://github.com/hrsh7th/cmp-nvim-lsp.git
-[submodule "vimplugins/cmp-buffer"]
-	path = vimplugins/cmp-buffer
-	url = https://github.com/hrsh7th/cmp-buffer.git
-[submodule "vimplugins/cmp-path"]
-	path = vimplugins/cmp-path
-	url = https://github.com/hrsh7th/cmp-path.git
-[submodule "vimplugins/lspkind-nvim"]
-	path = vimplugins/lspkind-nvim
-	url = https://github.com/onsails/lspkind-nvim.git
-[submodule "vimplugins/luasnip"]
-	path = vimplugins/luasnip
-	url = https://github.com/L3MON4D3/LuaSnip.git
-	ignore = untracked
-[submodule "vimplugins/cmp_luasnip"]
-	path = vimplugins/cmp_luasnip
-	url = https://github.com/saadparwaiz1/cmp_luasnip.git
-[submodule "vimplugins/distant.nvim"]
-	path = vimplugins/distant.nvim
-	url = https://github.com/chipsenkbeil/distant.nvim.git
-[submodule "vimplugins/luv-vimdocs"]
-	path = vimplugins/luv-vimdocs
-	url = https://github.com/nanotee/luv-vimdocs.git
-	ignore = untracked
-[submodule "vimplugins/nvim-hlslens"]
-	path = vimplugins/nvim-hlslens
-	url = https://github.com/kevinhwang91/nvim-hlslens.git
-[submodule "vimplugins/firenvim"]
-	path = vimplugins/firenvim
-	url = https://github.com/glacambre/firenvim.git
 [submodule "vimplugins/dressing.nvim"]
 	path = vimplugins/dressing.nvim
 	url = https://github.com/stevearc/dressing.nvim.git
-[submodule "vimplugins/nvim-notify"]
-	path = vimplugins/nvim-notify
-	url = https://github.com/rcarriga/nvim-notify.git
-[submodule "vimplugins/SchemaStore.nvim"]
-	path = vimplugins/SchemaStore.nvim
-	url = https://github.com/b0o/SchemaStore.nvim.git
-[submodule "vimplugins/vim-rhubarb"]
-	path = vimplugins/vim-rhubarb
-	url = https://github.com/tpope/vim-rhubarb.git
-[submodule "vimplugins/comment.nvim"]
-	path = vimplugins/comment.nvim
-	url = https://github.com/numToStr/Comment.nvim.git
-[submodule "vimplugins/crates.nvim"]
-	path = vimplugins/crates.nvim
-	url = https://github.com/Saecki/crates.nvim.git
 [submodule "vimplugins/vim-vscode-snippets"]
 	path = vimplugins/vim-vscode-snippets
 	url = https://github.com/stevearc/vim-vscode-snippets.git
@@ -162,79 +37,15 @@
 [submodule "vimplugins/overseer.nvim"]
 	path = vimplugins/overseer.nvim
 	url = https://github.com/stevearc/overseer.nvim.git
-[submodule "vimplugins/neotest-python"]
-	path = vimplugins/neotest-python
-	url = https://github.com/nvim-neotest/neotest-python.git
-[submodule "vimplugins/neotest-plenary"]
-	path = vimplugins/neotest-plenary
-	url = https://github.com/nvim-neotest/neotest-plenary.git
-[submodule "vimplugins/neotest"]
-	path = vimplugins/neotest
-	url = https://github.com/nvim-neotest/neotest.git
-[submodule "vimplugins/lua-dev.nvim"]
-	path = vimplugins/lua-dev.nvim
-	url = https://github.com/folke/neodev.nvim.git
-[submodule "vimplugins/neotest-jest"]
-	path = vimplugins/neotest-jest
-	url = https://github.com/haydenmeade/neotest-jest.git
-[submodule "vimplugins/nightfox.nvim"]
-	path = vimplugins/nightfox.nvim
-	url = https://github.com/EdenEast/nightfox.nvim.git
-[submodule "vimplugins/nvim-dap"]
-	path = vimplugins/nvim-dap
-	url = https://github.com/mfussenegger/nvim-dap.git
-[submodule "vimplugins/nvim-dap-ui"]
-	path = vimplugins/nvim-dap-ui
-	url = https://github.com/rcarriga/nvim-dap-ui.git
-[submodule "vimplugins/nvim-dap-virtual-text"]
-	path = vimplugins/nvim-dap-virtual-text
-	url = https://github.com/theHamsta/nvim-dap-virtual-text.git
-[submodule "vimplugins/nvim-dap-go"]
-	path = vimplugins/nvim-dap-go
-	url = https://github.com/leoluz/nvim-dap-go.git
-[submodule "vimplugins/nvim-osc52"]
-	path = vimplugins/nvim-osc52
-	url = https://github.com/ojroques/nvim-osc52.git
 [submodule "vimplugins/profile.nvim"]
 	path = vimplugins/profile.nvim
 	url = https://github.com/stevearc/profile.nvim.git
-[submodule "vimplugins/nvim-jdtls"]
-	path = vimplugins/nvim-jdtls
-	url = https://github.com/mfussenegger/nvim-jdtls.git
-	ignore = untracked
-[submodule "vimplugins/nvim-FeMaco.lua"]
-	path = vimplugins/nvim-FeMaco.lua
-	url = https://github.com/AckslD/nvim-FeMaco.lua.git
 [submodule "vimplugins/resession.nvim"]
 	path = vimplugins/resession.nvim
 	url = https://github.com/stevearc/resession.nvim.git
-[submodule "vimplugins/fzf-lua"]
-	path = vimplugins/fzf-lua
-	url = https://github.com/ibhagwan/fzf-lua.git
-[submodule "vimplugins/ccc.nvim"]
-	path = vimplugins/ccc.nvim
-	url = https://github.com/uga-rosa/ccc.nvim.git
-[submodule "vimplugins/vim-startuptime"]
-	path = vimplugins/vim-startuptime
-	url = https://github.com/dstein64/vim-startuptime.git
-[submodule "vimplugins/nvim-treesitter-context"]
-	path = vimplugins/nvim-treesitter-context
-	url = https://github.com/nvim-treesitter/nvim-treesitter-context.git
 [submodule "vimplugins/three.nvim"]
 	path = vimplugins/three.nvim
 	url = https://github.com/stevearc/three.nvim.git
-[submodule "vimplugins/nvim-config-local"]
-	path = vimplugins/nvim-config-local
-	url = https://github.com/klen/nvim-config-local.git
-[submodule "vimplugins/nvim-luaref"]
-	path = vimplugins/nvim-luaref
-	url = https://github.com/milisims/nvim-luaref.git
-[submodule "vimplugins/nvim-treesitter-textobjects"]
-	path = vimplugins/nvim-treesitter-textobjects
-	url = https://github.com/nvim-treesitter/nvim-treesitter-textobjects.git
-[submodule "vimplugins/fidget.nvim"]
-	path = vimplugins/fidget.nvim
-	url = https://github.com/j-hui/fidget.nvim
 [submodule "vimplugins/oil.nvim"]
 	path = vimplugins/oil.nvim
 	url = https://github.com/stevearc/oil.nvim.git

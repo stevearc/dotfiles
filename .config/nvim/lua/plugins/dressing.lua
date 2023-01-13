@@ -1,6 +1,5 @@
 return {
   "stevearc/dressing.nvim",
-  dev = true,
   event = "VeryLazy",
   opts = {
     input = {

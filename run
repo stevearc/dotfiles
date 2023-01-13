@@ -135,10 +135,6 @@ Opts:
   else
     rsync -lrp .config/nvim ~/.config/
   fi
-  rm -rf ~/.local/share/nvim/site/pack
-  for plugin in "$HERE"/vimplugins/*; do
-    cp-vim-plugin "$(basename "$plugin")" "$symbolic"
-  done
 
   mkdir -p ~/.bash.d
   if [ $symbolic ]; then

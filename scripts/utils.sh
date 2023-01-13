@@ -147,10 +147,3 @@ mirror() {
     fi
   fi
 }
-
-cp-vim-plugin() {
-  local plugin=${1?Must specify a vim plugin}
-  local symbolic=$2
-  local parent="$HOME/.local/share/nvim/site/pack/$plugin/opt/$plugin"
-  mirror "$HERE/vimplugins/$plugin" "$parent" "$symbolic"
-}
