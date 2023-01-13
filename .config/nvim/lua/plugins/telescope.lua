@@ -1,4 +1,4 @@
-local lazy = require("lazy")
+local p = require("p")
 function stevearc.find_files(...)
   if stevearc._find_files_impl then
     stevearc._find_files_impl(...)
@@ -9,7 +9,7 @@ end
 vim.keymap.set("n", "<leader>ff", function()
   stevearc.find_files()
 end, { desc = "[F]ind [F]iles" })
-lazy.require("telescope", function(telescope)
+p.require("telescope", function(telescope)
   telescope.setup({
     defaults = {
       winblend = 10,
@@ -81,8 +81,8 @@ lazy.require("telescope", function(telescope)
 end)
 
 if vim.fn.executable("fzf") == 1 then
-  lazy.load("fzf-lua")
-  lazy.require("fzf-lua", function(fzf)
+  p.load("fzf-lua")
+  p.require("fzf-lua", function(fzf)
     fzf.setup({
       global_git_icons = false,
       files = {
@@ -108,23 +108,23 @@ if vim.fn.executable("fzf") == 1 then
   end)
 end
 
-lazy.multi("telescope.nvim", "aerial.nvim", {
+p.multi("telescope.nvim", "aerial.nvim", {
   keymaps = { { "n", "<leader>fd", "<cmd>Telescope aerial<CR>", { desc = "[F]ind [D]ocument symbol" } } },
   post_config = function()
-    pcall(lazy.require("telescope").load_extension, "aerial")
+    pcall(p.require("telescope").load_extension, "aerial")
   end,
 })
-lazy.multi("telescope.nvim", "gkeep.nvim", {
+p.multi("telescope.nvim", "gkeep.nvim", {
   keymaps = { { "n", "<leader>fn", "<cmd>Telescope gkeep<CR>", { desc = "[F]ind [N]ote" } } },
   post_config = function()
-    pcall(lazy.require("telescope").load_extension, "gkeep")
+    pcall(p.require("telescope").load_extension, "gkeep")
   end,
 })
-lazy.multi("telescope.nvim", "luasnip", {
+p.multi("telescope.nvim", "luasnip", {
   keymaps = {
     { "i", "<C-s>", "<cmd>lua require('telescope').extensions.luasnip.luasnip()<CR>", { desc = "[S]nippets" } },
   },
   post_config = function()
-    pcall(lazy.require("telescope").load_extension, "luasnip")
+    pcall(p.require("telescope").load_extension, "luasnip")
   end,
 })

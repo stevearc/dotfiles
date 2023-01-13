@@ -1,5 +1,5 @@
-local lazy = require("lazy")
-lazy.require("resession", function(resession)
+local p = require("p")
+p.require("resession", function(resession)
   local aug = vim.api.nvim_create_augroup("StevearcResession", {})
   resession.setup({
     autosave = {

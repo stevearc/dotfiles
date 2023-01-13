@@ -368,8 +368,8 @@ end
 
 ---Require one or more modules
 ---@example
---- safe_require("foo").setup({})
---- safe_require("foo", "bar", function(foo, bar)
+--- p.require("foo").setup({})
+--- p.require("foo", "bar", function(foo, bar)
 ---   foo.setup({arg = bar})
 --- end)
 M.require = function(...)

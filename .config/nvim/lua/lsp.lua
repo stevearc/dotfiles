@@ -1,4 +1,4 @@
-local lazy = require("lazy")
+local p = require("p")
 local M = {}
 
 local function adjust_formatting_capabilities(client, bufnr)
@@ -108,7 +108,7 @@ M.on_attach = function(client, bufnr)
     })
     vim.api.nvim_create_autocmd("BufWritePre", {
       callback = function()
-        safe_require("autoformat").format()
+        p.require("autoformat").format()
       end,
       buffer = bufnr,
       group = autoformat_group,
@@ -161,7 +161,7 @@ M.safe_setup = function(name, config)
 end
 
 M.capabilities = vim.lsp.protocol.make_client_capabilities()
-lazy.load("cmp-nvim-lsp").require("cmp_nvim_lsp", function(cmp_nvim_lsp)
+p.load("cmp-nvim-lsp").require("cmp_nvim_lsp", function(cmp_nvim_lsp)
   M.capabilities = cmp_nvim_lsp.default_capabilities()
 end)
 

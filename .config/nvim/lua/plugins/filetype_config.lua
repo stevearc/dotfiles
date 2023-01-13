@@ -1,5 +1,5 @@
-local lazy = require("lazy")
-local ftplugin = lazy.require("ftplugin")
+local p = require("p")
+local ftplugin = p.require("ftplugin")
 
 local function run_file(cmd)
   vim.cmd("update")

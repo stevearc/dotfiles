@@ -1,6 +1,6 @@
-local lazy = require("lazy")
-local ftplugin = lazy.require("ftplugin")
-lazy.require("aerial", function(aerial)
+local p = require("p")
+local ftplugin = p.require("ftplugin")
+p.require("aerial", function(aerial)
   ftplugin.extend("aerial", {
     ignore_win_opts = true,
   })

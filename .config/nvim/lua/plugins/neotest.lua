@@ -1,4 +1,4 @@
-local lazy = require("lazy")
+local p = require("p")
 -- Todo:
 -- * Bug: Running tests on directory doesn't work if directory not in tree (but tree has subdirectories)
 -- * Bug: No output or debug info if test fails to run (e.g. try running tests in cpython)
@@ -14,7 +14,7 @@ local lazy = require("lazy")
 -- Investigate:
 -- * Does neotest have ability to throttle groups of individual test runs?
 -- * Tangential, but also check out https://github.com/andythigpen/nvim-coverage
-lazy.require(
+p.require(
   "neotest",
   "neotest-python",
   "neotest-plenary",
@@ -35,7 +35,7 @@ lazy.require(
         enabled = false,
       },
       consumers = {
-        overseer = lazy.require("neotest.consumers.overseer"),
+        overseer = p.require("neotest.consumers.overseer"),
       },
       summary = {
         mappings = {

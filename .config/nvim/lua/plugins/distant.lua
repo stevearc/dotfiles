@@ -1,5 +1,5 @@
-local lazy = require("lazy")
-lazy("distant.nvim", {
+local p = require("p")
+p("distant.nvim", {
   commands = { "DistantConnect", "DistantLaunch", "DistantInstall" },
   req = "distant",
   post_config = function(distant)

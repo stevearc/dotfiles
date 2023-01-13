@@ -1,7 +1,7 @@
-local lazy = require("lazy")
+local p = require("p")
 local ccc_filetypes =
   { "html", "css", "sass", "less", "javascript", "typescript", "javascriptreact", "typescriptreact" }
-lazy("ccc.nvim", {
+p("ccc.nvim", {
   filetypes = ccc_filetypes,
   req = "ccc",
   modules = { "^ccc" },
@@ -36,7 +36,7 @@ lazy("ccc.nvim", {
     })
   end,
 })
-lazy.require("quick_action").add("menu", {
+p.require("quick_action").add("menu", {
   name = "Pick color",
   condition = function()
     local pickers = require("ccc.config").get("pickers")

@@ -1,5 +1,5 @@
-local lazy = require("lazy")
-lazy.require("lualine", function(lualine)
+local p = require("p")
+p.require("lualine", function(lualine)
   local function arduino_status()
     local ft = vim.api.nvim_buf_get_option(0, "ft")
     if ft ~= "arduino" then
@@ -19,7 +19,7 @@ lazy.require("lualine", function(lualine)
   local function session_name()
     return ""
   end
-  lazy.require("resession", function(resession)
+  p.require("resession", function(resession)
     session_name = function()
       local current_session = resession.get_current()
       if not current_session then

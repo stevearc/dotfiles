@@ -1,10 +1,10 @@
 _G.stevearc = {}
-local lazy = require("lazy")
+local p = require("p")
 
 -- Profiling
 local should_profile = os.getenv("NVIM_PROFILE")
 if should_profile then
-  lazy.load("profile.nvim")
+  p.load("profile.nvim")
   require("profile").instrument_autocmds()
   if should_profile:lower():match("^start") then
     local pat = vim.split(should_profile, ":")[2] or "*"
@@ -28,9 +28,7 @@ local function toggle_profile()
     prof.start(should_profile or "*")
   end
 end
-lazy.keymap("profile.nvim", "", "<f1>", toggle_profile, { desc = "Toggle profiling" })
-
-_G.safe_require = lazy.require
+p.keymap("profile.nvim", "", "<f1>", toggle_profile, { desc = "Toggle profiling" })
 
 -- Patch vim.keymap.set so that it reports errors
 local _keymap_set = vim.keymap.set
@@ -59,7 +57,7 @@ vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*")
 local aug = vim.api.nvim_create_augroup("StevearcNewConfig", {})
 
-local ftplugin = lazy.require("ftplugin")
+local ftplugin = p.require("ftplugin")
 vim.keymap.set("n", "<f2>", [[<cmd>lua require("plenary.profile").start("profile.log", {flame = true})<cr>]])
 vim.keymap.set("n", "<f3>", [[<cmd>lua require("plenary.profile").stop()<cr>]])
 

@@ -1,4 +1,5 @@
-local ftplugin = safe_require("ftplugin")
+local p = require("p")
+local ftplugin = p.require("ftplugin")
 vim.keymap.set("t", "\\\\", [[<C-\><C-N>]])
 for i = 1, 9 do
   vim.keymap.set("t", string.format([[\%d]], i), string.format([[<C-\><C-N>:BufferGoto %d<CR>]], i))

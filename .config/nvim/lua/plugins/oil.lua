@@ -1,7 +1,7 @@
-local lazy = require("lazy")
-local ftplugin = lazy.require("ftplugin")
+local p = require("p")
+local ftplugin = p.require("ftplugin")
 
-lazy.require("oil", function(oil)
+p.require("oil", function(oil)
   oil.setup({
     trash = false,
     skip_confirm_for_simple_edits = true,

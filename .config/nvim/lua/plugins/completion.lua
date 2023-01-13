@@ -1,14 +1,14 @@
-local lazy = require("lazy")
+local p = require("p")
 
 return function(cmp)
-  lazy.load("nvim-cmp")
-  lazy.load("cmp-buffer")
-  lazy.load("cmp-nvim-lsp")
-  lazy.load("cmp-nvim-lua")
-  lazy.load("cmp-path")
-  lazy.load("cmp_luasnip")
+  p.load("nvim-cmp")
+  p.load("cmp-buffer")
+  p.load("cmp-nvim-lsp")
+  p.load("cmp-nvim-lua")
+  p.load("cmp-path")
+  p.load("cmp_luasnip")
 
-  lazy.require("luasnip", function(luasnip)
+  p.require("luasnip", function(luasnip)
     local MAX_INDEX_FILE_SIZE = 4000
 
     local has_words_before = function()
@@ -55,7 +55,7 @@ return function(cmp)
     })
 
     local formatting = {}
-    safe_require("lspkind", function(lspkind)
+    p.require("lspkind", function(lspkind)
       formatting.format = lspkind.cmp_format({
         mode = "symbol",
         symbol_map = {

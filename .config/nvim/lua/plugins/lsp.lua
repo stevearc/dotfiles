@@ -1,10 +1,10 @@
 local lsp = require("lsp")
-local lazy = require("lazy")
-lazy.load("SchemaStore.nvim")
-lazy.load("flow-coverage.nvim")
-lazy.load("fidget.nvim")
+local p = require("p")
+p.load("SchemaStore.nvim")
+p.load("flow-coverage.nvim")
+p.load("fidget.nvim")
 
-lazy.require("lspconfig", function(lspconfig)
+p.require("lspconfig", function(lspconfig)
   -- vim.lsp.set_log_level("debug")
 
   vim.diagnostic.config({
@@ -145,7 +145,7 @@ lazy.require("lspconfig", function(lspconfig)
   lsp.safe_setup("yamlls", {
     settings = {
       yaml = {
-        schemas = lazy.require("schemastore").json.schemas(),
+        schemas = p.require("schemastore").json.schemas(),
       },
     },
   })
@@ -174,7 +174,7 @@ lazy.require("lspconfig", function(lspconfig)
     filetypes = { "json", "jsonc", "json5" },
     settings = {
       json = {
-        schemas = lazy.require("schemastore").json.schemas(),
+        schemas = p.require("schemastore").json.schemas(),
       },
     },
   })
@@ -217,7 +217,7 @@ lazy.require("lspconfig", function(lspconfig)
     },
   })
 
-  lazy("lua-dev.nvim", {
+  p("lua-dev.nvim", {
     req = "neodev",
     filetypes = "lua",
     post_config = function(neodev)
@@ -249,7 +249,7 @@ lazy.require("lspconfig", function(lspconfig)
   --   cmd = { "bundle", "exec", "srb", "tc", "--lsp" },
   -- })
 
-  lazy.require("null-ls", function(null_ls)
+  p.require("null-ls", function(null_ls)
     null_ls.setup(vim.tbl_extend("keep", {
       capabilities = lsp.capabilities,
       root_dir = function(fname)

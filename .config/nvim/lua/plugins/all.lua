@@ -1,5 +1,5 @@
-local lazy = require("lazy")
-local ftplugin = lazy.require("ftplugin")
+local p = require("p")
+local ftplugin = p.require("ftplugin")
 
 local pending_notifications = {}
 local old_notify = vim.notify
@@ -7,14 +7,14 @@ vim.notify = function(...)
   table.insert(pending_notifications, { ... })
 end
 
-lazy.load("plenary.nvim")
-lazy.load("nvim-treesitter")
-lazy.load("nvim-treesitter-context")
-lazy.load("nvim-treesitter-textobjects")
-lazy.load("closetag")
-lazy.load("resession.nvim")
-lazy.load("comment.nvim").require("Comment").setup()
-lazy.load("dressing.nvim").require("dressing", function(dressing)
+p.load("plenary.nvim")
+p.load("nvim-treesitter")
+p.load("nvim-treesitter-context")
+p.load("nvim-treesitter-textobjects")
+p.load("closetag")
+p.load("resession.nvim")
+p.load("comment.nvim").require("Comment").setup()
+p.load("dressing.nvim").require("dressing", function(dressing)
   dressing.setup({
     input = {
       insert_only = false,
@@ -38,16 +38,16 @@ lazy.load("dressing.nvim").require("dressing", function(dressing)
     )
   end)
 end)
-lazy("firenvim", {
+p("firenvim", {
   post_config = "plugins.firenvim",
 })
 if vim.g.started_by_firenvim then
-  lazy.load("firenvim")
+  p.load("firenvim")
 end
-lazy.load("editorconfig-vim")
-lazy.load("lspkind-nvim")
-lazy.load("lualine.nvim")
-lazy("luasnip", {
+p.load("editorconfig-vim")
+p.load("lspkind-nvim")
+p.load("lualine.nvim")
+p("luasnip", {
   modules = { "^luasnip" },
   autocmds = {
     InsertEnter = { pattern = "*" },
@@ -55,8 +55,8 @@ lazy("luasnip", {
   req = "luasnip",
   post_config = "plugins.luasnip",
 })
-lazy.load("crates.nvim").require("crates").setup()
-lazy("nvim-cmp", {
+p.load("crates.nvim").require("crates").setup()
+p("nvim-cmp", {
   modules = { "^cmp%." },
   autocmds = {
     InsertEnter = { pattern = "*" },
@@ -65,11 +65,11 @@ lazy("nvim-cmp", {
   req = "cmp",
   post_config = "plugins.completion",
 })
-lazy.load("nvim-cmp")
-lazy.load("luv-vimdocs")
-lazy.load("nightfox.nvim")
-lazy.load("null-ls.nvim")
-lazy("nvim-dap", {
+p.load("nvim-cmp")
+p.load("luv-vimdocs")
+p.load("nightfox.nvim")
+p.load("null-ls.nvim")
+p("nvim-dap", {
   req = "dap",
   keymaps = {
     { "n", "<leader>dc", "<cmd>lua require'dap'.continue()<CR>", { desc = "[D]ebug [C]ontinue" } },
@@ -83,46 +83,46 @@ lazy("nvim-dap", {
   post_config = "plugins.dap",
 })
 -- TODO need to manually load to make this work with overseer
--- lazy.load("nvim-dap")
-lazy("nvim-jdtls", { filetypes = "java", modules = { "^jdtls" } })
-lazy.load("nvim-lspconfig")
-lazy.load("nvim-luaref")
+-- p.load("nvim-dap")
+p("nvim-jdtls", { filetypes = "java", modules = { "^jdtls" } })
+p.load("nvim-lspconfig")
+p.load("nvim-luaref")
 if vim.g.nerd_font ~= false then
-  lazy.load("nvim-web-devicons").require("nvim-web-devicons").setup({
+  p.load("nvim-web-devicons").require("nvim-web-devicons").setup({
     default = true,
   })
 end
-lazy.load("qf_helper.nvim").require("qf_helper").setup()
-lazy("quickfix-reflector.vim", {
+p.load("qf_helper.nvim").require("qf_helper").setup()
+p("quickfix-reflector.vim", {
   autocmds = {
     QuickFixCmdPost = { pattern = "*" },
   },
 })
-lazy("scnvim", {
+p("scnvim", {
   filetypes = "supercollider",
   pre_config = function()
     vim.g.scnvim_no_mappings = 1
     vim.g.scnvim_eval_flash_repeats = 1
   end,
 })
-lazy.load("stickybuf.nvim")
-lazy("suda.vim", {
+p.load("stickybuf.nvim")
+p("suda.vim", {
   commands = { "SudaRead", "SudaWrite" },
 })
-lazy("tabular", { commands = { "Tabularize" } })
-lazy.load("targets.vim")
-lazy.load("telescope.nvim")
-lazy.load("tokyonight.nvim")
-lazy("vim-arduino", {
+p("tabular", { commands = { "Tabularize" } })
+p.load("targets.vim")
+p.load("telescope.nvim")
+p.load("tokyonight.nvim")
+p("vim-arduino", {
   filetypes = "arduino",
   pre_config = function()
     vim.g.arduino_serial_cmd = "picocom {port} -b {baud} -l"
   end,
 })
-lazy.load("vim-autoswap")
-lazy.load("vim-endwise")
-lazy.load("vim-eunuch")
-lazy("vim-fugitive", {
+p.load("vim-autoswap")
+p.load("vim-endwise")
+p.load("vim-eunuch")
+p("vim-fugitive", {
   keymaps = {
     { "n", "<leader>gh", "<cmd>GitHistory<CR>", { desc = "[G]it [H]istory" } },
     { "n", "<leader>gb", "<cmd>Git blame<CR>", { desc = "[G]it [B]lame" } },
@@ -130,26 +130,26 @@ lazy("vim-fugitive", {
     { "v", "<leader>gc", ":GBrowse!<CR>", { desc = "[G]it [C]opy link" } },
   },
 })
-lazy.load("vim-fugitive")
+p.load("vim-fugitive")
 vim.keymap.set("n", "<leader>gt", function()
   require("gitterm").toggle()
 end, { desc = "[G]it [T]erminal interface" })
-lazy.load("vim-repeat")
-lazy.load("vim-rhubarb")
-lazy.load("vim-startuptime")
-lazy.load("vim-surround")
-lazy.load("vim-vscode-snippets")
+p.load("vim-repeat")
+p.load("vim-rhubarb")
+p.load("vim-startuptime")
+p.load("vim-surround")
+p.load("vim-vscode-snippets")
 
 require("plugins.lualine")
 require("plugins.telescope")
-lazy("nvim-notify", {
+p("nvim-notify", {
   autocmds = {
     ColorScheme = { pattern = "*" },
   },
   post_config = function()
     -- We have to set this up after we apply our colorscheme
     vim.notify = old_notify
-    lazy.require("notify", function(notify)
+    p.require("notify", function(notify)
       vim.notify = notify
       notify.setup({
         stages = "fade",
@@ -164,7 +164,7 @@ lazy("nvim-notify", {
   end,
 })
 
-lazy("pair-ls.nvim", {
+p("pair-ls.nvim", {
   commands = { "Pair", "PairConnect" },
   req = "pair-ls",
   post_config = function(pairls)
@@ -198,7 +198,7 @@ ftplugin.set("GoogleKeepNote", {
   }, gkeep_bindings),
 })
 ftplugin.extend("norg", { bindings = gkeep_bindings })
-lazy("gkeep.nvim", {
+p("gkeep.nvim", {
   keymaps = { { "n", "<leader>n", "<cmd>GkeepToggle<CR>", { desc = "[N]otes" } } },
   modules = { "^telescope._extensions.gkeep$" },
   autocmds = {
@@ -214,10 +214,10 @@ lazy("gkeep.nvim", {
   end,
 })
 
-lazy.load("oil.nvim").require("plugins.oil")
+p.load("oil.nvim").require("plugins.oil")
 
-lazy.load("aerial.nvim").require("plugins.aerial")
-lazy("lightspeed.nvim", {
+p.load("aerial.nvim").require("plugins.aerial")
+p("lightspeed.nvim", {
   keymaps = {
     { "", "<leader>s", "<Plug>Lightspeed_omni_s", { desc = "Lightspeed search" } },
     { "", "gs", "<Plug>Lightspeed_omni_s", { desc = "Lightspeed search" } },
@@ -233,7 +233,7 @@ lazy("lightspeed.nvim", {
     })
   end,
 })
-lazy.require("tags", function(tags)
+p.require("tags", function(tags)
   tags.setup({
     on_attach = function(bufnr)
       vim.keymap.set("n", "<C-]>", tags.goto_definition, { buffer = bufnr, desc = "Goto tag" })
@@ -242,7 +242,7 @@ lazy.require("tags", function(tags)
 end)
 -- Only change the clipboard if we're in a SSH session
 if os.getenv("SSH_CLIENT") then
-  lazy.load("nvim-osc52").require("osc52", function(osc52)
+  p.load("nvim-osc52").require("osc52", function(osc52)
     local function copy(lines, _)
       osc52.copy(table.concat(lines, "\n"))
     end
@@ -258,8 +258,8 @@ if os.getenv("SSH_CLIENT") then
     }
   end)
 end
-lazy.load("overseer.nvim")
-lazy.load("nvim-config-local").require("config-local", function(config_local)
+p.load("overseer.nvim")
+p.load("nvim-config-local").require("config-local", function(config_local)
   config_local.setup({
     config_files = { ".nvimrc.lua", ".vimrc.lua", ".nvimrc" },
     autocommands_create = true,
@@ -269,10 +269,10 @@ lazy.load("nvim-config-local").require("config-local", function(config_local)
   })
 end)
 
-lazy.load("neotest", "neotest-jest", "neotest-plenary", "neotest-python")
+p.load("neotest", "neotest-jest", "neotest-plenary", "neotest-python")
 require("plugins.neotest")
 
-lazy.require("overseer", function(overseer)
+p.require("overseer", function(overseer)
   overseer.setup({
     strategy = { "jobstart" },
     log = {
@@ -316,9 +316,9 @@ lazy.require("overseer", function(overseer)
   vim.keymap.set("n", "<leader>od", "<cmd>OverseerQuickAction<CR>")
   vim.keymap.set("n", "<leader>os", "<cmd>OverseerTaskAction<CR>")
 end)
-lazy.load("nvim-hlslens").require("plugins.hlslens")
+p.load("nvim-hlslens").require("plugins.hlslens")
 
-lazy("nvim-FeMaco.lua", {
+p("nvim-FeMaco.lua", {
   commands = { "FeMaco" },
   req = "femaco",
   post_config = function(femaco)
@@ -328,7 +328,7 @@ lazy("nvim-FeMaco.lua", {
 
 require("plugins.ccc")
 
-lazy.require("quick_action", function(quick_action)
+p.require("quick_action", function(quick_action)
   quick_action.set_keymap("n", "<CR>", "menu")
   quick_action.add("menu", {
     name = "Show diagnostics",
@@ -343,8 +343,8 @@ lazy.require("quick_action", function(quick_action)
     end,
   })
 end)
-lazy.load("three.nvim").require("plugins.three")
-lazy("fidget.nvim", {
+p.load("three.nvim").require("plugins.three")
+p("fidget.nvim", {
   req = "fidget",
   modules = { "^fidget" },
   post_config = function(fidget)
@@ -358,15 +358,15 @@ lazy("fidget.nvim", {
     })
   end,
 })
-lazy.require("plugins.resession")
+p.require("plugins.resession")
 
 require("plugins.distant")
-lazy("playground", {
+p("playground", {
   commands = { "TSPlaygroundToggle", "TSHighlightCapturesUnderCursor" },
 })
 
 -- vim-matchup
-lazy.load("vim-matchup")
+p.load("vim-matchup")
 vim.g.matchup_surround_enabled = 1
 vim.g.matchup_matchparen_nomode = "i"
 vim.g.matchup_matchparen_deferred = 1

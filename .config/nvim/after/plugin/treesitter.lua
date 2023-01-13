@@ -1,5 +1,5 @@
-local lazy = require("lazy")
-lazy.require("nvim-treesitter", function()
+local p = require("p")
+p.require("nvim-treesitter", function()
   local queries = require("nvim-treesitter.query")
   local parsers = require("nvim-treesitter.parsers")
 

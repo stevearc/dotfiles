@@ -1,5 +1,5 @@
-local lazy = require("lazy")
-lazy.require("three", function(three)
+local p = require("p")
+p.require("three", function(three)
   local is_windows = vim.loop.os_uname().version:match("Windows")
 
   local sep = is_windows and "\\" or "/"
