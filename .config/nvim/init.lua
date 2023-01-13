@@ -25,7 +25,7 @@ local function toggle_profile()
       end
     end)
   else
-    prof.start("*")
+    prof.start(should_profile or "*")
   end
 end
 lazy.keymap("profile.nvim", "", "<f1>", toggle_profile, { desc = "Toggle profiling" })
@@ -50,13 +50,18 @@ vim.keymap.set = function(mode, lhs, rhs, opts)
 end
 
 vim.g.python3_host_prog = os.getenv("HOME") .. "/.envs/py3/bin/python"
+if not vim.loop.fs_stat(vim.g.python3_host_prog) then
+  -- Disable the python provider if the virtualenv isn't found
+  vim.g.loaded_python3_provider = 0
+end
+-- Add nvim-local to the runtimepath so we can extend the configuration
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local")
 vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "-local/site/pack/*/start/*")
 local aug = vim.api.nvim_create_augroup("StevearcNewConfig", {})
 
 local ftplugin = lazy.require("ftplugin")
-vim.keymap.set("n", "<f2>", [[<cmd>lua require'plenary.profile'.start("profile.log", {flame = true})<cr>]])
-vim.keymap.set("n", "<f3>", [[<cmd>lua require'plenary.profile'.stop()<cr>]])
+vim.keymap.set("n", "<f2>", [[<cmd>lua require("plenary.profile").start("profile.log", {flame = true})<cr>]])
+vim.keymap.set("n", "<f3>", [[<cmd>lua require("plenary.profile").stop()<cr>]])
 
 vim.g.nerd_font = true
 vim.g.debug_treesitter = false
