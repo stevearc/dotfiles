@@ -269,6 +269,9 @@ M.setup = function(opts)
       scroll = 0, -- We won't get a good default value for this otherwise (will be 1/2 of current win height)
     },
   })
+  if not conf.augroup then
+    conf.augroup = vim.api.nvim_create_augroup("FiletypePlugin", {})
+  end
   -- Pick up the existing option values
   for opt, opt_info in pairs(vim.api.nvim_get_all_options_info()) do
     if opt_info.scope == "win" and conf.default_win_opts[opt] == nil then

@@ -26,7 +26,6 @@ return {
       vim.g.scnvim_eval_flash_repeats = 1
     end,
   },
-  { "mfussenegger/nvim-jdtls", ft = "java" },
   { "dstein64/vim-startuptime", cmd = "StartupTime" },
   { "Saecki/crates.nvim", cmd = "BufReadPre Cargo.toml", config = true },
   "milisims/nvim-luaref",

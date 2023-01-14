@@ -14,7 +14,10 @@
 -- * Does neotest have ability to throttle groups of individual test runs?
 -- * Tangential, but also check out https://github.com/andythigpen/nvim-coverage
 return {
-  "nvim-neotest/neotest",
+  -- "nvim-neotest/neotest",
+  "stevearc/neotest",
+  branch = "stevearc-no-error",
+  dev = false,
   dependencies = {
     "nvim-neotest/neotest-python",
     "nvim-neotest/neotest-plenary",

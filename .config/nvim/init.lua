@@ -54,7 +54,6 @@ if not vim.loop.fs_stat(vim.g.python3_host_prog) then
 end
 local aug = vim.api.nvim_create_augroup("StevearcNewConfig", {})
 
-local ftplugin = p.require("ftplugin")
 vim.keymap.set("n", "<f2>", [[<cmd>lua require("plenary.profile").start("profile.log", {flame = true})<cr>]])
 vim.keymap.set("n", "<f3>", [[<cmd>lua require("plenary.profile").stop()<cr>]])
 
@@ -198,6 +197,7 @@ function stevearc.foldtext()
   local padding = string.rep(" ", string.find(line, "[^%s]") - 1)
   return string.format("%s%s %s   %d", padding, icon, line, vim.v.foldend - vim.v.foldstart + 1)
 end
+vim.o.foldtext = [[v:lua.stevearc.foldtext()")]]
 vim.opt.fillchars = {
   fold = " ",
   vert = "┃",
@@ -208,18 +208,12 @@ vim.opt.fillchars = {
   vertright = "┣",
   verthoriz = "╋",
 }
-vim.o.foldtext = [[v:lua.stevearc.foldtext()")]]
-
--- Use my universal clipboard tool to copy with <leader>y
-vim.keymap.set("n", "<leader>y", '<cmd>call system("clip", @0)<CR>')
 
 -- Map leader-r to do a global replace of a word
 vim.keymap.set("n", "<leader>r", [[*N:s//<C-R>=expand("<cword>")<CR>]])
 
 -- Expand %% to current directory in command mode
-vim.cmd([[
-cabbr <expr> %% expand('%:p:h')
-]])
+vim.cmd.cabbr({ args = { "<expr>", "%%", "expand('%:p:h')" } })
 
 vim.api.nvim_create_autocmd("FocusGained", {
   desc = "Reload files from disk when we focus vim",
@@ -280,10 +274,6 @@ vim.api.nvim_create_autocmd("ColorScheme", {
   group = aug,
 })
 
--- Filetype mappings and options
-ftplugin.setup({ augroup = aug })
-require("filetype_config")
-
 p.require("tags", function(tags)
   tags.setup({
     on_attach = function(bufnr)
@@ -291,6 +281,16 @@ p.require("tags", function(tags)
     end,
   })
 end)
+
+-- Makes * and # work in visual mode
+function stevearc.visual_set_search(cmdtype)
+  local tmp = vim.fn.getreg("s")
+  vim.cmd.normal({ args = { 'gv"sy' }, bang = true })
+  vim.fn.setreg("/", "\\V" .. vim.fn.escape(vim.fn.getreg("s"), cmdtype .. "\\"):gsub("\n", "\\n"))
+  vim.fn.setreg("s", tmp)
+end
+vim.keymap.set("x", "*", ':lua stevearc.visual_set_search("/")<CR>/<C-R>=@/<CR><CR>')
+vim.keymap.set("x", "#", ':lua stevearc.visual_set_search("?")<CR>?<C-R>=@/<CR><CR>')
 
 -- :W and :H to set win width/height
 vim.api.nvim_create_user_command("W", function(params)
@@ -370,12 +370,13 @@ end
 
 require("lazy").setup({
   spec = specs,
-  install = { colorscheme = { "nightfox", "habamax" } },
+  install = { colorscheme = { "duskfox", "habamax" } },
   dev = {
     path = "~/dotfiles/vimplugins",
     patterns = { "stevearc" },
   },
   checker = { enabled = false },
+  change_detection = { enabled = false },
   performance = {
     rtp = {
       paths = {
@@ -400,7 +401,7 @@ require("lazy").setup({
 local is_tty = os.getenv("XDG_SESSION_TYPE") == "tty" and os.getenv("SSH_TTY") == ""
 if is_tty then
   vim.opt.termguicolors = false
-  vim.cmd("colorscheme darkblue")
+  vim.cmd.colorscheme({ args = { "darkblue" } })
 else
   vim.opt.termguicolors = true
   vim.cmd.colorscheme({ args = { "duskfox" } })

@@ -4,6 +4,9 @@ return {
   "stevearc/three.nvim",
   opts = {
     projects = {
+      allowlist = {
+        vim.fn.stdpath("data") .. "/lazy",
+      },
       filter_dir = function(dir)
         local dotgit = dir .. sep .. ".git"
         if vim.fn.isdirectory(dotgit) == 1 or vim.fn.filereadable(dotgit) == 1 then

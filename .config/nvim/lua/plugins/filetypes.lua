@@ -2,7 +2,7 @@ local p = require("p")
 local ftplugin = p.require("ftplugin")
 
 local function run_file(cmd)
-  vim.cmd("update")
+  vim.cmd.update()
   local task = require("overseer").new_task({
     cmd = cmd,
     components = { "unique", "default" },
@@ -10,12 +10,12 @@ local function run_file(cmd)
   task:start()
   local bufnr = task:get_bufnr()
   if bufnr then
-    vim.cmd("botright split")
+    vim.cmd.split()
     vim.api.nvim_win_set_buf(0, bufnr)
   end
 end
 
-ftplugin.set_all({
+ftplugin.extend_all({
   arduino = {
     bindings = {
       { "n", "<leader>ac", ":wa<CR>:ArduinoVerify<CR>" },
@@ -192,3 +192,7 @@ ftplugin.set_all({
     },
   },
 })
+
+ftplugin.setup()
+
+return {}
