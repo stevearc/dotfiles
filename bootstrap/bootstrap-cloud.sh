@@ -19,6 +19,6 @@ if [ ! -e .bash_profile ]; then
 fi
 su stevearc -l -c "cd ~/dotfiles && ./run dotfiles"
 su stevearc -l -c "cd ~/dotfiles && ./run install common"
-su stevearc -l -c "cd ~/dotfiles && ./run language common"
 su stevearc -l -c "cd ~/dotfiles && ./scripts/install_neovim.sh stable"
 su stevearc -l -c "cd ~/dotfiles && ./run install neovim"
+su stevearc -l -c "cd ~/dotfiles && ./run language common"

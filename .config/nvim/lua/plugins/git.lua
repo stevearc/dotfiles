@@ -5,7 +5,7 @@ end, { desc = "[G]it [T]erminal interface" })
 return {
   "tpope/vim-fugitive",
   dependencies = { "tpope/vim-rhubarb" },
-  cmd = { "GitHistory", "Git", "GBrowse" },
+  cmd = { "GitHistory", "Git", "GBrowse", "Gwrite" },
   keys = {
     { "<leader>gh", "<cmd>GitHistory<CR>", { mode = "n", desc = "[G]it [H]istory" } },
     { "<leader>gb", "<cmd>Git blame<CR>", { mode = "n", desc = "[G]it [B]lame" } },
