@@ -8,6 +8,13 @@ return {
       win_options = {
         sidescrolloff = 4,
       },
+      get_config = function()
+        if vim.api.nvim_win_get_width(0) < 50 then
+          return {
+            relative = "editor",
+          }
+        end
+      end,
     },
   },
   config = function(_, opts)
