@@ -5,6 +5,7 @@ return {
     trash = false,
     skip_confirm_for_simple_edits = true,
     restore_win_options = false,
+    silence_disclaimer = true,
     keymaps = {
       ["`"] = "actions.tcd",
       ["~"] = "actions.cd",
