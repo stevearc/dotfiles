@@ -81,6 +81,8 @@ setup-kde() {
     # sudo ufw allow proto udp from 2a02:xxxx:xxxx:xxxx::/64 to any port 1714:1764 comment 'kdeconnect'
     # sudo ufw allow proto tcp from 2a02:xxxx:xxxx:xxxx::/64 to any port 1714:1764 comment 'kdeconnect'
   fi
+  # Disable baloo file indexer
+  balooctl disable
   # Disable screen corner magic [Workspace Behavior > Screen Edges]
   for pos in Bottom BottomLeft BottomRight Left Right Top TopLeft TopRight; do
     kwriteconfig5 --file ~/.config/kwinrc --group ElectricBorders --key "$pos" None
