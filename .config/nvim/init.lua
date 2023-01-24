@@ -213,7 +213,7 @@ vim.opt.fillchars = {
 vim.keymap.set("n", "<leader>r", [[*N:s//<C-R>=expand("<cword>")<CR>]])
 
 -- Expand %% to current directory in command mode
-vim.cmd.cabbr({ args = { "<expr>", "%%", "expand('%:p:h')" } })
+vim.cmd.cabbr({ args = { "<expr>", "%%", "&filetype == 'oil' ? bufname('%')[6:] : expand('%:p:h')" } })
 
 vim.api.nvim_create_autocmd("FocusGained", {
   desc = "Reload files from disk when we focus vim",
