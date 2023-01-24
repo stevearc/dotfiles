@@ -49,7 +49,10 @@ return {
   { "numToStr/Comment.nvim", config = true },
   {
     "klen/nvim-config-local",
-    opts = { ".nvimrc.lua", ".vimrc.lua" },
+    opts = {
+      config_files = { ".nvimrc.lua", ".vimrc.lua" },
+      lookup_parents = true,
+    },
   },
   { "kyazdani42/nvim-web-devicons", enabled = vim.g.nerd_font, opts = { default = true }, config = true },
   {
