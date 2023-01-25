@@ -154,4 +154,3 @@ local function toggle()
 end
 
 vim.keymap.set({ "n", "t" }, [[<C-\>]], toggle, { desc = "Toggle floating terminal" })
-return {}

@@ -112,6 +112,21 @@ vim.o.number = true -- Except for current line
 vim.o.relativenumber = true -- Relative line numbers
 vim.opt.showbreak = "↳ " -- DOWNWARDS ARROW WITH TIP RIGHTWARDS (U+21B3, UTF-8: E2 86 B3)
 
+if vim.fn.executable("rg") == 1 then
+  vim.o.grepprg = "rg --vimgrep --no-heading --smart-case"
+  vim.o.grepformat = "%f:%l:%c:%m,%f:%l:%m"
+elseif vim.fn.executable("ag") == 1 then
+  vim.o.grepprg = "ag --vimgrep $*"
+  vim.o.grepformat = "%f:%l:%c:%m"
+elseif vim.fn.executable("ack") == 1 then
+  vim.o.grepprg = "ack --nogroup --nocolor"
+elseif vim.fn.finddir(".git", ".;") ~= "" then
+  vim.o.grepprg = "git --no-pager grep --no-color -n $*"
+  vim.o.grepformat = "%f:%l:%m,%m %f match%ts,%f"
+else
+  vim.o.grepprg = "grep -nIR $* ."
+end
+
 vim.filetype.add({
   extension = {
     sky = "python", -- starlark

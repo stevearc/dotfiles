@@ -47,5 +47,3 @@ p.require("quick_action", function(quick_action)
     end,
   })
 end)
-
-return {}

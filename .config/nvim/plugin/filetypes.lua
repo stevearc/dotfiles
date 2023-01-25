@@ -194,5 +194,3 @@ ftplugin.extend_all({
 })
 
 ftplugin.setup()
-
-return {}
