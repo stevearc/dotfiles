@@ -1,5 +1,6 @@
 return {
   "nvim-lualine/lualine.nvim",
+  enabled = false,
   dependencies = { "kyazdani42/nvim-web-devicons" },
   config = function()
     local lualine = require("lualine")
@@ -20,9 +21,8 @@ return {
     end
 
     local function session_name()
-      local has_resession, resession = pcall(require, "resession")
-      if has_resession then
-        local current_session = resession.get_current()
+      if package.loaded.resession then
+        local current_session = require("resession").get_current()
         if current_session then
           return string.format("session: %s", current_session)
         end

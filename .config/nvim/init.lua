@@ -127,6 +127,13 @@ else
   vim.o.grepprg = "grep -nIR $* ."
 end
 
+local is_tty = os.getenv("XDG_SESSION_TYPE") == "tty" and os.getenv("SSH_TTY") == ""
+if is_tty then
+  vim.o.termguicolors = false
+else
+  vim.o.termguicolors = true
+end
+
 vim.filetype.add({
   extension = {
     sky = "python", -- starlark
@@ -410,11 +417,8 @@ require("lazy").setup({
   },
 })
 
-local is_tty = os.getenv("XDG_SESSION_TYPE") == "tty" and os.getenv("SSH_TTY") == ""
 if is_tty then
-  vim.opt.termguicolors = false
   vim.cmd.colorscheme({ args = { "darkblue" } })
 else
-  vim.opt.termguicolors = true
   vim.cmd.colorscheme({ args = { "duskfox" } })
 end
