@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
 
+fetch-nerd-font() {
+  if [ ! -e UbuntuMono.zip ]; then
+    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/UbuntuMono.zip
+    unzip UbuntuMono.zip
+  fi
+  rm -f UbuntuMono.zip
+}
+
 post-install-neovim() {
   [ -d ~/.envs ] || mkdir ~/.envs
   [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3

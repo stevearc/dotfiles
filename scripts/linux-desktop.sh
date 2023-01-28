@@ -226,10 +226,7 @@ DC_INSTALL_NERD_FONT_DOC="Font with icons"
 dc-install-nerd-font() {
   mkdir -p ~/.local/share/fonts
   pushd ~/.local/share/fonts >/dev/null
-  if [ ! -e UbuntuMono.zip ]; then
-    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/UbuntuMono.zip
-    unzip UbuntuMono.zip
-  fi
+  fetch-nerd-font
   popd >/dev/null
 }
 
