@@ -281,7 +281,7 @@ local SessionName = {
     return package.loaded.resession and require("resession").get_current()
   end,
   provider = function()
-    return string.format("[%s]", require("resession").get_current())
+    return string.format(" %s", require("resession").get_current())
   end,
 }
 
