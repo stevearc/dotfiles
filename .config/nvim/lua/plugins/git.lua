@@ -4,9 +4,10 @@ end, { desc = "[G]it [T]erminal interface" })
 
 return {
   "tpope/vim-fugitive",
-  dependencies = { "tpope/vim-rhubarb" },
-  cmd = { "GitHistory", "Git", "GBrowse", "Gwrite" },
+  dependencies = { "tpope/vim-rhubarb", "rbong/vim-flog" },
+  cmd = { "GitHistory", "Git", "GBrowse", "Gwrite", "Flog", "Flogsplit" },
   keys = {
+    { "<leader>gg", "<cmd>Flog -all<CR>", { mode = "n", desc = "[G]it [G]raph" } },
     { "<leader>gh", "<cmd>GitHistory<CR>", { mode = "n", desc = "[G]it [H]istory" } },
     { "<leader>gb", "<cmd>Git blame<CR>", { mode = "n", desc = "[G]it [B]lame" } },
     { "<leader>gc", "<cmd>GBrowse!<CR>", { mode = "n", desc = "[G]it [C]opy link" } },
