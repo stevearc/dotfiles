@@ -51,28 +51,30 @@ return {
     local overseer = require("overseer")
     overseer.setup(opts)
     vim.api.nvim_create_user_command("OverseerDebugParser", 'lua require("overseer").debug_parser()', {})
-    vim.api.nvim_create_user_command("Grep", function(args)
-      -- Interpolate the "$*" in grepprg
-      local cmd, num_subs = vim.o.grepprg:gsub("%$%*", args.args)
+    vim.api.nvim_create_user_command("Grep", function(params)
+      local args = vim.fn.expandcmd(params.args)
+      -- Insert args at the '$*' in the grepprg
+      local cmd, num_subs = vim.o.grepprg:gsub("%$%*", args)
       if num_subs == 0 then
-        cmd = cmd .. " " .. args.args
+        cmd = cmd .. " " .. args
       end
       local task = overseer.new_task({
         cmd = cmd,
-        name = "grep " .. args.args,
+        name = "grep " .. args,
         components = {
           {
             "on_output_quickfix",
             errorformat = vim.o.grepformat,
-            open = true,
+            open = not params.bang,
             open_height = 8,
             items_only = true,
           },
+          -- We don't care to keep this around as long as most tasks
           { "on_complete_dispose", timeout = 30 },
           "default",
         },
       })
       task:start()
-    end, { nargs = "*" })
+    end, { nargs = "*", bang = true })
   end,
 }

@@ -116,15 +116,15 @@ if vim.fn.executable("rg") == 1 then
   vim.o.grepprg = "rg --vimgrep --no-heading --smart-case"
   vim.o.grepformat = "%f:%l:%c:%m,%f:%l:%m"
 elseif vim.fn.executable("ag") == 1 then
-  vim.o.grepprg = "ag --vimgrep $*"
+  vim.o.grepprg = "ag --vimgrep"
   vim.o.grepformat = "%f:%l:%c:%m"
 elseif vim.fn.executable("ack") == 1 then
   vim.o.grepprg = "ack --nogroup --nocolor"
 elseif vim.fn.finddir(".git", ".;") ~= "" then
-  vim.o.grepprg = "git --no-pager grep --no-color -n $*"
+  vim.o.grepprg = "git --no-pager grep --no-color -n"
   vim.o.grepformat = "%f:%l:%m,%m %f match%ts,%f"
 else
-  vim.o.grepprg = "grep -nIR $* ."
+  vim.o.grepprg = "grep -nIR $* /dev/null"
 end
 
 local is_tty = os.getenv("XDG_SESSION_TYPE") == "tty" and os.getenv("SSH_TTY") == ""
