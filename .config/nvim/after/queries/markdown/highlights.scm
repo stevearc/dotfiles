@@ -1,4 +1,4 @@
-;; extends
+; extends
 
 ; Needs https://github.com/nvim-treesitter/nvim-treesitter/issues/4181
 ; (([(list_marker_star) (list_marker_minus)] @punctuation.special @conceal_star (#offset! @conceal_star 0 0 0 -1)) (#set! conceal "•"))
