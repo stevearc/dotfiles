@@ -137,6 +137,7 @@ end
 vim.filetype.add({
   extension = {
     sky = "python", -- starlark
+    norg = "norg", -- neorg
   },
   filename = {
     [".nvimrc"] = "lua",

@@ -111,6 +111,7 @@ return {
         { name = "nvim_lsp" },
         { name = "path" },
         { name = "luasnip" },
+        { name = "neorg" },
         {
           name = "buffer",
           keyword_length = 4,
