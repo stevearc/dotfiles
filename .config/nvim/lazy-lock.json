@@ -20,6 +20,7 @@
   "lspkind-nvim": { "branch": "master", "commit": "c68b3a003483cf382428a43035079f78474cd11e" },
   "luv-vimdocs": { "branch": "main", "commit": "4b37ef2755906e7f8b9a066b718d502684b55274" },
   "neodev.nvim": { "branch": "main", "commit": "4186775df167e3fb974398ea2f9130a1f0cac019" },
+  "neorg": { "branch": "main", "commit": "36cc15300c0dfc19d483b0a4176cb89e94f4730a" },
   "neotest": { "branch": "master", "commit": "392808a91d6ee28d27cbfb93c9fd9781759b5d00" },
   "neotest-jest": { "branch": "main", "commit": "821bb227e31259307db30c88671a1c3724f78637" },
   "neotest-plenary": { "branch": "master", "commit": "d49bfd9470f791e7c29149e75d56b6f925bb391b" },
@@ -59,5 +60,6 @@
   "vim-repeat": { "branch": "master", "commit": "24afe922e6a05891756ecf331f39a1f6743d3d5a" },
   "vim-rhubarb": { "branch": "master", "commit": "cad60fe382f3f501bbb28e113dfe8c0de6e77c75" },
   "vim-startuptime": { "branch": "master", "commit": "6580cf539c33a212f4f5542068a3b4dd2b3ad834" },
-  "vim-surround": { "branch": "master", "commit": "3d188ed2113431cf8dac77be61b842acb64433d9" }
+  "vim-surround": { "branch": "master", "commit": "3d188ed2113431cf8dac77be61b842acb64433d9" },
+  "zen-mode.nvim": { "branch": "main", "commit": "136dda65769cee45119f16e4bc3d3f13a7aecb28" }
 }

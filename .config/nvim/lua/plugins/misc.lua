@@ -76,4 +76,21 @@ return {
       }
     end,
   },
+  {
+    "folke/zen-mode.nvim",
+    opts = {
+      window = {
+        options = {
+          relativenumber = false,
+          number = false,
+        },
+      },
+      plugins = {
+        alacritty = {
+          enabled = true,
+          font = "24",
+        },
+      },
+    },
+  },
 }
