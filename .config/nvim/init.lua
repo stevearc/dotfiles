@@ -6,12 +6,16 @@ local should_profile = os.getenv("NVIM_PROFILE")
 if should_profile then
   vim.opt.runtimepath:append("~/dotfiles/vimplugins/profile.nvim")
   require("profile").instrument_autocmds()
+  local method = "instrument"
   if should_profile:lower():match("^start") then
-    local pat = vim.split(should_profile, ":")[2] or "*"
-    require("profile").start(pat)
-  else
-    require("profile").instrument(should_profile)
+    should_profile = should_profile:sub(7)
+    method = "start"
   end
+  local patterns = vim.split(should_profile, ":", { trimempty = true })
+  if vim.tbl_isempty(patterns) then
+    table.insert(patterns, "*")
+  end
+  require("profile")[method](unpack(patterns))
 
   local function toggle_profile()
     local prof = require("profile")
@@ -27,7 +31,7 @@ if should_profile then
       prof.start(should_profile or "*")
     end
   end
-  vim.keymap.set("profile.nvim", "", "<f1>", toggle_profile, { desc = "Toggle profiling" })
+  vim.keymap.set("n", "<f1>", toggle_profile, { desc = "Toggle profiling" })
 end
 
 -- Patch vim.keymap.set so that it reports errors
