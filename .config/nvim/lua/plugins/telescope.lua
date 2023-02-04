@@ -7,6 +7,7 @@ function stevearc.find_files(...)
 end
 vim.keymap.set("n", "<leader>ff", function()
   pcall(require, "telescope")
+  pcall(require, "fzf-lua")
   stevearc.find_files()
 end, { desc = "[F]ind [F]iles" })
 
@@ -39,7 +40,7 @@ local function find_local_files()
     previewer = false,
   })
 end
-local specs = {
+return {
   {
     "nvim-telescope/telescope.nvim",
     cmd = "Telescope",
@@ -104,11 +105,11 @@ local specs = {
       end
     end,
   },
-}
 
-if vim.fn.executable("fzf") == 1 then
-  table.insert(specs, {
+  {
     "ibhagwan/fzf-lua",
+    enabled = vim.fn.executable("fzf") == 1,
+    lazy = true,
     config = function()
       local fzf = require("fzf-lua")
       fzf.setup({
@@ -134,7 +135,5 @@ if vim.fn.executable("fzf") == 1 then
         -- end
       end
     end,
-  })
-end
-
-return specs
+  },
+}
