@@ -1,6 +1,5 @@
 return {
   "stevearc/oil.nvim",
-  dependencies = { "kyazdani42/nvim-web-devicons" },
   opts = {
     trash = false,
     skip_confirm_for_simple_edits = true,

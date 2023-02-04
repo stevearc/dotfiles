@@ -54,7 +54,7 @@ return {
       lookup_parents = true,
     },
   },
-  { "kyazdani42/nvim-web-devicons", enabled = vim.g.nerd_font, opts = { default = true }, config = true },
+  { "kyazdani42/nvim-web-devicons", enabled = vim.g.nerd_font, opts = { default = true }, lazy = true, config = true },
   {
     "ojroques/nvim-osc52",
     -- Only change the clipboard if we're in a SSH session
