@@ -8,7 +8,7 @@ local function bufgrep(text)
   vim.cmd("QFOpen!")
 end
 
-vim.keymap.set("n", "gw", "<cmd>cclose | silent grep! <cword> | QFOpen!<CR>")
+vim.keymap.set("n", "gw", "<cmd>cclose | Grep <cword> | QFOpen!<CR>")
 vim.keymap.set("n", "gbw", function()
   bufgrep(vim.fn.expand("<cword>"))
 end)
@@ -22,24 +22,11 @@ end, { nargs = "+" })
 return {
   {
     "stefandtw/quickfix-reflector.vim",
-    event = "QuickFixCmdPost *",
+    ft = "qf",
   },
   {
     "stevearc/qf_helper.nvim",
-    cmd = {
-      "Cclear",
-      "Lclear",
-      "QNext",
-      "QPrev",
-      "QFNext",
-      "QFPrev",
-      "LLNext",
-      "LLPrev",
-      "QFOpen",
-      "LLOpen",
-      "QFToggle",
-      "LLToggle",
-    },
+    ft = "qf",
     keys = {
       { "<C-N>", "<cmd>QNext<CR>", mode = "n" },
       { "<C-P>", "<cmd>QPrev<CR>", mode = "n" },
@@ -47,11 +34,9 @@ return {
       { "<leader>l", "<cmd>LLToggle!<CR>", mode = "n" },
     },
     config = function()
-      vim.cmd([[
-command! -bar Cclear call setqflist([])
-command! -bar Lclear call setloclist(0, [])
-]])
-      require("qf_helper").setup()
+      require("qf_helper").setup({
+        prefer_loclist = false,
+      })
     end,
   },
 }

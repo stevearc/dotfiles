@@ -44,7 +44,7 @@ return {
           condition = function()
             return conditions.buffer_matches({
               buftype = { "nofile", "prompt", "quickfix", "terminal" },
-              filetype = { "^git.*", "fugitive" },
+              filetype = { "^git.*", "fugitive", "qf" },
             }) or vim.api.nvim_win_get_config(0).relative ~= ""
           end,
           init = function()
@@ -65,7 +65,7 @@ return {
         local buf = args.buf
         local ignore_buftype = vim.tbl_contains({ "prompt", "nofile", "terminal", "quickfix" }, vim.bo[buf].buftype)
         local filetype = vim.bo[buf].filetype
-        local ignore_filetype = filetype == "fugitive" or filetype:match("^git")
+        local ignore_filetype = filetype == "fugitive" or filetype == "qf" or filetype:match("^git")
         local is_float = vim.api.nvim_win_get_config(0).relative ~= ""
         if ignore_buftype or ignore_filetype or is_float then
           vim.opt_local.winbar = nil
