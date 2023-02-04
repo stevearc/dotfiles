@@ -12,23 +12,23 @@ if should_profile then
   else
     require("profile").instrument(should_profile)
   end
-end
 
-local function toggle_profile()
-  local prof = require("profile")
-  if prof.is_recording() then
-    prof.stop()
-    vim.ui.input({ prompt = "Save profile to:", completion = "file", default = "profile.json" }, function(filename)
-      if filename then
-        prof.export(filename)
-        vim.notify(string.format("Wrote %s", filename))
-      end
-    end)
-  else
-    prof.start(should_profile or "*")
+  local function toggle_profile()
+    local prof = require("profile")
+    if prof.is_recording() then
+      prof.stop()
+      vim.ui.input({ prompt = "Save profile to:", completion = "file", default = "profile.json" }, function(filename)
+        if filename then
+          prof.export(filename)
+          vim.notify(string.format("Wrote %s", filename))
+        end
+      end)
+    else
+      prof.start(should_profile or "*")
+    end
   end
+  vim.keymap.set("profile.nvim", "", "<f1>", toggle_profile, { desc = "Toggle profiling" })
 end
-p.keymap("profile.nvim", "", "<f1>", toggle_profile, { desc = "Toggle profiling" })
 
 -- Patch vim.keymap.set so that it reports errors
 local _keymap_set = vim.keymap.set
