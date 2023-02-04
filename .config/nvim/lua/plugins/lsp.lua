@@ -34,7 +34,7 @@ return {
 
         local has_telescope = pcall(require, "telescope")
         if vim.tbl_islist(result) then
-          if #result == 1 then
+          if #result == 1 or (#result == 2 and vim.deep_equal(result[1], result[2])) then
             vim.lsp.util.jump_to_location(result[1], client.offset_encoding)
           elseif has_telescope then
             local opts = {}
