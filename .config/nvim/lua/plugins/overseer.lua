@@ -3,7 +3,15 @@ return {
   dependencies = {
     "mfussenegger/nvim-dap",
   },
-  cmd = { "OverseerDebugParser", "OverseerRun", "OverseerRunCmd", "OverseerInfo", "OverseerToggle", "OverseerOpen" },
+  cmd = {
+    "Grep",
+    "OverseerDebugParser",
+    "OverseerInfo",
+    "OverseerOpen",
+    "OverseerRun",
+    "OverseerRunCmd",
+    "OverseerToggle",
+  },
   keys = {
     { "<leader>oo", "<cmd>OverseerToggle<CR>", mode = "n" },
     { "<leader>or", "<cmd>OverseerRun<CR>", mode = "n" },
@@ -75,6 +83,6 @@ return {
         },
       })
       task:start()
-    end, { nargs = "*", bang = true })
+    end, { nargs = "*", bang = true, bar = true })
   end,
 }
