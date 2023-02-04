@@ -23,6 +23,11 @@ return {
       local p = require("p")
       -- vim.lsp.set_log_level("debug")
 
+      local function locations_equal(loc1, loc2)
+        return (loc1.uri or loc1.targetUri) == (loc2.uri or loc2.targetUri)
+          and (loc1.range or loc1.targetSelectionRange).start.line
+            == (loc2.range or loc2.targetSelectionRange).start.line
+      end
       local function location_handler(_, result, ctx, _)
         if result == nil or vim.tbl_isempty(result) then
           return nil
@@ -34,8 +39,8 @@ return {
 
         local has_telescope = pcall(require, "telescope")
         if vim.tbl_islist(result) then
-          if #result == 1 or (#result == 2 and vim.deep_equal(result[1], result[2])) then
-            vim.lsp.util.jump_to_location(result[1], client.offset_encoding)
+          if #result == 1 or (#result == 2 and locations_equal(result[1], result[2])) then
+            vim.lsp.util.jump_to_location(result[1], client.offset_encoding, false)
           elseif has_telescope then
             local opts = {}
             local pickers = require("telescope.pickers")
