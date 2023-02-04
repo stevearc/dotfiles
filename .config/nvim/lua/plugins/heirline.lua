@@ -55,6 +55,24 @@ return {
         comp.FullFileName,
       },
     })
+
+    -- We have to disable the winbar here too or else we get flicker
+    vim.api.nvim_create_autocmd("User", {
+      pattern = "HeirlineInitWinbar",
+      desc = "Disable the winbar for certain buffers",
+      group = aug,
+      callback = function(args)
+        local buf = args.buf
+        local ignore_buftype = vim.tbl_contains({ "prompt", "nofile", "terminal", "quickfix" }, vim.bo[buf].buftype)
+        local filetype = vim.bo[buf].filetype
+        local ignore_filetype = filetype == "fugitive" or filetype:match("^git")
+        local is_float = vim.api.nvim_win_get_config(0).relative ~= ""
+        if ignore_buftype or ignore_filetype or is_float then
+          vim.opt_local.winbar = nil
+        end
+      end,
+    })
+
     -- Because heirline is lazy loaded, we need to manually set the winbar on startup
     vim.opt_local.winbar = "%{%v:lua.require'heirline'.eval_winbar()%}"
   end,
