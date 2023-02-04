@@ -25,21 +25,24 @@ else
     ]])
 end
 
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
+
 local aug = vim.api.nvim_create_augroup("StevearcDiagnosticConfig", {})
 
 local function set_loclist_win_height(bufnr, winid, loclist_winid)
-  local has_qf_helper, config = pcall(require, "qf_helper.config")
   local total = vim.tbl_count(vim.diagnostic.get(bufnr, { severity = { min = vim.diagnostic.severity.W } }))
-  local height
-  if has_qf_helper then
-    height = math.max(config.l.min_height, math.min(config.l.max_height, total))
-  else
-    height = math.max(2, math.min(10, total))
-  end
   if loclist_winid ~= 0 and winid ~= loclist_winid then
     if total == 0 then
       vim.api.nvim_win_close(loclist_winid, true)
     else
+      local has_qf_helper, config = pcall(require, "qf_helper.config")
+      local height
+      if has_qf_helper then
+        height = math.max(config.l.min_height, math.min(config.l.max_height, total))
+      else
+        height = math.max(2, math.min(10, total))
+      end
       -- I don't know why we have to defer here, but BAD THINGS happen if we
       -- don't
       vim.defer_fn(function()
