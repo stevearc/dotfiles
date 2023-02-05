@@ -94,4 +94,20 @@ return {
       },
     },
   },
+  {
+    "jackMort/ChatGPT.nvim",
+    enabled = vim.env.OPENAI_API_KEY ~= nil,
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "nvim-lua/plenary.nvim",
+    },
+    cmd = {
+      "ChatGPT",
+      "ChatGPTActAs",
+      "ChatGPTEditWithInstructions",
+    },
+    opts = { welcome_message = "", chat_input = {
+      prompt = "",
+    } },
+  },
 }
