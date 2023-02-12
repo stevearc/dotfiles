@@ -29,11 +29,12 @@ return {
           engine = "nvim-cmp",
         },
       },
-      ["core.norg.esupports.metagen"] = {
-        config = {
-          type = "auto",
-        },
-      },
+      -- This is deleting the non-empty contents of files
+      -- ["core.norg.esupports.metagen"] = {
+      --   config = {
+      --     type = "auto",
+      --   },
+      -- },
       ["core.presenter"] = {
         config = {
           zen_mode = "zen-mode",

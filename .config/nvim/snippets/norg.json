@@ -1,0 +1,16 @@
+{
+  "@document.meta": {
+    "prefix": "meta",
+    "body": [
+      "@document.meta",
+      "  title: ${1:$TM_FILENAME_BASE}",
+      "  description: ${2:$TM_FILENAME_BASE}",
+      "  authors: $3",
+      "  categories: ${4:notes}",
+      "  created: $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE",
+      "  updated: $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE",
+      "  version: 1.0.0",
+      "@end"
+    ]
+  }
+}
