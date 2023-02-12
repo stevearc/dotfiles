@@ -137,6 +137,48 @@ EOF
   'nvim' "$HOME/.local/share/nvenv/$name/config/nvim/init.lua"
 }
 
+_nvenv-repro() {
+  local name="${1-repro.lua}"
+  cat >"$name" <<EOF
+-- save as repro.lua
+-- run with nvim -u repro.lua
+-- DO NOT change the paths
+local root = vim.fn.fnamemodify("./.repro", ":p")
+
+-- set stdpaths to use .repro
+for _, name in ipairs({ "config", "data", "state", "runtime", "cache" }) do
+  vim.env[("XDG_%s_HOME"):format(name:upper())] = root .. "/" .. name
+end
+
+-- bootstrap lazy
+local lazypath = root .. "/plugins/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "--single-branch",
+    "https://github.com/folke/lazy.nvim.git",
+    lazypath,
+  })
+end
+vim.opt.runtimepath:prepend(lazypath)
+
+-- install plugins
+local plugins = {
+  "folke/tokyonight.nvim",
+  -- add any other plugins here
+}
+require("lazy").setup(plugins, {
+  root = root .. "/plugins",
+})
+
+vim.cmd.colorscheme("tokyonight")
+-- add anything else here
+EOF
+  'nvim' "$name"
+}
+
 _nvenv-cd() {
   local name="${1?Usage: nvenv cd <name>}"
   cd "$HOME/.local/share/nvenv/$name"
@@ -227,7 +269,7 @@ _nvenv-clone() {
 }
 
 nvenv() {
-  local usage="nvenv [create|delete|list|activate|deactivate|install|link|kickstart|lazy|edit]"
+  local usage="nvenv [create|delete|list|activate|deactivate|install|link|kickstart|lazy|repro|edit]"
   local cmd="$1"
   if [ -z "$cmd" ]; then
     echo "$usage"
