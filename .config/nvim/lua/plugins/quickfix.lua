@@ -8,7 +8,7 @@ local function bufgrep(text)
   vim.cmd("QFOpen!")
 end
 
-vim.keymap.set("n", "gw", "<cmd>cclose | Grep <cword> | QFOpen!<CR>")
+vim.keymap.set("n", "gw", "<cmd>cclose | Grep <cword><CR>")
 vim.keymap.set("n", "gbw", function()
   bufgrep(vim.fn.expand("<cword>"))
 end)
