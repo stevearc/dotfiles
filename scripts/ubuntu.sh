@@ -53,8 +53,17 @@ INSTALL_LANGUAGE_MISC_DOC="Random small languages like json & yaml"
 install-language-misc() {
   sudo apt-get install -yq pandoc yamllint
   install-misc-languages
-  install-language-go
-  hascmd shfmt || go install mvdan.cc/sh/v3/cmd/shfmt@latest
+}
+
+install-language-bash() {
+  if ! hascmd bash-language-server; then
+    dc-install-nvm
+    yarn global add bash-language-server
+  fi
+  if ! hascmd shfmt; then
+    install-language-go
+    go install mvdan.cc/sh/v3/cmd/shfmt@latest
+  fi
 }
 
 install-language-lua() {

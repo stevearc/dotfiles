@@ -26,8 +26,16 @@ install-language-python() {
 # shellcheck disable=SC2034
 INSTALL_LANGUAGE_MISC_DOC="Random small languages like json & yaml"
 install-language-misc() {
-  sudo pacman -Syq --noconfirm pandoc yamllint shfmt
+  sudo pacman -Syq --noconfirm pandoc yamllint
   install-misc-languages
+}
+
+install-language-bash() {
+  if ! hascmd bash-language-server; then
+    dc-install-nvm
+    yarn global add bash-language-server
+  fi
+  hascmd shfmt || sudo pacman -Syq --noconfirm shfmt
 }
 
 install-language-lua() {

@@ -178,19 +178,17 @@ install-arduino() {
 }
 
 install-lua-utils() {
-  if hascmd cargo; then
-    cargo install stylua@0.14.3 --features lua52
-  fi
+  hascmd cargo || cargo install stylua@0.15.2 --features lua52
 
   # Install lua language server
   mkdir -p ~/.local/share/nvim/language-servers/
   pushd ~/.local/share/nvim/language-servers/
   if [ ! -d lua-language-server ]; then
-    git clone https://github.com/sumneko/lua-language-server
+    git clone https://github.com/LuaLS/lua-language-server
     cd lua-language-server
     git fetch --tags
     local latest_version
-    latest_version=$(curl -s https://api.github.com/repos/sumneko/lua-language-server/releases/latest | jq -r .name)
+    latest_version=$(curl -s https://api.github.com/repos/LuaLS/lua-language-server/releases/latest | jq -r .name)
     git checkout "$latest_version"
     git submodule update --init --recursive
     cd 3rd/luamake

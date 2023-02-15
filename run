@@ -186,7 +186,7 @@ dotcmd-upgrade-lsp() {
   hascmd zls && rm -f "$(which zls)" && dotcmd-language zig
   if [ -e ~/.local/share/nvim/language-servers/lua-language-server ]; then
     rm -rf ~/.local/share/nvim/language-servers/lua-language-server
-    install-lua-utils
+    dotcmd-language lua
   fi
 }
 
