@@ -95,6 +95,13 @@ ftplugin.extend_all({
       wrap = false,
     },
   },
+  norg = {
+    opt = {
+      virtualedit = "all",
+      conceallevel = 2,
+      indentkeys = "o,O,*<M-o>,*<M-O>,*<CR>",
+    },
+  },
   python = {
     abbr = {
       inn = "is not None",

@@ -15,9 +15,12 @@ if vim.loop.os_uname().sysname == "Darwin" then
 end
 return {
   "nvim-neorg/neorg",
-  dependencies = { "nvim-lua/plenary.nvim", "nvim-treesitter/nvim-treesitter" },
+  dependencies = { "nvim-lua/plenary.nvim", "nvim-treesitter/nvim-treesitter", "jbyuki/venn.nvim" },
   enabled = enabled,
   build = ":Neorg sync-parsers",
+  keys = {
+    { "<CR>", ":VBox<CR>", mode = "v" },
+  },
   ft = "norg",
   cmd = "Neorg",
   opts = {
