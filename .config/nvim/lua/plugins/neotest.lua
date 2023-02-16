@@ -126,7 +126,7 @@ return {
         enabled = true,
       },
       quickfix = {
-        open = false,
+        enabled = false,
       },
     })
     vim.keymap.set("n", "<leader>tn", function()
