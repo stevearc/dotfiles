@@ -247,7 +247,7 @@ return {
       local lsp = require("lsp")
       local sumneko_root_path = os.getenv("HOME") .. "/.local/share/nvim/language-servers/lua-language-server"
       local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
-      lsp.safe_setup("sumneko_lua", {
+      lsp.safe_setup("lua_ls", {
         cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
         settings = {
           Lua = {
