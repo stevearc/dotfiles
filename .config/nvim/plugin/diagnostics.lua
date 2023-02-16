@@ -81,8 +81,12 @@ vim.api.nvim_create_autocmd("DiagnosticChanged", {
 vim.api.nvim_create_autocmd("BufEnter", {
   desc = "Set diagnostics on enter buffer",
   pattern = "*",
-  callback = function()
-    local bufnr = 0
+  callback = vim.schedule_wrap(function()
+    local bufnr = vim.api.nvim_get_current_buf()
+    if vim.bo[bufnr].buftype == "quickfix" then
+      return
+    end
+    local loclist_data = vim.fn.getloclist(0, { winid = 0 })
     local winid = vim.api.nvim_get_current_win()
     vim.diagnostic.setloclist({
       open = false,
@@ -91,8 +95,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
         min = vim.diagnostic.severity.W,
       },
     })
-    local loclist_winid = vim.fn.getloclist(0, { winid = 0 }).winid
-    set_loclist_win_height(bufnr, winid, loclist_winid)
-  end,
+    set_loclist_win_height(bufnr, winid, loclist_data.winid)
+  end),
   group = aug,
 })
