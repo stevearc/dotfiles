@@ -97,7 +97,6 @@ ftplugin.extend_all({
   },
   norg = {
     opt = {
-      virtualedit = "all",
       conceallevel = 2,
       indentkeys = "o,O,*<M-o>,*<M-O>,*<CR>",
     },
