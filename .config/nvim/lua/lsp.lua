@@ -75,7 +75,7 @@ M.on_attach = function(client, bufnr)
 
   local function safemap(method, mode, key, rhs, desc)
     if client.server_capabilities[method] then
-      vim.keymap.set(mode, key, rhs, { desc = desc })
+      vim.keymap.set(mode, key, rhs, { buffer = bufnr, desc = desc })
     end
   end
 
@@ -117,7 +117,7 @@ M.on_attach = function(client, bufnr)
       vim.lsp.buf.format({ async = true })
     end, { buffer = bufnr })
   end
-  safemap("documentRangeFormattingProvider", "v", "=", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
+  safemap("documentRangeFormattingProvider", "v", "=", "<cmd>lua vim.lsp.buf.format()<CR>")
   safemap("renameProvider", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
 
   if client.server_capabilities.documentHighlightProvider and not string.match(client.name, "sorbet$") then
