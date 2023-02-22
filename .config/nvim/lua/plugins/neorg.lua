@@ -46,6 +46,8 @@ return {
       ["core.keybinds"] = {
         config = {
           hook = function(keybinds)
+            keybinds.unmap("norg", "n", "<CR>")
+
             keybinds.unmap("presenter", "n", "l")
             keybinds.unmap("presenter", "n", "h")
             keybinds.unmap("presenter", "n", "<CR>")
@@ -63,4 +65,29 @@ return {
       },
     },
   },
+  config = function(_, opts)
+    local neorg = require("neorg")
+    neorg.setup(opts)
+
+    local p = require("p")
+
+    p.require("quick_action", function(quick_action)
+      quick_action.add("menu", {
+        name = "Toggle todo status",
+        condition = function()
+          if vim.bo.filetype ~= "norg" then
+            return false
+          end
+          local lnum = vim.api.nvim_win_get_cursor(0)[1] - 1
+          local todo_module = neorg.modules.get_module("core.norg.qol.todo_items")
+          local item = todo_module and todo_module.get_todo_item_from_cursor(0, lnum)
+          local row = item and item:start()
+          return row == lnum
+        end,
+        action = function()
+          vim.cmd("Neorg keybind norg core.norg.qol.todo_items.todo.task_cycle")
+        end,
+      })
+    end)
+  end,
 }
