@@ -26,7 +26,17 @@ return {
   opts = {
     load = {
       ["core.defaults"] = {}, -- Loads default behaviour
-      ["core.norg.concealer"] = {}, -- Adds pretty icons to your documents
+      ["core.norg.concealer"] = { -- Adds pretty icons to your documents
+        config = {
+          icons = {
+            todo = {
+              undone = {
+                icon = " ",
+              },
+            },
+          },
+        },
+      },
       ["core.norg.completion"] = {
         config = {
           engine = "nvim-cmp",
