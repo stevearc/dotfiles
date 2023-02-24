@@ -13,6 +13,7 @@ return {
         ["@text.strong"] = { style = "bold" },
         ["@text.literal"] = { style = "" }, -- Don't italicize
         ["@codeblock"] = { bg = "palette.bg0" },
+        ["@neorg.markup.strikethrough"] = { fg = "palette.comment", style = "strikethrough" },
       },
     },
   },

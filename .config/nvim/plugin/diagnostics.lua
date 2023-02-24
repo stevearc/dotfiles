@@ -1,6 +1,8 @@
 vim.diagnostic.config({
   float = {
     source = "always",
+    border = "rounded",
+    severity_sort = true,
   },
   virtual_text = {
     severity = { min = vim.diagnostic.severity.W },
