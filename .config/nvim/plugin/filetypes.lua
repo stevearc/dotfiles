@@ -97,6 +97,7 @@ ftplugin.extend_all({
   },
   norg = {
     opt = {
+      comments = "n:-,n:*,n:( )",
       conceallevel = 2,
       indentkeys = "o,O,*<M-o>,*<M-O>,*<CR>",
     },
