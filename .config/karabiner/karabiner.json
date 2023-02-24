@@ -869,6 +869,7 @@
                                     {
                                         "bundle_identifiers": [
                                             "org.alacritty",
+                                            "net.kovidgoyal.kitty",
                                             "com.apple.Terminal",
                                             "com.googlecode.iterm2"
                                         ],
@@ -905,6 +906,7 @@
                                     {
                                         "bundle_identifiers": [
                                             "org.alacritty",
+                                            "net.kovidgoyal.kitty",
                                             "com.apple.Terminal",
                                             "com.googlecode.iterm2"
                                         ],
@@ -936,6 +938,7 @@
                                     {
                                         "bundle_identifiers": [
                                             "org.alacritty",
+                                            "net.kovidgoyal.kitty",
                                             "com.apple.Terminal",
                                             "com.googlecode.iterm2"
                                         ],
@@ -967,6 +970,7 @@
                                     {
                                         "bundle_identifiers": [
                                             "org.alacritty",
+                                            "net.kovidgoyal.kitty",
                                             "com.apple.Terminal",
                                             "com.googlecode.iterm2"
                                         ],
@@ -997,6 +1001,7 @@
                                     {
                                         "bundle_identifiers": [
                                             "org.alacritty",
+                                            "net.kovidgoyal.kitty",
                                             "com.apple.Terminal",
                                             "com.googlecode.iterm2"
                                         ],
@@ -1027,6 +1032,7 @@
                                     {
                                         "bundle_identifiers": [
                                             "org.alacritty",
+                                            "net.kovidgoyal.kitty",
                                             "com.apple.Terminal",
                                             "com.googlecode.iterm2"
                                         ],
@@ -1057,6 +1063,7 @@
                                     {
                                         "bundle_identifiers": [
                                             "org.alacritty",
+                                            "net.kovidgoyal.kitty",
                                             "com.apple.Terminal",
                                             "com.googlecode.iterm2"
                                         ],
@@ -1089,6 +1096,7 @@
                                     {
                                         "bundle_identifiers": [
                                             "org.alacritty",
+                                            "net.kovidgoyal.kitty",
                                             "com.apple.Terminal",
                                             "com.googlecode.iterm2"
                                         ],
@@ -1119,6 +1127,7 @@
                                     {
                                         "bundle_identifiers": [
                                             "org.alacritty",
+                                            "net.kovidgoyal.kitty",
                                             "com.apple.Terminal",
                                             "com.googlecode.iterm2"
                                         ],
