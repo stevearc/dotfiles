@@ -2,7 +2,6 @@
 source parseargs.sh
 set -e
 
-
 # Frames {{{1
 
 _cmd_frames() {
@@ -38,6 +37,22 @@ _compress_doc() {
   echo "Compress a video"
 }
 
+# Scale {{{1
+
+_cmd_scale() {
+  local usage="scale <INPUT> <OUTPUT>
+
+Options:
+  -w WIDTH, --width=WIDTH       Width multiplier
+  -H HEIGHT, --height=HEIGHT    Height multiplier
+"
+  parseargs "$usage" "$@"
+  _run "ffmpeg -i '$INPUT' -vf scale=iw*${WIDTH-1}:ih*${HEIGHT-1} '$OUTPUT'"
+}
+_scale_doc() {
+  echo "Resize a video"
+}
+
 # To GIF {{{1
 
 _cmd_togif() {
@@ -70,7 +85,7 @@ _cmd_tomp3() {
   local usage="tomp3 [<FILE>...]"
   parseargs "$usage" "$@"
   for file in $FILE; do
-    pushd "$(dirname "$file")" > /dev/null
+    pushd "$(dirname "$file")" >/dev/null
     local base=
     base="$(basename "$file")"
     local output="${base%.*}.mp3"
@@ -80,7 +95,7 @@ _cmd_tomp3() {
     fi
     echo "Converting $file to $output"
     _run "ffmpeg -i '$file' -vn -f mp3 '$output'"
-    popd > /dev/null
+    popd >/dev/null
   done
 }
 _tomp3_doc() {
@@ -169,11 +184,11 @@ _sidebyside_doc() {
 # Screenshot {{{1
 
 _cmd_screenshot() {
-  local usage="screenshot <INPUT> <TIME> <OUTPUT>
+  local usage='screenshot <INPUT> <TIME> <OUTPUT>
 
 Notes:
-  TIME     Format is \"hh:mm:ss\"
-"
+  TIME     Format is "hh:mm:ss"
+'
   parseargs "$usage" "$@"
   _run "ffmpeg -ss $TIME -i $INPUT -vframes 1 -q:v 2 $OUTPUT"
 }
@@ -184,11 +199,11 @@ _screenshot_doc() {
 # Clip {{{1
 
 _cmd_clip() {
-  local usage="clip <INPUT> <OUTPUT> [<TIME>...]
+  local usage='clip <INPUT> <OUTPUT> [<TIME>...]
 
 Notes:
-  TIME     Format is \"hh:mm:ss-hh:mm:ss\"
-"
+  TIME     Format is "hh:mm:ss-hh:mm:ss"
+'
   parseargs "$usage" "$@"
   if [ -e "$OUTPUT" ]; then
     echo "File '$OUTPUT' already exists!"
@@ -213,9 +228,9 @@ Notes:
     fi
     local tmpfile="${tmpbase}-${i}.mp4"
     __clip "$INPUT" "$_start" "$duration" "$tmpfile"
-    echo "file '$tmpfile'" >> "$tmpfiles"
+    echo "file '$tmpfile'" >>"$tmpfiles"
     cleancmd="$cleancmd $tmpfile"
-    i=$((i+1))
+    i=$((i + 1))
   done
   _run "ffmpeg -f concat -i \"$tmpfiles\" -c copy \"$OUTPUT\""
   _run "$cleancmd"
@@ -244,7 +259,7 @@ _cmd_concat() {
   parseargs "$usage" "$@"
   local tmpfiles="tmp-${RANDOM}-files.txt"
   for input in $INPUT; do
-    echo "file '$input'" >> "$tmpfiles"
+    echo "file '$input'" >>"$tmpfiles"
   done
   if [ ! -e "$tmpfiles" ]; then
     # No inputs provided
@@ -275,7 +290,7 @@ _cmd_concat2() {
     cleancmd="$cleancmd '$intermediate'"
     let n="$n + 1"
   done
-  cat $tmpbase-*.mpg > "$intermediate_all"
+  cat $tmpbase-*.mpg >"$intermediate_all"
   _run "ffmpeg -i $intermediate_all -qscale:v 2 $OUTPUT"
   eval "$cleancmd"
 }
@@ -291,19 +306,20 @@ _run() {
 }
 
 _convert_time() {
-  if [[ "$1" =~ .*:.* ]]; then
+  if [[ $1 =~ .*:.* ]]; then
     local seconds="${1##*:}"
     # Trim off leading zeroes
     local seconds="${seconds##0}"
     local minutes="${1%%:*}"
-    echo "$((minutes*60 + seconds))"
+    echo "$((minutes * 60 + seconds))"
   else
     echo "$1"
   fi
 }
 
 main() {
-  local cmd="$1"; shift || :
+  local cmd="$1"
+  shift || :
   if [ -z "$cmd" ]; then
     local cmds
     cmds="$(declare -F | cut -f 3 -d ' ' | grep "^_cmd_" | sed 's/^_cmd_//' | sort)"
