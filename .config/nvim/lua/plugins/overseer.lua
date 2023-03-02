@@ -66,8 +66,14 @@ return {
       if num_subs == 0 then
         cmd = cmd .. " " .. args
       end
+      local cwd
+      local has_oil, oil = pcall(require, "oil")
+      if has_oil then
+        cwd = oil.get_current_dir()
+      end
       local task = overseer.new_task({
         cmd = cmd,
+        cwd = cwd,
         name = "grep " .. args,
         components = {
           {
