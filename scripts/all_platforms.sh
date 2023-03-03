@@ -55,6 +55,7 @@ configure-git() {
   git config --global alias.amend 'commit --amend'
   git config --global alias.am 'commit --amend --no-edit'
   git config --global alias.ama 'commit --amend -a --no-edit'
+  git config --global alias.amn 'commit --amend --no-edit'
   git config --global alias.aa 'add --all'
   git config --global alias.head '!git l -1'
   git config --global alias.h '!git head'
@@ -116,11 +117,11 @@ configure-git() {
   git config --global core.excludesFile '~/.config/global-git-ignore'
   mkdir -p ~/.config
   touch ~/.config/global-git-ignore
-  grep tags ~/.config/global-git-ignore >/dev/null 2>&1 || echo tags >> ~/.config/global-git-ignore
-  grep .DS_Store ~/.config/global-git-ignore >/dev/null 2>&1 || echo .DS_Store >> ~/.config/global-git-ignore
-  grep .vimrc.lua ~/.config/global-git-ignore >/dev/null 2>&1 || echo .vimrc.lua >> ~/.config/global-git-ignore
-  grep .nvimrc.lua ~/.config/global-git-ignore >/dev/null 2>&1 || echo .nvimrc.lua >> ~/.config/global-git-ignore
-  grep __pycache__ ~/.config/global-git-ignore >/dev/null 2>&1 || echo __pycache__ >> ~/.config/global-git-ignore
+  grep tags ~/.config/global-git-ignore >/dev/null 2>&1 || echo tags >>~/.config/global-git-ignore
+  grep .DS_Store ~/.config/global-git-ignore >/dev/null 2>&1 || echo .DS_Store >>~/.config/global-git-ignore
+  grep .vimrc.lua ~/.config/global-git-ignore >/dev/null 2>&1 || echo .vimrc.lua >>~/.config/global-git-ignore
+  grep .nvimrc.lua ~/.config/global-git-ignore >/dev/null 2>&1 || echo .nvimrc.lua >>~/.config/global-git-ignore
+  grep __pycache__ ~/.config/global-git-ignore >/dev/null 2>&1 || echo __pycache__ >>~/.config/global-git-ignore
 
   if hascmd fzf; then
     git config --global alias.fb '!git sk list | fzf | xargs git checkout'
