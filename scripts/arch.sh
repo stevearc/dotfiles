@@ -44,6 +44,22 @@ install-language-lua() {
   install-lua-utils
 }
 
+DC_INSTALL_JELLYFIN_DOC="Jellyfin media server"
+dc-install-jellyfin() {
+  yay -S --noconfirm jellyfin
+  sudo systemctl start jellyfin.service
+  sudo systemctl enable jellyfin.service
+  xdg-open http://localhost:8096
+  if hascmd ufw; then
+    sudo ufw allow proto udp from 192.168.1.0/24 to any port 8096 comment 'jellyfin'
+    sudo ufw allow proto tcp from 192.168.1.0/24 to any port 8096 comment 'jellyfin'
+  fi
+  if hascmd firewall-cmd; then
+    firewall-cmd --zone=home --add-port=8096/tcp
+    firewall-cmd --permanent --zone=home --add-port=8096/tcp
+  fi
+}
+
 # shellcheck disable=SC2034
 DC_INSTALL_COMMON_DOC="Common unix utilities like tmux, netcat, etc"
 dc-install-common() {
@@ -157,7 +173,6 @@ dotcmd-everything() {
   dc-install-neovim
   dotcmd-dotfiles
   install-language-common
-  dc-install-ufw
   dotcmd-desktop
   echo "Done"
 }
