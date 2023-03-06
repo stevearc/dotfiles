@@ -1,5 +1,5 @@
 return {
-  "stevearc/stickybuf.nvim",
+  { "stevearc/stickybuf.nvim", config = true },
   { "lambdalisue/suda.vim", cmd = { "SudaRead", "SudaWrite" } },
   { "godlygeek/tabular", cmd = { "Tabularize" } },
   "wellle/targets.vim",
