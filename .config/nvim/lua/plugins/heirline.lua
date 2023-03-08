@@ -56,6 +56,10 @@ return {
       },
     })
 
+    vim.api.nvim_create_user_command("HeirlineResetStatusline", function()
+      vim.o.statusline = "%{%v:lua.require'heirline'.eval_statusline()%}"
+    end, {})
+
     -- We have to disable the winbar here too or else we get flicker
     vim.api.nvim_create_autocmd("User", {
       pattern = "HeirlineInitWinbar",
