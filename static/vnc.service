@@ -1,0 +1,25 @@
+[Unit]
+Description=Remote desktop service (VNC) for :0 display
+
+# Require start of
+Requires=display-manager.service
+
+# Wait for
+After=network-online.target
+After=display-manager.service
+
+[Service]
+Type=simple
+
+# Set environment
+Environment=HOME=/root
+
+# Start command
+ExecStart=/usr/local/bin/x0vnc.sh
+
+# Restart service after session log out
+Restart=on-failure
+RestartSec=500ms
+
+[Install]
+WantedBy=multi-user.target

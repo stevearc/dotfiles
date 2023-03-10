@@ -1,0 +1,17 @@
+[Unit]
+Description = Torrent Daemon
+
+[Service]
+Type = simple
+ExecStartPre = mkdir -p %h/Downloads
+ExecStartPre = mkdir -p /mnt/storage/incomplete
+ExecStartPre = mkdir -p /mnt/storage/media
+ExecStart = /usr/bin/transmission-daemon -f -c %h/Downloads --incomplete-dir /mnt/storage/incomplete/ --no-portmap --peerport PEER_PORT -w /mnt/storage/media/ --log-level=info
+Restart = always
+RestartSec = 30
+IOSchedulingClass = best-effort
+IOSchedulingPriority = 7
+Nice = 10
+
+[Install]
+WantedBy=default.target

@@ -5,7 +5,7 @@ platform-setup() {
   has-checkpoint platform-setup && return
 
   sudo pacman -Syuq --noconfirm
-  sudo -Sq --noconfirm yay binutils fakeroot curl wget clang
+  sudo pacman -Sq --noconfirm yay binutils fakeroot curl wget clang
   checkpoint platform-setup
 }
 
@@ -16,6 +16,7 @@ install-language-python() {
     dc-install-nvm
     yarn global add -s pyright
   fi
+  mkdir -p ~/.local/bin
   pushd ~/.local/bin >/dev/null
   test -e isort || "$HERE/scripts/make_standalone.py" isort
   test -e black || "$HERE/scripts/make_standalone.py" black
@@ -46,7 +47,7 @@ install-language-lua() {
 
 DC_INSTALL_JELLYFIN_DOC="Jellyfin media server"
 dc-install-jellyfin() {
-  yay -S --noconfirm jellyfin
+  yay -S --noconfirm jellyfin-bin
   sudo systemctl start jellyfin.service
   sudo systemctl enable jellyfin.service
   xdg-open http://localhost:8096
@@ -55,8 +56,8 @@ dc-install-jellyfin() {
     sudo ufw allow proto tcp from 192.168.1.0/24 to any port 8096 comment 'jellyfin'
   fi
   if hascmd firewall-cmd; then
-    firewall-cmd --zone=home --add-port=8096/tcp
-    firewall-cmd --permanent --zone=home --add-port=8096/tcp
+    sudo firewall-cmd --zone=home --add-port=8096/tcp
+    sudo firewall-cmd --permanent --zone=home --add-port=8096/tcp
   fi
 }
 
@@ -73,7 +74,6 @@ dc-install-common() {
     openssh \
     ripgrep \
     rsync \
-    shellcheck \
     starship \
     tmux \
     tree \
@@ -81,7 +81,8 @@ dc-install-common() {
     wmctrl \
     xsel
 
-  yay -S --noconfirm direnv
+  hascmd direnv || yay -S --noconfirm direnv
+  hascmd shellcheck || yay -S --noconfirm shellcheck-bin
 }
 
 # shellcheck disable=SC2034
@@ -145,7 +146,6 @@ dotcmd-desktop() {
     kitty \
     libnotify \
     mupen64plus \
-    rofi \
     steam \
     vlc \
     zenity
@@ -156,9 +156,104 @@ dotcmd-desktop() {
     setup-gnome
   elif [[ $XDG_CURRENT_DESKTOP =~ "KDE" ]]; then
     setup-kde
+  elif [[ $XDG_CURRENT_DESKTOP =~ "XFCE" ]]; then
+    setup-xfce
   else
     echo "ERROR: Not sure what desktop environment this is."
   fi
+}
+
+# shellcheck disable=SC2034
+DOTCMD_PIBOX_DOC="Set up the raspberry pi"
+dotcmd-pibox() {
+  dc-install-common
+  sudo pacman -Syq --noconfirm neovim
+  post-install-neovim
+  dotcmd-dotfiles
+  setup-xfce
+  dc-install-nerd-font
+  sudo pacman -Syq --noconfirm \
+    ffmpeg \
+    flatpak \
+    kitty \
+    openssh \
+    rclone \
+    tigervnc \
+    transmission-cli \
+    vlc
+  flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+  flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+  dc-install-kitty
+  dc-install-jellyfin
+  hascmd mullvad || yay -S --noconfirm mullvad-vpn-bin
+  if [ "$(mullvad status)" = "Disconnected" ]; then
+    echo "Log in to Mullvad"
+    mullvad account login
+    mullvad auto-connect set on
+    mullvad lan set allow
+    mullvad relay set location us lax
+    echo "Go to https://mullvad.net/account/#/port-forwarding to configure port forwarding. Device is below"
+    mullvad account get
+  fi
+  sudo systemctl enable sshd.service
+  sudo systemctl start sshd.service
+
+  if [ -e ~/.config/mullvad_port ]; then
+    mullvad_port="$(cat ~/.config/mullvad_port)"
+  else
+    read -r -p "What port was forwarded for Mullvad? " mullvad_port
+    echo "$mullvad_port" > ~/.config/mullvad_port
+  fi
+  if hascmd firewall-cmd; then
+    # Set the current zone to home
+    sudo firewall-cmd --zone=home --change-interface=wlan0
+    sudo firewall-cmd --zone=home --change-interface=eth0
+    sudo firewall-cmd --zone=home --change-interface=wlan0 --permanent
+    sudo firewall-cmd --zone=home --change-interface=eth0 --permanent
+    # Open ports for ssh
+    sudo firewall-cmd --zone=home --add-port=22/tcp
+    sudo firewall-cmd --permanent --zone=home --add-port=22/tcp
+    # Transmission
+    sudo firewall-cmd --zone=home --add-port=9091/tcp
+    sudo firewall-cmd --permanent --zone=home --add-port=9091/tcp
+    if [ -n "$mullvad_port" ]; then
+      sudo firewall-cmd --zone=home --add-port="${mullvad_port}/tcp"
+      sudo firewall-cmd --permanent --zone=home --add-port="${mullvad_port}/tcp"
+      sudo firewall-cmd --zone=public --add-port="${mullvad_port}/tcp"
+      sudo firewall-cmd --permanent --zone=public --add-port="${mullvad_port}/tcp"
+    fi
+    # VNC
+    sudo firewall-cmd --zone=home --add-port=5901/tcp
+    sudo firewall-cmd --permanent --zone=home --add-port=5901/tcp
+    sudo firewall-cmd --zone=home --add-port=5900/tcp
+    sudo firewall-cmd --permanent --zone=home --add-port=5900/tcp
+  fi
+
+  # Storage drive
+  grep /dev/sda1 /etc/fstab >/dev/null || echo "/dev/sda1 /mnt/storage ext4 rw,user,exec 0 0" | sudo tee -a /etc/fstab > /dev/null
+  sudo mkdir -p /mnt/storage
+  sudo chmod 777 /mnt/storage
+
+  # Transmission-daemon
+  # NOTE I also had to disable/update the rpc-whitelist in
+  # ~/config/transmission-daemon/settings.json
+  if [ ! -e ~/.config/systemd/user/transmission-daemon.service ]; then
+    sed -e "s/PEER_PORT/$mullvad_port/" "$HERE/static/transmission-daemon.service" > ~/.config/systemd/user/transmission-daemon.service
+    systemctl --user enable transmission-daemon
+    systemctl --user reload-daemon
+    systemctl --user start transmission-daemon
+  fi
+
+  # VNC
+  sudo cp "$HERE/static/vnc.service" /etc/systemd/system/vnc.service
+  sudo cp "$HERE/static/x0vnc.sh" /usr/local/bin/x0vnc.sh
+  sudo systemctl daemon-reload
+  sudo systemctl start vnc
+
+  # TODO
+  # remap capslock->ctrl over vnc
+  # keyboard shortcuts (workspace switching, launcher, terminal)
+  # nerd font
 }
 
 # shellcheck disable=SC2034

@@ -150,6 +150,10 @@ setup-kde() {
   kstart5 plasmashell
 }
 
+setup-xfce() {
+  sudo cp "$HERE/static/00-keyboard.conf" /etc/X11/xorg.conf.d/00-keyboard.conf
+}
+
 # shellcheck disable=SC2034
 DOTCMD_SAVE_DESKTOP_CONFIG_DOC="Save desktop config files to repo"
 dotcmd-save-desktop-config() {
