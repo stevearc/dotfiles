@@ -1,0 +1,36 @@
+#!/bin/bash
+set -e
+
+if [ -z "$PIBOX_IP" ]; then
+  echo "You must set the PIBOX_IP environment variable"
+  exit 1
+fi
+
+main() {
+  local cmd="${1}"
+  local usage="pibox [ssh|vnc|jellyfin|transmission]"
+  case $cmd in
+    s*)
+      ssh "$PIBOX_IP"
+      ;;
+    v*)
+      vncviewer "$PIBOX_IP:5900"
+      ;;
+    j*)
+      open "http://$PIBOX_IP:8096"
+      ;;
+    t*)
+      open "http://$PIBOX_IP:9091"
+      ;;
+    h)
+      echo "$usage"
+      exit 0
+      ;;
+    *)
+      echo "$usage"
+      exit 1
+      ;;
+  esac
+}
+
+main "$@"
