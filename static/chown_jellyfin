@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+chown -R jellyfin:stevearc /mnt/storage/jellyfin
+chmod -R 775 /mnt/storage/jellyfin

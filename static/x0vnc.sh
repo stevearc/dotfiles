@@ -10,7 +10,7 @@ VNC_BIN=/usr/bin/x0vncserver
 ## Set parameters
 ## WARNING: This use of SecurityTypes is insecure.
 ##          Anyone can connect to the VNC server without any authentication.
-PARAMS="-display :0 -SecurityTypes None"
+PARAMS="-display :0 -SecurityTypes None -geometry 1024x768"
 
 ## Launch VNC server
 ($VNC_BIN $PARAMS)

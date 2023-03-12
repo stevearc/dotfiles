@@ -173,6 +173,7 @@ dotcmd-pibox() {
   setup-xfce
   dc-install-nerd-font
   sudo pacman -Syq --noconfirm \
+    cronie \
     ffmpeg \
     flatpak \
     kitty \
@@ -191,25 +192,31 @@ dotcmd-pibox() {
     mullvad account login
     mullvad auto-connect set on
     mullvad lan set allow
+    mullvad relay set tunnel-protocol wireguard
     mullvad relay set location us lax
     echo "Go to https://mullvad.net/account/#/port-forwarding to configure port forwarding. Device is below"
     mullvad account get
   fi
-  sudo systemctl enable sshd.service
-  sudo systemctl start sshd.service
-
   if [ -e ~/.config/mullvad_port ]; then
     mullvad_port="$(cat ~/.config/mullvad_port)"
   else
     read -r -p "What port was forwarded for Mullvad? " mullvad_port
     echo "$mullvad_port" > ~/.config/mullvad_port
   fi
+  sudo systemctl enable sshd.service
+  sudo systemctl start sshd.service
+  sudo systemctl enable cronie.service
+  sudo systemctl start cronie.service
+
+  test -e /etc/cron.hourly/rsync_torrents || sudo cp "$HERE/static/rsync_torrents" /etc/cron.hourly/
+  test -e /etc/cron.hourly/chown_jellyfin || sudo cp "$HERE/static/chown_jellyfin" /etc/cron.hourly/
+
   if hascmd firewall-cmd; then
     # Set the current zone to home
     sudo firewall-cmd --zone=home --change-interface=wlan0
-    sudo firewall-cmd --zone=home --change-interface=eth0
+    sudo firewall-cmd --zone=home --change-interface=end0
     sudo firewall-cmd --zone=home --change-interface=wlan0 --permanent
-    sudo firewall-cmd --zone=home --change-interface=eth0 --permanent
+    sudo firewall-cmd --zone=home --change-interface=end0 --permanent
     # Open ports for ssh
     sudo firewall-cmd --zone=home --add-port=22/tcp
     sudo firewall-cmd --permanent --zone=home --add-port=22/tcp
@@ -235,13 +242,20 @@ dotcmd-pibox() {
   sudo chmod 777 /mnt/storage
 
   # Transmission-daemon
-  # NOTE I also had to disable/update the rpc-whitelist in
-  # ~/config/transmission-daemon/settings.json
   if [ ! -e ~/.config/systemd/user/transmission-daemon.service ]; then
     sed -e "s/PEER_PORT/$mullvad_port/" "$HERE/static/transmission-daemon.service" > ~/.config/systemd/user/transmission-daemon.service
-    systemctl --user enable transmission-daemon
-    systemctl --user reload-daemon
+    systemctl --user daemon-reload
+    test -e ~/.config/transmission-daemon/settings.json || echo "{}" > ~/.config/transmission-daemon/settings.json
+    systemctl --user stop transmission-daemon
+    cat ~/.config/transmission-daemon/settings.json \
+      | jq '."rpc-enabled" = true' \
+      | jq '."rpc-whitelist-enabled" = false' \
+      | jq '."script-torrent-done-enabled" = true' \
+      | jq '."script-torrent-done-filename" = "'$HOME/dotfiles/static/torrent_done.py'"' \
+      > /tmp/settings.json
+    mv /tmp/settings.json ~/.config/transmission-daemon/settings.json
     systemctl --user start transmission-daemon
+    systemctl --user enable transmission-daemon
   fi
 
   # VNC
