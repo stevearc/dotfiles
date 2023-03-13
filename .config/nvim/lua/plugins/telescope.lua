@@ -43,6 +43,9 @@ end
 return {
   {
     "nvim-telescope/telescope.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
     cmd = "Telescope",
     keys = {
       { "<leader>f.", find_dotfiles, { desc = "[F]ind [.]otfiles" }, mode = "n" },
