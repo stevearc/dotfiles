@@ -59,6 +59,8 @@ dc-install-jellyfin() {
     sudo firewall-cmd --zone=home --add-port=8096/tcp
     sudo firewall-cmd --permanent --zone=home --add-port=8096/tcp
   fi
+  test -e /etc/cron.hourly/chown_jellyfin || sudo cp "$HERE/static/chown_jellyfin" /etc/cron.hourly/
+  sudo cp "$HERE/static/jellyfin_conf" /etc/conf.d/jellyfin
 }
 
 # shellcheck disable=SC2034
@@ -209,7 +211,6 @@ dotcmd-pibox() {
   sudo systemctl start cronie.service
 
   test -e /etc/cron.hourly/rsync_torrents || sudo cp "$HERE/static/rsync_torrents" /etc/cron.hourly/
-  test -e /etc/cron.hourly/chown_jellyfin || sudo cp "$HERE/static/chown_jellyfin" /etc/cron.hourly/
 
   if hascmd firewall-cmd; then
     # Set the current zone to home
