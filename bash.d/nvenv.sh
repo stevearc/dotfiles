@@ -1,6 +1,15 @@
 #!/bin/bash
 export NVENV
 
+_create-stylua() {
+  local dir="${1?usage: _create-stylua <dir>}"
+  cat >"$dir/.stylua.toml" <<EOF
+column_width = 100
+indent_type = "Spaces"
+indent_width = 2
+EOF
+}
+
 _nvenv-list() {
   ls ~/.local/share/nvenv 2>/dev/null || echo "No nvenvs available"
   if [ -n "$NVENV" ]; then
@@ -32,6 +41,7 @@ _nvenv-create() {
   local bin_name=${2-nvim}
   mkdir -p "$HOME/.local/share/nvenv/$name"
   echo "$bin_name" >"$HOME/.local/share/nvenv/$name/bin_name"
+  _create-stylua "$HOME/.local/share/nvenv/$name"
 }
 
 _nvenv-delete() {
@@ -48,6 +58,7 @@ _nvenv-kickstart() {
   fi
   mkdir -p "$HOME/.local/share/nvenv/$name/config/nvim"
   echo "$bin_name" >"$HOME/.local/share/nvenv/$name/bin_name"
+  _create-stylua "$HOME/.local/share/nvenv/$name"
   curl -sL https://raw.githubusercontent.com/nvim-lua/kickstart.nvim/master/init.lua -o "$HOME/.local/share/nvenv/$name/config/nvim/init.lua"
   'nvim' "$HOME/.local/share/nvenv/$name/config/nvim/init.lua"
 }
@@ -61,6 +72,7 @@ _nvenv-lazy() {
   fi
   mkdir -p "$HOME/.local/share/nvenv/$name/config/nvim"
   echo "$bin_name" >"$HOME/.local/share/nvenv/$name/bin_name"
+  _create-stylua "$HOME/.local/share/nvenv/$name"
   cat >"$HOME/.local/share/nvenv/$name/config/nvim/init.lua" <<EOF
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -204,31 +216,6 @@ _nvenv-nvim() {
     "$bin_name" "$@"
 }
 
-# Install a plugin
-_nvenv-install() {
-  if [ -z "$NVENV" ]; then
-    echo "Must activate nvenv first"
-    return
-  fi
-  local repo="${1?Usage: nvenv install [REPO]}"
-  local name="${1##*/}"
-  git clone "$repo" "$HOME/.local/share/nvenv/$NVENV/data/nvim/site/pack/$name/start/$name"
-}
-
-# Link a plugin from the default nvim install
-_nvenv-link() {
-  if [ -z "$NVENV" ]; then
-    echo "Must activate nvenv first"
-    return
-  fi
-  mkdir -p "$HOME/.local/share/nvenv/$NVENV/data/nvim/site/pack/"
-  while [ -n "$1" ]; do
-    rm -f "$HOME/.local/share/nvenv/$NVENV/data/nvim/site/pack/$1"
-    ln -s "$HOME/.local/share/nvim/site/pack/$1" "$HOME/.local/share/nvenv/$NVENV/data/nvim/site/pack/$1"
-    shift
-  done
-}
-
 # Edit the init file for a nvenv
 _nvenv-edit() {
   local name="${1-$NVENV}"
@@ -269,7 +256,7 @@ _nvenv-clone() {
 }
 
 nvenv() {
-  local usage="nvenv [create|delete|list|activate|deactivate|install|link|kickstart|lazy|repro|edit]"
+  local usage="nvenv [create|delete|list|activate|deactivate|kickstart|lazy|repro|edit]"
   local cmd="$1"
   if [ -z "$cmd" ]; then
     echo "$usage"
