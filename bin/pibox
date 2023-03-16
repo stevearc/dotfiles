@@ -8,19 +8,22 @@ fi
 
 main() {
   local cmd="${1}"
-  local usage="pibox [ssh|vnc|jellyfin|transmission]"
+  local usage="pibox [ssh|vnc|jellyfin|transmission|proxy]"
   case $cmd in
-    s*)
+    s*) # ssh
       ssh "$PIBOX_IP"
       ;;
-    v*)
+    v*) # vnc
       vncviewer "$PIBOX_IP:5900"
       ;;
-    j*)
+    j*) # jellyfin
       open "http://$PIBOX_IP:8096"
       ;;
-    t*)
+    t*) # transmission
       open "http://$PIBOX_IP:9091"
+      ;;
+    p*) # proxy
+      ssh -N -D 9080 "$PIBOX_IP"
       ;;
     h)
       echo "$usage"
