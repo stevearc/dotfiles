@@ -61,6 +61,12 @@ dc-install-jellyfin() {
   fi
   test -e /etc/cron.hourly/chown_jellyfin || sudo cp "$HERE/static/chown_jellyfin" /etc/cron.hourly/
   sudo cp "$HERE/static/jellyfin_conf" /etc/conf.d/jellyfin
+  # Add jellyfin to the video group for hardware acceleration
+  sudo -u jellyfin groups | grep video || sudo usermod -aG video jellyfin
+  # To enable hardware acceleration, you also need to add the following lines to /boot/config.txt
+  #   [all]
+  #   apu_mem=320
+  # As well as enabling V4L2 in the Jellyfin interface
 }
 
 # shellcheck disable=SC2034
