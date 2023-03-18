@@ -3,4 +3,4 @@ SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 # m h dom mon dow user  command
-0 0 1 * *   stevearc    rclone sync /mnt/storage s3:pibox-backups/
+0 0 1 * *   stevearc    rclone sync /mnt/storage s3:pibox-backups/ --backup-dir s3:pibox-backups/old
