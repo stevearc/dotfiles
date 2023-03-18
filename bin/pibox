@@ -8,8 +8,14 @@ fi
 
 main() {
   local cmd="${1}"
-  local usage="pibox [ssh|vnc|jellyfin|transmission|proxy]"
+  local usage="pibox [ssh|vnc|jellyfin|transmission|proxy|books|calibre]"
   case $cmd in
+    b*) # books/calibre
+      open "http://$PIBOX_IP:8083"
+      ;;
+    c*) # books/calibre
+      open "http://$PIBOX_IP:8083"
+      ;;
     s*) # ssh
       ssh "$PIBOX_IP"
       ;;
