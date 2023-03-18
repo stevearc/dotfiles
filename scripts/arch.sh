@@ -275,6 +275,9 @@ dotcmd-pibox() {
   sudo systemctl daemon-reload
   sudo systemctl start vnc
 
+  sudo cp "$HERE/static/pibox_backup" /etc/cron.d/pibox_backup
+  sudo chown root:root /etc/cron.d/pibox_backup
+  sudo chmod 644 /etc/cron.d/pibox_backup
   # TODO
   # remap capslock->ctrl over vnc
   # keyboard shortcuts (workspace switching, launcher, terminal)
