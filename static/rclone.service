@@ -3,20 +3,18 @@ Description=rclone: Remote FUSE filesystem for cloud storage
 Documentation=man:rclone(1)
 After=network-online.target
 Wants=network-online.target
-AssertPathIsDirectory=%h/Dropbox
 AssertPathExists=%h/.config/rclone/rclone.conf
 
 [Service]
 Type=notify
-ExecStartPre=/bin/mkdir -p %h/.cache/rclone
-ExecStartPre=/bin/mkdir -p %h/Dropbox
-ExecStart= \
-  %h/.local/bin/rclone mount \
+ExecStartPre=mkdir -p %h/.cache/rclone
+ExecStartPre=mkdir -p %h/Dropbox
+ExecStart= rclone mount \
     --config=%h/.config/rclone/rclone.conf \
     --vfs-cache-mode full \
     --vfs-cache-max-size 2G \
     --log-level INFO \
-    --log-file /%h/.cache/rclone/rclone.log \
+    --log-file %h/.cache/rclone/rclone.log \
     drive:/Dropbox %h/Dropbox
 ExecStop=/bin/fusermount -u %h/Dropbox
 

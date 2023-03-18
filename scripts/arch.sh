@@ -184,6 +184,7 @@ dotcmd-pibox() {
     cronie \
     ffmpeg \
     flatpak \
+    fuse2 \
     kitty \
     openssh \
     rclone \

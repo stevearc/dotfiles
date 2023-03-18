@@ -384,3 +384,21 @@ dc-install-watchexec() {
   install-language-rust
   cargo install watchexec-cli
 }
+
+dc-install-rclone() {
+  hascmd rclone && return
+  local rclone_zip="rclone-current-linux-amd64.zip"
+  local download_link="https://downloads.rclone.org/${rclone_zip}"
+  pushd /tmp
+  curl -OfsS "$download_link"
+  local unzip_dir="tmp_unzip_dir_for_rclone"
+  unzip -a "$rclone_zip" -d "$unzip_dir"
+  cd $unzip_dir/*
+  cp rclone ~/.local/bin/rclone
+  chmod 755 ~/.local/bin/rclone
+  mkdir -p ~/.local/share/man/man1
+  cp rclone.1 ~/.local/share/man/man1/
+  mandb || :
+  popd
+  post-install-rclone
+}

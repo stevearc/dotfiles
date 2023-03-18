@@ -258,3 +258,13 @@ setup-docker() {
     popd
   fi
 }
+
+post-install-rclone() {
+  local service="$HOME/.config/systemd/user/rclone.service"
+  if [ ! -e "$service" ]; then
+    cp "$HERE/static/rclone.service" "$service"
+    systemctl --user daemon-reload
+    systemctl --user enable rclone.service
+    systemctl --user start rclone.service
+  fi
+}
