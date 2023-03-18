@@ -1,0 +1,15 @@
+[Unit]
+Description=Calibre-web
+After=network-online.target
+Wants=network-online.target
+AssertPathExists=/mnt/storage/Library
+
+[Service]
+Type=simple
+ExecStart=%h/.envs/calibre/bin/cps
+WorkingDirectory=/mnt/storage/Library
+Restart=on-failure
+KillSignal=SIGINT
+
+[Install]
+WantedBy=default.target

@@ -196,6 +196,7 @@ dotcmd-pibox() {
   dc-install-kitty
   dc-install-jellyfin
   hascmd mullvad || yay -S --noconfirm mullvad-vpn-bin
+
   if [ "$(mullvad status)" = "Disconnected" ]; then
     echo "Log in to Mullvad"
     mullvad account login
@@ -266,6 +267,8 @@ dotcmd-pibox() {
     systemctl --user enable transmission-daemon
   fi
 
+  dc-install-calibreweb
+
   # VNC
   sudo cp "$HERE/static/vnc.service" /etc/systemd/system/vnc.service
   sudo cp "$HERE/static/x0vnc.sh" /usr/local/bin/x0vnc.sh
@@ -276,6 +279,31 @@ dotcmd-pibox() {
   # remap capslock->ctrl over vnc
   # keyboard shortcuts (workspace switching, launcher, terminal)
   # nerd font
+}
+
+dc-install-calibreweb() {
+  mkdir -p ~/.envs
+  pushd ~/.envs >/dev/null
+  if [ ! -e calibre ]; then
+    python -m venv calibre
+  fi
+  if [ ! -e calibre/bin/cps ]; then
+    source ./calibre/bin/activate
+    pip install --upgrade pip wheel
+    pip install calibreweb
+    deactivate
+  fi
+  popd >/dev/null
+
+  cp "$HERE/static/calibre.service" "$HOME/.config/systemd/user"
+  systemctl --user daemon-reload
+  systemctl --user start calibre
+  systemctl --user enable calibre
+
+  if hascmd firewall-cmd; then
+    sudo firewall-cmd --zone=home --add-port=8083/tcp
+    sudo firewall-cmd --permanent --zone=home --add-port=8083/tcp
+  fi
 }
 
 # shellcheck disable=SC2034
