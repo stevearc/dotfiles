@@ -110,4 +110,15 @@ return {
       prompt = "",
     } },
   },
+  {
+    "willothy/flatten.nvim",
+    opts = {
+      window = {
+        open = "tab",
+      },
+      post_open = function(bufnr, winnr, ft, is_blocking)
+        vim.w[winnr].is_remote = true
+      end,
+    },
+  },
 }

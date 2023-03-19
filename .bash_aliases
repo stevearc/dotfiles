@@ -88,9 +88,3 @@ scsv() {
   cat "$tablefile" | tr -d ' ' | tr ':' ',' >"$1"
   rm -f "$tmpfile" "$tablefile" "$macro"
 }
-
-plugvim() {
-  local repo="${1?Usage: plugvim [REPO]}"
-  local name="${1##*/}"
-  git clone "$repo" "$HOME/.local/share/nvim/site/pack/tmp/start/$name"
-}

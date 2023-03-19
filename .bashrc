@@ -101,36 +101,13 @@ if [ $MAC ] && command -v brew >/dev/null && [ -f $(brew --prefix)/etc/bash_comp
   . $(brew --prefix)/etc/bash_completion
 fi
 
-_nvim_remote() {
-  local edit_cmd=
-  # TODO currently barbar isn't detecting & showing multiple files
-  # for filename in "$@"; do
-  #   edit_cmd="$edit_cmd | call nvim_buf_set_option(bufadd('${filename// /\ }'), 'buflisted', v:true)"
-  # done
-  edit_cmd="| edit ${1// /\ }"
-  nvim --server "${NVIM-$NVIM_LISTEN_ADDRESS}" --remote-send "<C-\><C-N>:tabnew | setlocal bufhidden=wipe | let w:is_remote = v:true $edit_cmd <CR>"
-}
+export EDITOR=vim
 if command -v nvim >/dev/null; then
-  if [ -n "${NVIM-$NVIM_LISTEN_ADDRESS}" ]; then
-    alias vim="_nvim_remote"
-  elif [ -n "$NVIM_LISTEN_ADDRESS" ] && command -v nvr >/dev/null; then
-    alias vim="nvr -cc 'tabnew | let w:is_remote = v:true'"
-  else
-    alias vim="nvim"
-  fi
+  alias vim="nvim"
   alias vi="vim"
+  export EDITOR=nvim
 fi
 
-# Default applications
-if command -v nvim >/dev/null; then
-  if [ -n "$NVIM_LISTEN_ADDRESS" ] && command -v nvr >/dev/null; then
-    export EDITOR="nvr --remote-wait -cc 'tabnew | let w:is_remote = v:true'"
-  else
-    export EDITOR=nvim
-  fi
-else
-  export EDITOR=vim
-fi
 export GIT_EDITOR="$EDITOR"
 export SVN_EDITOR="$EDITOR"
 export BROWSER=google-chrome-stable

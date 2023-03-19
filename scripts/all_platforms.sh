@@ -16,13 +16,6 @@ post-install-neovim() {
   ~/.envs/py3/bin/pip install -q pynvim || ~/.envs/py3/bin/pip install -i https://pypi.org/simple -q pynvim
 
   # nvim --headless +UpdateRemotePlugins +qall >/dev/null
-  # TODO find a replacement for this
-  # if ! hascmd nvr; then
-  #   mkdir -p ~/.local/bin
-  #   pushd ~/.local/bin
-  #   "$HERE/scripts/make_standalone.py" -s nvr neovim-remote
-  #   popd
-  # fi
 }
 
 configure-git() {
