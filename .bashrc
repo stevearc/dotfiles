@@ -1,3 +1,4 @@
+#!/bin/bash
 PROFILE_STARTUP=
 if [ -n "$PROFILE_STARTUP" ]; then
   PS4='+ $(date "+%s.%N")\011 '
@@ -43,47 +44,6 @@ export GOPATH=~/go
 export PATH=$HOME/.local/bin:$GOROOT/bin:$GOPATH/bin:$PATH
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-  debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-function git_branch {
-  [ -n "$NO_SHOW_GIT_BRANCH" ] && return
-  __cur_ref=$(git log --abbrev-commit -1 --decorate=short --pretty="tformat:%h{%D" 2>/dev/null | sed -e 's/{.*\(tag: [^ ,]*\).*$/}\1/' -e 's/{.*//' -e 's/ //' -e 's/}/ /' 2>/dev/null)
-  __git_branch=$(git branch --no-color 2>/dev/null | grep -e ^* | sed -E s/^\\*\ \(.*\)$/\\1/ | sed -E s/^\\\(.*\\\)$/"$__cur_ref"/)
-  echo $(echo $__git_branch | sed -E s/\(.+\)/\[\\1\]/)
-}
-function hg_branch {
-  [ -n "$NO_SHOW_HG_BRANCH" ] && return
-  local branch=$(hg id -B -t 2>/dev/null)
-  if [ -n "$branch" ]; then
-    echo "[$branch]"
-  fi
-}
-
-__last_color="\[\033[00m\]"
-__user="\[\033[01;32m\]\u$__last_color"
-__host="\[\033[01;32m\]\h$__last_color"
-__cur_location="\[\033[01;34m\]\w"
-__git_branch_color="\[\033[0;32m\]"
-__nvm_color="\[\033[0;37m\]"
-__prompt_tail="\[\033[00m\]$"
-function __nvm_version {
-  command -v nvm >/dev/null || return
-  local root=$(git rev-parse --show-toplevel 2>/dev/null)
-  [ -n "$root" ] || return
-  [ -e "$root/package.json" ] || return
-  echo "[$(nvm current)]"
-}
-function __timestamp {
-  echo "$(date +%H:%M:%S) "
-}
-PS1='$(__timestamp)'"$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)$(hg_branch)'"$__nvm_color"'$(__nvm_version)'"$__prompt_tail$__last_color "
-if [ -n "$PROFILE_STARTUP" ]; then
-  export PS4='+$0.$LINENO: '
-fi
-
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
@@ -110,7 +70,11 @@ fi
 
 export GIT_EDITOR="$EDITOR"
 export SVN_EDITOR="$EDITOR"
-export BROWSER=google-chrome-stable
+if command -v firefox >/dev/null; then
+  export BROWSER=firefox
+else
+  export BROWSER=google-chrome-stable
+fi
 
 command -v sourcedir >/dev/null 2>&1 || sourcedir() {
   if [ -d "$1" ]; then
@@ -127,12 +91,6 @@ command -v sourcedir >/dev/null 2>&1 || sourcedir() {
 sourcedir ~/.bash_env
 sourcedir ~/.bash.d
 sourcedir ~/.bash.completion
-
-# Autoenv
-if command -v activate.sh >/dev/null; then
-  source activate.sh
-  autoenv_init
-fi
 
 if command -v yarn >/dev/null; then
   pushd $HOME >/dev/null
@@ -160,6 +118,42 @@ export DOCKER_GUI="--net=host --env=DISPLAY --volume=$HOME/.Xauthority:/root/.Xa
 
 if command -v starship >/dev/null; then
   eval "$(starship init bash)"
+else
+  function git_branch {
+    [ -n "$NO_SHOW_GIT_BRANCH" ] && return
+    __cur_ref=$(git log --abbrev-commit -1 --decorate=short --pretty="tformat:%h{%D" 2>/dev/null | sed -e 's/{.*\(tag: [^ ,]*\).*$/}\1/' -e 's/{.*//' -e 's/ //' -e 's/}/ /' 2>/dev/null)
+    __git_branch=$(git branch --no-color 2>/dev/null | grep -e ^* | sed -E s/^\\*\ \(.*\)$/\\1/ | sed -E s/^\\\(.*\\\)$/"$__cur_ref"/)
+    echo $(echo $__git_branch | sed -E s/\(.+\)/\[\\1\]/)
+  }
+  function hg_branch {
+    [ -n "$NO_SHOW_HG_BRANCH" ] && return
+    local branch=$(hg id -B -t 2>/dev/null)
+    if [ -n "$branch" ]; then
+      echo "[$branch]"
+    fi
+  }
+
+  __last_color="\[\033[00m\]"
+  __user="\[\033[01;32m\]\u$__last_color"
+  __host="\[\033[01;32m\]\h$__last_color"
+  __cur_location="\[\033[01;34m\]\w"
+  __git_branch_color="\[\033[0;32m\]"
+  __nvm_color="\[\033[0;37m\]"
+  __prompt_tail="\[\033[00m\]$"
+  function __nvm_version {
+    command -v nvm >/dev/null || return
+    local root=$(git rev-parse --show-toplevel 2>/dev/null)
+    [ -n "$root" ] || return
+    [ -e "$root/package.json" ] || return
+    echo "[$(nvm current)]"
+  }
+  function __timestamp {
+    echo "$(date +%H:%M:%S) "
+  }
+  PS1='$(__timestamp)'"$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)$(hg_branch)'"$__nvm_color"'$(__nvm_version)'"$__prompt_tail$__last_color "
+  if [ -n "$PROFILE_STARTUP" ]; then
+    export PS4='+$0.$LINENO: '
+  fi
 fi
 
 if [ -n "$PROFILE_STARTUP" ]; then
