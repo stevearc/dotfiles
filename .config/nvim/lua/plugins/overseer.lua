@@ -89,6 +89,6 @@ return {
         },
       })
       task:start()
-    end, { nargs = "*", bang = true, bar = true })
+    end, { nargs = "*", bang = true, bar = true, complete = "file" })
   end,
 }
