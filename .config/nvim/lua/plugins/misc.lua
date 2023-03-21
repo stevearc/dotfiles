@@ -116,6 +116,10 @@ return {
       window = {
         open = "tab",
       },
+      block_for = {
+        gitcommit = true,
+        gitrebase = true,
+      },
       post_open = function(bufnr, winnr, ft, is_blocking)
         vim.w[winnr].is_remote = true
       end,
