@@ -73,7 +73,7 @@ install-language-rust() {
 }
 
 install-language-zig() {
-  local ZIG_VERSION=0.10.0
+  local ZIG_VERSION=$(curl -s https://api.github.com/repos/ziglang/zig/releases | jq -r ".[].tag_name" | head -n 1)
   if ! hascmd zig; then
     local dirname="zig-linux-x86_64-${ZIG_VERSION}"
     local tarball="zig-linux-x86_64-${ZIG_VERSION}.tar.xz"
