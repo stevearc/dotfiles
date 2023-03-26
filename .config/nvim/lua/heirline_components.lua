@@ -205,9 +205,9 @@ local Overseer = {
   static = {
     symbols = {
       ["CANCELED"] = " ",
-      ["FAILURE"] = " ",
-      ["SUCCESS"] = " ",
-      ["RUNNING"] = "省",
+      ["FAILURE"] = "󰅚 ",
+      ["SUCCESS"] = "󰄴 ",
+      ["RUNNING"] = "󰑮 ",
     },
   },
 
@@ -281,7 +281,7 @@ local SessionName = {
     return package.loaded.resession and require("resession").get_current()
   end,
   provider = function()
-    return string.format(" %s", require("resession").get_current())
+    return string.format("󰆓 %s", require("resession").get_current())
   end,
 }
 
