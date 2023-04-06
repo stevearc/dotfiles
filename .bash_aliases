@@ -88,3 +88,11 @@ scsv() {
   cat "$tablefile" | tr -d ' ' | tr ':' ',' >"$1"
   rm -f "$tmpfile" "$tablefile" "$macro"
 }
+
+b64encode() {
+  python -c "import base64; print(base64.b64encode('$1'))"
+}
+
+b64decode() {
+  python -c "import base64; print(base64.b64decode('$1'))"
+}
