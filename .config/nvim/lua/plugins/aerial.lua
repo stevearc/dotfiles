@@ -11,6 +11,7 @@ return {
   cmd = { "AerialToggle", "AerialOpen" },
   keys = {
     { "<leader>a", "<cmd>AerialToggle!<CR>", desc = "[A]erial toggle", mode = "n" },
+    { "<leader>A", "<cmd>AerialNavToggle<CR>", desc = "[A]erial nav toggle", mode = "n" },
     { "[s", lazy_aerial.prev, desc = "Previous aerial symbol", mode = { "n", "v" } },
     { "]s", lazy_aerial.next, desc = "Next aerial symbol", mode = { "n", "v" } },
     { "[u", lazy_aerial.prev_up, desc = "Previous aerial parent symbol", mode = { "n", "v" } },
@@ -55,6 +56,9 @@ return {
     local p = require("p")
     local ftplugin = p.require("ftplugin")
     ftplugin.extend("aerial", {
+      ignore_win_opts = true,
+    })
+    ftplugin.extend("aerial-nav", {
       ignore_win_opts = true,
     })
   end,
