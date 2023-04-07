@@ -17,7 +17,6 @@ return {
   "tpope/vim-surround",
   { "docunext/closetag.vim", event = "InsertEnter *" },
   "nanotee/luv-vimdocs",
-  "editorconfig/editorconfig-vim",
   {
     "stevearc/scnvim",
     ft = "supercollider",
@@ -47,13 +46,6 @@ return {
     },
   },
   { "numToStr/Comment.nvim", config = true },
-  {
-    "klen/nvim-config-local",
-    opts = {
-      config_files = { ".nvim.lua" },
-      lookup_parents = true,
-    },
-  },
   { "kyazdani42/nvim-web-devicons", enabled = vim.g.nerd_font, opts = { default = true }, lazy = true, config = true },
   {
     "ojroques/nvim-osc52",

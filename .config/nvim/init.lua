@@ -1,3 +1,4 @@
+vim.loader.enable()
 _G.stevearc = {}
 local p = require("p")
 
@@ -73,6 +74,7 @@ vim.opt.completeopt = { "menu", "menuone", "noselect" }
 vim.o.expandtab = true -- Turn tabs into spaces
 vim.o.formatoptions = "rqnlj"
 vim.o.gdefault = true -- Use 'g' flag by default with :s/foo/bar
+vim.o.exrc = true -- Load .nvim.lua files
 vim.o.guifont = "UbuntuMono Nerd Font:h10"
 vim.o.ignorecase = true
 vim.o.laststatus = 3 -- Global statusline
