@@ -50,7 +50,7 @@ return {
   {
     "klen/nvim-config-local",
     opts = {
-      config_files = { ".nvimrc.lua", ".vimrc.lua" },
+      config_files = { ".nvim.lua" },
       lookup_parents = true,
     },
   },
