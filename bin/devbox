@@ -95,11 +95,15 @@ def get_devbox(name: str) -> Optional[Dict]:
     return None
 
 
-def get_matching_snapshots(name: str) -> List[Dict]:
+def get_matching_snapshots(name: str, region: Optional[str] = None) -> List[Dict]:
     resp = call("/v2/snapshots")
     if not resp:
         return []
-    snaps = [s for s in resp["snapshots"] if s["name"].startswith(name)]
+    snaps = []
+    for s in resp['snapshots']:
+        if s['name'].startswith(name):
+            if region is None or any([r.startswith(region) for r in s['regions']]):
+                snaps.append(s)
     snaps.sort(
         key=lambda s: datetime.strptime(s["created_at"], "%Y-%m-%dT%H:%M:%SZ"),
         reverse=True,
@@ -130,7 +134,7 @@ def cmd_up_add_args(parser):
     )
 
 
-def select_region(regions: List[str], region: str):
+def select_region(regions: List[str], region: str) -> str:
     preferences = region.split(",")
     for pref in preferences:
         for r in regions:
@@ -144,7 +148,7 @@ def cmd_up(args):
     if droplet:
         print(f"{args.name} is already running")
     else:
-        snaps = get_matching_snapshots(args.name)
+        snaps = get_matching_snapshots(args.name, region = args.region)
         if snaps:
             snap = snaps[0]
         else:
