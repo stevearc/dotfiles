@@ -97,11 +97,19 @@ return {
       "ChatGPT",
       "ChatGPTActAs",
       "ChatGPTEditWithInstructions",
+      "ChatGPTRun",
     },
-    opts = { welcome_message = "", chat_input = {
-      prompt = "",
-    } },
+    opts = {
+      welcome_message = "",
+      chat_input = {
+        prompt = "",
+      },
+      popup_input = {
+        submit = "<C-s>",
+      },
+    },
   },
+  { "stevearc/openai.nvim", cmd = { "AIChat", "AIEdit" }, config = true },
   {
     "willothy/flatten.nvim",
     opts = {

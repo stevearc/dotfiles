@@ -6,6 +6,7 @@ return {
     projects = {
       allowlist = {
         vim.fn.stdpath("data") .. "/lazy",
+        vim.fs.normalize("~/dotfiles/vimplugins/openai.nvim"),
       },
       filter_dir = function(dir)
         local dotgit = dir .. sep .. ".git"
