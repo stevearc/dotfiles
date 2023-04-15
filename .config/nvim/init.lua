@@ -201,11 +201,34 @@ vim.keymap.set("n", "k", [[(v:count > 5 ? "m'" . v:count . 'k' : 'gk')]], { expr
 vim.keymap.set("n", "<leader>p", '"0p')
 vim.keymap.set("n", "<leader>P", '"0P')
 
+local obs = false
+local function set_scrolloff(winid)
+  if obs then
+    vim.wo[winid].scrolloff = math.floor(math.max(10, vim.api.nvim_win_get_height(winid) / 10))
+  else
+    vim.wo[winid].scrolloff = 1 + math.floor(vim.api.nvim_win_get_height(winid) / 2)
+  end
+end
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "WinNew", "VimResized" }, {
   desc = "Always keep the cursor vertically centered",
   pattern = "*",
-  command = 'let &l:scrolloff=1+winheight(win_getid())/2")',
+  callback = function()
+    set_scrolloff(0)
+  end,
   group = aug,
+})
+
+vim.api.nvim_create_user_command("ToggleObs", function()
+  obs = not obs
+  vim.o.relativenumber = not obs
+  for _, winid in ipairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_is_valid(winid) then
+      vim.wo[winid].relativenumber = not obs
+      set_scrolloff(winid)
+    end
+  end
+end, {
+  desc = "Toggle settings that make me easier to follow while pairing",
 })
 
 -- Start with folds open
