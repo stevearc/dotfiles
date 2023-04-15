@@ -82,7 +82,7 @@ M.on_attach = function(client, bufnr)
   -- Standard LSP
   safemap("definitionProvider", "n", "gd", cancelable("textDocument/definition"), "[G]oto [D]efinition")
   safemap("declarationProvider", "n", "gD", cancelable("textDocument/declaration"), "[G]oto [D]eclaration")
-  safemap("typeDefinitionProvider", "n", "<leader>D", cancelable("textDocument/typeDefinition"), "Type [D]efinition")
+  safemap("typeDefinitionProvider", "n", "gy", cancelable("textDocument/typeDefinition"), "[G]oto T[y]pe Definition")
   safemap("implementationProvider", "n", "gi", cancelable("textDocument/implementation"), "[G]oto [I]mplementation")
   safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", "[G]oto [R]eferences")
   -- Only map K if keywordprg is not ':help'
