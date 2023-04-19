@@ -15,15 +15,15 @@ if vim.g.nerd_font then
   vim.cmd([[
       sign define DiagnosticSignError text=󰅚   numhl=DiagnosticSignError texthl=DiagnosticSignError
       sign define DiagnosticSignWarn text=󰀪  numhl=DiagnosticSignWarn texthl=DiagnosticSignWarn
-      sign define DiagnosticSignInfo text=• numhl=DiagnosticSignInfo texthl=DiagnosticSignInfo
-      sign define DiagnosticSignHint text=• numhl=DiagnosticSignHint texthl=DiagnosticSignHint
+      sign define DiagnosticSignInfo text=• texthl=DiagnosticSignInfo
+      sign define DiagnosticSignHint text=• texthl=DiagnosticSignHint
     ]])
 else
   vim.cmd([[
       sign define DiagnosticSignError text=• numhl=DiagnosticSignError texthl=DiagnosticSignError
       sign define DiagnosticSignWarn text=• numhl=DiagnosticSignWarn texthl=DiagnosticSignWarn
-      sign define DiagnosticSignInfo text=. numhl=DiagnosticSignInfo texthl=DiagnosticSignInfo
-      sign define DiagnosticSignHint text=. numhl=DiagnosticSignHint texthl=DiagnosticSignHint
+      sign define DiagnosticSignInfo text=. texthl=DiagnosticSignInfo
+      sign define DiagnosticSignHint text=. texthl=DiagnosticSignHint
     ]])
 end
 
