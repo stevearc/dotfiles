@@ -86,29 +86,6 @@ return {
       },
     },
   },
-  {
-    "jackMort/ChatGPT.nvim",
-    enabled = vim.env.OPENAI_API_KEY ~= nil,
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "nvim-lua/plenary.nvim",
-    },
-    cmd = {
-      "ChatGPT",
-      "ChatGPTActAs",
-      "ChatGPTEditWithInstructions",
-      "ChatGPTRun",
-    },
-    opts = {
-      welcome_message = "",
-      chat_input = {
-        prompt = "",
-      },
-      popup_input = {
-        submit = "<C-s>",
-      },
-    },
-  },
   { "stevearc/openai.nvim", cmd = { "AIChat", "AIEdit" }, config = true },
   {
     "willothy/flatten.nvim",
