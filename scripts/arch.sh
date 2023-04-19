@@ -153,11 +153,11 @@ dotcmd-desktop() {
     gtk2 \
     kitty \
     libnotify \
-    mupen64plus \
     steam \
     vlc \
     zenity
   yay -S --noconfirm tomb # gtk2 above is a dependency
+  yay -S --noconfirm simple64 xpadneo-dkms
   setup-desktop-generic
   if [[ $XDG_CURRENT_DESKTOP =~ "GNOME" ]]; then
     sudo pacman -Syq --noconfirm dconf
@@ -211,7 +211,7 @@ dotcmd-pibox() {
     mullvad_port="$(cat ~/.config/mullvad_port)"
   else
     read -r -p "What port was forwarded for Mullvad? " mullvad_port
-    echo "$mullvad_port" > ~/.config/mullvad_port
+    echo "$mullvad_port" >~/.config/mullvad_port
   fi
   sudo systemctl enable sshd.service
   sudo systemctl start sshd.service
@@ -246,22 +246,22 @@ dotcmd-pibox() {
   fi
 
   # Storage drive
-  grep /dev/sda1 /etc/fstab >/dev/null || echo "/dev/sda1 /mnt/storage ext4 rw,user,exec 0 0" | sudo tee -a /etc/fstab > /dev/null
+  grep /dev/sda1 /etc/fstab >/dev/null || echo "/dev/sda1 /mnt/storage ext4 rw,user,exec 0 0" | sudo tee -a /etc/fstab >/dev/null
   sudo mkdir -p /mnt/storage
   sudo chmod 777 /mnt/storage
 
   # Transmission-daemon
   if [ ! -e ~/.config/systemd/user/transmission-daemon.service ]; then
-    sed -e "s/PEER_PORT/$mullvad_port/" "$HERE/static/transmission-daemon.service" > ~/.config/systemd/user/transmission-daemon.service
+    sed -e "s/PEER_PORT/$mullvad_port/" "$HERE/static/transmission-daemon.service" >~/.config/systemd/user/transmission-daemon.service
     systemctl --user daemon-reload
-    test -e ~/.config/transmission-daemon/settings.json || echo "{}" > ~/.config/transmission-daemon/settings.json
+    test -e ~/.config/transmission-daemon/settings.json || echo "{}" >~/.config/transmission-daemon/settings.json
     systemctl --user stop transmission-daemon
     cat ~/.config/transmission-daemon/settings.json \
       | jq '."rpc-enabled" = true' \
       | jq '."rpc-whitelist-enabled" = false' \
       | jq '."script-torrent-done-enabled" = true' \
       | jq '."script-torrent-done-filename" = "'$HOME/dotfiles/static/torrent_done.py'"' \
-      > /tmp/settings.json
+        >/tmp/settings.json
     mv /tmp/settings.json ~/.config/transmission-daemon/settings.json
     systemctl --user start transmission-daemon
     systemctl --user enable transmission-daemon

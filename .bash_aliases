@@ -14,6 +14,9 @@ elif [ $MAC ]; then
   alias ls='ls -G'
 fi
 
+alias pm-rm-orphans='sudo pacman -Qtdq | sudo pacman -Rns -'
+alias pm-rm-cache='sudo pacman -Scc'
+
 alias ll='ls -lh'
 alias la='ls -A'
 alias lla='ls -Alh'
