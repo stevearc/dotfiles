@@ -50,6 +50,7 @@ return {
         "on_complete_dispose",
       },
       default_neotest = {
+        "unique",
         { "on_complete_notify", system = "unfocused", on_change = true },
         "default",
       },
