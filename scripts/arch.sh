@@ -157,7 +157,7 @@ dotcmd-desktop() {
     vlc \
     zenity
   yay -S --noconfirm tomb # gtk2 above is a dependency
-  yay -S --noconfirm simple64 xpadneo-dkms
+  yay -S --noconfirm xpadneo-dkms
   setup-desktop-generic
   if [[ $XDG_CURRENT_DESKTOP =~ "GNOME" ]]; then
     sudo pacman -Syq --noconfirm dconf
