@@ -281,8 +281,6 @@ vim.api.nvim_create_autocmd("BufEnter", {
   group = aug,
 })
 
--- Enter paste mode with <C-v> in insert mode
-vim.keymap.set("i", "<C-v>", "<cmd>set paste<CR>")
 vim.api.nvim_create_autocmd("InsertLeave", {
   desc = "Leave paste mode when leaving insert",
   pattern = "*",
