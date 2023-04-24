@@ -4,6 +4,7 @@ return {
     "stevearc/aerial.nvim",
     "stevearc/overseer.nvim",
     "stevearc/three.nvim",
+    "stevearc/oil.nvim",
   },
   event = "VeryLazy",
   config = function()
@@ -25,7 +26,7 @@ return {
         end
         return visible_buffers[bufnr] or require("three").is_buffer_in_any_tab(bufnr)
       end,
-      extensions = { aerial = {}, overseer = {}, quickfix = {}, three = {}, config_local = {} },
+      extensions = { aerial = {}, overseer = {}, quickfix = {}, three = {}, config_local = {}, oil = {} },
     })
 
     resession.add_hook("pre_save", function()
