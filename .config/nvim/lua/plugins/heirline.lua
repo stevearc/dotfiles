@@ -1,7 +1,7 @@
 return {
   "rebelot/heirline.nvim",
   enabled = true,
-  dependencies = { "kyazdani42/nvim-web-devicons" },
+  dependencies = { "nvim-tree/nvim-web-devicons" },
   event = "VeryLazy",
   config = function()
     local comp = require("heirline_components")

@@ -18,7 +18,7 @@ return {
   dependencies = {
     "nvim-neotest/neotest-python",
     "nvim-neotest/neotest-plenary",
-    "haydenmeade/neotest-jest",
+    "nvim-neotest/neotest-jest",
     "stevearc/overseer.nvim",
     "nvim-lua/plenary.nvim",
   },
