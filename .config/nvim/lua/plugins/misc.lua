@@ -108,29 +108,27 @@ return {
     event = "InsertEnter",
     opts = {
       suggestion = {
-        enabled = true,
-        auto_trigger = true,
-        debounce = 75,
-        keymap = {
-          accept = "<C-y>",
-          accept_word = false,
-          accept_line = false,
-          next = "<C-n>",
-          prev = "<C-p>",
-          dismiss = "<C-e>",
-        },
+        enabled = false,
+        -- auto_trigger = true,
+        -- debounce = 75,
+        -- keymap = {
+        --   accept = "<C-y>",
+        --   accept_word = false,
+        --   accept_line = false,
+        --   next = "<C-n>",
+        --   prev = "<C-p>",
+        --   dismiss = "<C-e>",
+        -- },
       },
       panel = {
-        enabled = true,
-        auto_refresh = true,
-        keymap = {
-          jump_prev = "[[",
-          jump_next = "]]",
-          accept = "<C-y>",
-          refresh = "gr",
-          open = "<M-CR>",
-        },
+        enabled = false,
       },
     },
+  },
+  {
+    "zbirenbaum/copilot-cmp",
+    lazy = true,
+    dependencies = { "zbirenbaum/copilot.lua" },
+    config = true,
   },
 }

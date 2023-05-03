@@ -8,6 +8,7 @@ return {
     "saadparwaiz1/cmp_luasnip",
     "onsails/lspkind-nvim",
     "L3MON4D3/LuaSnip",
+    "zbirenbaum/copilot-cmp",
   },
   cmd = { "CmpInfo" },
   event = "InsertEnter *",
@@ -65,6 +66,7 @@ return {
       formatting.format = lspkind.cmp_format({
         mode = "symbol",
         symbol_map = {
+          Copilot = " ",
           Class = "󰆧 ",
           Color = "󰏘 ",
           Constant = "󰏿 ",
@@ -106,6 +108,7 @@ return {
       formatting = formatting,
 
       sources = {
+        { name = "copilot" },
         { name = "crates" },
         { name = "nvim_lua" },
         { name = "nvim_lsp" },
