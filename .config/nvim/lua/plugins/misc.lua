@@ -15,6 +15,7 @@ return {
   "tpope/vim-repeat",
   "tpope/vim-endwise",
   "tpope/vim-surround",
+  "tpope/vim-abolish",
   { "docunext/closetag.vim", event = "InsertEnter *" },
   "nanotee/luv-vimdocs",
   {
