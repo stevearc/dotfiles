@@ -73,12 +73,12 @@ install-language-lua() {
   hascmd stylua || brew install stylua
 
   # Install lua language server
-  if [ ! -d ~/.local/share/nvim/language-servers/lua-language-server ]; then
+  if [ ! -d ~/.local/share/nvim/language-servers/lua-language-server/bin/lua-language-server ]; then
     mkdir -p ~/.local/share/nvim/language-servers/lua-language-server
-    pushd ~/.local/share/nvim/language-servers/lua-language-server
+    pushd ~/.local/share/nvim/language-servers/lua-language-server/
     local latest_version
     latest_version=$(curl -s https://api.github.com/repos/LuaLS/lua-language-server/releases/latest | jq -r .name)
-    wget "https://github.com/LuaLS/lua-language-server/releases/download/$latest_version/lua-language-server-$latest_version-darwin-arm64.tar.gz" ls.tar.gz
+    wget -O ls.tar.gz "https://github.com/LuaLS/lua-language-server/releases/download/$latest_version/lua-language-server-$latest_version-darwin-arm64.tar.gz"
     tar -zxf ls.tar.gz
     rm -f ls.tar.gz
   fi
