@@ -27,8 +27,12 @@ else
     ]])
 end
 
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
+vim.keymap.set("n", "[d", function()
+  vim.diagnostic.goto_prev({ severity = { min = vim.diagnostic.severity.WARN } })
+end)
+vim.keymap.set("n", "]d", function()
+  vim.diagnostic.goto_next({ severity = { min = vim.diagnostic.severity.WARN } })
+end)
 
 local aug = vim.api.nvim_create_augroup("StevearcDiagnosticConfig", {})
 
