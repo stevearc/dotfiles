@@ -13,6 +13,7 @@ local function get_client()
     end
     _client = Client.new({
       secret_key = secret_key,
+      organization = os.getenv("OPENAI_ORG"),
     })
   end
   return _client
