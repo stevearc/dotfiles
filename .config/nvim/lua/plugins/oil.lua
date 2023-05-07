@@ -2,9 +2,10 @@ return {
   "stevearc/oil.nvim",
   opts = {
     trash = false,
+    delete_to_trash = true,
     skip_confirm_for_simple_edits = true,
     restore_win_options = false,
-    silence_disclaimer = true,
+    prompt_save_on_select_new_entry = false,
     keymaps = {
       ["`"] = "actions.tcd",
       ["~"] = "actions.cd",
