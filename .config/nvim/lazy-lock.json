@@ -22,7 +22,7 @@
   "lspkind-nvim": { "branch": "master", "commit": "c68b3a003483cf382428a43035079f78474cd11e" },
   "luv-vimdocs": { "branch": "main", "commit": "997b9338fd3ac91a53bbdc19110c127e3bea01c4" },
   "neodev.nvim": { "branch": "main", "commit": "fe48362be179b5705edcbcb947c1d84b263d5698" },
-  "neorg": { "branch": "main", "commit": "d61c4d1dd9442ec34d57e4a296b35a1117e65dbb" },
+  "neorg": { "branch": "main", "commit": "5de014e7cc3dc6eed0a62854fe8ba58f664d97ea" },
   "neotest": { "branch": "master", "commit": "8d279ac31542553461f5377db1596ae52e042d00" },
   "neotest-jest": { "branch": "main", "commit": "22b1050dda3ebd401780ec4b8e193cf52523a4da" },
   "neotest-plenary": { "branch": "master", "commit": "65f57c41ffb7bf1c34938b61683fe833ad3be8fb" },

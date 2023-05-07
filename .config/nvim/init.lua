@@ -68,6 +68,7 @@ vim.g.sidebar_filetypes = { "dagger", "aerial", "OverseerList", "neotest-summary
 
 -- Space is leader
 vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 -- Options
 vim.opt.completeopt = { "menu", "menuone", "noselect" }

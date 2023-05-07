@@ -43,7 +43,7 @@ return {
         },
       },
       -- This is deleting the non-empty contents of files
-      -- ["core.norg.esupports.metagen"] = {
+      -- ["core.esupports.metagen"] = {
       --   config = {
       --     type = "auto",
       --   },
