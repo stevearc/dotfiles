@@ -1,11 +1,12 @@
 ; extends
 
-; Needs https://github.com/nvim-treesitter/nvim-treesitter/issues/4181
-; (([(list_marker_star) (list_marker_minus)] @punctuation.special @conceal_star (#offset! @conceal_star 0 0 0 -1)) (#set! conceal "•"))
+; bullet points
+([(list_marker_minus) (list_marker_star)] @punctuation.special (#offset! @punctuation.special 0 0 0 -1) (#set! conceal "•"))
 
 ; Checkbox list items
-((task_list_marker_unchecked) @punctuation.special @conceal (#set! conceal ""))
-((task_list_marker_checked) @punctuation.special @conceal (#set! conceal ""))
+((task_list_marker_unchecked) @punctuation.special (#offset! @punctuation.special 0 -2 0 0) (#set! conceal ""))
+((task_list_marker_checked) @comment (#offset! @comment 0 -2 0 0) (#set! conceal ""))
+(list_item (task_list_marker_checked)) @comment
 
 ; Use box drawing characters for tables
 (pipe_table_header ("|") @punctuation.special @conceal (#set! conceal "┃"))

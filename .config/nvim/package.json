@@ -25,6 +25,10 @@
         "path": "snippets/lua.json"
       },
       {
+        "language": "markdown",
+        "path": "snippets/markdown.json"
+      },
+      {
         "language": "norg",
         "path": "snippets/norg.json"
       },

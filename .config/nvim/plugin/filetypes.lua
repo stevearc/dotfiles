@@ -89,6 +89,10 @@ ftplugin.extend_all({
       conceallevel = 2,
       formatoptions = "jqln",
     },
+    bindings = {
+      { "n", "<leader>td", require("markdown").task_mark_done },
+      { "n", "<leader>tu", require("markdown").task_mark_undone },
+    },
   },
   ["neotest-summary"] = {
     opt = {
