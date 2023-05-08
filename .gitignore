@@ -4,3 +4,4 @@ venv
 .checkpoints
 *.log
 .direnv/
+vimplugins/conjoin.nvim
