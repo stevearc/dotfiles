@@ -19,6 +19,7 @@ return {
     "nvim-neotest/neotest-python",
     "nvim-neotest/neotest-plenary",
     "nvim-neotest/neotest-jest",
+    "nvim-neotest/neotest-go",
     "stevearc/overseer.nvim",
     "nvim-lua/plenary.nvim",
   },
@@ -84,6 +85,7 @@ return {
           dap = { justMyCode = false },
         }),
         require("neotest-plenary"),
+        require("neotest-go"),
         require("neotest-jest")({
           cwd = require("neotest-jest").root,
         }),

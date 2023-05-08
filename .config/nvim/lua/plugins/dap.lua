@@ -1,7 +1,7 @@
 return {
   {
     "mfussenegger/nvim-dap",
-    enabled = false,
+    enabled = true,
     dependencies = {
       { "leoluz/nvim-dap-go", config = true },
       "rcarriga/nvim-dap-ui",
@@ -32,10 +32,10 @@ return {
     config = function()
       -- dap.set_log_level("DEBUG")
       vim.fn.sign_define("DapBreakpoint", { text = "•", texthl = "DiagnosticError", linehl = "", numhl = "" })
-      vim.fn.sign_define("DapBreakpointCondition", { text = "*", texthl = "DiagnosticError", linehl = "", numhl = "" })
+      vim.fn.sign_define("DapBreakpointCondition", { text = "?", texthl = "DiagnosticError", linehl = "", numhl = "" })
       vim.fn.sign_define("DapLogPoint", { text = "⁋", texthl = "", linehl = "", numhl = "" })
-      vim.fn.sign_define("DapStopped", { text = "→", texthl = "", linehl = "", numhl = "" })
-      vim.fn.sign_define("DapBreakpointRejected", { text = "🛑", texthl = "", linehl = "", numhl = "" })
+      vim.fn.sign_define("DapStopped", { text = " ", texthl = "DiagnosticInfo", linehl = "", numhl = "" })
+      vim.fn.sign_define("DapBreakpointRejected", { text = "X", texthl = "DiagnosticError", linehl = "", numhl = "" })
 
       local dapui = require("dapui")
       local dap = require("dap")

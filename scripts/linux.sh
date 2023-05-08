@@ -121,11 +121,11 @@ install-language-zig() {
 install-language-go() {
   if [ ! -e ~/.local/share/go ]; then
     pushd /tmp
-    local pkg="go1.18.linux-amd64.tar.gz"
+    local pkg="go1.20.4.linux-amd64.tar.gz"
     if [ ! -e "$pkg" ]; then
       wget -O "$pkg" "https://golang.org/dl/$pkg"
     fi
-    sudo tar -C ~/.local/share -xzf $pkg
+    tar -C ~/.local/share -xzf $pkg
     rm -f $pkg
     popd
   fi
