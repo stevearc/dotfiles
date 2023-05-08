@@ -40,8 +40,7 @@ return {
     }
     ftplugin.set("GoogleKeepList", {
       callback = function(bufnr)
-        -- FIXME update the api for stickybuf
-        vim.cmd("silent! PinBuffer")
+        require("stickybuf").pin()
       end,
       bindings = gkeep_bindings,
     })
