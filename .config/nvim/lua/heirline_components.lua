@@ -331,6 +331,35 @@ local Ruler = {
   end,
 }
 
+local ConjoinStatus = {
+  condition = function()
+    local ok, state = pcall(require, "conjoin.state")
+    return ok and state.id ~= -1
+  end,
+
+  flexible = 1,
+  {
+    provider = function()
+      local state = require("conjoin.state")
+      local others = state.get_other_users()
+      local names = vim.tbl_map(function(u)
+        return u.name
+      end, others)
+      return string.format(" [%s]", table.concat(names, ", "))
+    end,
+  },
+  {
+    provider = function()
+      local state = require("conjoin.state")
+      local others = state.get_other_users()
+      return string.format(" %d", #others)
+    end,
+  },
+  {
+    provider = " ",
+  },
+}
+
 return {
   ViMode = ViMode,
   Ruler = Ruler,
@@ -347,4 +376,5 @@ return {
   ArduinoStatus = ArduinoStatus,
   LSPActive = LSPActive,
   stl_static = stl_static,
+  ConjoinStatus = ConjoinStatus,
 }
