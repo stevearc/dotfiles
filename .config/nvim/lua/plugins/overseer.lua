@@ -91,5 +91,10 @@ return {
       })
       task:start()
     end, { nargs = "*", bang = true, bar = true, complete = "file" })
+
+    local has_dap = pcall(require, "dap")
+    if has_dap then
+      require("dap.ext.vscode").json_decode = require("overseer.util").decode_json
+    end
   end,
 }
