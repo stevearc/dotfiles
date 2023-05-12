@@ -8,7 +8,6 @@ return {
     "saadparwaiz1/cmp_luasnip",
     "onsails/lspkind-nvim",
     "L3MON4D3/LuaSnip",
-    "zbirenbaum/copilot-cmp",
   },
   cmd = { "CmpInfo" },
   event = "InsertEnter *",
@@ -130,25 +129,6 @@ return {
               return bufs
             end,
           },
-        },
-      },
-
-      sorting = {
-        priority_weight = 2,
-        comparators = {
-          require("copilot_cmp.comparators").prioritize,
-
-          -- Below is the default comparitor list and order for nvim-cmp
-          cmp.config.compare.offset,
-          cmp.config.compare.exact,
-          -- compare.scopes,
-          cmp.config.compare.score,
-          cmp.config.compare.recently_used,
-          cmp.config.compare.locality,
-          cmp.config.compare.kind,
-          -- compare.sort_text,
-          cmp.config.compare.length,
-          cmp.config.compare.order,
         },
       },
 
