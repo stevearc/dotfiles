@@ -83,7 +83,7 @@ local function render_messages(bufnr, settings, messages)
     end
     table.insert(lines, string.format("# %s", message.role))
     table.insert(lines, "")
-    for _, text in ipairs(vim.split(message.content, "\n")) do
+    for _, text in ipairs(vim.split(message.content, "\n", { plain = true, trimempty = true })) do
       table.insert(lines, text)
     end
   end
