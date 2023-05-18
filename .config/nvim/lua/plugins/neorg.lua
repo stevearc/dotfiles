@@ -89,13 +89,13 @@ return {
             return false
           end
           local lnum = vim.api.nvim_win_get_cursor(0)[1] - 1
-          local todo_module = neorg.modules.get_module("core.norg.qol.todo_items")
+          local todo_module = neorg.modules.get_module("core.qol.todo_items")
           local item = todo_module and todo_module.get_todo_item_from_cursor(0, lnum)
           local row = item and item:start()
           return row == lnum
         end,
         action = function()
-          vim.cmd("Neorg keybind norg core.norg.qol.todo_items.todo.task_cycle")
+          vim.cmd("Neorg keybind norg core.qol.todo_items.todo.task_cycle")
         end,
       })
     end)
