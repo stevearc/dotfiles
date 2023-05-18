@@ -208,7 +208,7 @@ function Chat.new(args)
     settings = settings,
   }, { __index = Chat })
   chatmap[bufnr] = self
-  render_messages(bufnr, self.settings, args.messages or {})
+  render_messages(bufnr, settings, args.messages or {})
   return self
 end
 
@@ -240,12 +240,12 @@ function Chat:submit()
         if delta.content then
           new_message.content = new_message.content .. delta.content
         end
-        render_messages(self.bufnr, self.settings, messages)
+        render_messages(self.bufnr, settings, messages)
         util.buf_scroll_to_end(self.bufnr)
       end
       if done then
         table.insert(messages, { role = "user", content = "" })
-        render_messages(self.bufnr, self.settings, messages)
+        render_messages(self.bufnr, settings, messages)
         util.buf_scroll_to_end(self.bufnr)
         finalize()
       end
