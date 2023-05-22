@@ -15,7 +15,7 @@ return {
         vim.schedule_wrap(function()
           timer:close()
           timer = nil
-          if vim.api.nvim_buf_get_option(bufnr, "modified") then
+          if vim.bo[bufnr].modified then
             vim.api.nvim_buf_call(bufnr, function()
               vim.cmd("write")
             end)
@@ -37,7 +37,7 @@ return {
       },
     }
 
-    vim.api.nvim_set_option("guifont", "UbuntuMono Nerd Font:h11")
+    vim.o.guifont = "UbuntuMono Nerd Font:h11"
     local group = vim.api.nvim_create_augroup("FireNvimFT", {})
     vim.api.nvim_create_autocmd("BufEnter", {
       pattern = "github.com_*.txt",

@@ -36,7 +36,7 @@ setmetatable(M, {
     if type(key) == "number" then
       local bufnr = key
       key = vim.api.nvim_buf_get_name(bufnr)
-      if key == "" or vim.api.nvim_buf_get_option(bufnr, "buftype") ~= "" then
+      if key == "" or vim.bo[bufnr].buftype ~= "" then
         key = vim.fn.getcwd()
       else
         key = vim.fn.fnamemodify(key, ":p")

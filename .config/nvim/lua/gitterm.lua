@@ -10,10 +10,10 @@ end
 
 local function set_buf_opts(focusable)
   vim.cmd("silent! PinBuffer!")
-  vim.api.nvim_buf_set_option(0, "bufhidden", "delete")
-  vim.api.nvim_buf_set_option(0, "buflisted", false)
+  vim.bo.bufhidden = "delete"
+  vim.bo.buflisted = false
   if not focusable then
-    vim.api.nvim_buf_set_option(0, "scrollback", 1)
+    vim.bo.scrollback = 1
     vim.api.nvim_buf_set_var(0, "term_no_autoinsert", true)
   end
 end

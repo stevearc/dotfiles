@@ -51,7 +51,7 @@ vim.api.nvim_create_autocmd("TermOpen", {
   callback = function()
     -- Wait briefly just in case we immediately switch out of the buffer
     vim.defer_fn(function()
-      if vim.api.nvim_buf_get_option(0, "buftype") == "terminal" then
+      if vim.bo.buftype == "terminal" then
         vim.cmd([[startinsert]])
       end
     end, 100)

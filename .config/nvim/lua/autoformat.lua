@@ -57,7 +57,7 @@ local function js_has_format()
 end
 
 local function has_format_directive()
-  local ft = vim.api.nvim_buf_get_option(0, "filetype")
+  local ft = vim.bo.filetype
   if ft == "php" then
     return php_has_format()
   elseif ft == "javascript" or ft == "javascriptreact" or ft == "javascript.jsx" then

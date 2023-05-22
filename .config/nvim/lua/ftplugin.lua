@@ -136,23 +136,21 @@ end
 ---@return table<string, boolean>
 local function _apply_win(name, winid)
   local conf = configs[name]
-  if not conf then
+  if not conf or not conf.opt then
     return {}
   end
   local ret = {}
-  if conf.opt then
-    for k, v in pairs(conf.opt) do
-      local opt_info = vim.api.nvim_get_option_info(k)
-      if opt_info.scope == "win" then
-        local ok, err = pcall(vim.api.nvim_win_set_option, winid, k, v)
-        if ok then
-          ret[k] = true
-        else
-          vim.notify(
-            string.format("Error setting window option %s = %s: %s", k, vim.inspect(v), err),
-            vim.log.levels.ERROR
-          )
-        end
+  for k, v in pairs(conf.opt) do
+    local opt_info = vim.api.nvim_get_option_info2(k, {})
+    if opt_info.scope == "win" then
+      local ok, err = pcall(vim.api.nvim_set_option_value, k, v, { win = winid })
+      if ok then
+        ret[k] = true
+      else
+        vim.notify(
+          string.format("Error setting window option %s = %s: %s", k, vim.inspect(v), err),
+          vim.log.levels.ERROR
+        )
       end
     end
   end
@@ -164,7 +162,7 @@ end
 ---@param winid integer
 M.apply_win = function(name, winid)
   local win_overrides = {}
-  local pieces = vim.split(name, ".", true)
+  local pieces = vim.split(name, ".", { plain = true })
   if #pieces > 1 then
     for _, ft in ipairs(pieces) do
       win_overrides = vim.tbl_extend("force", win_overrides, _apply_win(ft, winid))
@@ -199,7 +197,7 @@ end
 ---@param name string
 ---@param bufnr integer
 M.apply = function(name, bufnr)
-  local pieces = vim.split(name, ".", true)
+  local pieces = vim.split(name, ".", { plain = true })
   if #pieces > 1 then
     for _, ft in ipairs(pieces) do
       M.apply(ft, bufnr)
@@ -219,9 +217,9 @@ M.apply = function(name, bufnr)
   end
   if conf.opt then
     for k, v in pairs(conf.opt) do
-      local opt_info = vim.api.nvim_get_option_info(k)
+      local opt_info = vim.api.nvim_get_option_info2(k, {})
       if opt_info.scope == "buf" then
-        local ok, err = pcall(vim.api.nvim_buf_set_option, bufnr, k, v)
+        local ok, err = pcall(vim.api.nvim_set_option_value, k, v, { buf = bufnr })
         if not ok then
           vim.notify(
             string.format("Error setting buffer option %s = %s: %s", k, vim.inspect(v), err),
@@ -299,9 +297,9 @@ M.setup = function(opts)
     callback = function(params)
       local winid = vim.api.nvim_get_current_win()
       local bufnr = vim.api.nvim_win_get_buf(winid)
-      local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+      local filetype = vim.bo[bufnr].filetype
       -- If we're in a terminal buffer, make the filetype "terminal"
-      if vim.api.nvim_buf_get_option(bufnr, "buftype") == "terminal" then
+      if vim.bo[bufnr].buftype == "terminal" then
         filetype = "terminal"
       end
       M.apply_win(filetype, winid)
@@ -314,7 +312,7 @@ M.setup = function(opts)
     callback = function(params)
       local winid = vim.api.nvim_get_current_win()
       local bufnr = vim.api.nvim_win_get_buf(winid)
-      if vim.api.nvim_buf_get_option(bufnr, "buftype") ~= "terminal" then
+      if vim.bo[bufnr].buftype ~= "terminal" then
         return
       end
       M.apply("terminal", bufnr)

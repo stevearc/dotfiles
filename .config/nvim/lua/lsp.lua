@@ -11,7 +11,7 @@ local function adjust_formatting_capabilities(client, bufnr)
   if not null_ls_client or not vim.lsp.buf_is_attached(bufnr, null_ls_client.id) then
     return
   end
-  local formatters = sources.get_available(vim.api.nvim_buf_get_option(bufnr, "filetype"), methods.FORMATTING)
+  local formatters = sources.get_available(vim.bo[bufnr].filetype, methods.FORMATTING)
   if vim.tbl_isempty(formatters) then
     return
   end
@@ -86,7 +86,7 @@ M.on_attach = function(client, bufnr)
   safemap("implementationProvider", "n", "gi", cancelable("textDocument/implementation"), "[G]oto [I]mplementation")
   safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", "[G]oto [R]eferences")
   -- Only map K if keywordprg is not ':help'
-  if vim.api.nvim_buf_get_option(bufnr, "keywordprg") ~= ":help" then
+  if vim.bo[bufnr].keywordprg ~= ":help" then
     safemap("hoverProvider", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", "Show hover information")
   end
   safemap("signatureHelpProvider", "i", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", "Function signature help")
@@ -133,7 +133,7 @@ M.on_attach = function(client, bufnr)
     })
   end
 
-  vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+  vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
 end
 
 ---@param name string
