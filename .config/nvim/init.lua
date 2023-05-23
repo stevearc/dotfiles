@@ -35,23 +35,6 @@ if should_profile then
   vim.keymap.set("n", "<f1>", toggle_profile, { desc = "Toggle profiling" })
 end
 
--- Patch vim.keymap.set so that it reports errors
-local _keymap_set = vim.keymap.set
-vim.keymap.set = function(mode, lhs, rhs, opts)
-  local _rhs = rhs
-  if type(rhs) == "function" then
-    rhs = function()
-      local ok, res_or_err = pcall(_rhs)
-      if ok then
-        return res_or_err
-      else
-        vim.api.nvim_echo({ { res_or_err, "Error" } }, true, {})
-      end
-    end
-  end
-  _keymap_set(mode, lhs, rhs, opts)
-end
-
 vim.g.python3_host_prog = os.getenv("HOME") .. "/.envs/py3/bin/python"
 if not vim.loop.fs_stat(vim.g.python3_host_prog) then
   -- Disable the python provider if the virtualenv isn't found
