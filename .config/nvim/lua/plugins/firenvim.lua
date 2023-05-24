@@ -1,7 +1,11 @@
 return {
   "glacambre/firenvim",
-  enabled = vim.g.started_by_firenvim == true,
+  lazy = not vim.g.started_by_firenvim,
+  build = "call firenvim#install(0)",
   config = function()
+    if not vim.g.started_by_firenvim then
+      return
+    end
     local timer = nil
     local function throttle_write(delay)
       local bufnr = vim.api.nvim_get_current_buf()
@@ -17,7 +21,7 @@ return {
           timer = nil
           if vim.bo[bufnr].modified then
             vim.api.nvim_buf_call(bufnr, function()
-              vim.cmd("write")
+              vim.cmd.write()
             end)
           end
         end)
