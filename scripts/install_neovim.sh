@@ -80,7 +80,6 @@ Options:
     else
       _install_linux "$DEST"
     fi
-    "$DEST/$NAME" --headless +UpdateRemotePlugins +qall >/dev/null
     echo -n "Installed "
     "$DEST/$NAME" --version | head -n 1
   else

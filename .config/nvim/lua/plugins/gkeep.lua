@@ -1,6 +1,7 @@
 local is_mac = vim.loop.os_uname().sysname == "Darwin"
 return {
   "stevearc/gkeep.nvim",
+  build = "UpdateRemotePlugins",
   enabled = not is_mac,
   event = "BufReadPre gkeep://*",
   keys = {
