@@ -40,19 +40,27 @@ return {
       { "n", "<leader>l", "<CMD>GkeepEnter list<CR>" },
     }
     ftplugin.set("GoogleKeepList", {
-      callback = function(bufnr)
-        require("stickybuf").pin()
-      end,
       bindings = gkeep_bindings,
     })
     ftplugin.set("GoogleKeepMenu", ftplugin.get("GoogleKeepList"))
     ftplugin.set("GoogleKeepNote", {
       bindings = vim.list_extend({
-        { "n", "<leader>x", "<CMD>GkeepCheck<CR>" },
         { "n", "<leader>p", "<CMD>GkeepPopup<CR>" },
         { "n", "<leader>fl", "<CMD>Telescope gkeep link<CR>" },
       }, gkeep_bindings),
     })
     ftplugin.extend("norg", { bindings = gkeep_bindings })
+
+    p.require("quick_action", function(quick_action)
+      quick_action.add("menu", {
+        name = "Toggle Gkeep check",
+        condition = function()
+          return vim.bo.filetype == "GoogleKeepNote" and vim.b.note_type == "list"
+        end,
+        action = function()
+          vim.cmd.GkeepCheck()
+        end,
+      })
+    end)
   end,
 }
