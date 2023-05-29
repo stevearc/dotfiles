@@ -11,7 +11,7 @@ local chat_query = [[
   )
 
 (section
-  [(paragraph) (fenced_code_block)] @text
+  [(paragraph) (fenced_code_block) (list)] @text
   )
 ]]
 
