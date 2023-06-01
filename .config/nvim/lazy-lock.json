@@ -19,7 +19,7 @@
   "lazy.nvim": { "branch": "main", "commit": "761b8388af5bcb451e30d886163fcd129278e1d1" },
   "lightspeed.nvim": { "branch": "main", "commit": "299eefa6a9e2d881f1194587c573dad619fdb96f" },
   "livegrep.nvim": { "branch": "main", "commit": "d11a5feb2dfb9c3b3936f3b3a24ac99a534d3f9f" },
-  "lspkind-nvim": { "branch": "master", "commit": "57610d5ab560c073c465d6faf0c19f200cb67e6e" },
+  "lspkind.nvim": { "branch": "master", "commit": "57610d5ab560c073c465d6faf0c19f200cb67e6e" },
   "luv-vimdocs": { "branch": "main", "commit": "997b9338fd3ac91a53bbdc19110c127e3bea01c4" },
   "neodev.nvim": { "branch": "main", "commit": "da3c31c350511db81d1948816f5287692be9aaa0" },
   "neorg": { "branch": "main", "commit": "dd3e8dc60af9947ca37f7ab0449c43937c3b7a9c" },

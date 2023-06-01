@@ -6,7 +6,7 @@ return {
     "hrsh7th/cmp-path",
     "hrsh7th/cmp-nvim-lua",
     "saadparwaiz1/cmp_luasnip",
-    "onsails/lspkind-nvim",
+    "onsails/lspkind.nvim",
     "L3MON4D3/LuaSnip",
   },
   cmd = { "CmpInfo" },

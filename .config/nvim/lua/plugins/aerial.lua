@@ -7,7 +7,12 @@ local lazy_aerial = setmetatable({}, {
 })
 return {
   "stevearc/aerial.nvim",
-  dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
+  dependencies = {
+    "nvim-treesitter/nvim-treesitter",
+    "nvim-tree/nvim-web-devicons",
+    -- Hack to ensure that lspkind-nvim is loaded
+    "hrsh7th/nvim-cmp",
+  },
   cmd = { "AerialToggle", "AerialOpen" },
   keys = {
     { "<leader>a", "<cmd>AerialToggle!<CR>", desc = "[A]erial toggle", mode = "n" },
