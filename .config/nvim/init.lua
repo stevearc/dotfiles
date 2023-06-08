@@ -261,7 +261,7 @@ vim.api.nvim_create_autocmd("FocusGained", {
 vim.api.nvim_create_autocmd("BufEnter", {
   desc = "Every time we enter an unmodified buffer, check if it changed on disk",
   pattern = "*",
-  command = "if &buftype == '' && !&modified | exec 'checktime ' . expand('<abuf>') | endif",
+  command = "if &buftype == '' && !&modified && expand('%') != '' | exec 'checktime ' . expand('<abuf>') | endif",
   group = aug,
 })
 
