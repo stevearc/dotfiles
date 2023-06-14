@@ -15,12 +15,15 @@
 (pipe_table_row ("|") @punctuation.special @conceal (#set! conceal "┃"))
 
 ; Block quotes
-((block_quote_marker) @conceal (#set! conceal "▍"))
+((block_quote_marker) @punctuation.special (#offset! @punctuation.special 0 0 0 -1) (#set! conceal "▐"))
 ((block_quote
   (paragraph (inline
-    (block_continuation) @conceal (#set! conceal "▍")
+    (block_continuation) @punctuation.special (#offset! @punctuation.special 0 0 0 -1) (#set! conceal "▐")
   ))
 ))
+(block_quote
+  (paragraph) @text.literal)
 
 ; Needs https://github.com/neovim/neovim/issues/11711
 ; (fenced_code_block) @codeblock
+; (indented_code_block) @codeblock
