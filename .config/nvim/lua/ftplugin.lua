@@ -143,7 +143,7 @@ local function _apply_win(name, winid)
   for k, v in pairs(conf.opt) do
     local opt_info = vim.api.nvim_get_option_info2(k, {})
     if opt_info.scope == "win" then
-      local ok, err = pcall(vim.api.nvim_set_option_value, k, v, { win = winid })
+      local ok, err = pcall(vim.api.nvim_set_option_value, k, v, { scope = "local", win = winid })
       if ok then
         ret[k] = true
       else
