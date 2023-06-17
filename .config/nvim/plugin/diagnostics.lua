@@ -11,20 +11,24 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
-if vim.g.nerd_font then
-  vim.cmd([[
-      sign define DiagnosticSignError text=󰅚   numhl=DiagnosticSignError texthl=DiagnosticSignError
-      sign define DiagnosticSignWarn text=󰀪  numhl=DiagnosticSignWarn texthl=DiagnosticSignWarn
-      sign define DiagnosticSignInfo text=• texthl=DiagnosticSignInfo
-      sign define DiagnosticSignHint text=• texthl=DiagnosticSignHint
-    ]])
-else
-  vim.cmd([[
-      sign define DiagnosticSignError text=• numhl=DiagnosticSignError texthl=DiagnosticSignError
-      sign define DiagnosticSignWarn text=• numhl=DiagnosticSignWarn texthl=DiagnosticSignWarn
-      sign define DiagnosticSignInfo text=. texthl=DiagnosticSignInfo
-      sign define DiagnosticSignHint text=. texthl=DiagnosticSignHint
-    ]])
+local icons = vim.g.nerd_font and {
+  Error = "󰅚 ",
+  Warn = "󰀪 ",
+  Info = "•",
+  Hint = "•",
+} or {
+  Error = "•",
+  Warn = "•",
+  Info = ".",
+  Hint = ".",
+}
+local hl_num = {
+  Error = true,
+  Warn = true,
+}
+for _, lvl in ipairs({ "Error", "Warn", "Info", "Hint" }) do
+  local hl = "DiagnosticSign" .. lvl
+  vim.fn.sign_define(hl, { text = icons[lvl], texthl = hl, linehl = "", numhl = hl_num[lvl] and hl or "" })
 end
 
 vim.keymap.set("n", "[d", function()
