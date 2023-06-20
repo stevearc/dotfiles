@@ -21,7 +21,18 @@ return {
       end
 
       require("nvim-treesitter.configs").setup({
-        ensure_installed = { "lua", "markdown", "markdown_inline", "vim", "vimdoc", "bash" },
+        ensure_installed = {
+          "bash",
+          "comment",
+          "git_rebase",
+          "gitcommit",
+          "lua",
+          "luadoc",
+          "markdown",
+          "markdown_inline",
+          "vim",
+          "vimdoc",
+        },
         ignore_install = { "supercollider", "phpdoc" },
         auto_install = true,
         highlight = {
