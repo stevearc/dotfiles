@@ -8,8 +8,8 @@ return {
     prompt_save_on_select_new_entry = false,
     keymaps = {
       ["`"] = "actions.tcd",
-      ["~"] = "actions.cd",
-      ["<C-t>"] = "actions.open_terminal",
+      ["~"] = "<cmd>edit $HOME<CR>",
+      ["<leader>t"] = "actions.open_terminal",
       ["gd"] = {
         desc = "Toggle detail view",
         callback = function()
