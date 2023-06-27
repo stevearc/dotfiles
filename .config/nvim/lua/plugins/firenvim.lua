@@ -1,3 +1,4 @@
+local uv = vim.uv or vim.loop
 return {
   "glacambre/firenvim",
   lazy = not vim.g.started_by_firenvim,
@@ -14,7 +15,7 @@ return {
       if timer then
         timer:close()
       end
-      timer = vim.loop.new_timer()
+      timer = uv.new_timer()
       timer:start(
         delay or 1000,
         0,

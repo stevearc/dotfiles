@@ -1,4 +1,5 @@
-local is_mac = vim.loop.os_uname().sysname == "Darwin"
+local uv = vim.uv or vim.loop
+local is_mac = uv.os_uname().sysname == "Darwin"
 return {
   "stevearc/gkeep.nvim",
   build = "UpdateRemotePlugins",

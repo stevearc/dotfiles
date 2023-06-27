@@ -35,8 +35,9 @@ if should_profile then
   vim.keymap.set("n", "<f1>", toggle_profile, { desc = "Toggle profiling" })
 end
 
+local uv = vim.uv or vim.loop
 vim.g.python3_host_prog = os.getenv("HOME") .. "/.envs/py3/bin/python"
-if not vim.loop.fs_stat(vim.g.python3_host_prog) then
+if not uv.fs_stat(vim.g.python3_host_prog) then
   -- Disable the python provider if the virtualenv isn't found
   vim.g.loaded_python3_provider = 0
 end
@@ -358,7 +359,7 @@ end, 1000)
 
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not uv.fs_stat(lazypath) then
   vim.fn.system({
     "git",
     "clone",
@@ -399,7 +400,7 @@ local specs = {
   },
 }
 local localpath = vim.fn.stdpath("data") .. "-local"
-if vim.loop.fs_stat(localpath) then
+if uv.fs_stat(localpath) then
   table.insert(specs, { import = "local_plugins" })
 end
 

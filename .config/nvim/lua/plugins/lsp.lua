@@ -1,3 +1,4 @@
+local uv = vim.uv or vim.loop
 return {
   {
     "neovim/nvim-lspconfig",
@@ -148,7 +149,7 @@ return {
       local function is_using_sqlalchemy()
         local util = lspconfig.util
         local path = util.path
-        local setup = util.root_pattern("setup.cfg")(vim.loop.cwd())
+        local setup = util.root_pattern("setup.cfg")(uv.cwd())
         if not setup then
           return false
         end
@@ -297,12 +298,12 @@ return {
         pattern = "java",
         group = aug,
         callback = function(args)
-          local local_share = vim.loop.os_homedir() .. "/.local/share"
+          local local_share = uv.os_homedir() .. "/.local/share"
           local jdtls_root = local_share .. "/jdtls"
           local configuration
-          if vim.loop.os_uname().version:match("Windows") then
+          if uv.os_uname().version:match("Windows") then
             configuration = jdtls_root .. "/config_win"
-          elseif vim.loop.os_uname().sysname == "Darwin" then
+          elseif uv.os_uname().sysname == "Darwin" then
             configuration = jdtls_root .. "/config_mac"
           else
             configuration = jdtls_root .. "/config_linux"

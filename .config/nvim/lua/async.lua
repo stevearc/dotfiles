@@ -1,8 +1,10 @@
+local uv = vim.uv or vim.loop
+
 local M = {}
 
 local function create_async_handle(callback)
   local async
-  async = vim.loop.new_async(vim.schedule_wrap(function(ret)
+  async = uv.new_async(vim.schedule_wrap(function(ret)
     callback(unpack(vim.mpack.decode(ret)))
     async:close()
   end))
@@ -11,7 +13,7 @@ end
 
 M.run_in_thread = function(callback, fn, ...)
   local handle = create_async_handle(callback)
-  vim.loop.new_thread(function(fn_str, async, args_str)
+  uv.new_thread(function(fn_str, async, args_str)
     local args = vim.mpack.decode(args_str)
     local function pack(...)
       return { ... }

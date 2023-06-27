@@ -1,4 +1,5 @@
-local is_windows = vim.loop.os_uname().version:match("Windows")
+local uv = vim.uv or vim.loop
+local is_windows = uv.os_uname().version:match("Windows")
 local sep = is_windows and "\\" or "/"
 return {
   "stevearc/three.nvim",
