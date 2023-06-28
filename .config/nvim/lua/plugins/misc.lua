@@ -1,5 +1,5 @@
 return {
-  { "stevearc/stickybuf.nvim", config = true },
+  { "stevearc/stickybuf.nvim", cmd = { "PinBuffer", "PinBuftype", "PinFiletype" }, opts = {} },
   { "lambdalisue/suda.vim", cmd = { "SudaRead", "SudaWrite" } },
   { "godlygeek/tabular", cmd = { "Tabularize" } },
   "wellle/targets.vim",
@@ -11,11 +11,13 @@ return {
     end,
   },
   "gioele/vim-autoswap",
-  "tpope/vim-eunuch",
+  { "tpope/vim-eunuch", ft = { "sh" }, cmd = { "Remove", "Delete" } },
   "tpope/vim-repeat",
-  "tpope/vim-endwise",
+  { "tpope/vim-endwise", event = "InsertEnter" },
   "tpope/vim-surround",
-  "tpope/vim-abolish",
+  { "tpope/vim-abolish", keys = {
+    { "cr", "<Plug>(abolish-coerce-word)", mode = "n" },
+  } },
   { "docunext/closetag.vim", event = "InsertEnter *" },
   "nanotee/luv-vimdocs",
   {
@@ -46,7 +48,14 @@ return {
       -- cmd = { "pair-ls", "lsp", "-forward", "wss://localhost:8080" },
     },
   },
-  { "numToStr/Comment.nvim", config = true },
+  {
+    "numToStr/Comment.nvim",
+    keys = {
+      { "gc", mode = { "n", "x" } },
+      { "gcc", mode = "n" },
+    },
+    config = true,
+  },
   { "nvim-tree/nvim-web-devicons", enabled = vim.g.nerd_font, opts = { default = true }, lazy = true, config = true },
   {
     "ojroques/nvim-osc52",

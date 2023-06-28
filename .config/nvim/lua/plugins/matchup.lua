@@ -1,10 +1,10 @@
 return {
   "andymass/vim-matchup",
-  event = "VeryLazy",
-  config = function()
-    vim.keymap.set({ "n", "x" }, "[[", "<plug>(matchup-[%)")
-    vim.keymap.set({ "n", "x" }, "]]", "<plug>(matchup-]%)")
-  end,
+  event = { "BufReadPre", "BufNewFile" },
+  keys = {
+    { "[[", "<plug>(matchup-[%)", mode = { "n", "x" } },
+    { "]]", "<plug>(matchup-]%)", mode = { "n", "x" } },
+  },
   init = function()
     vim.g.matchup_surround_enabled = 1
     vim.g.matchup_matchparen_nomode = "i"

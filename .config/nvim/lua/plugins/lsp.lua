@@ -2,7 +2,7 @@ local uv = vim.uv or vim.loop
 return {
   {
     "neovim/nvim-lspconfig",
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
       "b0o/SchemaStore.nvim",
@@ -274,7 +274,7 @@ return {
   {
     "jose-elias-alvarez/null-ls.nvim",
     dependencies = { "neovim/nvim-lspconfig" },
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
       local null_ls = require("null-ls")
       null_ls.setup(vim.tbl_extend("keep", {

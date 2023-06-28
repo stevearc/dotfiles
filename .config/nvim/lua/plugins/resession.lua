@@ -1,33 +1,28 @@
+local visible_buffers = {}
 return {
   "stevearc/resession.nvim",
-  dependencies = {
-    "stevearc/aerial.nvim",
-    "stevearc/overseer.nvim",
-    "stevearc/three.nvim",
-    "stevearc/oil.nvim",
-  },
   event = "VeryLazy",
-  config = function()
+  opts = {
+    autosave = {
+      enabled = true,
+      notify = false,
+    },
+    tab_buf_filter = function(tabpage, bufnr)
+      local dir = vim.fn.getcwd(-1, vim.api.nvim_tabpage_get_number(tabpage))
+      return vim.startswith(vim.api.nvim_buf_get_name(bufnr), dir)
+    end,
+    buf_filter = function(bufnr)
+      if not require("resession").default_buf_filter(bufnr) then
+        return false
+      end
+      return visible_buffers[bufnr] or require("three").is_buffer_in_any_tab(bufnr)
+    end,
+    extensions = { quickfix = {} },
+  },
+  config = function(_, opts)
     local resession = require("resession")
     local aug = vim.api.nvim_create_augroup("StevearcResession", {})
-    local visible_buffers = {}
-    resession.setup({
-      autosave = {
-        enabled = true,
-        notify = false,
-      },
-      tab_buf_filter = function(tabpage, bufnr)
-        local dir = vim.fn.getcwd(-1, vim.api.nvim_tabpage_get_number(tabpage))
-        return vim.startswith(vim.api.nvim_buf_get_name(bufnr), dir)
-      end,
-      buf_filter = function(bufnr)
-        if not resession.default_buf_filter(bufnr) then
-          return false
-        end
-        return visible_buffers[bufnr] or require("three").is_buffer_in_any_tab(bufnr)
-      end,
-      extensions = { aerial = {}, overseer = {}, quickfix = {}, three = {}, config_local = {}, oil = {} },
-    })
+    resession.setup(opts)
 
     resession.add_hook("pre_save", function()
       visible_buffers = {}
