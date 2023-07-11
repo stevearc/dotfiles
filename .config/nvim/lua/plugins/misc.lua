@@ -160,6 +160,9 @@ return {
         else
           vim.fn.system("luarocks --local --lua-version=5.1 install magick")
         end
+        if vim.v.shell_error ~= 0 then
+          vim.notify("Error installing magick with luarocks", vim.log.levels.WARN)
+        end
       end
     end,
     opts = {},
