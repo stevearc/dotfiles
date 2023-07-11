@@ -1,6 +1,5 @@
 return {
   "rebelot/heirline.nvim",
-  enabled = true,
   dependencies = { "nvim-tree/nvim-web-devicons" },
   event = "VeryLazy",
   config = function()

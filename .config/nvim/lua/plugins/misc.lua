@@ -56,11 +56,11 @@ return {
     },
     config = true,
   },
-  { "nvim-tree/nvim-web-devicons", enabled = vim.g.nerd_font, opts = { default = true }, lazy = true, config = true },
+  { "nvim-tree/nvim-web-devicons", cond = vim.g.nerd_font, opts = { default = true }, lazy = true, config = true },
   {
     "ojroques/nvim-osc52",
     -- Only change the clipboard if we're in a SSH session
-    enabled = os.getenv("SSH_CLIENT") ~= nil,
+    cond = os.getenv("SSH_CLIENT") ~= nil,
     config = function()
       local osc52 = require("osc52")
       local function copy(lines, _)

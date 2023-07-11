@@ -3,7 +3,7 @@ local is_mac = uv.os_uname().sysname == "Darwin"
 return {
   "stevearc/gkeep.nvim",
   build = "UpdateRemotePlugins",
-  enabled = not is_mac,
+  cond = not is_mac,
   event = "BufReadPre gkeep://*",
   keys = {
     {
