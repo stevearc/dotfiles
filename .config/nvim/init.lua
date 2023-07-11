@@ -377,6 +377,11 @@ vim.notify = function(...)
   table.insert(pending_notifications, vim.F.pack_len(...))
 end
 
+-- Add luarocks to rtp
+local home = uv.os_homedir()
+package.path = package.path .. ";" .. home .. "/.luarocks/share/lua/5.1/?/init.lua;"
+package.path = package.path .. ";" .. home .. "/.luarocks/share/lua/5.1/?.lua;"
+
 local specs = {
   { import = "plugins" },
   {

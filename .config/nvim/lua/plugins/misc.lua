@@ -1,3 +1,5 @@
+local uv = vim.uv or vim.loop
+local is_mac = uv.os_uname().sysname == "Darwin"
 return {
   { "stevearc/stickybuf.nvim", cmd = { "PinBuffer", "PinBuftype", "PinFiletype" }, opts = {} },
   { "lambdalisue/suda.vim", cmd = { "SudaRead", "SudaWrite" } },
@@ -147,5 +149,19 @@ return {
         enabled = false,
       },
     },
+  },
+  {
+    "3rd/image.nvim",
+    build = function()
+      local has_magick = pcall(require, "magick")
+      if not has_magick and vim.fn.executable("luarocks") == 1 then
+        if is_mac then
+          vim.fn.system("luarocks --lua-dir=$(brew --prefix)/opt/lua@5.1 --lua-version=5.1 install magick")
+        else
+          vim.fn.system("luarocks --local --lua-version=5.1 install magick")
+        end
+      end
+    end,
+    opts = {},
   },
 }

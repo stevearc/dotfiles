@@ -16,6 +16,7 @@
   "flatten.nvim": { "branch": "main", "commit": "d92c93959e9ac52a00002d6fd64c2d2ca5dd7192" },
   "fzf-lua": { "branch": "main", "commit": "c9230c337d33a1c5437f0029cbda87e522516982" },
   "heirline.nvim": { "branch": "master", "commit": "76136ccd93ed608e8109762f032cf1118981ebbd" },
+  "image.nvim": { "branch": "master", "commit": "847f5d6d37f0607a29485944768ff3ff6a6b1952" },
   "lazy.nvim": { "branch": "main", "commit": "da8b00581a52f5f87ad2aba9f52171fda7491f18" },
   "lightspeed.nvim": { "branch": "main", "commit": "299eefa6a9e2d881f1194587c573dad619fdb96f" },
   "livegrep.nvim": { "branch": "main", "commit": "d11a5feb2dfb9c3b3936f3b3a24ac99a534d3f9f" },
