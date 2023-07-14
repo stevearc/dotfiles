@@ -73,7 +73,12 @@
           "conditions": [
             {
               "type": "frontmost_application_if",
-              "bundle_identifiers": ["org.alacritty", "com.apple.Terminal", "com.googlecode.iterm2"]
+              "bundle_identifiers": [
+                "org.alacritty",
+                "net.kovidgoyal.kitty",
+                "com.apple.Terminal",
+                "com.googlecode.iterm2"
+              ]
             }
           ],
           "to": [
@@ -101,7 +106,12 @@
             {
               "type": "frontmost_application_unless",
               "description": "",
-              "bundle_identifiers": ["org.alacritty", "com.apple.Terminal", "com.googlecode.iterm2"]
+              "bundle_identifiers": [
+                "org.alacritty",
+                "net.kovidgoyal.kitty",
+                "com.apple.Terminal",
+                "com.googlecode.iterm2"
+              ]
             }
           ],
           "to": [
@@ -124,7 +134,12 @@
             {
               "type": "frontmost_application_unless",
               "description": "",
-              "bundle_identifiers": ["org.alacritty", "com.apple.Terminal", "com.googlecode.iterm2"]
+              "bundle_identifiers": [
+                "org.alacritty",
+                "net.kovidgoyal.kitty",
+                "com.apple.Terminal",
+                "com.googlecode.iterm2"
+              ]
             }
           ],
           "to": [
@@ -146,7 +161,12 @@
           "conditions": [
             {
               "type": "frontmost_application_unless",
-              "bundle_identifiers": ["org.alacritty", "com.apple.Terminal", "com.googlecode.iterm2"]
+              "bundle_identifiers": [
+                "org.alacritty",
+                "net.kovidgoyal.kitty",
+                "com.apple.Terminal",
+                "com.googlecode.iterm2"
+              ]
             }
           ],
           "to": [
@@ -168,7 +188,12 @@
           "conditions": [
             {
               "type": "frontmost_application_unless",
-              "bundle_identifiers": ["org.alacritty", "com.apple.Terminal", "com.googlecode.iterm2"]
+              "bundle_identifiers": [
+                "org.alacritty",
+                "net.kovidgoyal.kitty",
+                "com.apple.Terminal",
+                "com.googlecode.iterm2"
+              ]
             }
           ],
           "to": [
@@ -190,7 +215,12 @@
           "conditions": [
             {
               "type": "frontmost_application_unless",
-              "bundle_identifiers": ["org.alacritty", "com.apple.Terminal", "com.googlecode.iterm2"]
+              "bundle_identifiers": [
+                "org.alacritty",
+                "net.kovidgoyal.kitty",
+                "com.apple.Terminal",
+                "com.googlecode.iterm2"
+              ]
             }
           ],
           "to": [
@@ -212,7 +242,12 @@
           "conditions": [
             {
               "type": "frontmost_application_unless",
-              "bundle_identifiers": ["org.alacritty", "com.apple.Terminal", "com.googlecode.iterm2"]
+              "bundle_identifiers": [
+                "org.alacritty",
+                "net.kovidgoyal.kitty",
+                "com.apple.Terminal",
+                "com.googlecode.iterm2"
+              ]
             }
           ],
           "to": [
@@ -234,7 +269,12 @@
           "conditions": [
             {
               "type": "frontmost_application_unless",
-              "bundle_identifiers": ["org.alacritty", "com.apple.Terminal", "com.googlecode.iterm2"]
+              "bundle_identifiers": [
+                "org.alacritty",
+                "net.kovidgoyal.kitty",
+                "com.apple.Terminal",
+                "com.googlecode.iterm2"
+              ]
             }
           ],
           "to": [
@@ -256,7 +296,12 @@
           "conditions": [
             {
               "type": "frontmost_application_unless",
-              "bundle_identifiers": ["org.alacritty", "com.apple.Terminal", "com.googlecode.iterm2"]
+              "bundle_identifiers": [
+                "org.alacritty",
+                "net.kovidgoyal.kitty",
+                "com.apple.Terminal",
+                "com.googlecode.iterm2"
+              ]
             }
           ],
           "to": [
