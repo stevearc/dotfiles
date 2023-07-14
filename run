@@ -1,6 +1,6 @@
 #!/bin/bash -e
 set -e
-declare -r CLI_DOTFILES=".bash_aliases .inputrc .psqlrc .githelpers .tmux.conf .agignore .shellcheckrc .sqliterc .xbindkeysrc"
+declare -r CLI_DOTFILES=".bash_aliases .inputrc .psqlrc .githelpers .tmux.conf .agignore .shellcheckrc .sqliterc .xbindkeysrc .yabairc .skhdrc"
 
 export HERE=$(dirname "$(realpath "$0")")
 source "$HERE/scripts/utils.sh"
