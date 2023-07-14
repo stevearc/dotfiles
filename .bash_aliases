@@ -17,6 +17,10 @@ fi
 alias pm-rm-orphans='sudo pacman -Qtdq | sudo pacman -Rns -'
 alias pm-rm-cache='sudo pacman -Scc'
 
+if [ "$TERM" = "xterm-kitty" ]; then
+  alias ssh='kitty +kitten ssh'
+fi
+
 alias ll='ls -lh'
 alias la='ls -A'
 alias lla='ls -Alh'
