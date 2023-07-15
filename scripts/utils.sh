@@ -21,7 +21,9 @@ hascmd() {
   fi
 }
 
-if hascmd apt-get; then
+if hascmd nixos-rebuild; then
+  export NIXOS=1
+elif hascmd apt-get; then
   export UBUNTU=1
 elif hascmd pamac; then
   export MANJARO=1

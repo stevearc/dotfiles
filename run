@@ -1,11 +1,13 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 set -e
 declare -r CLI_DOTFILES=".bash_aliases .inputrc .psqlrc .githelpers .tmux.conf .agignore .shellcheckrc .sqliterc .xbindkeysrc .yabairc .skhdrc"
 
 export HERE=$(dirname "$(realpath "$0")")
 source "$HERE/scripts/utils.sh"
 source "$HERE/scripts/all_platforms.sh"
-if [ $UBUNTU ]; then
+if [ $NIXOS ]; then
+  source "$HERE/scripts/nixos.sh"
+elif [ $UBUNTU ]; then
   source "$HERE/scripts/ubuntu.sh"
 elif [ $MANJARO ]; then
   source "$HERE/scripts/arch.sh"
