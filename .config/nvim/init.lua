@@ -127,9 +127,14 @@ end
 
 vim.filetype.add({
   extension = {
-    sky = "python", -- starlark
+    cconf = "python",
+    frag = "glsl",
+    js = "javascript.jsx",
+    ["js.flow"] = "javascript.jsx",
     norg = "norg", -- neorg
     rbi = "ruby",
+    sky = "python", -- starlark
+    tsx = "typescript.tsx",
   },
   filename = {
     [".nvimrc"] = "lua",
