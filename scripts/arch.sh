@@ -45,6 +45,16 @@ install-language-lua() {
   install-lua-utils
 }
 
+DC_INSTALL_JELLYFIN_DOC="virt-manager virtualization tool"
+dc-install-virtmanager() {
+  sudo pacman -Syq --noconfirm virt-manager qemu virt-viewer dnsmasq vde2 bridge-utils libguestfs
+  sudo cp "$HERE/static/libvirtd.conf" /etc/libvirt/libvirtd.conf
+  sed -e "s/USER/$USER/" <"$HERE/static/qemu.conf" | sudo tee /etc/libvirt/qemu.conf >/dev/null
+  sudo systemctl enable libvirtd
+  sudo systemctl start libvirtd
+  sudo usermod -a -G libvirt "$USER"
+}
+
 DC_INSTALL_JELLYFIN_DOC="Jellyfin media server"
 dc-install-jellyfin() {
   yay -S --noconfirm jellyfin-bin
