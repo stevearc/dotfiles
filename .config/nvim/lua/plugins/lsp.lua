@@ -25,6 +25,30 @@ return {
       local p = require("p")
       -- vim.lsp.set_log_level("debug")
 
+      if not vim.g.started_by_firenvim then
+        local autoformat_group = vim.api.nvim_create_augroup("LspAutoformat", { clear = true })
+        vim.api.nvim_create_autocmd("BufWritePre", {
+          callback = function(args)
+            if vim.g.autoformat == false or vim.b[args.buf].autoformat == false then
+              return
+            end
+            local supports_formatting = false
+            for _, client in pairs(vim.lsp.get_active_clients({ bufnr = args.buf })) do
+              if client.server_capabilities.documentFormattingProvider then
+                supports_formatting = true
+              end
+            end
+            if supports_formatting then
+              -- TODO: I don't think we need this anymore. Use for a while to confirm
+              -- local restore = lsp.save_win_positions(0)
+              vim.lsp.buf.format({ timeout_ms = 500, async = false })
+              -- restore()
+            end
+          end,
+          group = autoformat_group,
+        })
+      end
+
       local function locations_equal(loc1, loc2)
         return (loc1.uri or loc1.targetUri) == (loc2.uri or loc2.targetUri)
           and (loc1.range or loc1.targetSelectionRange).start.line
@@ -66,7 +90,7 @@ return {
               title = "LSP locations",
               items = vim.lsp.util.locations_to_items(result, client.offset_encoding),
             })
-            vim.cmd([[botright copen]])
+            vim.cmd.copen({ mods = { split = "botright" } })
           end
         else
           vim.lsp.util.jump_to_location(result, client.offset_encoding)
@@ -78,15 +102,16 @@ return {
       vim.lsp.handlers["textDocument/typeDefinition"] = location_handler
       vim.lsp.handlers["textDocument/implementation"] = location_handler
 
-      vim.lsp.handlers["textDocument/formatting"] = function(_, result, ctx, _)
-        if not result then
-          return
-        end
-        local client = vim.lsp.get_client_by_id(ctx.client_id)
-        local restore = lsp.save_win_positions(ctx.bufnr)
-        vim.lsp.util.apply_text_edits(result, ctx.bufnr, client.offset_encoding)
-        restore()
-      end
+      -- TODO I don't think we need this anymore
+      -- vim.lsp.handlers["textDocument/formatting"] = function(_, result, ctx, _)
+      --   if not result then
+      --     return
+      --   end
+      --   local client = vim.lsp.get_client_by_id(ctx.client_id)
+      --   local restore = lsp.save_win_positions(ctx.bufnr)
+      --   vim.lsp.util.apply_text_edits(result, ctx.bufnr, client.offset_encoding)
+      --   restore()
+      -- end
 
       vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
       vim.lsp.handlers["textDocument/signatureHelp"] =
@@ -119,6 +144,8 @@ return {
             Info = vim.log.levels.INFO,
             Log = vim.log.levels.DEBUG,
           }
+          -- The whole reason to override this handler is so that this uses vim.notify instead of
+          -- vim.api.nvim_out_write
           vim.notify(string.format("LSP[%s] %s\n", client_name, message), map[message_type_name])
         end
         return result

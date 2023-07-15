@@ -1,11 +1,7 @@
 -- To customize, add a local_projects.lua file to the runtimepath/lua directory and inside of it add
--- require('projects')['/path/to/proj'] = { autoformat = false }
+-- require('projects')['/path/to/proj'] = { key = value }
 
 local defaults = {
-  autoformat = true, -- true|false|'directive'
-  autoformat_threshold = 10000,
-  prettier_prefix = "yarn --silent ",
-  ts_prettier_format = true,
   lsp_settings = {},
 }
 

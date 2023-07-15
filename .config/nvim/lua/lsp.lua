@@ -18,8 +18,8 @@ local function adjust_formatting_capabilities(client, bufnr)
   if client.id == null_ls_client.id then
     -- We're attaching a null-ls client. If it has a formatter, disable
     -- formatting on all prior clients
-    local clients = vim.lsp.buf_get_clients(bufnr)
-    for _, other_client in ipairs(clients) do
+    local clients = vim.lsp.get_active_clients({ bufnr = bufnr })
+    for _, other_client in pairs(clients) do
       if other_client.id ~= client.id then
         other_client.server_capabilities.documentFormattingProvider = nil
         other_client.server_capabilities.documentRangeFormattingProvider = nil
@@ -69,7 +69,6 @@ local function cancelable(method)
   end
 end
 
-local autoformat_group = vim.api.nvim_create_augroup("LspAutoformat", { clear = true })
 M.on_attach = function(client, bufnr)
   adjust_formatting_capabilities(client, bufnr)
 
@@ -86,41 +85,26 @@ M.on_attach = function(client, bufnr)
   safemap("implementationProvider", "n", "gi", cancelable("textDocument/implementation"), "[G]oto [I]mplementation")
   safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", "[G]oto [R]eferences")
   -- Only map K if keywordprg is not ':help'
-  if vim.bo[bufnr].keywordprg ~= ":help" then
+  if vim.fn.has("nvim-0.10") == 0 and vim.bo[bufnr].keywordprg ~= ":help" then
     safemap("hoverProvider", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", "Show hover information")
   end
   safemap("signatureHelpProvider", "i", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", "Function signature help")
-  -- This crashed omnisharp last I checked
-  if client.name ~= "omnisharp" then
-    safemap("codeActionProvider", "n", "<leader>fa", "<cmd>lua vim.lsp.buf.code_action()<CR>", "[F]ind Code [A]ction")
-    safemap(
-      "codeActionProvider",
-      "v",
-      "<leader>fa",
-      ":<C-U>lua vim.lsp.buf.range_code_action()<CR>",
-      "[F]ind Code [A]ction"
-    )
-  end
+  safemap("codeActionProvider", "n", "<leader>fa", "<cmd>lua vim.lsp.buf.code_action()<CR>", "[F]ind Code [A]ction")
+  safemap(
+    "codeActionProvider",
+    "v",
+    "<leader>fa",
+    ":<C-U>lua vim.lsp.buf.range_code_action()<CR>",
+    "[F]ind Code [A]ction"
+  )
   if client.server_capabilities.documentFormattingProvider then
-    vim.api.nvim_clear_autocmds({
-      buffer = bufnr,
-      group = autoformat_group,
-    })
-    vim.api.nvim_create_autocmd("BufWritePre", {
-      callback = function()
-        p.require("autoformat").format()
-      end,
-      buffer = bufnr,
-      group = autoformat_group,
-    })
     vim.keymap.set("n", "=", function()
       vim.lsp.buf.format({ async = true })
     end, { buffer = bufnr })
   end
-  safemap("documentRangeFormattingProvider", "v", "=", "<cmd>lua vim.lsp.buf.format()<CR>")
   safemap("renameProvider", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
 
-  if client.server_capabilities.documentHighlightProvider and not string.match(client.name, "sorbet$") then
+  if client.server_capabilities.documentHighlightProvider and not client.name:match("sorbet$") then
     vim.api.nvim_create_autocmd({ "CursorHold" }, {
       desc = "LSP highlight document word",
       buffer = bufnr,
@@ -132,8 +116,6 @@ M.on_attach = function(client, bufnr)
       callback = vim.lsp.buf.clear_references,
     })
   end
-
-  vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
 end
 
 ---@param name string
