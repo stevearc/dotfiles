@@ -160,11 +160,6 @@ ftplugin.extend_all({
   },
   sh = {
     callback = function(bufnr)
-      -- Highlight variables inside strings
-      vim.cmd([[
-        hi link TSConstant Identifier
-        hi link TSVariable Identifier
-      ]])
       vim.keymap.set("n", "<leader>e", function()
         run_file({ "bash", vim.api.nvim_buf_get_name(0) })
       end, { buffer = bufnr })
