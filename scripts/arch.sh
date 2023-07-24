@@ -58,6 +58,7 @@ dc-install-virtmanager() {
 DC_INSTALL_JELLYFIN_DOC="Jellyfin media server"
 dc-install-jellyfin() {
   yay -S --noconfirm jellyfin-bin
+  sudo pacman -Syq cronie
   sudo systemctl start jellyfin.service
   sudo systemctl enable jellyfin.service
   xdg-open http://localhost:8096
@@ -169,6 +170,8 @@ dotcmd-desktop() {
   yay -S --noconfirm tomb # gtk2 above is a dependency
   yay -S --noconfirm xpadneo-dkms
   setup-desktop-generic
+  sudo systemctl enable bluetooth.service
+  sudo systemctl restart bluetooth.service
   if [[ $XDG_CURRENT_DESKTOP =~ "GNOME" ]]; then
     sudo pacman -Syq --noconfirm dconf
     setup-gnome
