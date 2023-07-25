@@ -109,14 +109,7 @@ DC_INSTALL_NEOVIM_DOC="<3"
 dc-install-neovim() {
   install-language-python
   if ! hascmd nvim; then
-    if confirm "From github appimage?" y; then
-      local version
-      "$HERE/scripts/install_neovim.sh" --list
-      version=$(prompt "Version?" stable)
-      "$HERE/scripts/install_neovim.sh" "$version"
-    else
-      sudo pacman -Syq --noconfirm neovim
-    fi
+    sudo pacman -Syq --noconfirm neovim
   fi
   post-install-neovim
 }
@@ -195,19 +188,16 @@ dotcmd-pibox() {
   dc-install-nerd-font
   sudo pacman -Syq --noconfirm \
     cronie \
-    ffmpeg \
     flatpak \
     fuse2 \
     kitty \
+    nfs-utils \
     openssh \
-    rclone \
-    tigervnc \
     transmission-cli \
     vlc
   flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
   flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
   dc-install-kitty
-  dc-install-jellyfin
   hascmd mullvad || yay -S --noconfirm mullvad-vpn-bin
 
   if [ "$(mullvad status)" = "Disconnected" ]; then
@@ -251,15 +241,11 @@ dotcmd-pibox() {
       sudo firewall-cmd --zone=public --add-port="${mullvad_port}/tcp"
       sudo firewall-cmd --permanent --zone=public --add-port="${mullvad_port}/tcp"
     fi
-    # VNC
-    sudo firewall-cmd --zone=home --add-port=5901/tcp
-    sudo firewall-cmd --permanent --zone=home --add-port=5901/tcp
-    sudo firewall-cmd --zone=home --add-port=5900/tcp
-    sudo firewall-cmd --permanent --zone=home --add-port=5900/tcp
   fi
 
   # Storage drive
-  grep /dev/sda1 /etc/fstab >/dev/null || echo "/dev/sda1 /mnt/storage ext4 rw,user,exec 0 0" | sudo tee -a /etc/fstab >/dev/null
+  grep 192.168.50.2 /etc/fstab >/dev/null || echo "192.168.50.2:/mnt/storage   /mnt/storage   nfs   defaults,timeo=900,retrans=5,_netdev	0 0" | sudo tee -a /etc/fstab >/dev/null
+
   sudo mkdir -p /mnt/storage
   sudo chmod 777 /mnt/storage
 
@@ -280,21 +266,9 @@ dotcmd-pibox() {
     systemctl --user enable transmission-daemon
   fi
 
-  dc-install-calibreweb
-
-  # VNC
-  sudo cp "$HERE/static/vnc.service" /etc/systemd/system/vnc.service
-  sudo cp "$HERE/static/x0vnc.sh" /usr/local/bin/x0vnc.sh
-  sudo systemctl daemon-reload
-  sudo systemctl start vnc
-
-  sudo cp "$HERE/static/pibox_backup" /etc/cron.d/pibox_backup
-  sudo chown root:root /etc/cron.d/pibox_backup
-  sudo chmod 644 /etc/cron.d/pibox_backup
-  # TODO
-  # remap capslock->ctrl over vnc
-  # keyboard shortcuts (workspace switching, launcher, terminal)
-  # nerd font
+  # sudo cp "$HERE/static/pibox_backup" /etc/cron.d/pibox_backup
+  # sudo chown root:root /etc/cron.d/pibox_backup
+  # sudo chmod 644 /etc/cron.d/pibox_backup
 }
 
 dc-install-calibreweb() {
