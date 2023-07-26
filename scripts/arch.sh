@@ -45,7 +45,7 @@ install-language-lua() {
   install-lua-utils
 }
 
-DC_INSTALL_JELLYFIN_DOC="virt-manager virtualization tool"
+DC_INSTALL_VIRTMANAGER_DOC="virt-manager virtualization tool"
 dc-install-virtmanager() {
   sudo pacman -Syq --noconfirm virt-manager qemu virt-viewer dnsmasq vde2 bridge-utils libguestfs
   sudo cp "$HERE/static/libvirtd.conf" /etc/libvirt/libvirtd.conf
@@ -151,7 +151,6 @@ dotcmd-desktop() {
     bluedevil \
     blueman \
     bluez \
-    dolphin-emu \
     ffmpeg \
     flatpak \
     gtk2 \
@@ -269,6 +268,30 @@ dotcmd-pibox() {
   # sudo cp "$HERE/static/pibox_backup" /etc/cron.d/pibox_backup
   # sudo chown root:root /etc/cron.d/pibox_backup
   # sudo chmod 644 /etc/cron.d/pibox_backup
+}
+
+DC_INSTALL_DOLPHIN_DOC="The Dolphin core for RetroArch"
+dc-install-dolphin() {
+  local base="$HOME/.local/share/Steam/steamapps/common/RetroArch"
+  if [ ! -e "$base" ]; then
+    echo "Error: could not find RetroArch Steam installation in $base"
+    return 1
+  fi
+  mkdir -p /tmp/dolphin-workspace
+  pushd /tmp/dolphin-workspace >/dev/null
+  [ -e dolphin_libretro.so.zip ] || wget https://buildbot.libretro.com/nightly/linux/x86_64/latest/dolphin_libretro.so.zip
+  [ -e info.zip ] || wget https://buildbot.libretro.com/assets/frontend/info.zip
+  [ -e Dolphin.zip ] || wget https://buildbot.libretro.com/assets/system/Dolphin.zip
+
+  unzip -o dolphin_libretro.so.zip
+  unzip -o info.zip
+  unzip -o Dolphin.zip
+
+  cp dolphin_libretro.so "$base/cores"
+  cp dolphin_libretro.info "$base/cores"
+  rm -rf "$base/system/dolphin-emu"
+  cp -r dolphin-emu "$base/system"
+  popd >/dev/null
 }
 
 dc-install-calibreweb() {
