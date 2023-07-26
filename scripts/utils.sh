@@ -1,5 +1,10 @@
 #!/bin/bash
 declare -r CHECKPOINT_DIR="$HERE/.checkpoints"
+
+MEDIA_SERVER_IP=192.168.50.2
+PIBOX_WIRED_IP=192.168.50.50
+PIBOX_WIRELESS_IP=192.168.50.120
+
 OSNAME=$(uname -s)
 if [ "$OSNAME" = "Darwin" ]; then
   export MAC=1

@@ -1,17 +1,20 @@
 [Unit]
 Description = Torrent Daemon
+After=bluetit.target network.target
 
 [Service]
+User = stevearc
 Type = simple
-ExecStartPre = mkdir -p %h/Downloads
+ExecStartPre = mkdir -p /home/stevearc/Downloads
 ExecStartPre = mkdir -p /mnt/storage/incomplete
 ExecStartPre = mkdir -p /mnt/storage/complete
-ExecStart = /usr/bin/transmission-daemon -f -c %h/Downloads --incomplete-dir /mnt/storage/incomplete/ --no-portmap --peerport PEER_PORT -w /mnt/storage/complete/ --log-level=info
+ExecStart = /usr/bin/transmission-daemon -f -c /home/stevearc/Downloads --incomplete-dir /mnt/storage/incomplete/ --no-portmap --peerport PEER_PORT -w /mnt/storage/complete/ --log-level=info
 Restart = always
 RestartSec = 30
 IOSchedulingClass = best-effort
 IOSchedulingPriority = 7
 Nice = 10
+TimeoutStopSec = 10
 
 [Install]
 WantedBy=default.target

@@ -1,0 +1,48 @@
+[Desktop Action BigPicture]
+Exec=steam steam://open/bigpicture
+Name=Big Picture
+
+[Desktop Action Community]
+Exec=steam steam://url/SteamIDControlPage
+Name=Community
+
+[Desktop Action Friends]
+Exec=steam steam://open/friends
+Name=Friends
+
+[Desktop Action Library]
+Exec=steam steam://open/games
+Name=Library
+
+[Desktop Action News]
+Exec=steam steam://open/news
+Name=News
+
+[Desktop Action Screenshots]
+Exec=steam steam://open/screenshots
+Name=Screenshots
+
+[Desktop Action Servers]
+Exec=steam steam://open/servers
+Name=Servers
+
+[Desktop Action Settings]
+Exec=steam steam://open/settings
+Name=Settings
+
+[Desktop Action Store]
+Exec=steam steam://store
+Name=Store
+
+[Desktop Entry]
+Actions=Store;Community;Library;Servers;Screenshots;News;Settings;BigPicture;Friends;
+Categories=Network;FileTransfer;Game;
+Comment=Application for managing and playing games on Steam
+Exec=/usr/bin/steam-runtime %U
+Icon=steam
+MimeType=x-scheme-handler/steam;x-scheme-handler/steamlink;
+Name=Steam (Runtime)
+PrefersNonDefaultGPU=true
+Terminal=false
+Type=Application
+X-KDE-RunOnDiscreteGpu=true

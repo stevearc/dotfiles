@@ -15,14 +15,16 @@ COMPLETE_DIR = "/mnt/storage/complete"
 ARCHIVE_DIR = "/mnt/storage/archive"
 PENDING_DIR = "/mnt/storage/pending"
 
+
 class TorrentActivity(Enum):
-    STOPPED = 0 # Torrent is stopped
-    CHECK_WAIT = 1 # Queued to check files
-    CHECK = 2 # Checking files
-    DOWNLOAD_WAIT = 3 # Queued to download
-    DOWNLOAD = 4 # Downloading
-    SEED_WAIT = 5 # Queued to seed
-    SEED = 6 # Seeding
+    STOPPED = 0  # Torrent is stopped
+    CHECK_WAIT = 1  # Queued to check files
+    CHECK = 2  # Checking files
+    DOWNLOAD_WAIT = 3  # Queued to download
+    DOWNLOAD = 4  # Downloading
+    SEED_WAIT = 5  # Queued to seed
+    SEED = 6  # Seeding
+
 
 class TorrentStatus(Enum):
     UNFINISHED = 1
@@ -66,7 +68,10 @@ class Torrent:
 
     @property
     def is_seeding(self) -> bool:
-        return self.activity == TorrentActivity.SEED_WAIT or self.activity == TorrentActivity.SEED
+        return (
+            self.activity == TorrentActivity.SEED_WAIT
+            or self.activity == TorrentActivity.SEED
+        )
 
     @property
     def file_status(self) -> TorrentStatus:
@@ -98,7 +103,9 @@ def run():
     os.makedirs(COMPLETE_DIR, exist_ok=True)
     os.makedirs(ARCHIVE_DIR, exist_ok=True)
     os.makedirs(PENDING_DIR, exist_ok=True)
-    result = subprocess.run(["transmission-remote", "--json", "--list"], capture_output=True, check=True)
+    result = subprocess.run(
+        ["transmission-remote", "--json", "--list"], capture_output=True, check=True
+    )
     data = json.loads(result.stdout)
     torrents = [Torrent(**status) for status in data["arguments"]["torrents"]]
     log.info("%d torrents found", len(torrents))
@@ -114,15 +121,23 @@ def run():
     )
     for torrent in sorted_torrents[TorrentStatus.UNKNOWN]:
         log.info("Moving unknown torrent %d %s to completed", torrent.id, torrent.name)
-        subprocess.run(['transmission-remote', '-t', str(torrent.id), '--move', COMPLETE_DIR], check=True)
+        subprocess.run(
+            ["transmission-remote", "-t", str(torrent.id), "--move", COMPLETE_DIR],
+            check=True,
+        )
     for torrent in sorted_torrents[TorrentStatus.COMPLETED]:
-        log.info("Hard copying torrent %s", torrent.name)
-        if os.path.isfile(torrent.complete_path):
-            os.link(torrent.complete_path, torrent.pending_path)
-        else:
-            shutil.copytree(torrent.complete_path, torrent.pending_path, copy_function=os.link)
         log.info("Moving torrent %d %s to archive", torrent.id, torrent.name)
-        subprocess.run(['transmission-remote', '-t', str(torrent.id), '--move', ARCHIVE_DIR], check=True)
+        subprocess.run(
+            ["transmission-remote", "-t", str(torrent.id), "--move", ARCHIVE_DIR],
+            check=True,
+        )
+        log.info("Linking torrent %s", torrent.name)
+        if os.path.isfile(torrent.complete_path):
+            os.link(torrent.archive_path, torrent.pending_path)
+        else:
+            shutil.copytree(
+                torrent.archive_path, torrent.pending_path, copy_function=os.link
+            )
 
 
 def main() -> None:

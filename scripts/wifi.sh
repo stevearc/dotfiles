@@ -3,8 +3,8 @@ set -e
 IFACE="$(iw dev | grep Interface | awk '{print $2}')"
 ESSID="slugnet"
 # Find this information with ifconfig and nmcli -f SSID,BSSID,ACTIVE dev wifi list
-GATEWAY="192.168.86.1"
-BSSID="60:E3:27:B8:E3:3A"
+GATEWAY="192.168.50.1"
+BSSID="04:42:1A:CC:E8:44"
 
 if [ "$1" == "manual" ]; then
   sudo systemctl stop NetworkManager.service

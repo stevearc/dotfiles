@@ -10,20 +10,8 @@ main() {
   local cmd="${1}"
   local usage="pibox [ssh|vnc|jellyfin|transmission|proxy|books|calibre]"
   case $cmd in
-    b*) # books/calibre
-      open "http://$PIBOX_IP:8083"
-      ;;
-    c*) # books/calibre
-      open "http://$PIBOX_IP:8083"
-      ;;
     s*) # ssh
       ssh "$PIBOX_IP"
-      ;;
-    v*) # vnc
-      vncviewer "$PIBOX_IP:5900"
-      ;;
-    j*) # jellyfin
-      open "http://$PIBOX_IP:8096"
       ;;
     t*) # transmission
       open "http://$PIBOX_IP:9091"

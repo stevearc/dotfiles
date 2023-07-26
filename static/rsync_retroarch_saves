@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+rsync -a /home/stevearc/.local/share/Steam/steamapps/common/RetroArch/saves /mnt/storage/games
+rsync -a /home/stevearc/.local/share/Steam/steamapps/common/RetroArch/content_favorites.lpl /mnt/storage/games

@@ -57,11 +57,9 @@ dc-install-virtmanager() {
 
 DC_INSTALL_JELLYFIN_DOC="Jellyfin media server"
 dc-install-jellyfin() {
-  yay -S --noconfirm jellyfin-bin
-  sudo pacman -Syq cronie
+  pacman -Qm | grep -q jellyfin-bin || yay -S --noconfirm jellyfin-bin
   sudo systemctl start jellyfin.service
   sudo systemctl enable jellyfin.service
-  xdg-open http://localhost:8096
   if hascmd ufw; then
     sudo ufw allow proto udp from 192.168.1.0/24 to any port 8096 comment 'jellyfin'
     sudo ufw allow proto tcp from 192.168.1.0/24 to any port 8096 comment 'jellyfin'
@@ -74,10 +72,7 @@ dc-install-jellyfin() {
   sudo cp "$HERE/static/jellyfin_conf" /etc/conf.d/jellyfin
   # Add jellyfin to the video group for hardware acceleration
   sudo -u jellyfin groups | grep video || sudo usermod -aG video jellyfin
-  # To enable hardware acceleration, you also need to add the following lines to /boot/config.txt
-  #   [all]
-  #   apu_mem=320
-  # As well as enabling V4L2 in the Jellyfin interface
+  # To enable hardware acceleration, you also need to enable V4L2 in the Jellyfin interface
 }
 
 # shellcheck disable=SC2034
@@ -94,6 +89,7 @@ dc-install-common() {
     ripgrep \
     rsync \
     starship \
+    tldr \
     tmux \
     tree \
     unzip \
@@ -159,8 +155,8 @@ dotcmd-desktop() {
     steam \
     vlc \
     zenity
-  yay -S --noconfirm tomb # gtk2 above is a dependency
-  yay -S --noconfirm xpadneo-dkms
+  hascmd tomb || yay -S --noconfirm tomb # gtk2 above is a dependency
+  pacman -Qm | grep -q xpadneo || yay -S --noconfirm xpadneo-dkms
   setup-desktop-generic
   sudo systemctl enable bluetooth.service
   sudo systemctl restart bluetooth.service
@@ -179,42 +175,29 @@ dotcmd-desktop() {
 # shellcheck disable=SC2034
 DOTCMD_PIBOX_DOC="Set up the raspberry pi"
 dotcmd-pibox() {
+  sudo cp "$HERE/static/NetworkManager.conf" /etc/NetworkManager
+  if ! ifconfig wlan0 | grep -q inet; then
+    nmcli dev wifi connect slugnet -a
+  fi
+
   dc-install-common
-  sudo pacman -Syq --noconfirm neovim
-  post-install-neovim
+  dc-install-neovim
   dotcmd-dotfiles
-  setup-xfce
   dc-install-nerd-font
   sudo pacman -Syq --noconfirm \
     cronie \
-    flatpak \
+    dialog \
+    dhcpcd \
     fuse2 \
     kitty \
     nfs-utils \
     openssh \
-    transmission-cli \
-    vlc
-  flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-  flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    transmission-cli
   dc-install-kitty
-  hascmd mullvad || yay -S --noconfirm mullvad-vpn-bin
+  dc-install-airvpn
+  # This is configured on the AirVPN website
+  local vpn_port=23701
 
-  if [ "$(mullvad status)" = "Disconnected" ]; then
-    echo "Log in to Mullvad"
-    mullvad account login
-    mullvad auto-connect set on
-    mullvad lan set allow
-    mullvad relay set tunnel-protocol wireguard
-    mullvad relay set location us lax
-    echo "Go to https://mullvad.net/account/#/port-forwarding to configure port forwarding. Device is below"
-    mullvad account get
-  fi
-  if [ -e ~/.config/mullvad_port ]; then
-    mullvad_port="$(cat ~/.config/mullvad_port)"
-  else
-    read -r -p "What port was forwarded for Mullvad? " mullvad_port
-    echo "$mullvad_port" >~/.config/mullvad_port
-  fi
   sudo systemctl enable sshd.service
   sudo systemctl start sshd.service
   sudo systemctl enable cronie.service
@@ -222,7 +205,7 @@ dotcmd-pibox() {
 
   test -e /etc/cron.hourly/rsync_torrents || sudo cp "$HERE/static/rsync_torrents" /etc/cron.hourly/
 
-  if hascmd firewall-cmd; then
+  if sudo firewall-cmd --state; then
     # Set the current zone to home
     sudo firewall-cmd --zone=home --change-interface=wlan0
     sudo firewall-cmd --zone=home --change-interface=end0
@@ -234,26 +217,23 @@ dotcmd-pibox() {
     # Transmission
     sudo firewall-cmd --zone=home --add-port=9091/tcp
     sudo firewall-cmd --permanent --zone=home --add-port=9091/tcp
-    if [ -n "$mullvad_port" ]; then
-      sudo firewall-cmd --zone=home --add-port="${mullvad_port}/tcp"
-      sudo firewall-cmd --permanent --zone=home --add-port="${mullvad_port}/tcp"
-      sudo firewall-cmd --zone=public --add-port="${mullvad_port}/tcp"
-      sudo firewall-cmd --permanent --zone=public --add-port="${mullvad_port}/tcp"
+    if [ -n "$vpn_port" ]; then
+      sudo firewall-cmd --zone=home --add-port="${vpn_port}/tcp"
+      sudo firewall-cmd --permanent --zone=home --add-port="${vpn_port}/tcp"
+      sudo firewall-cmd --zone=public --add-port="${vpn_port}/tcp"
+      sudo firewall-cmd --permanent --zone=public --add-port="${vpn_port}/tcp"
     fi
   fi
 
   # Storage drive
-  grep 192.168.50.2 /etc/fstab >/dev/null || echo "192.168.50.2:/mnt/storage   /mnt/storage   nfs   defaults,timeo=900,retrans=5,_netdev	0 0" | sudo tee -a /etc/fstab >/dev/null
-
-  sudo mkdir -p /mnt/storage
-  sudo chmod 777 /mnt/storage
+  dc-install-nfs-mount
 
   # Transmission-daemon
-  if [ ! -e ~/.config/systemd/user/transmission-daemon.service ]; then
-    sed -e "s/PEER_PORT/$mullvad_port/" "$HERE/static/transmission-daemon.service" >~/.config/systemd/user/transmission-daemon.service
-    systemctl --user daemon-reload
+  if [ ! -e /etc/systemd/system/transmission-daemon.service ]; then
+    sed -e "s/PEER_PORT/$vpn_port/" "$HERE/static/transmission-daemon.service" | sudo tee /etc/systemd/system/transmission-daemon.service >/dev/null
+    sudo systemctl daemon-reload
     test -e ~/.config/transmission-daemon/settings.json || echo "{}" >~/.config/transmission-daemon/settings.json
-    systemctl --user stop transmission-daemon
+    sudo systemctl stop transmission-daemon
     cat ~/.config/transmission-daemon/settings.json \
       | jq '."rpc-enabled" = true' \
       | jq '."rpc-whitelist-enabled" = false' \
@@ -261,13 +241,9 @@ dotcmd-pibox() {
       | jq '."script-torrent-done-filename" = "'$HOME/dotfiles/static/torrent_done.py'"' \
         >/tmp/settings.json
     mv /tmp/settings.json ~/.config/transmission-daemon/settings.json
-    systemctl --user start transmission-daemon
-    systemctl --user enable transmission-daemon
+    sudo systemctl enable transmission-daemon
+    sudo systemctl start transmission-daemon
   fi
-
-  # sudo cp "$HERE/static/pibox_backup" /etc/cron.d/pibox_backup
-  # sudo chown root:root /etc/cron.d/pibox_backup
-  # sudo chmod 644 /etc/cron.d/pibox_backup
 }
 
 DC_INSTALL_DOLPHIN_DOC="The Dolphin core for RetroArch"
@@ -294,6 +270,63 @@ dc-install-dolphin() {
   popd >/dev/null
 }
 
+dotcmd-beelink() {
+  sudo pacman -Syq --noconfirm cronie
+  sudo systemctl enable cronie.service
+  sudo systemctl start cronie.service
+  dc-install-common
+  dc-install-neovim
+  dotcmd-desktop
+  dc-install-jellyfin
+  sudo cp "$HERE/static/rsync_retroarch_saves" /etc/cron.hourly/
+  sudo cp "$HERE/static/create_symbolic_archive.py" /etc/cron.hourly/create_symbolic_archive
+  sudo cp "$HERE/static/storage_backup" /etc/cron.d/storage_backup
+  sudo chown root:root /etc/cron.d/storage_backup
+  sudo chmod 644 /etc/cron.d/storage_backup
+  mkdir -p ~/.config/autostart
+  cp "$HERE/static/autostart/steam.desktop" ~/.config/autostart/
+}
+
+dc-install-rclone() {
+  hascmd rclone || sudo pacman -Syq --noconfirm rclone
+}
+
+dc-install-airvpn() {
+  local version="1.3.0"
+  if ! hascmd goldcrest; then
+    pushd /tmp >/dev/null
+    local architecture
+    if [ ! -e AirVPN-Suite ]; then
+      if [ ! -e AirVPN-Suite.tar.gz ]; then
+        architecture="$(lscpu | grep Architecture | awk '{print $2}')"
+        local url="https://gitlab.com/AirVPN/AirVPN-Suite/-/raw/master/binary/AirVPN-Suite-${architecture}-${version}.tar.gz?inline=false"
+        curl "$url" -o AirVPN-Suite.tar.gz
+      fi
+      tar -zxf AirVPN-Suite.tar.gz
+    fi
+    cd AirVPN-Suite
+    sudo ./install.sh
+    sudo usermod -aG airvpn "$USER"
+    popd >/dev/null
+  fi
+
+  _set_airvpn_config airconnectatboot quick
+  _set_airvpn_config networklockpersist on
+  _set_airvpn_config airusername stevearc
+  _set_airvpn_config country US
+  if ! sudo grep -q "^airpassword " /etc/airvpn/bluetit.rc; then
+    read -r -p "AirVPN password? " air_password
+    _set_airvpn_config airpassword "$air_password"
+  fi
+}
+
+_set_airvpn_config() {
+  local key="${1?Usage: _set_airvpn_config [key] [value]}"
+  local value="${2?Usage: _set_airvpn_config [key] [value]}"
+  sudo sed -i -e "/^${key}\\s/d" /etc/airvpn/bluetit.rc
+  echo -e "$key\t$value" | sudo tee -a /etc/airvpn/bluetit.rc >/dev/null
+}
+
 dc-install-calibreweb() {
   mkdir -p ~/.envs
   pushd ~/.envs >/dev/null
@@ -317,6 +350,12 @@ dc-install-calibreweb() {
     sudo firewall-cmd --zone=home --add-port=8083/tcp
     sudo firewall-cmd --permanent --zone=home --add-port=8083/tcp
   fi
+}
+
+dc-install-nfs-mount() {
+  sudo mkdir -p /mnt/storage
+
+  grep "$MEDIA_SERVER_IP" /etc/fstab >/dev/null || echo "${MEDIA_SERVER_IP}:/mnt/storage   /mnt/storage   nfs   defaults,timeo=900,retrans=5,_netdev	0 0" | sudo tee -a /etc/fstab >/dev/null
 }
 
 # shellcheck disable=SC2034

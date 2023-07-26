@@ -234,6 +234,8 @@ DC_INSTALL_NERD_FONT_DOC="Font with icons"
 dc-install-nerd-font() {
   mkdir -p ~/.local/share/fonts
   pushd ~/.local/share/fonts >/dev/null
-  fetch-nerd-font
+  if [ ! -e "Ubuntu Mono Nerd Font Complete.ttf" ]; then
+    fetch-nerd-font
+  fi
   popd >/dev/null
 }
