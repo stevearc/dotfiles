@@ -16,6 +16,9 @@ return {
         end
       end,
     },
+    select = {
+      backend = { "fzf_lua", "telescope", "builtin" },
+    },
   },
   config = function(_, opts)
     require("dressing").setup(opts)
