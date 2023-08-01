@@ -93,6 +93,17 @@ ftplugin.extend_all({
       { "n", "<leader>td", require("markdown").task_mark_done },
       { "n", "<leader>tu", require("markdown").task_mark_undone },
     },
+    callback = function(bufnr)
+      require("markdown").update_code_highlights(bufnr)
+      local aug = vim.api.nvim_create_augroup("MarkdownStyling", {})
+      vim.api.nvim_clear_autocmds({ buffer = bufnr, group = aug })
+      vim.api.nvim_create_autocmd({ "TextChanged", "InsertLeave" }, {
+        buffer = bufnr,
+        callback = vim.schedule_wrap(function(args)
+          require("markdown").update_code_highlights(bufnr)
+        end),
+      })
+    end,
   },
   ["neotest-summary"] = {
     opt = {
