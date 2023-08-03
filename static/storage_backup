@@ -3,4 +3,4 @@ SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 # m h dom mon dow user  command
-0 0 1 * *   stevearc    /home/stevearc/dotfiles/static/storage_backup.sh >> /var/log/storage_backup.log 2>&1
+0 0 1 * *   stevearc    /home/stevearc/dotfiles/static/storage_backup.sh >> /home/stevearc/storage_backup.log 2>&1

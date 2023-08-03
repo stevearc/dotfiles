@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+echo "START BACKUP"
 if [ ! -e /mnt/storage/torrents_archive ] || [ ! -e /mnt/storage/Library ] || [ ! -e /mnt/storage/jellyfin ] || [ ! -e /mnt/storage/games ] || [ ! -e /mnt/storage/symbolic_archive ]; then
   echo "Cannot back up /mnt/storage; files missing"
   exit 1
