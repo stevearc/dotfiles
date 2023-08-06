@@ -57,7 +57,17 @@ dc-install-virtmanager() {
 
 DC_INSTALL_JELLYFIN_DOC="Jellyfin media server"
 dc-install-jellyfin() {
-  pacman -Qm | grep -q jellyfin-bin || yay -S --noconfirm jellyfin-bin
+  pacman -Qm | grep -q jellyfin-bin || yay -Sy --noconfirm jellyfin-bin
+  sudo pacman -Sy --noconfirm rocm-opencl-runtime libva-mesa-driver
+  if ! hascmd jellyfin-ffmpeg; then
+    pushd /tmp >/dev/null
+    if [ ! -e jellyfin-ffmpeg.tar.xz ]; then
+      curl -L https://github.com/jellyfin/jellyfin-ffmpeg/releases/download/v6.0-5/jellyfin-ffmpeg_6.0-5_portable_linux64-gpl.tar.xz -o jellyfin-ffmpeg.tar.xz
+    fi
+    tar -xf jellyfin-ffmpeg.tar.xz
+    sudo mv ffmpeg /usr/local/bin/jellyfin-ffmpeg
+    popd
+  fi
   sudo systemctl start jellyfin.service
   sudo systemctl enable jellyfin.service
   if hascmd ufw; then
@@ -72,6 +82,7 @@ dc-install-jellyfin() {
   sudo cp "$HERE/static/jellyfin_conf" /etc/conf.d/jellyfin
   # Add jellyfin to the video group for hardware acceleration
   sudo -u jellyfin groups | grep video || sudo usermod -aG video jellyfin
+  sudo -u jellyfin groups | grep render || sudo usermod -aG render jellyfin
   # To enable hardware acceleration, you also need to enable V4L2 in the Jellyfin interface
 }
 
