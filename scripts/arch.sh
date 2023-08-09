@@ -165,6 +165,7 @@ dotcmd-desktop() {
     libnotify \
     steam \
     vlc \
+    wl-clipboard \
     zenity
   hascmd tomb || yay -S --noconfirm tomb # gtk2 above is a dependency
   pacman -Qm | grep -q xpadneo || yay -S --noconfirm xpadneo-dkms
