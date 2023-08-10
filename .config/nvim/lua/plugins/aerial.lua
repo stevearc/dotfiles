@@ -65,6 +65,9 @@ return {
         ["<"] = "actions.tree_decrease_fold_level",
         [">"] = "actions.tree_increase_fold_level",
       },
+      treesitter = {
+        experimental_selection_range = true,
+      },
     },
     config = function(_, opts)
       require("aerial").setup(opts)

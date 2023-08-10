@@ -35,11 +35,6 @@ ftplugin.extend_all({
       all_folded = 1,
     },
   },
-  defx = {
-    opt = {
-      bufhidden = "wipe",
-    },
-  },
   DressingInput = {
     bindings = {
       { "i", "<C-k>", '<CMD>lua require("dressing.input").history_prev()<CR>' },
@@ -88,6 +83,8 @@ ftplugin.extend_all({
     opt = {
       conceallevel = 2,
       formatoptions = "jqln",
+      linebreak = true,
+      wrap = true,
     },
     bindings = {
       { "n", "<leader>td", require("markdown").task_mark_done },
@@ -115,6 +112,8 @@ ftplugin.extend_all({
       comments = "n:-,n:( )",
       conceallevel = 2,
       indentkeys = "o,O,*<M-o>,*<M-O>,*<CR>",
+      linebreak = true,
+      wrap = true,
     },
   },
   python = {
