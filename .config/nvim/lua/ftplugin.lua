@@ -1,6 +1,7 @@
 ---@class FiletypeConfig
 ---@field abbr? table<string, string> Insert-mode abbreviations
----@field bindings? table Buffer-local keymaps
+---@field bindings? table Buffer-local keymaps (old style)
+---@field keys? table Buffer-local keymaps
 ---@field bufvar? table<string, any> Buffer-local variables
 ---@field callback? fun(bufnr: integer)
 ---@field opt? table<string, any> Buffer-local or window-local options
@@ -46,6 +47,7 @@ end
 ---@param config FiletypeConfig
 M.set = function(name, config)
   validate_bindings(config.bindings)
+  validate_bindings(config.keys)
   configs[name] = config
 end
 
@@ -103,12 +105,14 @@ end
 ---@param new_config FiletypeConfig
 M.extend = function(name, new_config)
   validate_bindings(new_config.bindings)
+  validate_bindings(new_config.keys)
   local conf = configs[name] or {}
   conf.abbr = vim.tbl_deep_extend("force", conf.abbr or {}, new_config.abbr or {})
   conf.opt = vim.tbl_deep_extend("force", conf.opt or {}, new_config.opt or {})
   conf.bufvar = vim.tbl_deep_extend("force", conf.bufvar or {}, new_config.bufvar or {})
   conf.callback = merge_callbacks(conf.callback, new_config.callback)
   conf.bindings = merge_bindings(conf.bindings, new_config.bindings)
+  conf.keys = merge_bindings(conf.keys, new_config.keys)
   conf.ignore_win_opts = coalesce(new_config.ignore_win_opts, conf.ignore_win_opts)
   conf.compiler = coalesce(new_config.compiler, conf.compiler)
   configs[name] = conf
@@ -248,12 +252,27 @@ M.apply = function(name, bufnr)
     end
   end
   if conf.bindings then
+    vim.notify_once(string.format("ftplugin bindings are deprecated (filetype %s)", name), vim.log.levels.WARN)
     for _, defn in ipairs(conf.bindings) do
       local mode, lhs, rhs, opts = unpack(defn)
       opts = vim.tbl_deep_extend("error", opts or {}, {
         buffer = bufnr,
       })
       vim.keymap.set(mode, lhs, rhs, opts)
+    end
+  end
+  if conf.keys then
+    for _, defn in ipairs(conf.keys) do
+      local mode = defn.mode or "n"
+      local lhs = defn[1]
+      local rhs = defn[2]
+      vim.keymap.set(mode, lhs, rhs, {
+        buffer = bufnr,
+        desc = defn.desc,
+        remap = defn.remap,
+        replace_keycodes = defn.replace_keycodes,
+        nowait = defn.nowait,
+      })
     end
   end
   if conf.callback then

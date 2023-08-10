@@ -37,20 +37,20 @@ return {
     local p = require("p")
     local ftplugin = p.require("ftplugin")
     local gkeep_bindings = {
-      { "n", "<leader>m", "<CMD>GkeepEnter menu<CR>" },
-      { "n", "<leader>l", "<CMD>GkeepEnter list<CR>" },
+      { "<leader>m", "<CMD>GkeepEnter menu<CR>" },
+      { "<leader>l", "<CMD>GkeepEnter list<CR>" },
     }
     ftplugin.set("GoogleKeepList", {
-      bindings = gkeep_bindings,
+      keys = gkeep_bindings,
     })
     ftplugin.set("GoogleKeepMenu", ftplugin.get("GoogleKeepList"))
     ftplugin.set("GoogleKeepNote", {
-      bindings = vim.list_extend({
-        { "n", "<leader>p", "<CMD>GkeepPopup<CR>" },
-        { "n", "<leader>fl", "<CMD>Telescope gkeep link<CR>" },
+      keys = vim.list_extend({
+        { "<leader>p", "<CMD>GkeepPopup<CR>" },
+        { "<leader>fl", "<CMD>Telescope gkeep link<CR>" },
       }, gkeep_bindings),
     })
-    ftplugin.extend("norg", { bindings = gkeep_bindings })
+    ftplugin.extend("norg", { keys = gkeep_bindings })
 
     p.require("quick_action", function(quick_action)
       quick_action.add("menu", {

@@ -16,9 +16,8 @@ ftplugin.extend("terminal", {
     relativenumber = false,
     signcolumn = "no",
   },
-  bindings = {
+  keys = {
     {
-      "n",
       "<C-e>",
       function()
         local bufnr = vim.fn.bufadd(vim.fn.expand("<cWORD>"))
@@ -29,7 +28,6 @@ ftplugin.extend("terminal", {
       end,
     },
     {
-      "n",
       "<C-t>",
       "<CMD>tabnew <cWORD><CR>",
     },

@@ -17,12 +17,12 @@ end
 
 ftplugin.extend_all({
   arduino = {
-    bindings = {
-      { "n", "<leader>ac", ":wa<CR>:ArduinoVerify<CR>" },
-      { "n", "<leader>au", ":wa<CR>:ArduinoUpload<CR>" },
-      { "n", "<leader>ad", ":wa<CR>:ArduinoUploadAndSerial<CR>" },
-      { "n", "<leader>ab", "<CMD>ArduinoChooseBoard<CR>" },
-      { "n", "<leader>ap", "<CMD>ArduinoChooseProgrammer<CR>" },
+    keys = {
+      { "<leader>ac", ":wa<CR>:ArduinoVerify<CR>" },
+      { "<leader>au", ":wa<CR>:ArduinoUpload<CR>" },
+      { "<leader>ad", ":wa<CR>:ArduinoUploadAndSerial<CR>" },
+      { "<leader>ab", "<CMD>ArduinoChooseBoard<CR>" },
+      { "<leader>ap", "<CMD>ArduinoChooseProgrammer<CR>" },
     },
   },
   cs = {
@@ -36,14 +36,14 @@ ftplugin.extend_all({
     },
   },
   DressingInput = {
-    bindings = {
-      { "i", "<C-k>", '<CMD>lua require("dressing.input").history_prev()<CR>' },
-      { "i", "<C-j>", '<CMD>lua require("dressing.input").history_next()<CR>' },
+    keys = {
+      { "<C-k>", '<CMD>lua require("dressing.input").history_prev()<CR>', mode = "i" },
+      { "<C-j>", '<CMD>lua require("dressing.input").history_next()<CR>', mode = "i" },
     },
   },
   fugitiveblame = {
-    bindings = {
-      { "n", "gp", "<CMD>echo system('git findpr ' . expand('<cword>'))<CR>" },
+    keys = {
+      { "gp", "<CMD>echo system('git findpr ' . expand('<cword>'))<CR>" },
     },
   },
   go = {
@@ -54,8 +54,8 @@ ftplugin.extend_all({
     },
   },
   help = {
-    bindings = {
-      { "n", "gd", "<C-]>" },
+    keys = {
+      { "gd", "<C-]>" },
     },
     opt = {
       list = false,
@@ -68,8 +68,8 @@ ftplugin.extend_all({
       locla = "local",
       vll = "vim.log.levels",
     },
-    bindings = {
-      { "n", "gh", "<CMD>exec 'help ' . expand('<cword>')<CR>" },
+    keys = {
+      { "gh", "<CMD>exec 'help ' . expand('<cword>')<CR>" },
     },
     opt = {
       comments = ":---,:--",
@@ -87,9 +87,9 @@ ftplugin.extend_all({
       linebreak = true,
       wrap = true,
     },
-    bindings = {
-      { "n", "<leader>td", require("markdown").task_mark_done },
-      { "n", "<leader>tu", require("markdown").task_mark_undone },
+    keys = {
+      { "<leader>td", require("markdown").task_mark_done },
+      { "<leader>tu", require("markdown").task_mark_undone },
     },
     callback = function(bufnr)
       require("markdown").update_code_highlights(bufnr)
@@ -171,19 +171,19 @@ ftplugin.extend_all({
     end,
   },
   supercollider = {
-    bindings = {
-      { "n", "<CR>", "<Plug>(scnvim-send-block)", { remap = false } },
-      { "i", "<c-CR>", "<Plug>(scnvim-send-block)", { remap = false } },
-      { "x", "<CR>", "<Plug>(scnvim-send-selection)", { remap = false } },
-      { "n", "<F1>", "<cmd>call scnvim#install()<CR><cmd>SCNvimStart<CR><cmd>SCNvimStatusLine<CR>" },
-      { "n", "<F2>", "<cmd>SCNvimStop<CR>" },
-      { "n", "<F12>", "<Plug>(scnvim-hard-stop)", { remap = false } },
-      { "n", "<leader><space>", "<Plug>(scnvim-postwindow-toggle)", { remap = false } },
-      { "n", "<leader>g", "<cmd>call scnvim#sclang#send('s.plotTree;')<CR>" },
-      { "n", "<leader>s", "<cmd>call scnvim#sclang#send('s.scope;')<CR>" },
-      { "n", "<leader>f", "<cmd>call scnvim#sclang#send('FreqScope.new;')<CR>" },
-      { "n", "<leader>r", "<cmd>SCNvimRecompile<CR>" },
-      { "n", "<leader>m", "<cmd>call scnvim#sclang#send('Master.gui;')<CR>" },
+    keys = {
+      { "<CR>", "<Plug>(scnvim-send-block)" },
+      { "<c-CR>", "<Plug>(scnvim-send-block)", mode = "i" },
+      { "<CR>", "<Plug>(scnvim-send-selection)", mode = "x" },
+      { "<F1>", "<cmd>call scnvim#install()<CR><cmd>SCNvimStart<CR><cmd>SCNvimStatusLine<CR>" },
+      { "<F2>", "<cmd>SCNvimStop<CR>" },
+      { "<F12>", "<Plug>(scnvim-hard-stop)" },
+      { "<leader><space>", "<Plug>(scnvim-postwindow-toggle)" },
+      { "<leader>g", "<cmd>call scnvim#sclang#send('s.plotTree;')<CR>" },
+      { "<leader>s", "<cmd>call scnvim#sclang#send('s.scope;')<CR>" },
+      { "<leader>f", "<cmd>call scnvim#sclang#send('FreqScope.new;')<CR>" },
+      { "<leader>r", "<cmd>SCNvimRecompile<CR>" },
+      { "<leader>m", "<cmd>call scnvim#sclang#send('Master.gui;')<CR>" },
     },
     opt = {
       foldmethod = "marker",

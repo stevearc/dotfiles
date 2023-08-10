@@ -60,9 +60,9 @@ return {
       local p = require("p")
       local ftplugin = p.require("ftplugin")
       ftplugin.set("oil", {
-        bindings = {
-          { "n", "<leader>ff", find_files, { desc = "[F]ind [F]iles in dir" } },
-          { "n", "<leader>fg", livegrep, { desc = "[F]ind by [G]rep in dir" } },
+        keys = {
+          { "<leader>ff", find_files, desc = "[F]ind [F]iles in dir" },
+          { "<leader>fg", livegrep, desc = "[F]ind by [G]rep in dir" },
         },
         opt = {
           conceallevel = 3,
