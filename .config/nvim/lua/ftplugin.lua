@@ -5,6 +5,7 @@
 ---@field callback? fun(bufnr: integer)
 ---@field opt? table<string, any> Buffer-local or window-local options
 ---@field ignore_win_opts? boolean Don't manage the window-local options for this filetype
+---@field compiler? string
 
 local did_setup = false
 local M = {}
@@ -109,6 +110,7 @@ M.extend = function(name, new_config)
   conf.callback = merge_callbacks(conf.callback, new_config.callback)
   conf.bindings = merge_bindings(conf.bindings, new_config.bindings)
   conf.ignore_win_opts = coalesce(new_config.ignore_win_opts, conf.ignore_win_opts)
+  conf.compiler = coalesce(new_config.compiler, conf.compiler)
   configs[name] = conf
   if did_setup then
     M.reapply_all_bufs()
@@ -211,8 +213,13 @@ M.apply = function(name, bufnr)
   if conf.abbr then
     vim.api.nvim_buf_call(bufnr, function()
       for k, v in pairs(conf.abbr) do
-        vim.cmd(string.format("iabbr <buffer> %s %s", k, v))
+        vim.cmd(string.format("iabbrev <buffer> %s %s", k, v))
       end
+    end)
+  end
+  if conf.compiler then
+    vim.api.nvim_buf_call(bufnr, function()
+      vim.cmd.compiler({ args = { conf.compiler } })
     end)
   end
   if conf.opt then

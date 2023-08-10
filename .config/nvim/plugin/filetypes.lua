@@ -47,6 +47,7 @@ ftplugin.extend_all({
     },
   },
   go = {
+    compiler = "go",
     opt = {
       list = false,
       listchars = "nbsp:⦸,extends:»,precedes:«,tab:  ",
@@ -131,9 +132,9 @@ ftplugin.extend_all({
     callback = function(bufnr)
       if vim.fn.executable("autoimport") == 1 then
         vim.keymap.set("n", "<leader>o", function()
-          vim.cmd("write")
+          vim.cmd.write()
           vim.cmd("silent !autoimport " .. vim.api.nvim_buf_get_name(0))
-          vim.cmd("edit")
+          vim.cmd.edit()
           vim.lsp.buf.formatting({})
         end, { buffer = bufnr })
       end
@@ -150,9 +151,7 @@ ftplugin.extend_all({
     },
   },
   rust = {
-    opt = {
-      makeprg = "cargo $*",
-    },
+    compiler = "cargo",
     callback = function(bufnr)
       vim.keymap.set("n", "<leader>e", function()
         run_file({ "cargo", "run" })
@@ -199,6 +198,9 @@ ftplugin.extend_all({
       })
     end,
   },
+  typescript = {
+    compiler = "tsc",
+  },
   vim = {
     opt = {
       foldmethod = "marker",
@@ -206,6 +208,7 @@ ftplugin.extend_all({
     },
   },
   zig = {
+    compiler = "zig",
     opt = {
       shiftwidth = 4,
       tabstop = 4,
