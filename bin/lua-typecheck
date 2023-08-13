@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+
+exec nvim -u /dev/null --noplugin -l ~/dotfiles/scripts/typecheck.lua "$@"
