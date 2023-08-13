@@ -184,17 +184,17 @@ install-lua-utils() {
   mkdir -p ~/.local/share/nvim/language-servers/
   pushd ~/.local/share/nvim/language-servers/
   if [ ! -d lua-language-server ]; then
-    git clone https://github.com/LuaLS/lua-language-server
+    mkdir -p lua-language-server
     cd lua-language-server
-    git fetch --tags
     local latest_version
     latest_version=$(curl -s https://api.github.com/repos/LuaLS/lua-language-server/releases/latest | jq -r .name)
-    git checkout "$latest_version"
-    git submodule update --init --recursive
-    cd 3rd/luamake
-    ninja -f compile/ninja/linux.ninja
-    cd ../..
-    ./3rd/luamake/luamake rebuild
+    echo "https://github.com/LuaLS/lua-language-server/releases/download/${latest_version}/lua-language-server-${latest_version}-linux-x64.tar.gz"
+    curl -sL "https://github.com/LuaLS/lua-language-server/releases/download/${latest_version}/lua-language-server-${latest_version}-linux-x64.tar.gz" -o lua-language-server.tar.gz
+    tar -zxf lua-language-server.tar.gz
+    rm -f lua-language-server.tar.gz
+
+    rm -f ~/.local/bin/lua-language-server
+    ln -s ~/.local/share/nvim/language-servers/lua-language-server/bin/lua-language-server ~/.local/bin
   fi
   popd
 }
