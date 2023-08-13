@@ -30,13 +30,45 @@ local function write_json_file(path, data)
   vim.loop.fs_close(fd)
 end
 
----@param configpath? string
----@param ignore string[]
+---@param cmd string[]
+---@return integer exit code
+local function run_cmd(cmd)
+  local exit_code
+  local jid = vim.fn.jobstart(cmd, {
+    on_exit = function(j, code)
+      exit_code = code
+    end,
+  })
+  if jid == 0 then
+    print(string.format("Passed invalid arguments to '%s'", cmd[1]))
+    return 1
+  elseif jid == -1 then
+    print(string.format("'%s' is not executable", cmd[1]))
+    return 1
+  end
+  vim.fn.jobwait({ jid })
+  return exit_code
+end
+
+---@return string
+local function clone_neodev()
+  local tmp = assert(vim.loop.os_tmpdir())
+  local neodev = string.format("%s/neodev.nvim", tmp)
+  if vim.fn.isdirectory(neodev) == 0 then
+    local code = run_cmd({ "git", "clone", "https://github.com/folke/neodev.nvim", neodev })
+    if code ~= 0 then
+      print("ERROR cloning neodev repo")
+    end
+  end
+  return neodev
+end
+
+---@param opts Options
 ---@return table
-local function gen_config(configpath, ignore)
+local function gen_config(opts)
   local config
-  if configpath then
-    config = vim.tbl_deep_extend("force", read_json_file(configpath), {
+  if opts.configpath then
+    config = vim.tbl_deep_extend("force", read_json_file(opts.configpath), {
       Lua = {
         telemetry = {
           enable = false,
@@ -61,9 +93,27 @@ local function gen_config(configpath, ignore)
   config.Lua.workspace = config.Lua.workspace or {}
   config.Lua.workspace.library = config.Lua.workspace.library or {}
   table.insert(config.Lua.workspace.library, vim.env.VIMRUNTIME)
+  local neodev_version = opts.neodev_version or "stable"
+  if neodev_version ~= "none" then
+    local neodev = clone_neodev()
+    table.insert(config.Lua.workspace.library, string.format("%s/types/%s", neodev, neodev_version))
+  end
+  vim.list_extend(config.Lua.workspace.library, opts.libraries)
   config.Lua.workspace.ignoreDir = config.Lua.workspace.ignoreDir or {}
-  vim.list_extend(config.Lua.workspace.ignoreDir, ignore)
+  vim.list_extend(config.Lua.workspace.ignoreDir, opts.ignore)
   return config
+end
+
+---Remove diagnostics from workspace libraries
+---@param diagnostics table<string, any>
+---@param path string
+local function prune_workspace_diagnostics(diagnostics, path)
+  for _, uri in ipairs(vim.tbl_keys(diagnostics)) do
+    local filename = string.sub(uri, 8) -- trim off the leading file://
+    if not vim.startswith(filename, path) then
+      diagnostics[uri] = nil
+    end
+  end
 end
 
 local severity_to_string = {
@@ -77,7 +127,7 @@ local severity_to_string = {
 ---@return table?
 local function typecheck(opts)
   local logdir = mkdtemp()
-  local config = gen_config(opts.configpath, opts.ignore)
+  local config = gen_config(opts)
   local configpath = string.format("%s/luarc.json", logdir)
   write_json_file(configpath, config)
   local cmd = {
@@ -95,21 +145,7 @@ local function typecheck(opts)
   print(cmdstr)
   print("\n")
 
-  local exit_code
-  local jid = vim.fn.jobstart(cmd, {
-    on_exit = function(j, code)
-      exit_code = code
-    end,
-  })
-  if jid == 0 then
-    print(string.format("Passed invalid arguments to '%s'", opts.bin))
-    return 1
-  elseif jid == -1 then
-    print(string.format("'%s' is not executable", opts.bin))
-    return 1
-  end
-  vim.fn.jobwait({ jid })
-
+  local exit_code = run_cmd(cmd)
   if exit_code ~= 0 then
     return exit_code
   end
@@ -122,16 +158,9 @@ local function typecheck(opts)
   end
 
   local diagnostics = read_json_file(logfile)
-
   vim.fn.delete(logdir, "rf")
-
-  -- Remove diagnostics from VIMRUNTIME
-  for _, uri in ipairs(vim.tbl_keys(diagnostics)) do
-    local filename = string.sub(uri, 8) -- trim off the leading file://
-    if vim.startswith(filename, vim.env.VIMRUNTIME) then
-      diagnostics[uri] = nil
-    end
-  end
+  local fullpath = vim.fn.fnamemodify(opts.path, ":p")
+  prune_workspace_diagnostics(diagnostics, fullpath)
 
   return 0, diagnostics
 end
@@ -147,17 +176,22 @@ local function print_diagnostics(diagnostics)
       filename = filename:sub(curdir:len() + 2)
     end
     local file_diagnostics = diagnostics[uri]
+    table.sort(file_diagnostics, function(a, b)
+      return a.range.start.line < b.range.start.line
+        or (a.range.start.line == b.range.start.line and a.range.start.character < b.range.start.character)
+    end)
     for _, diagnostic in ipairs(file_diagnostics) do
       local severity = severity_to_string[diagnostic.severity]
       local msg = vim.split(diagnostic.message, "\n", { plain = true, trimempty = true })[1]
       local line = string.format(
-        "%s %s:%d:%d:%d:%d: %s",
+        "%s %s:%d:%d:%d:%d[%s]: %s",
         severity,
         filename,
-        diagnostic.range.start.line,
+        diagnostic.range.start.line + 1,
         diagnostic.range.start.character,
-        diagnostic.range["end"].line,
+        diagnostic.range["end"].line + 1,
         diagnostic.range["end"].character,
+        diagnostic.code,
         msg
       )
       vim.api.nvim_out_write(line .. "\n")
@@ -177,6 +211,8 @@ end
 ---@field level? "Error"|"Warning"|"Information"
 ---@field configpath? string
 ---@field ignore string[]
+---@field libraries string[]
+---@field neodev_version? "nightly"|"stable"|"none"
 
 ---@param path string
 ---@return string
@@ -204,6 +240,16 @@ local function parse_level(level)
   end
 end
 
+---@param version string
+---@return "none"|"stable"|"nightly"
+local function parse_neodev_version(version)
+  if version ~= "none" and version ~= "stable" and version ~= "nightly" then
+    print(string.format("neodev version '%s' must be one of nightly, stable, or none", version))
+    os.exit(1)
+  end
+  return version
+end
+
 ---@param bin string
 ---@return string
 local function parse_bin(bin)
@@ -223,6 +269,8 @@ local function print_help()
     "  --level LEVEL          Minimum level to check (one of Information, Warning, Error)",
     "  --configpath CONFIG    Path to luarc.json config file",
     "  --ignore PATH          Path to ignore. May be specified multiple times",
+    "  --lib LIBRARY          Path to library. May be specified multiple times",
+    "  --neodev VERSION       Version of neodev types (nightly, stable, or none)",
     "",
   }, "\n")
   print(help)
@@ -233,6 +281,7 @@ end
 local function parse_args(cli_args)
   local opts = {
     ignore = {},
+    libraries = {},
   }
   local i = 1
   while i <= #cli_args do
@@ -252,6 +301,12 @@ local function parse_args(cli_args)
     elseif str == "--ignore" then
       i = i + 1
       table.insert(opts.ignore, cli_args[i])
+    elseif str == "--lib" then
+      i = i + 1
+      table.insert(opts.libraries, cli_args[i])
+    elseif str == "--neodev" then
+      i = i + 1
+      opts.neodev_version = parse_neodev_version(cli_args[i])
     else
       if opts.path then
         print("Error: can only specify one path to check")
