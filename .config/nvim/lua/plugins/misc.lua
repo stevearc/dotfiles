@@ -19,7 +19,6 @@ return {
     { "cr", "<Plug>(abolish-coerce-word)", mode = "n" },
   } },
   { "docunext/closetag.vim", event = "InsertEnter *" },
-  "nanotee/luv-vimdocs",
   {
     "stevearc/scnvim",
     ft = "supercollider",
