@@ -5,3 +5,4 @@ venv
 *.log
 .direnv/
 vimplugins/conjoin.nvim
+nvim-typecheck-action

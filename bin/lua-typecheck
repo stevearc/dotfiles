@@ -1,4 +1,7 @@
 #!/bin/bash
 set -e
 
-exec nvim -u /dev/null --noplugin -l ~/dotfiles/scripts/typecheck.lua "$@"
+if [ ! -d ~/dotfiles/nvim-typecheck-action ]; then
+  git clone https://github.com/stevearc/nvim-typecheck-action ~/dotfiles/nvim-typecheck-action
+fi
+exec ~/dotfiles/nvim-typecheck-action/typecheck.sh "$@"
