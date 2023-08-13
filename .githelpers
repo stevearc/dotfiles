@@ -25,13 +25,9 @@ FORMAT="$HASH $RELATIVE_TIME $AUTHOR $REFS $SUBJECT"
 pretty_git_log() {
   git log --graph --abbrev-commit --date=relative --color=always --pretty="tformat:${FORMAT}" "$@" \
     |
-    
-
     # Replace (2 years ago) with (2 years)
     sed -Ee 's/(^[^<]*) ago\)/\1)/' \
     |
-    
-
     # Replace (2 years, 5 months) with (2 years)
     sed -Ee 's/(^[^<]*), [[:digit:]]+ .*months?\)/\1)/'
 
@@ -42,8 +38,6 @@ pretty_git_log() {
 pretty_git_log_paged() {
   pretty_git_log "$@" \
     |
-    
-
     # Page only if we need to
     less -FXRS
 }
@@ -67,13 +61,9 @@ contextual_git_log() {
   tmpfile=$(mktemp)
   git log $after --all --graph --abbrev-commit --date=relative --color=always --pretty="tformat:${FORMAT}" "$@" \
     |
-    
-
     # Replace (2 years ago) with (2 years)
     sed -Ee 's/(^[^<]*) ago\)/\1)/' \
     |
-    
-
     # Replace (2 years, 5 months) with (2 years)
     sed -Ee 's/(^[^<]*), [[:digit:]]+ .*months?\)/\1)/' >"$tmpfile"
 
@@ -91,8 +81,6 @@ contextual_git_log() {
 contextual_git_log_paged() {
   contextual_git_log "$@" \
     |
-    
-
     # Page only if we need to
     less -FXRS
 }
@@ -297,6 +285,27 @@ delete_merged() {
         git branch -d "$branch"
       fi
     fi
+  done
+}
+
+realpath() {
+  if ! readlink -f "$1" 2>/dev/null; then
+    [[ $1 == /* ]] && echo "$1" || echo "$PWD/${1#./}"
+  fi
+}
+
+install-hooks() {
+  for script in .github/pre-* .github/hooks/* hooks/* git_hooks/*; do
+    local hookdir=$(git hookdir)
+    local base=$(basename "$script")
+    if [ "$base" = '*' ] || [ "$base" = 'pre-*' ]; then
+      continue
+    fi
+    local dest="${hookdir}/${base}"
+    local abspath=$(realpath "$script")
+    rm -f "$dest"
+    echo "Installing $base hook"
+    ln -s "$abspath" "$dest"
   done
 }
 
