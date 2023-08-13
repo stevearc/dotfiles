@@ -187,7 +187,7 @@ install-lua-utils() {
     mkdir -p lua-language-server
     cd lua-language-server
     local latest_version
-    latest_version=$(curl -s https://api.github.com/repos/LuaLS/lua-language-server/releases/latest | jq -r .name)
+    latest_version=$(curl -s https://api.github.com/repos/LuaLS/lua-language-server/releases/latest | jq -r .tag_name)
     echo "https://github.com/LuaLS/lua-language-server/releases/download/${latest_version}/lua-language-server-${latest_version}-linux-x64.tar.gz"
     curl -sL "https://github.com/LuaLS/lua-language-server/releases/download/${latest_version}/lua-language-server-${latest_version}-linux-x64.tar.gz" -o lua-language-server.tar.gz
     tar -zxf lua-language-server.tar.gz
