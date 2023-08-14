@@ -82,6 +82,9 @@ alt - k : yabai -m window --focus north
 alt - l : yabai -m window --focus east
 alt - j : yabai -m window --focus south
 
+# alt-tab to cycle through windows. Map backtick (0x32) because I use karabiner to swap backtick and tab
+cmd - 0x32 : yabai -m window --focus next || yabai -m window --focus first
+
 # swap managed window
 # shift + alt - h : yabai -m window --swap north
 
@@ -148,7 +151,10 @@ cmd - h  : yabai -m display --focus prev
 # toggle window zoom
 # alt - d : yabai -m window --toggle zoom-parent
 # alt - f : yabai -m window --toggle zoom-fullscreen
-cmd - return : yabai -m window --toggle zoom-fullscreen
+# cmd - return : yabai -m window --toggle zoom-fullscreen
+cmd - return : yabai -m query --spaces --window | grep '"type":"float"' && yabai -m space --layout bsp;\
+          yabai -m query --windows --window | grep '"floating":1' && yabai -m window --toggle float;\
+          yabai -m window --toggle zoom-fullscreen;
 
 # toggle window split type
 # alt - e : yabai -m window --toggle split
