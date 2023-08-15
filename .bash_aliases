@@ -31,6 +31,7 @@ alias gg='git grep -I'
 alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf'
 alias dua='du -had 1 | sort -rh'
 alias tm='tmux'
+alias icat='kitty +kitten icat'
 alias dfh='df -h | grep -v tmpfs | grep -v snap'
 if [ $MAC ]; then
   alias alert='notify -c $? "$(history|tail -n1|sed -e '\''s/^[[:space:]]*[0-9]*[[:space:]]*//;s/[;&|][[:space:]]*alert$//'\'')"'
