@@ -3,7 +3,6 @@ local h = require("null-ls.helpers")
 local methods = require("null-ls.methods")
 local util = require("lspconfig.util")
 local FORMATTING = methods.internal.FORMATTING
-local DIAGNOSTICS = methods.internal.DIAGNOSTICS
 local CONDITION = "_null_ls_root"
 
 local find_vc_root = util.root_pattern(".git", ".hg")
@@ -56,39 +55,6 @@ local function has_root_pattern(...)
     return found
   end)
 end
-
-null_ls.builtins.diagnostics.rstlint = h.make_builtin({
-  method = DIAGNOSTICS,
-  filetypes = { "rst" },
-  generator_opts = {
-    command = "rst-lint",
-    args = { "--level", "info", "--format", "json", "$FILENAME" },
-    to_temp_file = true,
-    from_stderr = true,
-    format = "json",
-    on_output = h.diagnostics.from_json({
-      attributes = { line = "row", type = "severity", message = "message" },
-      severities = {
-        INFO = h.diagnostics.severities["information"],
-        WARNING = h.diagnostics.severities["warning"],
-        ERROR = h.diagnostics.severities["error"],
-        SEVERE = h.diagnostics.severities["error"],
-      },
-    }),
-  },
-  factory = h.generator_factory,
-})
-
-null_ls.builtins.formatting.xmllint = h.make_builtin({
-  method = FORMATTING,
-  filetypes = { "xml" },
-  generator_opts = {
-    command = "xmllint",
-    args = { "--format", "-" },
-    to_stdin = true,
-  },
-  factory = h.formatter_factory,
-})
 
 null_ls.builtins.formatting.hackfmt = h.make_builtin({
   method = FORMATTING,
