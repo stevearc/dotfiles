@@ -85,7 +85,8 @@ vim.o.tabstop = 2
 vim.o.textwidth = 100 -- Line width of 100
 vim.o.updatetime = 400 -- CursorHold time default is 4s. Way too long
 vim.o.whichwrap = "h,l" -- allow cursor to wrap to next/prev line
-vim.o.wrap = false
+vim.o.wrap = true
+vim.o.linebreak = true
 vim.opt.wildignore:append(
   "*.png,*.jpg,*.jpeg,*.gif,*.wav,*.aiff,*.dll,*.pdb,*.mdb,*.so,*.swp,*.zip,*.gz,*.bz2,*.meta,*.svg,*.cache,*/.git/*"
 )
