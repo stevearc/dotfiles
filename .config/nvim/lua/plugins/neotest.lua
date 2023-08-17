@@ -127,9 +127,6 @@ return {
       status = {
         enabled = true,
       },
-      quickfix = {
-        enabled = false,
-      },
     })
     vim.keymap.set("n", "<leader>tn", function()
       neotest.run.run({})
