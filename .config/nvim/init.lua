@@ -131,11 +131,10 @@ vim.filetype.add({
   extension = {
     cconf = "python",
     frag = "glsl",
-    js = "javascript.jsx",
+    jsx = "javascript.jsx",
     ["js.flow"] = "javascript.jsx",
     norg = "norg", -- neorg
     rbi = "ruby",
-    sky = "python", -- starlark
     tsx = "typescript.tsx",
   },
   filename = {
