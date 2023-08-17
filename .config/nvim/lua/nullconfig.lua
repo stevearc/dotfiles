@@ -138,11 +138,6 @@ return {
       condition = has_exe("stylua"),
       runtime_condition = has_root_pattern("stylua.toml", ".stylua.toml"),
     }),
-    null_ls.builtins.diagnostics.luacheck.with({
-      condition = has_exe("luacheck"),
-      args = { "--globals", "vim", "--formatter", "plain", "--codes", "--ranges", "--filename", "$FILENAME", "-" },
-      diagnostics_format = "[#{c}] #{m} (#{s})",
-    }),
 
     -- php
     null_ls.builtins.formatting.hackfmt.with({
@@ -156,23 +151,8 @@ return {
     null_ls.builtins.formatting.black.with({
       runtime_condition = runtime_has_exe("black"),
     }),
-    null_ls.builtins.diagnostics.pylint.with({
-      runtime_condition = runtime_has_exe("pylint"),
-      diagnostics_format = "[#{c}] #{m} (#{s})",
-    }),
-    null_ls.builtins.diagnostics.mypy.with({
-      runtime_condition = runtime_has_exe("mypy"),
-      diagnostics_format = "[#{c}] #{m} (#{s})",
-    }),
-
-    -- rst
-    null_ls.builtins.diagnostics.rstlint,
 
     -- sh
-    null_ls.builtins.diagnostics.shellcheck.with({
-      condition = has_exe("shellcheck"),
-      args = { "-x", "--format", "json1", "-" },
-    }),
     null_ls.builtins.formatting.shfmt.with({
       condition = has_exe("shfmt"),
       args = { "-ci", "-i", "2", "-s", "-bn" },
@@ -183,23 +163,6 @@ return {
 
     -- supercollider
     null_ls.builtins.formatting.trim_whitespace.with({ filetypes = { "supercollider" } }),
-
-    -- vim
-    null_ls.builtins.diagnostics.vint.with({
-      condition = has_exe("vint"),
-      args = { "--enable-neovim", "--style-problem", "--json", "$FILENAME" },
-    }),
-
-    -- xml
-    null_ls.builtins.formatting.xmllint.with({
-      condition = has_exe("xmllint"),
-    }),
-
-    -- yaml
-    null_ls.builtins.diagnostics.yamllint.with({
-      condition = has_exe("yamllint"),
-      diagnostics_format = "[#{c}] #{m} (#{s})",
-    }),
   },
 
   -- Export this for use in other locations
