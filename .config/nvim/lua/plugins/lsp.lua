@@ -39,10 +39,9 @@ return {
               end
             end
             if supports_formatting then
-              -- TODO: I don't think we need this anymore. Use for a while to confirm
-              -- local restore = lsp.save_win_positions(0)
+              local restore = lsp.save_win_positions(0)
               vim.lsp.buf.format({ timeout_ms = 500, async = false })
-              -- restore()
+              restore()
             end
           end,
           group = autoformat_group,
@@ -102,16 +101,15 @@ return {
       vim.lsp.handlers["textDocument/typeDefinition"] = location_handler
       vim.lsp.handlers["textDocument/implementation"] = location_handler
 
-      -- TODO I don't think we need this anymore
-      -- vim.lsp.handlers["textDocument/formatting"] = function(_, result, ctx, _)
-      --   if not result then
-      --     return
-      --   end
-      --   local client = vim.lsp.get_client_by_id(ctx.client_id)
-      --   local restore = lsp.save_win_positions(ctx.bufnr)
-      --   vim.lsp.util.apply_text_edits(result, ctx.bufnr, client.offset_encoding)
-      --   restore()
-      -- end
+      vim.lsp.handlers["textDocument/formatting"] = function(_, result, ctx, _)
+        if not result then
+          return
+        end
+        local client = vim.lsp.get_client_by_id(ctx.client_id)
+        local restore = lsp.save_win_positions(ctx.bufnr)
+        vim.lsp.util.apply_text_edits(result, ctx.bufnr, client.offset_encoding)
+        restore()
+      end
 
       vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
       vim.lsp.handlers["textDocument/signatureHelp"] =
