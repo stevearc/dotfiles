@@ -17,10 +17,6 @@ fi
 alias pm-rm-orphans='sudo pacman -Qtdq | sudo pacman -Rns -'
 alias pm-rm-cache='sudo pacman -Scc'
 
-if [ "$TERM" = "xterm-kitty" ]; then
-  alias ssh='kitty +kitten ssh'
-fi
-
 alias ll='ls -lh'
 alias la='ls -A'
 alias lla='ls -Alh'
@@ -31,6 +27,7 @@ alias gg='git grep -I'
 alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf'
 alias dua='du -had 1 | sort -rh'
 alias tm='tmux'
+alias kt='kitty +kitten'
 alias icat='kitty +kitten icat'
 alias dfh='df -h | grep -v tmpfs | grep -v snap'
 if [ $MAC ]; then
