@@ -17,5 +17,10 @@ return {
       end
     end
   end,
-  opts = {},
+  config = function()
+    local has_magick = pcall(require, "magick")
+    if has_magick then
+      require("image").setup()
+    end
+  end,
 }
