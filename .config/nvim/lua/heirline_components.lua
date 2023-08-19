@@ -302,6 +302,16 @@ local ArduinoStatus = {
   end,
 }
 
+-- HACK I don't know why, but the stock implementation of lsp_attached is causing error output
+-- (UNKNOWN PLUGIN): Error executing lua: attempt to call a nil value
+-- It gets written to raw stderr, which then messes up all of vim's rendering. It's something to do
+-- with the require("vim.lsp") call deep in the vim metatable __index function. I don't know the
+-- root cause, but I'm done debugging this for today.
+conditions.lsp_attached = function()
+  local lsp = rawget(vim, "lsp")
+  return lsp and next(lsp.get_active_clients({ bufnr = 0 })) ~= nil
+end
+
 local LSPActive = {
   condition = conditions.lsp_attached,
   update = { "LspAttach", "LspDetach", "VimResized" },
