@@ -25,29 +25,6 @@ return {
       local p = require("p")
       -- vim.lsp.set_log_level("debug")
 
-      if not vim.g.started_by_firenvim then
-        local autoformat_group = vim.api.nvim_create_augroup("LspAutoformat", { clear = true })
-        vim.api.nvim_create_autocmd("BufWritePre", {
-          callback = function(args)
-            if vim.g.autoformat == false or vim.b[args.buf].autoformat == false then
-              return
-            end
-            local supports_formatting = false
-            for _, client in pairs(vim.lsp.get_active_clients({ bufnr = args.buf })) do
-              if client.server_capabilities.documentFormattingProvider then
-                supports_formatting = true
-              end
-            end
-            if supports_formatting then
-              local restore = lsp.save_win_positions(0)
-              vim.lsp.buf.format({ timeout_ms = 500, async = false })
-              restore()
-            end
-          end,
-          group = autoformat_group,
-        })
-      end
-
       local function locations_equal(loc1, loc2)
         return (loc1.uri or loc1.targetUri) == (loc2.uri or loc2.targetUri)
           and (loc1.range or loc1.targetSelectionRange).start.line
@@ -293,22 +270,6 @@ return {
           },
         },
       })
-    end,
-  },
-
-  {
-    "jose-elias-alvarez/null-ls.nvim",
-    dependencies = { "neovim/nvim-lspconfig" },
-    event = { "BufReadPre", "BufNewFile" },
-    config = function()
-      local null_ls = require("null-ls")
-      null_ls.setup(vim.tbl_extend("keep", {
-        root_dir = function(fname)
-          local util = require("lspconfig.util")
-          return util.root_pattern(".git", "Makefile", "setup.py", "setup.cfg", "pyproject.toml", "package.json")(fname)
-            or util.path.dirname(fname)
-        end,
-      }, require("nullconfig")))
     end,
   },
 

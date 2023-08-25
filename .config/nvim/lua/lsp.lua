@@ -1,36 +1,6 @@
 local p = require("p")
 local M = {}
 
-local function adjust_formatting_capabilities(client, bufnr)
-  if not pcall(require, "null-ls") then
-    return
-  end
-  local sources = require("null-ls.sources")
-  local methods = require("null-ls.methods")
-  local null_ls_client = require("null-ls.client").get_client()
-  if not null_ls_client or not vim.lsp.buf_is_attached(bufnr, null_ls_client.id) then
-    return
-  end
-  local formatters = sources.get_available(vim.bo[bufnr].filetype, methods.FORMATTING)
-  if vim.tbl_isempty(formatters) then
-    return
-  end
-  if client.id == null_ls_client.id then
-    -- We're attaching a null-ls client. If it has a formatter, disable
-    -- formatting on all prior clients
-    local clients = vim.lsp.get_active_clients({ bufnr = bufnr })
-    for _, other_client in pairs(clients) do
-      if other_client.id ~= client.id then
-        other_client.server_capabilities.documentFormattingProvider = nil
-        other_client.server_capabilities.documentRangeFormattingProvider = nil
-      end
-    end
-  else
-    client.server_capabilities.documentFormattingProvider = nil
-    client.server_capabilities.documentRangeFormattingProvider = nil
-  end
-end
-
 M.save_win_positions = function(bufnr)
   if bufnr == nil or bufnr == 0 then
     bufnr = vim.api.nvim_get_current_buf()
@@ -70,8 +40,6 @@ local function cancelable(method)
 end
 
 M.on_attach = function(client, bufnr)
-  adjust_formatting_capabilities(client, bufnr)
-
   local function safemap(method, mode, key, rhs, desc)
     if client.server_capabilities[method] then
       vim.keymap.set(mode, key, rhs, { buffer = bufnr, desc = desc })
@@ -97,11 +65,6 @@ M.on_attach = function(client, bufnr)
     ":<C-U>lua vim.lsp.buf.range_code_action()<CR>",
     "[F]ind Code [A]ction"
   )
-  if client.server_capabilities.documentFormattingProvider then
-    vim.keymap.set("n", "=", function()
-      vim.lsp.buf.format({ async = true })
-    end, { buffer = bufnr })
-  end
   safemap("renameProvider", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
 
   if client.server_capabilities.documentHighlightProvider and not client.name:match("sorbet$") then

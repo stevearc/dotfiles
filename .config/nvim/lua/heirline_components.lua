@@ -313,23 +313,44 @@ conditions.lsp_attached = function()
 end
 
 local LSPActive = {
-  condition = conditions.lsp_attached,
-  update = { "LspAttach", "LspDetach", "VimResized" },
+  update = { "LspAttach", "LspDetach", "VimResized", "FileType" },
 
   flexible = 1,
   {
     provider = function()
       local names = {}
-      for _, server in pairs(vim.lsp.get_active_clients({ bufnr = 0 })) do
-        table.insert(names, server.name)
+      local lsp = rawget(vim, "lsp")
+      if lsp then
+        for _, server in pairs(lsp.get_active_clients({ bufnr = 0 })) do
+          table.insert(names, server.name)
+        end
       end
-      return " [" .. table.concat(names, " ") .. "]"
+      local has_lint, lint = pcall(require, "lint")
+      if has_lint then
+        for _, linter in ipairs(lint.linters_by_ft[vim.bo.filetype] or {}) do
+          table.insert(names, linter)
+        end
+      end
+      local conform = package.loaded.conform
+      if conform then
+        local formatters = conform.list_formatters(0)
+        for _, formatter in ipairs(formatters) do
+          table.insert(names, formatter.name)
+        end
+      end
+      if vim.tbl_isempty(names) then
+        return ""
+      else
+        return " [" .. table.concat(names, " ") .. "]"
+      end
     end,
   },
   {
+    condition = conditions.lsp_attached,
     provider = " [LSP]",
   },
   {
+    condition = conditions.lsp_attached,
     provider = " ",
   },
 }

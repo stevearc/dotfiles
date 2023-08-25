@@ -50,9 +50,11 @@ return {
           DEBOUNCE_MS,
           0,
           vim.schedule_wrap(function()
-            vim.api.nvim_buf_call(bufnr, function()
-              lint.try_lint(nil, { ignore_errors = true })
-            end)
+            if vim.api.nvim_buf_is_valid(bufnr) then
+              vim.api.nvim_buf_call(bufnr, function()
+                lint.try_lint(nil, { ignore_errors = true })
+              end)
+            end
           end)
         )
       end,

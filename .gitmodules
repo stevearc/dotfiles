@@ -49,3 +49,6 @@
 [submodule "vimplugins/oil.nvim"]
 	path = vimplugins/oil.nvim
 	url = https://github.com/stevearc/oil.nvim.git
+[submodule "vimplugins/conform.nvim"]
+	path = vimplugins/conform.nvim
+	url = https://github.com/stevearc/conform.nvim

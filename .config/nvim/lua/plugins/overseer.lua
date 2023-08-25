@@ -110,7 +110,7 @@ return {
 
       local has_dap = pcall(require, "dap")
       if has_dap then
-        require("dap.ext.vscode").json_decode = require("overseer.util").decode_json
+        require("dap.ext.vscode").json_decode = require("overseer.json").decode
       end
     end,
   },
