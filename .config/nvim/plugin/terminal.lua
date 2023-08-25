@@ -112,7 +112,7 @@ local function open()
     row = padding,
     col = padding,
   })
-  vim.api.nvim_win_set_option(winid, "winblend", 3)
+  -- vim.api.nvim_win_set_option(winid, "winblend", 3)
   local autocmd_id
   autocmd_id = vim.api.nvim_create_autocmd("VimResized", {
     desc = "Resize floating terminal on vim resize",
