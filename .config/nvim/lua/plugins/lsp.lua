@@ -273,94 +273,94 @@ return {
     end,
   },
 
-  {
-    "mfussenegger/nvim-jdtls",
-    ft = "java",
-    dependencies = { "neovim/nvim-lspconfig" },
-    config = function()
-      local aug = vim.api.nvim_create_augroup("Jdtls", {})
-      vim.api.nvim_create_autocmd("FileType", {
-        desc = "Start JDTLS",
-        pattern = "java",
-        group = aug,
-        callback = function(args)
-          local local_share = uv.os_homedir() .. "/.local/share"
-          local jdtls_root = local_share .. "/jdtls"
-          local configuration
-          if uv.os_uname().version:match("Windows") then
-            configuration = jdtls_root .. "/config_win"
-          elseif uv.os_uname().sysname == "Darwin" then
-            configuration = jdtls_root .. "/config_mac"
-          else
-            configuration = jdtls_root .. "/config_linux"
-          end
-          if vim.fn.isdirectory(configuration) == 0 then
-            return
-          end
-
-          local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
-          local workspace_dir = vim.fn.stdpath("cache") .. "/jdtls/" .. project_name
-          local launcher = vim.fn.glob(jdtls_root .. "/plugins/org.eclipse.equinox.launcher_*.jar")
-          if launcher == "" then
-            return
-          end
-
-          -- Look for a local install of java
-          local java_cmd = vim.fn.glob(local_share .. "/java/Home/bin/java")
-          if java_cmd == "" then
-            java_cmd = "java"
-          end
-          if vim.fn.executable(java_cmd) == 0 then
-            return
-          end
-
-          -- Possibly not supposed to include all of these jar files https://github.com/salesforce/bazel-vscode/blob/c7f5b7476a425b3f6481c9b23c1057d894c3ed33/package.json#L23
-          local extension_dirs = { local_share .. "/bazel-eclipse/plugins/*.jar" }
-          local bundles = {}
-          for _, glob in ipairs(extension_dirs) do
-            vim.list_extend(bundles, vim.split(vim.fn.glob(glob), "\n"))
-          end
-
-          local config = {
-            cmd = {
-              java_cmd,
-              "-Declipse.application=org.eclipse.jdt.ls.core.id1",
-              "-Dosgi.bundles.defaultStartLevel=4",
-              "-Declipse.product=org.eclipse.jdt.ls.core.product",
-              "-Dlog.protocol=true",
-              "-Dlog.level=ALL",
-              "-Xmx4G",
-              "-Xms4G",
-              "--add-modules=ALL-SYSTEM",
-              "--add-opens",
-              "java.base/java.util=ALL-UNNAMED",
-              "--add-opens",
-              "java.base/java.lang=ALL-UNNAMED",
-              "-jar",
-              launcher,
-              "-configuration",
-              configuration,
-              "-data",
-              workspace_dir,
-            },
-
-            root_dir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew", ".bazelrc" }),
-
-            -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
-            -- for a list of options
-            settings = require("projects")[args.buf].lsp_settings.jdtls or {},
-
-            init_options = {
-              bundles = bundles,
-            },
-            capabilities = require("lsp").capabilities,
-          }
-
-          vim.api.nvim_buf_call(args.buf, function()
-            require("jdtls").start_or_attach(config)
-          end)
-        end,
-      })
-    end,
-  },
+  -- {
+  --   "mfussenegger/nvim-jdtls",
+  --   ft = "java",
+  --   dependencies = { "neovim/nvim-lspconfig" },
+  --   config = function()
+  --     local aug = vim.api.nvim_create_augroup("Jdtls", {})
+  --     vim.api.nvim_create_autocmd("FileType", {
+  --       desc = "Start JDTLS",
+  --       pattern = "java",
+  --       group = aug,
+  --       callback = function(args)
+  --         local local_share = uv.os_homedir() .. "/.local/share"
+  --         local jdtls_root = local_share .. "/jdtls"
+  --         local configuration
+  --         if uv.os_uname().version:match("Windows") then
+  --           configuration = jdtls_root .. "/config_win"
+  --         elseif uv.os_uname().sysname == "Darwin" then
+  --           configuration = jdtls_root .. "/config_mac"
+  --         else
+  --           configuration = jdtls_root .. "/config_linux"
+  --         end
+  --         if vim.fn.isdirectory(configuration) == 0 then
+  --           return
+  --         end
+  --
+  --         local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
+  --         local workspace_dir = vim.fn.stdpath("cache") .. "/jdtls/" .. project_name
+  --         local launcher = vim.fn.glob(jdtls_root .. "/plugins/org.eclipse.equinox.launcher_*.jar")
+  --         if launcher == "" then
+  --           return
+  --         end
+  --
+  --         -- Look for a local install of java
+  --         local java_cmd = vim.fn.glob(local_share .. "/java/Home/bin/java")
+  --         if java_cmd == "" then
+  --           java_cmd = "java"
+  --         end
+  --         if vim.fn.executable(java_cmd) == 0 then
+  --           return
+  --         end
+  --
+  --         -- Possibly not supposed to include all of these jar files https://github.com/salesforce/bazel-vscode/blob/c7f5b7476a425b3f6481c9b23c1057d894c3ed33/package.json#L23
+  --         local extension_dirs = { local_share .. "/bazel-eclipse/plugins/*.jar" }
+  --         local bundles = {}
+  --         for _, glob in ipairs(extension_dirs) do
+  --           vim.list_extend(bundles, vim.split(vim.fn.glob(glob), "\n"))
+  --         end
+  --
+  --         local config = {
+  --           cmd = {
+  --             java_cmd,
+  --             "-Declipse.application=org.eclipse.jdt.ls.core.id1",
+  --             "-Dosgi.bundles.defaultStartLevel=4",
+  --             "-Declipse.product=org.eclipse.jdt.ls.core.product",
+  --             "-Dlog.protocol=true",
+  --             "-Dlog.level=ALL",
+  --             "-Xmx4G",
+  --             "-Xms4G",
+  --             "--add-modules=ALL-SYSTEM",
+  --             "--add-opens",
+  --             "java.base/java.util=ALL-UNNAMED",
+  --             "--add-opens",
+  --             "java.base/java.lang=ALL-UNNAMED",
+  --             "-jar",
+  --             launcher,
+  --             "-configuration",
+  --             configuration,
+  --             "-data",
+  --             workspace_dir,
+  --           },
+  --
+  --           root_dir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew", ".bazelrc" }),
+  --
+  --           -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
+  --           -- for a list of options
+  --           settings = require("projects")[args.buf].lsp_settings.jdtls or {},
+  --
+  --           init_options = {
+  --             bundles = bundles,
+  --           },
+  --           capabilities = require("lsp").capabilities,
+  --         }
+  --
+  --         vim.api.nvim_buf_call(args.buf, function()
+  --           require("jdtls").start_or_attach(config)
+  --         end)
+  --       end,
+  --     })
+  --   end,
+  -- },
 }
