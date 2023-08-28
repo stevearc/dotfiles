@@ -22,13 +22,10 @@ local icons = vim.g.nerd_font and {
   Info = ".",
   Hint = ".",
 }
-local hl_num = {
-  Error = true,
-  Warn = true,
-}
 for _, lvl in ipairs({ "Error", "Warn", "Info", "Hint" }) do
   local hl = "DiagnosticSign" .. lvl
-  vim.fn.sign_define(hl, { text = icons[lvl], texthl = hl, linehl = "", numhl = hl_num[lvl] and hl or "" })
+  local highlight_lnum = lvl == "Error" or lvl == "Warn"
+  vim.fn.sign_define(hl, { text = icons[lvl], texthl = hl, linehl = "", numhl = highlight_lnum and hl or "" })
 end
 
 vim.keymap.set("n", "[d", function()
