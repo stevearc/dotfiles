@@ -1,7 +1,7 @@
 local prettier = { "prettierd", "prettier" }
 return {
   "stevearc/conform.nvim",
-  event = { "FileType" },
+  event = { "BufWritePre" },
   keys = {
     {
       "=",

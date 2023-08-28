@@ -1,4 +1,3 @@
-local uv = vim.uv or vim.loop
 return {
   {
     "neovim/nvim-lspconfig",
@@ -20,7 +19,6 @@ return {
       },
     },
     config = function()
-      local lspconfig = require("lspconfig")
       local lsp = require("lsp")
       local p = require("p")
       -- vim.lsp.set_log_level("debug")
@@ -78,16 +76,6 @@ return {
       vim.lsp.handlers["textDocument/typeDefinition"] = location_handler
       vim.lsp.handlers["textDocument/implementation"] = location_handler
 
-      vim.lsp.handlers["textDocument/formatting"] = function(_, result, ctx, _)
-        if not result then
-          return
-        end
-        local client = vim.lsp.get_client_by_id(ctx.client_id)
-        local restore = lsp.save_win_positions(ctx.bufnr)
-        vim.lsp.util.apply_text_edits(result, ctx.bufnr, client.offset_encoding)
-        restore()
-      end
-
       vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
       vim.lsp.handlers["textDocument/signatureHelp"] =
         vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
@@ -134,6 +122,7 @@ return {
         "gopls",
         "html",
         "omnisharp",
+        "pyright",
         "rust_analyzer",
         "vimls",
         "zls",
@@ -147,24 +136,6 @@ return {
             schemas = p.require("schemastore").json.schemas(),
           },
         },
-      })
-      local function is_using_sqlalchemy()
-        local util = lspconfig.util
-        local path = util.path
-        local setup = util.root_pattern("setup.cfg")(uv.cwd())
-        if not setup then
-          return false
-        end
-        for line in io.lines(path.join(setup, "setup.cfg")) do
-          if string.find(line, "sqlalchemy.ext.mypy.plugin") or string.find(line, "sqlmypy") then
-            return true
-          end
-        end
-        return false
-      end
-      lsp.safe_setup("pyright", {
-        -- pyright is real noisy when we're using sqlalchemy
-        diagnostics = not is_using_sqlalchemy(),
       })
       lsp.safe_setup("clangd", {
         filetypes = { "c", "cpp", "objc", "objcpp" },
@@ -232,7 +203,6 @@ return {
           lsp.on_attach(client, args.buf)
         end,
       })
-      -- vim.cmd("silent! LspStart")
     end,
   },
 

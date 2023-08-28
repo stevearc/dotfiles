@@ -1,30 +1,6 @@
 local p = require("p")
 local M = {}
 
-M.save_win_positions = function(bufnr)
-  if bufnr == nil or bufnr == 0 then
-    bufnr = vim.api.nvim_get_current_buf()
-  end
-  local win_positions = {}
-  for _, winid in ipairs(vim.api.nvim_list_wins()) do
-    if vim.api.nvim_win_get_buf(winid) == bufnr then
-      vim.api.nvim_win_call(winid, function()
-        local view = vim.fn.winsaveview()
-        table.insert(win_positions, { winid, view })
-      end)
-    end
-  end
-
-  return function()
-    for _, pair in ipairs(win_positions) do
-      local winid, view = unpack(pair)
-      vim.api.nvim_win_call(winid, function()
-        pcall(vim.fn.winrestview, view)
-      end)
-    end
-  end
-end
-
 local function cancelable(method)
   return function()
     local params = vim.lsp.util.make_position_params()
