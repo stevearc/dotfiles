@@ -1,13 +1,16 @@
+vim.g.no_format_filetypes = vim.g.no_format_filetypes or {}
 local prettier = { "prettierd", "prettier" }
 return {
   "stevearc/conform.nvim",
   event = { "BufWritePre" },
+  cmd = "ConformInfo",
   keys = {
     {
       "=",
       function()
         require("conform").format({ async = true, lsp_fallback = true })
       end,
+      mode = "",
       desc = "Format buffer",
     },
   },
@@ -32,7 +35,6 @@ return {
         run_all_formatters = true,
       },
     },
-    format_on_save = { timeout_ms = 500, lsp_fallback = true },
     log_level = vim.log.levels.DEBUG,
   },
   config = function(_, opts)
@@ -40,5 +42,18 @@ return {
       opts.format_on_save = false
     end
     require("conform").setup(opts)
+    local aug = vim.api.nvim_create_augroup("Conform", { clear = true })
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      pattern = "*",
+      group = aug,
+      callback = function(args)
+        if vim.tbl_contains(vim.g.no_format_filetypes, vim.bo[args.buf].filetype) then
+          return
+        end
+        if not vim.g.disable_autoformat and not vim.b[args.buf].disable_autoformat then
+          require("conform").format({ timeout_ms = 500, lsp_fallback = true, buf = args.buf })
+        end
+      end,
+    })
   end,
 }

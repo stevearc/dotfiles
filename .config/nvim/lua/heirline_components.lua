@@ -313,7 +313,7 @@ conditions.lsp_attached = function()
 end
 
 local LSPActive = {
-  update = { "LspAttach", "LspDetach", "VimResized", "FileType", "BufEnter" },
+  update = { "LspAttach", "LspDetach", "VimResized", "FileType", "BufEnter", "BufWritePost" },
 
   flexible = 1,
   {

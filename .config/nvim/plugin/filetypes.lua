@@ -83,7 +83,8 @@ ftplugin.extend_all({
   markdown = {
     opt = {
       conceallevel = 2,
-      formatoptions = "jqln",
+      formatoptions = "jqlnr",
+      comments = "b:-,b:*,b:>",
       linebreak = true,
       wrap = true,
     },
