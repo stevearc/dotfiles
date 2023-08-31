@@ -136,9 +136,7 @@ vim.filetype.add({
     norg = "norg", -- neorg
     rbi = "ruby",
     tsx = "typescript.tsx",
-  },
-  filename = {
-    [".nvimrc"] = "lua",
+    sky = "starlark",
   },
   pattern = {
     [".*/%.vscode/.*%.json"] = "json5", -- These json files frequently have comments
