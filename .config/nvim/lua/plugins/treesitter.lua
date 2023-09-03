@@ -17,6 +17,10 @@ return {
         if size > disable_max_size or size == -2 then
           return true
         end
+        -- The zig parser is insanely slow for some reason
+        if lang == "zig" then
+          return true
+        end
         return false
       end
 
@@ -153,5 +157,14 @@ return {
   {
     "nvim-treesitter/playground",
     cmd = { "TSPlaygroundToggle", "TSHighlightCapturesUnderCursor" },
+  },
+  {
+    "nvim-treesitter/nvim-treesitter-context",
+    opts = {
+      on_attach = function(bufnr)
+        -- context is super wrong for zig
+        return vim.bo[bufnr].filetype ~= "zig"
+      end,
+    },
   },
 }

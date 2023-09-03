@@ -1,11 +1,11 @@
 local M = {}
 
----@type QuickAction
+---@class QuickAction
 ---@field name string
 ---@field condition nil|fun(): boolean
 ---@field action fun()
 
----@type table<string, QuickAction>
+---@type table<string, QuickAction[]>
 local registered_actions = {}
 
 ---@param name string

@@ -204,7 +204,7 @@ ftplugin.extend_all({
     },
   },
   zig = {
-    compiler = "zig",
+    compiler = "zig_test",
     opt = {
       shiftwidth = 4,
       tabstop = 4,
