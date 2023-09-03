@@ -34,6 +34,7 @@ return {
         formatters = { "isort", "black" },
         run_all_formatters = true,
       },
+      zig = { "zigfmt" },
     },
     log_level = vim.log.levels.DEBUG,
   },
