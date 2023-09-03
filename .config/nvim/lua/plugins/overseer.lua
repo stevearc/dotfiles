@@ -17,6 +17,7 @@ return {
     },
     cmd = {
       "Grep",
+      "Make",
       "OverseerDebugParser",
       "OverseerInfo",
       "OverseerOpen",
@@ -107,6 +108,27 @@ return {
         })
         task:start()
       end, { nargs = "*", bang = true, bar = true, complete = "file" })
+
+      vim.api.nvim_create_user_command("Make", function(params)
+        -- Insert args at the '$*' in the makeprg
+        local cmd, num_subs = vim.o.makeprg:gsub("%$%*", params.args)
+        if num_subs == 0 then
+          cmd = cmd .. " " .. params.args
+        end
+        local task = require("overseer").new_task({
+          cmd = vim.fn.expandcmd(cmd),
+          components = {
+            { "on_output_quickfix", open = not params.bang, open_height = 8 },
+            "unique",
+            "default",
+          },
+        })
+        task:start()
+      end, {
+        desc = "Run your makeprg as an Overseer task",
+        nargs = "*",
+        bang = true,
+      })
 
       local has_dap = pcall(require, "dap")
       if has_dap then
