@@ -161,6 +161,7 @@ return {
   {
     "nvim-treesitter/nvim-treesitter-context",
     opts = {
+      multiline_threshold = 3,
       on_attach = function(bufnr)
         -- context is super wrong for zig
         return vim.bo[bufnr].filetype ~= "zig"
