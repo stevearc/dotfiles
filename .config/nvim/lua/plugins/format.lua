@@ -1,4 +1,3 @@
-vim.g.no_format_filetypes = vim.g.no_format_filetypes or {}
 local prettier = { "prettierd", "prettier" }
 return {
   "stevearc/conform.nvim",
@@ -28,30 +27,36 @@ return {
       markdown = { prettier },
       graphql = { prettier },
       lua = { "stylua" },
-      go = { "gofmt" },
+      go = { "goimports", "gofmt" },
       sh = { "shfmt" },
       python = { "isort", "black" },
       zig = { "zigfmt" },
     },
     log_level = vim.log.levels.DEBUG,
+    format_on_save = function(bufnr)
+      local async_format = vim.g.async_format_filetypes[vim.bo[bufnr].filetype]
+      if async_format or vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+        return
+      end
+      return { timeout_ms = 500, lsp_fallback = true }
+    end,
+    format_after_save = function(bufnr)
+      local async_format = vim.g.async_format_filetypes[vim.bo[bufnr].filetype]
+      if not async_format or vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+        return
+      end
+      return { lsp_fallback = true }
+    end,
+    user_async_format_filetypes = {
+      python = true,
+    },
   },
   config = function(_, opts)
     if vim.g.started_by_firenvim then
       opts.format_on_save = false
+      opts.format_after_save = false
     end
+    vim.g.async_format_filetypes = opts.user_async_format_filetypes
     require("conform").setup(opts)
-    local aug = vim.api.nvim_create_augroup("Conform", { clear = true })
-    vim.api.nvim_create_autocmd("BufWritePre", {
-      pattern = "*",
-      group = aug,
-      callback = function(args)
-        if vim.tbl_contains(vim.g.no_format_filetypes, vim.bo[args.buf].filetype) then
-          return
-        end
-        if not vim.g.disable_autoformat and not vim.b[args.buf].disable_autoformat then
-          require("conform").format({ timeout_ms = 500, lsp_fallback = true, buf = args.buf })
-        end
-      end,
-    })
   end,
 }
