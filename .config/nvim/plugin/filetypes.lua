@@ -84,7 +84,7 @@ ftplugin.extend_all({
     opt = {
       conceallevel = 2,
       formatoptions = "jqlnr",
-      comments = "b:-,b:*,b:>",
+      comments = "sb:- [x],mb:- [ ],b:-,b:*,b:>",
       linebreak = true,
       wrap = true,
     },
