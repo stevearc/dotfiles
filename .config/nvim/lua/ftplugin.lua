@@ -5,7 +5,6 @@
 ---@field bufvar? table<string, any> Buffer-local variables
 ---@field callback? fun(bufnr: integer)
 ---@field opt? table<string, any> Buffer-local or window-local options
----@field ignore_win_opts? boolean Don't manage the window-local options for this filetype
 ---@field compiler? string
 
 local did_setup = false
@@ -113,7 +112,6 @@ M.extend = function(name, new_config)
   conf.callback = merge_callbacks(conf.callback, new_config.callback)
   conf.bindings = merge_bindings(conf.bindings, new_config.bindings)
   conf.keys = merge_bindings(conf.keys, new_config.keys)
-  conf.ignore_win_opts = coalesce(new_config.ignore_win_opts, conf.ignore_win_opts)
   conf.compiler = coalesce(new_config.compiler, conf.compiler)
   configs[name] = conf
   if did_setup then
@@ -139,20 +137,16 @@ end
 
 ---@param name string
 ---@param winid integer
----@return table<string, boolean>
 local function _apply_win(name, winid)
   local conf = configs[name]
   if not conf or not conf.opt then
-    return {}
+    return
   end
-  local ret = {}
   for k, v in pairs(conf.opt) do
     local opt_info = vim.api.nvim_get_option_info2(k, {})
     if opt_info.scope == "win" then
       local ok, err = pcall(vim.api.nvim_set_option_value, k, v, { scope = "local", win = winid })
-      if ok then
-        ret[k] = true
-      else
+      if not ok then
         vim.notify(
           string.format("Error setting window option %s = %s: %s", k, vim.inspect(v), err),
           vim.log.levels.ERROR
@@ -160,43 +154,20 @@ local function _apply_win(name, winid)
       end
     end
   end
-  return ret
 end
 
 ---Apply window options
 ---@param name string
 ---@param winid integer
 M.apply_win = function(name, winid)
-  local win_overrides = {}
   local pieces = vim.split(name, ".", { plain = true })
   if #pieces > 1 then
     for _, ft in ipairs(pieces) do
-      win_overrides = vim.tbl_extend("force", win_overrides, _apply_win(ft, winid))
+      _apply_win(ft, winid)
     end
   else
-    win_overrides = _apply_win(name, winid)
+    _apply_win(name, winid)
   end
-
-  local conf = configs[name]
-  if conf and conf.ignore_win_opts then
-    return
-  end
-  -- Restore other window options to the default value
-  local has_prev, prev_win_opts = pcall(vim.api.nvim_win_get_var, winid, "ftplugin_set_opts")
-  if has_prev then
-    for _, prev_opt in ipairs(prev_win_opts) do
-      if not win_overrides[prev_opt] then
-        local ok, err = pcall(vim.api.nvim_win_set_option, winid, prev_opt, get_default_opt(winid, prev_opt))
-        if not ok then
-          vim.notify(
-            string.format("Error restoring window option %s = %s: %s", prev_opt, get_default_opt(winid, prev_opt), err),
-            vim.log.levels.ERROR
-          )
-        end
-      end
-    end
-  end
-  vim.api.nvim_win_set_var(winid, "ftplugin_set_opts", vim.tbl_keys(win_overrides))
 end
 
 ---Apply all filetype configs for a buffer

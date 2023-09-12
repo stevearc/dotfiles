@@ -69,16 +69,5 @@ return {
         experimental_selection_range = true,
       },
     },
-    config = function(_, opts)
-      require("aerial").setup(opts)
-      local p = require("p")
-      local ftplugin = p.require("ftplugin")
-      ftplugin.extend("aerial", {
-        ignore_win_opts = true,
-      })
-      ftplugin.extend("aerial-nav", {
-        ignore_win_opts = true,
-      })
-    end,
   },
 }
