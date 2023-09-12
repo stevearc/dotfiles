@@ -50,7 +50,9 @@ return {
         dapui.close()
       end
       vim.schedule(function()
+        require("dap.ext.vscode").json_decode = require("overseer.json").decode
         require("dap.ext.vscode").load_launchjs(nil, { node = { "typescript", "javascript" } })
+        require("overseer").patch_dap(true)
       end)
     end,
   },

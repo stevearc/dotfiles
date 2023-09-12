@@ -12,9 +12,6 @@ return {
   },
   {
     "stevearc/overseer.nvim",
-    dependencies = {
-      "mfussenegger/nvim-dap",
-    },
     cmd = {
       "Grep",
       "Make",
@@ -129,11 +126,6 @@ return {
         nargs = "*",
         bang = true,
       })
-
-      local has_dap = pcall(require, "dap")
-      if has_dap then
-        require("dap.ext.vscode").json_decode = require("overseer.json").decode
-      end
     end,
   },
 }
