@@ -46,8 +46,9 @@ return {
       resession.detach()
     end, {})
     vim.keymap.set("n", "ZZ", function()
-      resession.save("__quicksave__", { notify = false })
       vim.cmd("wa")
+      resession.save("__quicksave__", { notify = false })
+      vim.api.nvim_create_augroup("StevearcResession", {})
       vim.cmd("qa")
     end)
 
