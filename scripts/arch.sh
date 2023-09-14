@@ -55,6 +55,16 @@ dc-install-virtmanager() {
   sudo usermod -a -G libvirt "$USER"
 }
 
+dc-install-syncthing() {
+  sudo pacman -Syq --noconfirm syncthing
+  systemctl --user enable syncthing
+  systemctl --user start syncthing
+  if hascmd firewall-cmd; then
+    sudo firewall-cmd --zone=home --add-service=syncthing
+    sudo firewall-cmd --permanent --zone=home --add-service=syncthing
+  fi
+}
+
 DC_INSTALL_JELLYFIN_DOC="Jellyfin media server"
 dc-install-jellyfin() {
   pacman -Qm | grep -q jellyfin-bin || yay -Sy --noconfirm jellyfin-bin
@@ -246,11 +256,11 @@ dotcmd-pibox() {
     sudo systemctl daemon-reload
     test -e ~/.config/transmission-daemon/settings.json || echo "{}" >~/.config/transmission-daemon/settings.json
     sudo systemctl stop transmission-daemon
-    cat ~/.config/transmission-daemon/settings.json \
-      | jq '."rpc-enabled" = true' \
-      | jq '."rpc-whitelist-enabled" = false' \
-      | jq '."script-torrent-done-enabled" = true' \
-      | jq '."script-torrent-done-filename" = "'$HOME/dotfiles/static/torrent_done.py'"' \
+    cat ~/.config/transmission-daemon/settings.json |
+      jq '."rpc-enabled" = true' |
+      jq '."rpc-whitelist-enabled" = false' |
+      jq '."script-torrent-done-enabled" = true' |
+      jq '."script-torrent-done-filename" = "'$HOME/dotfiles/static/torrent_done.py'"' \
         >/tmp/settings.json
     mv /tmp/settings.json ~/.config/transmission-daemon/settings.json
     sudo systemctl enable transmission-daemon
