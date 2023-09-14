@@ -1,9 +1,12 @@
 local function bufgrep(text)
   vim.cmd.cclose()
   vim.cmd("%argd")
-  local bufnr = vim.api.nvim_get_current_buf()
-  vim.cmd.bufdo({ args = { "argadd", "%" } })
-  vim.api.nvim_set_current_buf(bufnr)
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+    local name = vim.api.nvim_buf_get_name(bufnr)
+    if vim.bo[bufnr].buflisted and vim.bo[bufnr].buftype == "" and name ~= "" then
+      vim.cmd.argadd({ args = { name } })
+    end
+  end
   vim.cmd.vimgrep({ args = { string.format("/%s/gj", text), "##" }, mods = { silent = true } })
   vim.cmd("QFOpen!")
 end
@@ -27,6 +30,7 @@ return {
   {
     "stevearc/qf_helper.nvim",
     ft = "qf",
+    cmd = { "QNext", "QPrev", "QFToggle", "QFOpen", "LLToggle" },
     keys = {
       { "<C-N>", "<cmd>QNext<CR>", mode = "n" },
       { "<C-P>", "<cmd>QPrev<CR>", mode = "n" },
