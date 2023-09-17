@@ -1,12 +1,4 @@
 local prettier = { "prettierd", "prettier" }
-local function get_lsp_fallback(bufnr)
-  local formatters = require("conform").list_formatters(bufnr)
-  if #formatters > 0 and formatters[1].name == "trim_whitespace" then
-    return "always"
-  else
-    return true
-  end
-end
 
 local slow_format_filetypes = {}
 return {
@@ -17,7 +9,7 @@ return {
     {
       "=",
       function()
-        require("conform").format({ async = true, lsp_fallback = get_lsp_fallback(0) })
+        require("conform").format({ async = true, lsp_fallback = true })
       end,
       mode = "",
       desc = "Format buffer",
@@ -49,20 +41,23 @@ return {
         return
       end
       local function on_format(err)
-        if err and err:match("timed out$") then
+        if err and err:match("timeout$") then
           slow_format_filetypes[vim.bo[bufnr].filetype] = true
         end
       end
 
-      return { timeout_ms = 200, lsp_fallback = get_lsp_fallback(bufnr) }, on_format
+      return { timeout_ms = 200, lsp_fallback = true }, on_format
     end,
     format_after_save = function(bufnr)
       if not slow_format_filetypes[vim.bo[bufnr].filetype] then
         return
       end
-      return { lsp_fallback = get_lsp_fallback(bufnr) }
+      return { lsp_fallback = true }
     end,
   },
+  init = function()
+    vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+  end,
   config = function(_, opts)
     vim.list_extend(require("conform.formatters.shfmt").args, { "-i", "2" })
     if vim.g.started_by_firenvim then

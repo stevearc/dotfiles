@@ -334,8 +334,10 @@ local LSPActive = {
       local conform = package.loaded.conform
       if conform then
         local formatters = conform.list_formatters(0)
-        for _, formatter in ipairs(formatters) do
-          table.insert(names, formatter.name)
+        if not conform.will_fallback_lsp() then
+          for _, formatter in ipairs(formatters) do
+            table.insert(names, formatter.name)
+          end
         end
       end
       if vim.tbl_isempty(names) then
