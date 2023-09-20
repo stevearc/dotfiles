@@ -13,6 +13,7 @@ return {
   },
   {
     "stevearc/three.nvim",
+    event = "VeryLazy",
     opts = {
       projects = {
         allowlist = {
