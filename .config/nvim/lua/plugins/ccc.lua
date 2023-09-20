@@ -3,6 +3,7 @@ local ccc_filetypes =
 return {
   "uga-rosa/ccc.nvim",
   cmd = { "CccPick" },
+  ft = ccc_filetypes,
   init = function()
     require("quick_action").add("menu", {
       name = "Pick color",

@@ -32,6 +32,7 @@ return {
       { "<leader>os", "<cmd>OverseerTaskAction<CR>", mode = "n" },
     },
     opts = {
+      templates = { builtin = true },
       strategy = { "jobstart" },
       log = {
         {
@@ -68,6 +69,7 @@ return {
       post_setup = {},
     },
     config = function(_, opts)
+      opts.templates = vim.tbl_keys(opts.templates)
       local overseer = require("overseer")
       overseer.setup(opts)
       for _, cb in pairs(opts.post_setup) do

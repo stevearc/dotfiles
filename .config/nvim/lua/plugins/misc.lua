@@ -1,7 +1,6 @@
 return {
   { "stevearc/stickybuf.nvim", cmd = { "PinBuffer", "PinBuftype", "PinFiletype" }, opts = {} },
   { "lambdalisue/suda.vim", cmd = { "SudaRead", "SudaWrite" } },
-  { "godlygeek/tabular", cmd = { "Tabularize" } },
   "wellle/targets.vim",
   {
     "stevearc/vim-arduino",
@@ -92,6 +91,10 @@ return {
           enabled = true,
           font = "24",
         },
+        kitty = {
+          enabled = true,
+          font = "24",
+        },
       },
     },
   },
@@ -109,7 +112,11 @@ return {
       post_open = function(bufnr, winnr, ft, is_blocking)
         vim.w[winnr].is_remote = true
         if is_blocking then
-          vim.bo.bufhidden = "wipe"
+          vim.bo[bufnr].bufhidden = "wipe"
+          local has_stickybuf, stickybuf = pcall(require, "stickybuf")
+          if has_stickybuf then
+            stickybuf.pin(winnr)
+          end
           vim.api.nvim_create_autocmd("BufHidden", {
             desc = "Close window when buffer is hidden",
             callback = function()
@@ -134,7 +141,7 @@ return {
         auto_trigger = true,
         debounce = 75,
         keymap = {
-          accept = "<C-y>",
+          accept = "<C-i>",
           accept_word = false,
           accept_line = false,
           next = "<C-n>",
@@ -146,5 +153,38 @@ return {
         enabled = false,
       },
     },
+  },
+  {
+    "ggandor/lightspeed.nvim",
+    keys = {
+      { "<leader>s", "<Plug>Lightspeed_omni_s", desc = "Lightspeed search", mode = "" },
+      { "gs", "<Plug>Lightspeed_omni_s", desc = "Lightspeed search", mode = "" },
+    },
+    opts = {
+      jump_to_unique_chars = false,
+      safe_labels = {},
+    },
+    config = function(_, opts)
+      require("lightspeed").setup(opts)
+    end,
+    init = function()
+      vim.g.lightspeed_no_default_keymaps = true
+    end,
+  },
+  {
+    "andymass/vim-matchup",
+    event = { "BufReadPre", "BufNewFile" },
+    keys = {
+      { "[[", "<plug>(matchup-[%)", mode = { "n", "x" } },
+      { "]]", "<plug>(matchup-]%)", mode = { "n", "x" } },
+    },
+    init = function()
+      vim.g.matchup_surround_enabled = 1
+      vim.g.matchup_matchparen_nomode = "i"
+      vim.g.matchup_matchparen_deferred = 1
+      vim.g.matchup_matchparen_deferred_show_delay = 400
+      vim.g.matchup_matchparen_deferred_hide_delay = 400
+      vim.g.matchup_matchparen_offscreen = {}
+    end,
   },
 }

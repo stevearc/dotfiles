@@ -152,6 +152,12 @@ return {
         callback = set_ts_win_defaults,
         group = aug,
       })
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        desc = "nvim-treesitter-context highlights",
+        pattern = "*",
+        command = "highlight link TreesitterContextLineNumber NormalFloat",
+        group = aug,
+      })
     end,
   },
   {

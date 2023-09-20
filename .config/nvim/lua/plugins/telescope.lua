@@ -1,4 +1,6 @@
 function stevearc.find_files(...)
+  pcall(require, "telescope")
+  pcall(require, "fzf-lua")
   if stevearc._find_files_impl then
     stevearc._find_files_impl(...)
   else
@@ -6,8 +8,6 @@ function stevearc.find_files(...)
   end
 end
 vim.keymap.set("n", "<leader>ff", function()
-  pcall(require, "telescope")
-  pcall(require, "fzf-lua")
   stevearc.find_files()
 end, { desc = "[F]ind [F]iles" })
 

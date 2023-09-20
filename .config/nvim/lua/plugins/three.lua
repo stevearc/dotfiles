@@ -19,6 +19,7 @@ return {
           vim.fn.stdpath("data") .. "/lazy",
           vim.fs.normalize("~/dotfiles/vimplugins/openai.nvim"),
         },
+        extra_allowlist = {},
         filter_dir = function(dir)
           local dotgit = dir .. sep .. ".git"
           if vim.fn.isdirectory(dotgit) == 1 or vim.fn.filereadable(dotgit) == 1 then
@@ -30,6 +31,7 @@ return {
       },
     },
     config = function(_, opts)
+      vim.list_extend(opts.projects.allowlist, vim.tbl_keys(opts.projects.extra_allowlist))
       local three = require("three")
       three.setup(opts)
       vim.keymap.set("n", "L", three.next, { desc = "Next buffer" })

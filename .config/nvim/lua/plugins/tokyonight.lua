@@ -9,7 +9,7 @@ return {
       keywords = { italic = false },
       floats = "normal",
     },
-    sidebars = vim.list_extend({ "qf", "help", "terminal" }, vim.g.sidebar_filetypes),
+    sidebars = { "qf", "help", "terminal", "dagger", "aerial", "OverseerList", "neotest-summary" },
     on_highlights = function(highlights, c)
       for _, defn in pairs(highlights) do
         if defn.undercurl then

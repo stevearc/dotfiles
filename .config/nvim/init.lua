@@ -47,8 +47,6 @@ vim.keymap.set("n", "<f2>", [[<cmd>lua require("plenary.profile").start("profile
 vim.keymap.set("n", "<f3>", [[<cmd>lua require("plenary.profile").stop()<cr>]])
 
 vim.g.nerd_font = true
-vim.g.debug_treesitter = false
-vim.g.sidebar_filetypes = { "dagger", "aerial", "OverseerList", "neotest-summary" }
 
 -- Space is leader
 vim.g.mapleader = " "
@@ -62,6 +60,7 @@ vim.o.gdefault = true -- Use 'g' flag by default with :s/foo/bar
 vim.o.exrc = true -- Load .nvim.lua files
 vim.o.guifont = "UbuntuMono Nerd Font:h10"
 vim.o.ignorecase = true
+vim.o.jumpoptions = "stack"
 vim.o.laststatus = 3 -- Global statusline
 vim.o.mouse = "a" -- Enable use of mouse
 vim.o.path = "**" -- Use a recursive path (for :find)
@@ -131,7 +130,7 @@ vim.filetype.add({
   extension = {
     cconf = "python",
     frag = "glsl",
-    norg = "norg", -- neorg
+    norg = "norg",
     rbi = "ruby",
     sky = "starlark",
   },
@@ -182,10 +181,6 @@ vim.keymap.set("c", "<C-g>", "<C-c>")
 -- Jumps <= 5 respect line wraps
 vim.keymap.set("n", "j", [[(v:count > 5 ? "m'" . v:count . 'j' : 'gj')]], { expr = true })
 vim.keymap.set("n", "k", [[(v:count > 5 ? "m'" . v:count . 'k' : 'gk')]], { expr = true })
-
--- Paste last text that was yanked, not deleted
-vim.keymap.set("n", "<leader>p", '"0p')
-vim.keymap.set("n", "<leader>P", '"0P')
 
 local obs = false
 local function set_scrolloff(winid)
@@ -267,13 +262,6 @@ vim.api.nvim_create_autocmd("BufEnter", {
   group = aug,
 })
 
-vim.api.nvim_create_autocmd("InsertLeave", {
-  desc = "Leave paste mode when leaving insert",
-  pattern = "*",
-  command = "set nopaste",
-  group = aug,
-})
-
 -- Close the scratch preview automatically
 vim.api.nvim_create_autocmd({ "CursorMovedI", "InsertLeave" }, {
   desc = "Close the popup-menu automatically",
@@ -288,28 +276,6 @@ vim.keymap.set("i", "<C-e>", "<C-o>$")
 
 -- This lets our bash aliases know to use nvr instead of nvim
 vim.env.NVIM_LISTEN_ADDRESS = vim.v.servername
-
-vim.api.nvim_create_autocmd("BufEnter", {
-  desc = "Pin buffer to window if opened from remote",
-  pattern = "*",
-  callback = function()
-    if not vim.w.is_remote then
-      return
-    end
-    if not vim.w._remote_entered then
-      vim.w._remote_entered = true
-      vim.cmd([[silent! PinBuffer]])
-      vim.bo.bufhidden = "wipe"
-    end
-  end,
-  group = aug,
-})
-vim.api.nvim_create_autocmd("ColorScheme", {
-  desc = "nvim-treesitter-context highlights",
-  pattern = "*",
-  command = "highlight link TreesitterContextLineNumber NormalFloat",
-  group = aug,
-})
 
 p.require("tags", function(tags)
   tags.setup({
@@ -389,7 +355,6 @@ local specs = {
     "rcarriga/nvim-notify",
     event = "VeryLazy",
     config = function()
-      -- We have to set this up after we apply our colorscheme
       vim.notify = old_notify
       local notify = require("notify")
       vim.notify = notify
@@ -398,10 +363,12 @@ local specs = {
         render = "minimal",
         top_down = false,
       })
-      for _, args in ipairs(pending_notifications) do
-        vim.notify(vim.F.unpack_len(args))
-      end
-      pending_notifications = nil
+      vim.defer_fn(function()
+        for _, args in ipairs(pending_notifications) do
+          vim.notify(vim.F.unpack_len(args))
+        end
+        pending_notifications = nil
+      end, 200)
     end,
   },
 }
