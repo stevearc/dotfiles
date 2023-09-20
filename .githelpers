@@ -23,11 +23,9 @@ SUBJECT="%s"
 FORMAT="$HASH $RELATIVE_TIME $AUTHOR $REFS $SUBJECT"
 
 pretty_git_log() {
-  git log --graph --abbrev-commit --date=relative --color=always --pretty="tformat:${FORMAT}" "$@" \
-    |
+  git log --graph --abbrev-commit --date=relative --color=always --pretty="tformat:${FORMAT}" "$@" |
     # Replace (2 years ago) with (2 years)
-    sed -Ee 's/(^[^<]*) ago\)/\1)/' \
-    |
+    sed -Ee 's/(^[^<]*) ago\)/\1)/' |
     # Replace (2 years, 5 months) with (2 years)
     sed -Ee 's/(^[^<]*), [[:digit:]]+ .*months?\)/\1)/'
 
@@ -36,8 +34,7 @@ pretty_git_log() {
 }
 
 pretty_git_log_paged() {
-  pretty_git_log "$@" \
-    |
+  pretty_git_log "$@" |
     # Page only if we need to
     less -FXRS
 }
@@ -59,11 +56,9 @@ contextual_git_log() {
 
   local tmpfile
   tmpfile=$(mktemp)
-  git log $after --all --graph --abbrev-commit --date=relative --color=always --pretty="tformat:${FORMAT}" "$@" \
-    |
+  git log $after --all --graph --abbrev-commit --date=relative --color=always --pretty="tformat:${FORMAT}" "$@" |
     # Replace (2 years ago) with (2 years)
-    sed -Ee 's/(^[^<]*) ago\)/\1)/' \
-    |
+    sed -Ee 's/(^[^<]*) ago\)/\1)/' |
     # Replace (2 years, 5 months) with (2 years)
     sed -Ee 's/(^[^<]*), [[:digit:]]+ .*months?\)/\1)/' >"$tmpfile"
 
@@ -79,8 +74,7 @@ contextual_git_log() {
 }
 
 contextual_git_log_paged() {
-  contextual_git_log "$@" \
-    |
+  contextual_git_log "$@" |
     # Page only if we need to
     less -FXRS
 }
@@ -130,12 +124,11 @@ _get_repo_url() {
     # Strip the .git off the end, if present.
     echo "${url%.git}"
   else
-    echo "$url" \
-      |
+    echo "$url" |
       # Trim the git@ from the start
-      sed 's/^.*@//' \
-      | sed 's|:|/|' \
-      | sed 's|^|https://|'
+      sed 's/^.*@//' |
+      sed 's|:|/|' |
+      sed 's|^|https://|'
   fi
 }
 
@@ -163,13 +156,13 @@ create_pull_request() {
   local fix=
   while getopts "f:" opt; do
     case $opt in
-      f)
-        fix=$OPTARG
-        ;;
-      \?)
-        echo "$usage"
-        exit 1
-        ;;
+    f)
+      fix=$OPTARG
+      ;;
+    \?)
+      echo "$usage"
+      exit 1
+      ;;
     esac
   done
   shift $((OPTIND - 1))
@@ -217,18 +210,18 @@ show_modified_files() {
   local root=
   root=$(git rev-parse --show-toplevel)
   if [ -n "$commit" ]; then
-    git diff-tree --no-commit-id --name-status -r "$commit" \
-      | grep "^[AM]" \
-      | awk '{print $2}' \
-      | while read -r filename; do
+    git diff-tree --no-commit-id --name-status -r "$commit" |
+      grep "^[AM]" |
+      awk '{print $2}' |
+      while read -r filename; do
         echo "$root/$filename"
       done
   else
-    git status --porcelain \
-      | sed '/\/$/d' \
-      | sed '/^ *D /d' \
-      | awk '{print $2}' \
-      | while read -r filename; do
+    git status --porcelain |
+      sed '/\/$/d' |
+      sed '/^ *D /d' |
+      awk '{print $2}' |
+      while read -r filename; do
         echo "$root/$filename"
       done
   fi
@@ -240,49 +233,55 @@ confirm() {
   local prompt="${1-Are you sure?}"
   local default="$2"
   case $default in
-    [yY])
-      prompt="$prompt [Y/n] "
-      ;;
-    [nN])
-      prompt="$prompt [y/N] "
-      ;;
-    *)
-      prompt="$prompt [y/n] "
-      ;;
+  [yY])
+    prompt="$prompt [Y/n] "
+    ;;
+  [nN])
+    prompt="$prompt [y/N] "
+    ;;
+  *)
+    prompt="$prompt [y/n] "
+    ;;
   esac
   while true; do
     read -r -p "$prompt" response
     case $response in
-      [yY][eE][sS] | [yY])
-        return 0
-        ;;
-      [nN][oO] | [nN])
-        return 1
-        ;;
-      *)
-        if [ -z "$response" ]; then
-          case $default in
-            [yY])
-              return 0
-              ;;
-            [nN])
-              return 1
-              ;;
-          esac
-        fi
-        ;;
+    [yY][eE][sS] | [yY])
+      return 0
+      ;;
+    [nN][oO] | [nN])
+      return 1
+      ;;
+    *)
+      if [ -z "$response" ]; then
+        case $default in
+        [yY])
+          return 0
+          ;;
+        [nN])
+          return 1
+          ;;
+        esac
+      fi
+      ;;
     esac
   done
 }
 
 delete_merged() {
   # Now find local branches with no remote
-  for branch in $(git branch --format "%(refname:short) %(upstream)" | awk '{if (!$2) print $1;}') $(git branch --merged "$(git main)" | grep -v $(git main)); do
+  for branch in $(git branch --format "%(refname:short) %(upstream)" | awk '{if (!$2) print $1;}') $(git branch --no-color --merged "$(git main)" | grep -v '\*\|master\|develop\|main'); do
     if git rev-parse "$branch" >/dev/null 2>&1; then
       pretty_git_log -20 "$branch"
       echo ""
       if confirm "Delete $branch?" "n"; then
-        git branch -d "$branch"
+        local deleted=1
+        git branch -d "$branch" || deleted=
+        if [ ! $deleted ]; then
+          if confirm "Force delete $branch?" "n"; then
+            git branch -D "$branch"
+          fi
+        fi
       fi
     fi
   done
