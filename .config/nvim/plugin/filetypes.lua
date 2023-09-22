@@ -87,6 +87,7 @@ ftplugin.extend_all({
       comments = "sb:- [x],mb:- [ ],b:-,b:*,b:>",
       linebreak = true,
       wrap = true,
+      suffixesadd = ".md",
     },
     keys = {
       { "<leader>td", require("markdown").task_mark_done },
