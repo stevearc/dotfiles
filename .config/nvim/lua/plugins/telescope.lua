@@ -113,7 +113,6 @@ return {
     "ibhagwan/fzf-lua",
     enabled = vim.fn.executable("fzf") == 1,
     lazy = true,
-    commit = "c9230c337d33a1c5437f0029cbda87e522516982", -- After this we lose support for fzf < 0.25
     config = function()
       local fzf = require("fzf-lua")
       fzf.setup({
@@ -121,8 +120,6 @@ return {
         files = {
           previewer = false,
         },
-        -- This is required to support older version of fzf
-        fzf_opts = { ["--border"] = false },
         git = {
           files = {
             previewer = false,
