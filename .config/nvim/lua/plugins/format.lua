@@ -59,7 +59,8 @@ return {
     vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
   end,
   config = function(_, opts)
-    vim.list_extend(require("conform.formatters.shfmt").args, { "-i", "2" })
+    local util = require("conform.util")
+    util.add_formatter_args(require("conform.formatters.shfmt"), { "-i", "2" })
     if vim.g.started_by_firenvim then
       opts.format_on_save = false
       opts.format_after_save = false
