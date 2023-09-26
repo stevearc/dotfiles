@@ -65,6 +65,11 @@ return {
       { "<leader>fq", "<cmd>Telescope quickfixhistory<CR>", mode = "n" },
     },
     opts = {
+      pickers = {
+        colorscheme = {
+          enable_preview = true,
+        },
+      },
       defaults = {
         winblend = 10,
         file_ignore_patterns = {
