@@ -28,7 +28,7 @@
   "neotest-jest": { "branch": "main", "commit": "ae559fbd405084ee38dd711eede6d74f3dc1d463" },
   "neotest-plenary": { "branch": "master", "commit": "e0d9b1530307a03abcc52fc0ae28f054dea3f752" },
   "neotest-python": { "branch": "master", "commit": "81d2265efac717bb567bc15cc652ae10801286b3" },
-  "nightfox.nvim": { "branch": "main", "commit": "ee3525fdfbe2ed81270a336ccbe62f433165357b" },
+  "nightfox.nvim": { "branch": "main", "commit": "fe2fc7b93d66349eff2c5baa6cec922ee3958f56" },
   "nvim-FeMaco.lua": { "branch": "main", "commit": "c4e9c71c9ca595772a360435bdf91bee3f9d32b1" },
   "nvim-cmp": { "branch": "main", "commit": "5dce1b778b85c717f6614e3f4da45e9f19f54435" },
   "nvim-dap": { "branch": "master", "commit": "b3d4408e29d924fe130c9397a7c3b3630b3ea671" },
