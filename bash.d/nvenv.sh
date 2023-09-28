@@ -183,6 +183,10 @@ local plugins = {
 }
 require("lazy").setup(plugins, {
   root = root .. "/plugins",
+  dev = {
+    path = "~/dotfiles/vimplugins",
+    patterns = { "stevearc" },
+  },
 })
 
 vim.cmd.colorscheme("tokyonight")
