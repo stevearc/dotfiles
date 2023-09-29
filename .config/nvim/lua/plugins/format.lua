@@ -1,6 +1,5 @@
 local prettier = { "prettierd", "prettier" }
 
-local slow_format_filetypes = {}
 return {
   "stevearc/conform.nvim",
   event = { "BufWritePre" },
@@ -26,7 +25,8 @@ return {
       json = { prettier },
       jsonc = { prettier },
       yaml = { prettier },
-      markdown = { prettier },
+      markdown = { prettier, "injected" },
+      norg = { "injected" },
       graphql = { prettier },
       lua = { "stylua" },
       go = { "goimports", "gofmt" },
@@ -36,24 +36,7 @@ return {
       ["_"] = { "trim_whitespace", "trim_newlines" },
     },
     log_level = vim.log.levels.DEBUG,
-    format_on_save = function(bufnr)
-      if slow_format_filetypes[vim.bo[bufnr].filetype] then
-        return
-      end
-      local function on_format(err)
-        if err and err:match("timeout$") then
-          slow_format_filetypes[vim.bo[bufnr].filetype] = true
-        end
-      end
-
-      return { timeout_ms = 200, lsp_fallback = true }, on_format
-    end,
-    format_after_save = function(bufnr)
-      if not slow_format_filetypes[vim.bo[bufnr].filetype] then
-        return
-      end
-      return { lsp_fallback = true }
-    end,
+    format_after_save = { timeout_ms = 5000, lsp_fallback = true },
   },
   init = function()
     vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
@@ -61,6 +44,8 @@ return {
   config = function(_, opts)
     local util = require("conform.util")
     util.add_formatter_args(require("conform.formatters.shfmt"), { "-i", "2" })
+    -- Dealing with old version of prettierd that doesn't support range formatting
+    require("conform.formatters.prettierd").range_args = nil
     if vim.g.started_by_firenvim then
       opts.format_on_save = false
       opts.format_after_save = false
