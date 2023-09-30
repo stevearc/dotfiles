@@ -105,6 +105,7 @@ return {
       window = {
         open = "tab",
       },
+      one_per = { kitty = false, wezterm = false },
       block_for = {
         gitcommit = true,
         gitrebase = true,
