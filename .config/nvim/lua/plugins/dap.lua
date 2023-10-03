@@ -1,11 +1,11 @@
 return {
   {
     "mfussenegger/nvim-dap",
-    enabled = true,
     dependencies = {
       { "leoluz/nvim-dap-go", config = true },
       "rcarriga/nvim-dap-ui",
       { "theHamsta/nvim-dap-virtual-text", config = true },
+      { "stevearc/overseer.nvim" },
     },
     keys = {
       { "<leader>dc", "<cmd>lua require'dap'.continue()<CR>", mode = "n", desc = "[D]ebug [C]ontinue" },

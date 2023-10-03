@@ -34,6 +34,7 @@ return {
     opts = {
       templates = { builtin = true },
       strategy = { "jobstart" },
+      dap = false,
       log = {
         {
           type = "echo",
