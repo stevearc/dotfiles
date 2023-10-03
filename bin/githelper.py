@@ -7,7 +7,12 @@ import re
 import shutil
 import subprocess
 import sys
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+
+# TODO:
+# - create PRs
+# - action should only operate on current and prior branches (push, pr, etc)
+# - tag commits with branch name / PR to make tidy work better
 
 
 def run(*args, **kwargs) -> str:
@@ -34,7 +39,7 @@ def git(*args, **kwargs) -> str:
 
 def gh(*args, **kwargs) -> str:
     if shutil.which("gh") is None:
-        print("Missing gh executable")
+        sys.stderr.write("Missing gh executable\n")
         sys.exit(1)
     return run(*(("gh",) + args), **kwargs)
 
@@ -64,61 +69,131 @@ USER = os.environ["USER"]
 STACK_RE = re.compile(r"^(.*)\-(\d+)$")
 
 
-class Stack:
-    def __init__(self, name: str, children: List[str]):
-        self.name = name
-        self.children = children
-        self.pull_requests = []
-        self.pr_map = {}
+def parse_child(child: str) -> Tuple[str, int]:
+    """Parse a child branch name into a stack name and number"""
+    match = STACK_RE.match(child)
+    assert match
+    return match[1], int(match[2])
 
-    def add_child(self, branch: str):
-        self.children.append(branch)
-        self.children.sort(key=lambda x: int(STACK_RE.match(x)[2]))
+
+class Stack:
+    def __init__(self, name: str):
+        self.name = name
+        self._children: List["Child"] = []
+
+    def finalize(self):
+        """Record all children that must have been merged"""
+        if not self._children:
+            return
+        for i in range(1, self._children[0].index):
+            self._children.append(Child(self.name, i, True))
+        self._children.sort(key=lambda x: x.index)
+
+    def add_child(self, child: "Child"):
+        self._children.append(child)
+        self._children.sort(key=lambda x: x.index)
+
+    def unmerged_children(self) -> List["Child"]:
+        return [child for child in self._children if not child.is_merged]
+
+    def all_children(self) -> List["Child"]:
+        return [child for child in self._children]
 
     def rebase(self, target: str):
-        rebase_branches(target, self.children + [self.name])
+        children = [child.branch for child in self.unmerged_children()]
+        rebase_branches(target, children + [self.name])
 
     def load_prs(self):
-        prs = json.loads(gh("pr", "status", "--json", "title,body,number,headRefName"))
-        self.pr_map = {
-            pr["headRefName"]: PullRequest(
-                pr["number"], pr["title"], pr["body"], pr["headRefName"]
-            )
-            for pr in prs["createdBy"]
+        prs = json.loads(
+            gh("pr", "status", "--json", "title,body,number,headRefName,isDraft")
+        )
+        pr_map: Dict[str, "PullRequest"] = {
+            pr["headRefName"]: PullRequest.from_json(pr) for pr in prs["createdBy"]
         }
-        self.pull_requests = []
-        for child in self.children:
-            if child in self.pr_map:
-                self.pull_requests.append(self.pr_map[child])
+        for child in self._children:
+            pr = pr_map.get(child.branch)
+            if pr:
+                child.pull_request = pr
+
+        # gh pr status doesn't show closed PRs, so we need to fetch them separately
+        any_new_prs = True
+        while any_new_prs and pr_map and not self._children[0].pull_request:
+            any_new_prs = False
+            first_pr = next(
+                (child.pull_request for child in self._children if child.pull_request)
+            )
+            pr_table = first_pr.parse_pr_table()
+            for child_idx, pr_num in pr_table.items():
+                child = self._children[child_idx - 1]
+                if child.pull_request:
+                    continue
+                pr = PullRequest.from_json(
+                    json.loads(
+                        gh(
+                            "pr",
+                            "view",
+                            str(pr_num),
+                            "--json",
+                            "title,body,number,headRefName,isDraft",
+                        )
+                    )
+                )
+                child.pull_request = pr
+                any_new_prs = True
+
+    def print_status(self):
+        self.load_prs()
+        # TODO display origin status
+        for child in reversed(self._children):
+            line = [child.branch]
+            if child.pull_request:
+                line.append(f"#{child.pull_request.number}")
+            if child.is_merged:
+                line.append(f"(merged)")
+            print(" ".join(line))
+
+    def __len__(self) -> int:
+        return len(self._children)
 
     def update_prs(self):
-        total = len(self.pull_requests)
-        for i, pr in enumerate(self.pull_requests):
-            pr.set_title(i + 1, total, pr.title)
-        for pr in self.pull_requests:
-            pr.set_table(self.pull_requests)
+        total = len(self)
+        for i, child in enumerate(self._children):
+            pr = child.pull_request
+            if pr:
+                pr.set_title(i + 1, total, pr.title)
+        pull_requests = [
+            child.pull_request for child in self._children if child.pull_request
+        ]
+        for pr in pull_requests:
+            pr.set_table(pull_requests)
 
     def get_next_base(self) -> str:
-        if self.children:
-            return self.children[-1]
+        if self._children:
+            return self._children[-1].branch
         else:
             return merge_base(self.name)
 
-    def next_child(self) -> str:
-        if self.children:
-            num = int(STACK_RE.match(self.children[-1])[2])
-            return f"{self.name}-{num+1}"
-        else:
-            return self.name + "-1"
+    def create_next_child(self) -> "Child":
+        idx = 1
+        if self._children:
+            idx = self._children[-1].index + 1
+        return Child(self.name, idx, False)
+
+    def unmerged_branches(self) -> List[str]:
+        return [child.branch for child in self.unmerged_children()] + [self.name]
 
     def tidy(self):
         cur = current_branch()
         i = 0
-        while i < len(self.children):
-            top = self.children[i]
-            children = child_branches(top)
-            if len(children) != len(self.children) - i:
-                rebase_branches(top, self.children[i + 1 :] + [self.name])
+        unmerged_children = self.unmerged_children()
+        while i < len(unmerged_children):
+            top = unmerged_children[i]
+            children = child_branches(top.branch)
+            if len(children) != len(unmerged_children) - i:
+                unmerged_branches = [
+                    child.branch for child in unmerged_children[i + 1 :]
+                ]
+                rebase_branches(top.branch, unmerged_branches + [self.name])
             i += 1
         switch_branch(cur)
 
@@ -127,43 +202,67 @@ class Stack:
             "log", "--format=%h %d %s", merge_base(self.name) + "..." + self.name
         )
 
-    def __str__(self) -> str:
-        return self.name + ": " + ", ".join(self.children)
 
-
-PR_TITLE_RE = re.compile(r"^(WIP)?\s*(\[\d+/\d+\])?\s*(.*)$")
+PR_TITLE_RE = re.compile(r"^(\[\d+/\d+\])?\s*(.*)$")
+PR_TABLE_LINE_RE = re.compile(r"^\|\s*(\d+)\s*\|\s*[#>](\d+)")
 
 
 class PullRequest:
-    def __init__(self, number: int, title: str, body: str, headRefName: str):
+    def __init__(
+        self, number: int, title: str, body: str, head_ref_name: str, is_draft: bool
+    ):
         match = PR_TITLE_RE.match(title)
+        assert match
         self.number = number
         self.raw_title = title
+        self.title = match[2]
         self.raw_body = body
         self.table, self.body = parse_markdown_table(body)
-        self.branch = headRefName
-        self.wip = match[1]
-        self.count = match[2]
-        self.title = match[3]
+        self.branch = head_ref_name
+        self.is_draft = is_draft
 
-    @staticmethod
-    def make_title(wip: bool, index: int, total: int, title: str) -> str:
-        ret = f"[{index}/{total}] {title}"
-        if wip:
-            ret = "WIP " + ret
+    @classmethod
+    def from_json(cls, json: Dict[str, Any]) -> "PullRequest":
+        return cls(
+            json["number"],
+            json["title"],
+            json["body"],
+            json["headRefName"],
+            json["isDraft"],
+        )
+
+    def parse_pr_table(self) -> Dict[int, int]:
+        """Return a mapping of child index to PR number"""
+        ret = {}
+        for line in self.table.split("\r\n"):
+            match = PR_TABLE_LINE_RE.match(line)
+            if match:
+                ret[int(match[1])] = int(match[2])
         return ret
 
     def set_title(self, index: int, total: int, title: str):
-        new_title = PullRequest.make_title(self.wip, index, total, title)
+        new_title = f"[{index}/{total}] {title}"
         if new_title != self.raw_title:
             gh("pr", "edit", str(self.number), "-t", new_title, capture_output=False)
             self.title = title
             self.raw_title = new_title
 
+    def set_draft(self, is_draft: bool):
+        if is_draft == self.is_draft:
+            return
+        args = ["pr", "ready", str(self.number)]
+        if is_draft:
+            args.append("--undo")
+        gh(*args, capture_output=False)
+        self.is_draft = is_draft
+
     def set_table(self, stack_prs: List["PullRequest"]):
         rows = []
         for i, pr in enumerate(stack_prs):
-            row = {"PR": f"#{pr.number}", "Title": pr.title, "": str(i + 1)}
+            title = pr.title
+            if pr.is_draft:
+                title = "WIP: " + title
+            row = {"PR": f"#{pr.number}", "Title": title, "": str(i + 1)}
             if pr.number == self.number:
                 row["PR"] = f">{pr.number}"
             rows.append(row)
@@ -174,9 +273,21 @@ class PullRequest:
             self.raw_body = new_body
             self.table = table
 
+
+class Child:
+    stack_name: str
+    index: int
+    is_merged: bool
+    pull_request: Optional[PullRequest] = None
+
+    def __init__(self, stack_name: str, index: int, is_merged: bool):
+        self.stack_name = stack_name
+        self.index = index
+        self.is_merged = is_merged
+
     @property
-    def is_wip(self) -> bool:
-        return bool(self.wip)
+    def branch(self):
+        return self.stack_name + "-" + str(self.index)
 
 
 def parse_markdown_table(body: str) -> Tuple[str, str]:
@@ -263,22 +374,23 @@ def get_repo_url() -> str:
 
 
 def list_stacks() -> List[Stack]:
-    stacks = {}
+    stacks: Dict[str, Stack] = {}
     merged = list_merged_branches()
     for branch in list_branches():
-        if branch in merged:
-            continue
+        is_merged = branch in merged
         match = STACK_RE.match(branch)
         if match:
-            name, num = match[1], match[2]
-            if name in stacks:
-                stacks[name].add_child(branch)
-            else:
-                stacks[name] = Stack(name, [branch])
+            name, num = parse_child(branch)
+            if name not in stacks:
+                stacks[name] = Stack(name)
+            stacks[name].add_child(Child(name, num, is_merged))
         elif branch not in stacks:
-            stacks[branch] = Stack(branch, [])
+            stacks[branch] = Stack(branch)
 
-    return list(stacks.values())
+    ret = list(stacks.values())
+    for stack in ret:
+        stack.finalize()
+    return ret
 
 
 def refs_between(ref1: str, ref2: str) -> List[str]:
@@ -349,8 +461,8 @@ def make_stack(branch: Optional[str] = None):
     stack.tidy()
     base = stack.get_next_base()
     for commit in refs_between(base, stack.name):
-        child = stack.next_child()
-        git("checkout", "-b", child, commit)
+        child = stack.create_next_child()
+        git("checkout", "-b", child.branch, commit)
         stack.add_child(child)
     switch_branch(cur)
 
@@ -385,7 +497,8 @@ def _add_cmd_stack(parser):
     subparsers.add_parser("create")
     tidy_parser = subparsers.add_parser("tidy")
     tidy_parser.add_argument("branch", nargs="?")
-    subparsers.add_parser("clean")
+    clean_parser = subparsers.add_parser("clean")
+    clean_parser.add_argument("name", nargs="?", default=".")
     push_parser = subparsers.add_parser("push")
     push_parser.add_argument("branch", nargs="?")
     push_parser.add_argument("-f", action="store_true")
@@ -398,10 +511,12 @@ def _add_cmd_stack(parser):
     next_parser = subparsers.add_parser("tip")
     next_parser = subparsers.add_parser("first")
     del_parser = subparsers.add_parser("delete")
-    del_parser.add_argument("name", nargs="?")
+    del_parser.add_argument("name", nargs="?", default=".")
     rebase_parser = subparsers.add_parser("rebase")
     rebase_parser.add_argument("target")
     subparsers.add_parser("reset_remote")
+    status_parser = subparsers.add_parser("status")
+    status_parser.add_argument("name", nargs="?", default=".")
 
 
 def navigate_stack_relative(count: int):
@@ -410,7 +525,7 @@ def navigate_stack_relative(count: int):
         sys.stderr.write("Not on a stack branch\n")
         sys.exit(1)
     cur = current_branch()
-    branches = stack.children + [stack.name]
+    branches = stack.unmerged_branches()
     idx = branches.index(cur)
     new_idx = max(0, min(len(branches) - 1, idx + count))
     switch_branch(branches[new_idx])
@@ -421,12 +536,17 @@ def cmd_stack(args, parser):
     if "stack_cmd" not in args or args.stack_cmd == "list":
         for stack in list_stacks():
             if args.children:
-                print(stack)
+                line = stack.name
+                num_children = len(stack.all_children())
+                if num_children:
+                    line += f" ({num_children})"
+                print(line)
             else:
                 print(stack.name)
     elif args.stack_cmd == "create":
         make_stack()
     elif args.stack_cmd == "tidy":
+        exit_if_dirty()
         if args.branch is None:
             stacks = list_stacks()
             for stack in stacks:
@@ -438,7 +558,14 @@ def cmd_stack(args, parser):
                 sys.exit(1)
             stack.tidy()
     elif args.stack_cmd == "clean":
-        print("TODO delete merged branches")
+        stack = get_stack(args.name)
+        if stack is None:
+            print("Could not find stack", args.name)
+            sys.exit(1)
+        for child in stack.all_children():
+            if child.is_merged:
+                print("delete", child.branch)
+                delete_branch(child.branch)
     elif args.stack_cmd == "push":
         if args.branch is None:
             args.branch = current_stack()
@@ -447,7 +574,7 @@ def cmd_stack(args, parser):
             print("Could not find stack", args.branch)
             sys.exit(1)
         cur = current_branch()
-        for branch in stack.children:
+        for branch in stack.unmerged_branches():
             switch_branch(branch)
             git_args = ["push", "-u", "origin", branch]
             if args.f:
@@ -464,10 +591,10 @@ def cmd_stack(args, parser):
             sys.exit(1)
         stack.load_prs()
         rel = MASTER
-        for branch in stack.children:
-            if branch not in stack.pr_map:
-                print(f"{url}/compare/{rel}...{branch}?expand=1")
-            rel = branch
+        for child in stack.unmerged_children():
+            if not child.pull_request:
+                print(f"{url}/compare/{rel}...{child.branch}?expand=1")
+            rel = child.branch
         stack.update_prs()
     elif args.stack_cmd == "rebase":
         exit_if_dirty()
@@ -491,20 +618,23 @@ def cmd_stack(args, parser):
         if stack is None:
             print("Could not find stack", args.branch)
             sys.exit(1)
-        for branch in stack.children:
-            switch_branch(branch)
-            git("reset", "--hard", "origin/" + branch)
+        for child in stack.unmerged_children():
+            switch_branch(child.branch)
+            git("reset", "--hard", "origin/" + child.branch)
         switch_branch(cur)
     elif args.stack_cmd == "delete":
-        if args.name:
-            stack = get_stack(args.name)
-        else:
-            stack = get_stack(current_stack())
+        stack = get_stack(args.name)
         if stack is None:
             sys.stderr.write("Not a valid stack branch\n")
             sys.exit(1)
-        for branch in stack.children:
-            delete_branch(branch, True)
+        for child in stack.all_children():
+            delete_branch(child.branch, True)
+    elif args.stack_cmd == "status":
+        stack = get_stack(args.name)
+        if stack is None:
+            sys.stderr.write("Not a valid stack branch\n")
+            sys.exit(1)
+        stack.print_status()
     else:
         parser.print_help()
 
