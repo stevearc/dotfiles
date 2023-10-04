@@ -10,6 +10,9 @@ from typing import Any, Dict, List, Literal, Optional, Tuple, overload
 
 DEBUG = False
 
+# TODO
+# - Extend a stack that has already been merged by passing in a PR
+
 
 def run(*args, **kwargs) -> str:
     kwargs.setdefault("check", True)
@@ -42,7 +45,7 @@ def gh(*args, **kwargs) -> str:
         sys.stderr.write("Missing gh executable\n")
         sys.exit(1)
 
-    return run(*(("gh",) + args), **kwargs)
+    return run("gh", *args, **kwargs)
 
 
 def has_gh() -> bool:
@@ -89,7 +92,9 @@ class Stack:
         if not self._children:
             return
         for i in range(1, self._children[0].index):
-            self._children.append(Child(self.name, i, True))
+            self._children.append(
+                Child(self.name, i, is_merged=True, local_exists=False)
+            )
         self._children.sort(key=lambda x: x.index)
 
     def add_child(self, child: "Child"):
@@ -138,9 +143,10 @@ class Stack:
         any_new_prs = True
         while any_new_prs and pr_map and not self._children[0].pull_request:
             any_new_prs = False
-            first_pr = next(
-                (child.pull_request for child in self._children if child.pull_request)
-            )
+            prs = [child.pull_request for child in self._children if child.pull_request]
+            if not prs:
+                return
+            first_pr = prs[0]
             pr_table = first_pr.parse_pr_table()
             for child_idx, pr_num in pr_table.items():
                 child = self._children[child_idx - 1]
@@ -153,12 +159,9 @@ class Stack:
     def __len__(self) -> int:
         return len(self._children)
 
-    def create_and_update_prs(self, before_branch: Optional[str] = None):
-        self.load_prs()
+    def create_prs(self, before_branch: Optional[str] = None) -> List["Child"]:
         total = len(self)
-        updated = set()
-        new = set()
-        pull_requests = []
+        created = []
         rel = MASTER
         body_file = os.path.join(
             git("rev-parse", "--show-toplevel"), ".github", "PULL_REQUEST_TEMPLATE.md"
@@ -166,10 +169,10 @@ class Stack:
         for i, child in enumerate(self.unmerged_children(before_branch)):
             pr = child.pull_request
             if not pr:
-                commit_line = git_lines(
-                    "git", "log", "-n", "1", "--format=%B", child.branch
-                )[0].strip()
-                title = (PullRequest.get_title(i + 1, total, commit_line, True),)
+                commit_line = git_lines("log", "-n", "1", "--format=%B", child.branch)[
+                    0
+                ].strip()
+                title = PullRequest.get_title(i + 1, total, commit_line, True)
                 gh(
                     "pr",
                     "create",
@@ -182,30 +185,31 @@ class Stack:
                     title,
                     "-F",
                     body_file,
+                    capture_output=False,
                 )
                 child.pull_request = PullRequest.from_ref(child.branch)
-                new.add(child.pull_request)
+                created.append(child)
             rel = child.branch
+        return created
+
+    def update_prs(self) -> List["Child"]:
+        total = len(self)
+        updated = set()
 
         for i, child in enumerate(self._children):
             pr = child.pull_request
             if pr is not None and pr.set_title(i + 1, total, pr.title):
-                updated.add(pr)
+                updated.add(child)
+        pull_requests = [
+            child.pull_request
+            for child in self._children
+            if child.pull_request is not None
+        ]
         for child in self._children:
             pr = child.pull_request
             if pr is not None and pr.set_table(pull_requests):
-                updated.add(pr)
-        for child in self._children:
-            pr = child.pull_request
-            if pr is not None:
-                if pr in new:
-                    print(f"Created   {pr.url}")
-                elif pr in updated:
-                    print(f"Updated   {pr.url}")
-                else:
-                    print(f"Unchanged {pr.url}")
-        if not updated and not new:
-            print("No changes")
+                updated.add(child)
+        return list(updated)
 
     def get_next_base(self) -> str:
         if self._children:
@@ -217,7 +221,7 @@ class Stack:
         idx = 1
         if self._children:
             idx = self._children[-1].index + 1
-        return Child(self.name, idx, False)
+        return Child(self.name, idx, is_merged=False, local_exists=False)
 
     def unmerged_branches(self, before_branch: Optional[str] = None) -> List[str]:
         children = [child.branch for child in self.unmerged_children(before_branch)]
@@ -392,16 +396,28 @@ class Child:
     stack_name: str
     index: int
     is_merged: bool
+    local_exists: bool
     pull_request: Optional[PullRequest] = None
 
-    def __init__(self, stack_name: str, index: int, is_merged: bool):
+    def __init__(
+        self, stack_name: str, index: int, *, is_merged: bool, local_exists: bool
+    ):
         self.stack_name = stack_name
         self.index = index
         self.is_merged = is_merged
+        self.local_exists = local_exists
 
     @property
     def branch(self):
         return self.stack_name + "-" + str(self.index)
+
+    def __hash__(self) -> int:
+        return hash(self.branch)
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Child):
+            return False
+        return self.branch == other.branch
 
 
 def parse_markdown_table(body: str) -> Tuple[str, str]:
@@ -510,7 +526,9 @@ def list_stacks() -> List[Stack]:
             name, num = match[1], int(match[2])
             if name not in stacks:
                 stacks[name] = Stack(name)
-            stacks[name].add_child(Child(name, num, is_merged))
+            stacks[name].add_child(
+                Child(name, num, is_merged=is_merged, local_exists=True)
+            )
         elif branch not in stacks:
             stacks[branch] = Stack(branch)
 
@@ -602,6 +620,7 @@ def make_stack(branch: Optional[str] = None):
     for commit in refs_between(base, stack.name):
         child = stack.create_next_child()
         git("checkout", "-b", child.branch, commit)
+        child.local_exists = True
         tag_commits(child.branch, f"{child.branch}^..{child.branch}")
         stack.add_child(child)
 
@@ -785,7 +804,7 @@ def cmd_stack(args, parser):
     elif args.stack_cmd == "clean":
         stack = get_stack(args.name, required=True)
         for child in stack.all_children():
-            if child.is_merged:
+            if child.is_merged and child.local_exists:
                 print("delete", child.branch)
                 delete_branch(child.branch)
     elif args.stack_cmd == "push":
@@ -802,11 +821,26 @@ def cmd_stack(args, parser):
     elif args.stack_cmd == "pr":
         exit_if_no_gh()
         stack = get_stack(args.name, required=True)
+        stack.load_prs()
         before_branch = None if args.a else current_branch()
-        stack.create_and_update_prs(before_branch)
+        created = stack.create_prs(before_branch)
+        updated = stack.update_prs()
+        for child in stack._children:
+            pr = child.pull_request
+            if pr is not None:
+                if child in created:
+                    print("Created  ", pr.url)
+                elif child in updated:
+                    print("Updated  ", pr.url)
+                else:
+                    print("Unchanged", pr.url)
     elif args.stack_cmd == "publish":
         exit_if_no_gh()
         stack = get_stack(args.name, required=True)
+        stack.load_prs()
+        unpublished = set()
+        published = set()
+        updated = set()
         if args.undo:
             cur = current_branch()
             child = next(
@@ -814,16 +848,28 @@ def cmd_stack(args, parser):
             )
             pr = child.pull_request
             assert pr
-            pr.set_draft(True)
-            return
-        before_branch = None if args.a else current_branch()
-        for child in stack.unmerged_children(before_branch):
+            if pr.set_draft(True):
+                unpublished.add(child)
+            updated = stack.update_prs()
+        else:
+            before_branch = None if args.a else current_branch()
+            for child in stack.unmerged_children(before_branch):
+                pr = child.pull_request
+                if pr:
+                    if pr.set_draft(False):
+                        published.add(child)
+            updated = stack.update_prs()
+        for child in stack.all_children():
             pr = child.pull_request
             if pr:
-                if pr.set_draft(False):
-                    print(f"Updated   {pr.url}")
+                if child in published:
+                    print("Published  ", pr.url)
+                elif child in unpublished:
+                    print("Unpublished", pr.url)
+                elif child in updated:
+                    print("Updated    ", pr.url)
                 else:
-                    print(f"Unchanged {pr.url}")
+                    print("Unchanged  ", pr.url)
     elif args.stack_cmd == "rebase":
         exit_if_dirty()
         stack = get_stack(".", required=True)
@@ -840,7 +886,9 @@ def cmd_stack(args, parser):
         exit_if_dirty()
         cur = current_branch()
         stack = get_stack(current_stack(), required=True)
-        unmerged = [child.branch for child in stack.unmerged_children()] + [stack.name]
+        unmerged = [
+            child.branch for child in stack.unmerged_children() if child.local_exists
+        ] + [stack.name]
         for branch in unmerged:
             switch_branch(branch)
             git("reset", "--hard", "origin/" + branch, check=False)
@@ -848,7 +896,8 @@ def cmd_stack(args, parser):
     elif args.stack_cmd == "delete":
         stack = get_stack(args.name, required=True)
         for child in stack.all_children():
-            delete_branch(child.branch, args.f)
+            if child.local_exists:
+                delete_branch(child.branch, args.force)
     elif args.stack_cmd == "status":
         stack = get_stack(args.name, required=True)
         stack.load_prs()
