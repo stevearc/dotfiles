@@ -1,6 +1,6 @@
 # Data directory
-JELLYFIN_DATA_DIRECTORY="/mnt/storage/jellyfin/data"
+JELLYFIN_DATA_DIR="/mnt/storage/jellyfin/data"
 # Cache directory
-JELLYFIN_CACHE_DIRECTORY="/mnt/storage/jellyfin/cache"
+JELLYFIN_CACHE_DIR="/mnt/storage/jellyfin/cache"
 # Additional options for the binary
 JELLYFIN_ADD_OPTS="--webdir=/usr/share/jellyfin/web"

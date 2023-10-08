@@ -78,6 +78,7 @@ dc-install-jellyfin() {
     sudo mv ffmpeg /usr/local/bin/jellyfin-ffmpeg
     popd
   fi
+  sudo cp "$HERE/static/jellyfin_conf" /etc/conf.d/jellyfin
   sudo systemctl start jellyfin.service
   sudo systemctl enable jellyfin.service
   if hascmd ufw; then
@@ -89,7 +90,6 @@ dc-install-jellyfin() {
     sudo firewall-cmd --permanent --zone=home --add-port=8096/tcp
   fi
   test -e /etc/cron.hourly/chown_jellyfin || sudo cp "$HERE/static/chown_jellyfin" /etc/cron.hourly/
-  sudo cp "$HERE/static/jellyfin_conf" /etc/conf.d/jellyfin
   # Add jellyfin to the video group for hardware acceleration
   sudo -u jellyfin groups | grep video || sudo usermod -aG video jellyfin
   sudo -u jellyfin groups | grep render || sudo usermod -aG render jellyfin
