@@ -8,7 +8,13 @@ return {
     {
       "=",
       function()
-        require("conform").format({ async = true, lsp_fallback = true })
+        require("conform").format({ async = true, lsp_fallback = true }, function(err)
+          if not err then
+            if vim.startswith(vim.api.nvim_get_mode().mode:lower(), "v") then
+              vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
+            end
+          end
+        end)
       end,
       mode = "",
       desc = "Format buffer",
@@ -38,9 +44,7 @@ return {
     log_level = vim.log.levels.DEBUG,
     format_after_save = { timeout_ms = 5000, lsp_fallback = true },
   },
-  init = function()
-    vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
-  end,
+  init = function() vim.o.formatexpr = "v:lua.require'conform'.formatexpr()" end,
   config = function(_, opts)
     local util = require("conform.util")
     util.add_formatter_args(require("conform.formatters.shfmt"), { "-i", "2" })

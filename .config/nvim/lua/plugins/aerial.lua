@@ -1,8 +1,6 @@
 local lazy_aerial = setmetatable({}, {
   __index = function(_, k)
-    return function(...)
-      require("aerial")[k](...)
-    end
+    return function(...) require("aerial")[k](...) end
   end,
 })
 return {
@@ -23,7 +21,7 @@ return {
       -- Hack to ensure that lspkind-nvim is loaded
       "hrsh7th/nvim-cmp",
     },
-    cmd = { "AerialToggle", "AerialOpen" },
+    cmd = { "AerialToggle", "AerialOpen", "AerialNext", "AerialPrev" },
     keys = {
       { "<leader>a", "<cmd>AerialToggle!<CR>", desc = "[A]erial toggle", mode = "n" },
       { "<leader>A", "<cmd>AerialNavToggle<CR>", desc = "[A]erial nav toggle", mode = "n" },
