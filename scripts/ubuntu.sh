@@ -68,7 +68,8 @@ install-language-bash() {
 
 install-language-lua() {
   sudo apt-get install -qy lua-check ninja-build
-  install-lua-utils
+  hascmd cargo || cargo install stylua@0.18.2 --features lua52
+  install-lua-ls
 }
 
 install-language-sc() {

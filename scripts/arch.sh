@@ -41,8 +41,8 @@ install-language-bash() {
 
 install-language-lua() {
   yay -S --noconfirm luacheck
-  sudo pacman -Syq --noconfirm ninja
-  install-lua-utils
+  sudo pacman -Syq --noconfirm ninja stylua
+  install-lua-ls
 }
 
 DC_INSTALL_VIRTMANAGER_DOC="virt-manager virtualization tool"
