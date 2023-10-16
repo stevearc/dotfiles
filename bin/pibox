@@ -10,23 +10,23 @@ main() {
   local cmd="${1}"
   local usage="pibox [ssh|vnc|jellyfin|transmission|proxy|books|calibre]"
   case $cmd in
-    s*) # ssh
-      ssh "$PIBOX_IP"
-      ;;
-    t*) # transmission
-      open "http://$PIBOX_IP:9091"
-      ;;
-    p*) # proxy
-      ssh -N -D 9080 "$PIBOX_IP"
-      ;;
-    h)
-      echo "$usage"
-      exit 0
-      ;;
-    *)
-      echo "$usage"
-      exit 1
-      ;;
+  s*) # ssh
+    ssh "$PIBOX_IP"
+    ;;
+  t*) # transmission
+    xdg-open "http://$PIBOX_IP:9091"
+    ;;
+  p*) # proxy
+    ssh -N -D 9080 "$PIBOX_IP"
+    ;;
+  h)
+    echo "$usage"
+    exit 0
+    ;;
+  *)
+    echo "$usage"
+    exit 1
+    ;;
   esac
 }
 

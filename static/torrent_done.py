@@ -132,7 +132,7 @@ def run():
             check=True,
         )
         log.info("Linking torrent %s", torrent.name)
-        if os.path.isfile(torrent.complete_path):
+        if os.path.isfile(torrent.archive_path):
             os.link(torrent.archive_path, torrent.pending_path)
         else:
             shutil.copytree(
