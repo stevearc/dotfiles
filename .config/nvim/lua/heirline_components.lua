@@ -94,12 +94,8 @@ local ViMode = {
       t = "TERMINAL",
     },
   },
-  provider = function(self)
-    return " " .. self.mode_names[self.mode] .. " "
-  end,
-  hl = function(self)
-    return { fg = "black", bg = self:mode_color(), bold = true }
-  end,
+  provider = function(self) return " " .. self.mode_names[self.mode] .. " " end,
+  hl = function(self) return { fg = "black", bg = self:mode_color(), bold = true } end,
   update = {
     "ModeChanged",
   },
@@ -110,23 +106,15 @@ local FileIcon = {
     self.icon, self.icon_color =
       require("nvim-web-devicons").get_icon_color_by_filetype(vim.bo.filetype, { default = true })
   end,
-  provider = function(self)
-    return self.icon and (self.icon .. " ")
-  end,
-  hl = function(self)
-    return { fg = self.icon_color }
-  end,
+  provider = function(self) return self.icon and (self.icon .. " ") end,
+  hl = function(self) return { fg = self.icon_color } end,
 }
 
 local FileType = {
-  condition = function()
-    return vim.bo.filetype ~= ""
-  end,
+  condition = function() return vim.bo.filetype ~= "" end,
   FileIcon,
   {
-    provider = function()
-      return vim.bo.filetype
-    end,
+    provider = function() return vim.bo.filetype end,
   },
 }
 
@@ -147,15 +135,11 @@ local FileName = {
 
 local FileFlags = {
   {
-    condition = function()
-      return vim.bo.modified
-    end,
+    condition = function() return vim.bo.modified end,
     provider = " [+]",
   },
   {
-    condition = function()
-      return not vim.bo.modifiable or vim.bo.readonly
-    end,
+    condition = function() return not vim.bo.modifiable or vim.bo.readonly end,
     provider = " ",
   },
 }
@@ -180,12 +164,8 @@ local FullFileName = {
 
 local function OverseerTasksForStatus(status)
   return {
-    condition = function(self)
-      return self.tasks[status]
-    end,
-    provider = function(self)
-      return string.format("%s%d", self.symbols[status], #self.tasks[status])
-    end,
+    condition = function(self) return self.tasks[status] end,
+    provider = function(self) return string.format("%s%d", self.symbols[status], #self.tasks[status]) end,
     hl = function(self)
       return {
         fg = utils.get_highlight(string.format("Overseer%s", status)).fg,
@@ -194,9 +174,7 @@ local function OverseerTasksForStatus(status)
   }
 end
 local Overseer = {
-  condition = function()
-    return package.loaded.overseer
-  end,
+  condition = function() return package.loaded.overseer end,
   init = function(self)
     local tasks = require("overseer.task_list").list_tasks({ unique = true })
     local tasks_by_status = require("overseer.util").tbl_group_by(tasks, "status")
@@ -218,9 +196,7 @@ local Overseer = {
 }
 
 local Diagnostics = {
-  condition = function()
-    return #vim.diagnostic.get(0, { severity = { min = vim.diagnostic.severity.WARN } }) > 0
-  end,
+  condition = function() return #vim.diagnostic.get(0, { severity = { min = vim.diagnostic.severity.WARN } }) > 0 end,
   static = {
     error_icon = vim.fn.sign_getdefined("DiagnosticSignError")[1].text,
     warn_icon = vim.fn.sign_getdefined("DiagnosticSignWarn")[1].text,
@@ -232,15 +208,11 @@ local Diagnostics = {
   update = { "DiagnosticChanged", "BufEnter" },
 
   {
-    provider = function(self)
-      return self.errors > 0 and (self.error_icon .. self.errors .. " ")
-    end,
+    provider = function(self) return self.errors > 0 and (self.error_icon .. self.errors .. " ") end,
     hl = { fg = "diag_error" },
   },
   {
-    provider = function(self)
-      return self.warnings > 0 and (self.warn_icon .. self.warnings .. " ")
-    end,
+    provider = function(self) return self.warnings > 0 and (self.warn_icon .. self.warnings .. " ") end,
     hl = { fg = "diag_warn" },
   },
 }
@@ -268,18 +240,12 @@ local function setup_colors()
 end
 
 local SessionName = {
-  condition = function()
-    return package.loaded.resession and require("resession").get_current()
-  end,
-  provider = function()
-    return string.format("󰆓 %s", require("resession").get_current())
-  end,
+  condition = function() return package.loaded.resession and require("resession").get_current() end,
+  provider = function() return string.format("󰆓 %s", require("resession").get_current()) end,
 }
 
 local ArduinoStatus = {
-  condition = function()
-    return vim.bo.filetype == "arduino"
-  end,
+  condition = function() return vim.bo.filetype == "arduino" end,
   provider = function()
     local port = vim.fn["arduino#GetPort"]()
     local line = string.format("[%s]", vim.g.arduino_board)
@@ -316,16 +282,18 @@ local LSPActive = {
           table.insert(names, server.name)
         end
       end
-      local has_lint, lint = pcall(require, "lint")
-      if has_lint then
+      local lint = package.loaded.lint
+      if lint and vim.bo.buftype == "" then
+        table.insert(names, "⫽")
         for _, linter in ipairs(lint.linters_by_ft[vim.bo.filetype] or {}) do
           table.insert(names, linter)
         end
       end
       local conform = package.loaded.conform
-      if conform then
+      if conform and vim.bo.buftype == "" then
         local formatters = conform.list_formatters(0)
         if not conform.will_fallback_lsp() then
+          table.insert(names, "⫽")
           for _, formatter in ipairs(formatters) do
             table.insert(names, formatter.name)
           end
@@ -350,9 +318,7 @@ local LSPActive = {
 
 local Ruler = {
   provider = " %P %l:%c ",
-  hl = function(self)
-    return { fg = "black", bg = self:mode_color(), bold = true }
-  end,
+  hl = function(self) return { fg = "black", bg = self:mode_color(), bold = true } end,
 }
 
 local ConjoinStatus = {
@@ -366,9 +332,7 @@ local ConjoinStatus = {
     provider = function()
       local state = require("conjoin.state")
       local others = state.get_other_users()
-      local names = vim.tbl_map(function(u)
-        return u.name
-      end, others)
+      local names = vim.tbl_map(function(u) return u.name end, others)
       return string.format(" [%s]", table.concat(names, ", "))
     end,
   },
