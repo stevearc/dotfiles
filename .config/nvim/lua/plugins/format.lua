@@ -41,15 +41,20 @@ return {
       zig = { "zigfmt" },
       ["_"] = { "trim_whitespace", "trim_newlines" },
     },
-    log_level = vim.log.levels.DEBUG,
+    formatters = {
+      shfmt = {
+        prepend_args = { "-i", "2" },
+      },
+      -- Dealing with old version of prettierd that doesn't support range formatting
+      prettierd = {
+        range_args = false,
+      },
+    },
+    log_level = vim.log.levels.TRACE,
     format_after_save = { timeout_ms = 5000, lsp_fallback = true },
   },
   init = function() vim.o.formatexpr = "v:lua.require'conform'.formatexpr()" end,
   config = function(_, opts)
-    local util = require("conform.util")
-    util.add_formatter_args(require("conform.formatters.shfmt"), { "-i", "2" })
-    -- Dealing with old version of prettierd that doesn't support range formatting
-    require("conform.formatters.prettierd").range_args = nil
     if vim.g.started_by_firenvim then
       opts.format_on_save = false
       opts.format_after_save = false
