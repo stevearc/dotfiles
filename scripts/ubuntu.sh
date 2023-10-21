@@ -225,6 +225,15 @@ dc-install-dotnet() {
   popd
 }
 
+dc-install-fzf() {
+  pushd /tmp >/dev/null
+  local version="0.43.0"
+  curl -L "https://github.com/junegunn/fzf/releases/download/${version}/fzf-${version}-linux_amd64.tar.gz" -o fzf.tar.gz
+  tar -zxf fzf.tar.gz
+  mv fzf ~/.local/bin/fzf
+  popd >/dev/null
+}
+
 # shellcheck disable=SC2034
 DC_INSTALL_NEOVIM_DOC="<3"
 dc-install-neovim() {
