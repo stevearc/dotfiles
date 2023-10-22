@@ -348,6 +348,19 @@ local ConjoinStatus = {
   },
 }
 
+local ProfileRecording = {
+  condition = function()
+    local profile = package.loaded.profile
+    return profile and profile.is_recording()
+  end,
+  provider = function() return "󰑊 " end,
+  hl = function() return { fg = "red" } end,
+  update = {
+    "User",
+    pattern = { "ProfileStart", "ProfileStop" },
+  },
+}
+
 return {
   ViMode = ViMode,
   Ruler = Ruler,
@@ -365,4 +378,5 @@ return {
   LSPActive = LSPActive,
   stl_static = stl_static,
   ConjoinStatus = ConjoinStatus,
+  ProfileRecording = ProfileRecording,
 }

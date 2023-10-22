@@ -6,7 +6,9 @@ local p = require("p")
 local should_profile = os.getenv("NVIM_PROFILE")
 if should_profile then
   vim.opt.runtimepath:append("~/dotfiles/vimplugins/profile.nvim")
-  require("profile").instrument_autocmds()
+  local profile = require("profile")
+  profile.set_sample_rate(0.1)
+  profile.instrument_autocmds()
   local method = "instrument"
   if should_profile:lower():match("^start") then
     should_profile = should_profile:sub(7)
@@ -16,20 +18,19 @@ if should_profile then
   if vim.tbl_isempty(patterns) then
     table.insert(patterns, "*")
   end
-  require("profile")[method](unpack(patterns))
+  profile[method](unpack(patterns))
 
   local function toggle_profile()
-    local prof = require("profile")
-    if prof.is_recording() then
-      prof.stop()
+    if profile.is_recording() then
+      profile.stop()
       vim.ui.input({ prompt = "Save profile to:", completion = "file", default = "profile.json" }, function(filename)
         if filename then
-          prof.export(filename)
+          profile.export(filename)
           vim.notify(string.format("Wrote %s", filename))
         end
       end)
     else
-      prof.start(should_profile or "*")
+      profile.start(should_profile or "*")
     end
   end
   vim.keymap.set("n", "<f1>", toggle_profile, { desc = "Toggle profiling" })
@@ -193,9 +194,7 @@ end
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "WinNew", "VimResized" }, {
   desc = "Always keep the cursor vertically centered",
   pattern = "*",
-  callback = function()
-    set_scrolloff(0)
-  end,
+  callback = function() set_scrolloff(0) end,
   group = aug,
 })
 
@@ -340,9 +339,7 @@ vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
 
 local pending_notifications = {}
 local old_notify = vim.notify
-vim.notify = function(...)
-  table.insert(pending_notifications, vim.F.pack_len(...))
-end
+vim.notify = function(...) table.insert(pending_notifications, vim.F.pack_len(...)) end
 
 -- Add luarocks to rtp
 local home = uv.os_homedir()

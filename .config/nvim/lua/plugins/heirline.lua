@@ -24,6 +24,7 @@ return {
           hl = { bg = "bg" },
         },
         comp.ViMode,
+        comp.lpad(comp.ProfileRecording),
         comp.lpad(comp.LSPActive),
         comp.lpad(comp.Diagnostics),
         require("statusline").left_components,
@@ -53,9 +54,11 @@ return {
       },
     })
 
-    vim.api.nvim_create_user_command("HeirlineResetStatusline", function()
-      vim.o.statusline = "%{%v:lua.require'heirline'.eval_statusline()%}"
-    end, {})
+    vim.api.nvim_create_user_command(
+      "HeirlineResetStatusline",
+      function() vim.o.statusline = "%{%v:lua.require'heirline'.eval_statusline()%}" end,
+      {}
+    )
 
     -- Because heirline is lazy loaded, we need to manually set the winbar on startup
     vim.opt_local.winbar = "%{%v:lua.require'heirline'.eval_winbar()%}"
