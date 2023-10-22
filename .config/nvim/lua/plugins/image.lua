@@ -3,7 +3,7 @@ local is_mac = uv.os_uname().sysname == "Darwin"
 
 return {
   "3rd/image.nvim",
-  ft = { "markdown", "norg" },
+  ft = { "markdown", "norg", "oil" },
   build = function()
     local has_magick = pcall(require, "magick")
     if not has_magick and vim.fn.executable("luarocks") == 1 then
@@ -17,10 +17,14 @@ return {
       end
     end
   end,
-  config = function()
+  opts = {
+    editor_only_render_when_focused = true,
+    tmux_show_only_in_active_window = true,
+  },
+  config = function(_, opts)
     local has_magick = pcall(require, "magick")
     if has_magick then
-      require("image").setup()
+      require("image").setup(opts)
     end
   end,
 }
