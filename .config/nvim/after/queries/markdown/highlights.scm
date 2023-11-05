@@ -20,7 +20,3 @@
 ((block_continuation) @punctuation.special (#eq? @punctuation.special ">") (#set! conceal "▐"))
 (block_quote
   (paragraph) @text.literal)
-
-; Needs https://github.com/neovim/neovim/issues/11711
-; (fenced_code_block) @codeblock
-; (indented_code_block) @codeblock

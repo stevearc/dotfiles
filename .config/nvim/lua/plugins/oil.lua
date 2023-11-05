@@ -37,9 +37,7 @@ return {
       local oil = require("oil")
       oil.setup(opts)
       vim.keymap.set("n", "-", oil.open, { desc = "Open parent directory" })
-      vim.keymap.set("n", "_", function()
-        oil.open(vim.fn.getcwd())
-      end, { desc = "Open cwd" })
+      vim.keymap.set("n", "_", function() oil.open(vim.fn.getcwd()) end, { desc = "Open cwd" })
       local function find_files()
         local dir = oil.get_current_dir()
         if vim.api.nvim_win_get_config(0).relative ~= "" then
@@ -71,22 +69,23 @@ return {
           signcolumn = "no",
         },
         callback = function(bufnr)
-          vim.api.nvim_buf_create_user_command(bufnr, "Save", function(params)
-            oil.save({ confirm = not params.bang })
-          end, {
-            desc = "Save oil changes with a preview",
-            bang = true,
-          })
-          vim.api.nvim_buf_create_user_command(bufnr, "EmptyTrash", function(params)
-            oil.empty_trash()
-          end, {
-            desc = "Empty the trash directory",
-          })
-          vim.api.nvim_buf_create_user_command(bufnr, "OpenTerminal", function(params)
-            require("oil.adapters.ssh").open_terminal()
-          end, {
-            desc = "Open the debug terminal for ssh connections",
-          })
+          vim.api.nvim_buf_create_user_command(
+            bufnr,
+            "Save",
+            function(params) oil.save({ confirm = not params.bang }) end,
+            {
+              desc = "Save oil changes with a preview",
+              bang = true,
+            }
+          )
+          vim.api.nvim_buf_create_user_command(
+            bufnr,
+            "OpenTerminal",
+            function(params) require("oil.adapters.ssh").open_terminal() end,
+            {
+              desc = "Open the debug terminal for ssh connections",
+            }
+          )
         end,
       })
     end,
