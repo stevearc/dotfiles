@@ -5,9 +5,7 @@ return {
   {
     "stevearc/vim-arduino",
     ft = "arduino",
-    init = function()
-      vim.g.arduino_serial_cmd = "picocom {port} -b {baud} -l"
-    end,
+    init = function() vim.g.arduino_serial_cmd = "picocom {port} -b {baud} -l" end,
   },
   "gioele/vim-autoswap",
   { "tpope/vim-eunuch", ft = { "sh" }, cmd = { "Remove", "Delete" } },
@@ -59,15 +57,12 @@ return {
     "ojroques/nvim-osc52",
     -- Only change the clipboard if we're in a SSH session
     cond = os.getenv("SSH_CLIENT") ~= nil,
+    enabled = vim.fn.has("nvim-0.10") == 0,
     config = function()
       local osc52 = require("osc52")
-      local function copy(lines, _)
-        osc52.copy(table.concat(lines, "\n"))
-      end
+      local function copy(lines, _) osc52.copy(table.concat(lines, "\n")) end
 
-      local function paste()
-        return { vim.fn.split(vim.fn.getreg(""), "\n"), vim.fn.getregtype("") }
-      end
+      local function paste() return { vim.fn.split(vim.fn.getreg(""), "\n"), vim.fn.getregtype("") } end
 
       vim.g.clipboard = {
         name = "osc52",
@@ -165,12 +160,8 @@ return {
       jump_to_unique_chars = false,
       safe_labels = {},
     },
-    config = function(_, opts)
-      require("lightspeed").setup(opts)
-    end,
-    init = function()
-      vim.g.lightspeed_no_default_keymaps = true
-    end,
+    config = function(_, opts) require("lightspeed").setup(opts) end,
+    init = function() vim.g.lightspeed_no_default_keymaps = true end,
   },
   {
     "andymass/vim-matchup",
