@@ -149,24 +149,6 @@ return {
         },
       })
 
-      lsp.safe_setup("tsserver", {
-        root_dir = function(fname)
-          local util = require("lspconfig.util")
-          -- Disable tsserver on js files when a flow project is detected
-          if not string.match(fname, ".tsx?$") and util.root_pattern(".flowconfig")(fname) then
-            return nil
-          end
-          local ts_root = util.root_pattern("tsconfig.json")(fname)
-            or util.root_pattern("package.json", "jsconfig.json", ".git")(fname)
-          if ts_root then
-            return ts_root
-          end
-          if vim.g.started_by_firenvim then
-            return util.path.dirname(fname)
-          end
-          return nil
-        end,
-      })
       lsp.safe_setup("flow", {
         root_dir = function(fname)
           local util = require("lspconfig.util")
@@ -241,6 +223,32 @@ return {
         },
       })
     end,
+  },
+  {
+    "pmizio/typescript-tools.nvim",
+    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+    opts = {
+      root_dir = function(fname)
+        local util = require("lspconfig.util")
+        -- Disable tsserver on js files when a flow project is detected
+        if not string.match(fname, ".tsx?$") and util.root_pattern(".flowconfig")(fname) then
+          return nil
+        end
+        local ts_root = util.root_pattern("tsconfig.json")(fname)
+          or util.root_pattern("package.json", "jsconfig.json", ".git")(fname)
+        if ts_root then
+          return ts_root
+        end
+        if vim.g.started_by_firenvim then
+          return util.path.dirname(fname)
+        end
+        return nil
+      end,
+      settings = {
+        separate_diagnostic_server = false,
+        tsserver_max_memory = 8 * 1024,
+      },
+    },
   },
 
   -- {
