@@ -34,17 +34,16 @@ return {
     end)
 
     vim.keymap.set("n", "<leader>ss", resession.save, { desc = "[S]ession [S]ave" })
-    vim.keymap.set("n", "<leader>st", function()
-      resession.save_tab()
-    end, { desc = "[S]ession save [T]ab" })
+    vim.keymap.set("n", "<leader>st", function() resession.save_tab() end, { desc = "[S]ession save [T]ab" })
     vim.keymap.set("n", "<leader>so", resession.load, { desc = "[S]ession [O]pen" })
-    vim.keymap.set("n", "<leader>sl", function()
-      resession.load(nil, { reset = false })
-    end, { desc = "[S]ession [L]oad without reset" })
+    vim.keymap.set(
+      "n",
+      "<leader>sl",
+      function() resession.load(nil, { reset = false }) end,
+      { desc = "[S]ession [L]oad without reset" }
+    )
     vim.keymap.set("n", "<leader>sd", resession.delete, { desc = "[S]ession [D]elete" })
-    vim.api.nvim_create_user_command("SessionDetach", function()
-      resession.detach()
-    end, {})
+    vim.api.nvim_create_user_command("SessionDetach", function() resession.detach() end, {})
     vim.keymap.set("n", "ZZ", function()
       vim.cmd("wa")
       resession.save("__quicksave__", { notify = false })
@@ -64,9 +63,7 @@ return {
 
     vim.api.nvim_create_autocmd("VimLeavePre", {
       group = aug,
-      callback = function()
-        resession.save("last")
-      end,
+      callback = function() resession.save("last") end,
     })
   end,
 }

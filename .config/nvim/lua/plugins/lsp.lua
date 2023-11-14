@@ -7,15 +7,7 @@ return {
       "b0o/SchemaStore.nvim",
       {
         "j-hui/fidget.nvim",
-        tag = "legacy",
-        opts = {
-          text = {
-            spinner = "dots",
-          },
-          window = {
-            relative = "editor",
-          },
-        },
+        config = true,
       },
     },
     config = function()

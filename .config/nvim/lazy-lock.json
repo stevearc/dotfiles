@@ -11,7 +11,7 @@
   "cmp_luasnip": { "branch": "master", "commit": "05a9ab28b53f71d1aece421ef32fee2cb857a843" },
   "copilot.lua": { "branch": "master", "commit": "73047082d72fcfdde1f73b7f17ad495cffcbafaa" },
   "crates.nvim": { "branch": "main", "commit": "aac57ef84cf4fecf7907114b22e875f84a6128ee" },
-  "fidget.nvim": { "branch": "main", "commit": "0ba1e16d07627532b6cae915cc992ecac249fb97" },
+  "fidget.nvim": { "branch": "main", "commit": "36916518b16d80c48f4b3d88765734bf0842493c" },
   "firenvim": { "branch": "master", "commit": "138424db463e6c0e862a05166a4ccc781cd7c19d" },
   "flatten.nvim": { "branch": "main", "commit": "f75bd1eae9aa826dda5ddc3a8cf5a0efa6df046b" },
   "fzf-lua": { "branch": "main", "commit": "305c60c39fdc8cc536cc330150eebf04fa351249" },
