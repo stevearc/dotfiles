@@ -67,16 +67,13 @@ dc-install-syncthing() {
 
 DC_INSTALL_JELLYFIN_DOC="Jellyfin media server"
 dc-install-jellyfin() {
-  pacman -Qm | grep -q jellyfin-bin || yay -Sy --noconfirm jellyfin-bin
+  pacman -Qm | grep -q jellyfin-server-bin || yay -Sy --noconfirm jellyfin-server-bin jellyfin-web
   sudo pacman -Sy --noconfirm rocm-opencl-runtime libva-mesa-driver
-  if ! hascmd jellyfin-ffmpeg; then
-    pushd /tmp >/dev/null
-    if [ ! -e jellyfin-ffmpeg.tar.xz ]; then
-      curl -L https://github.com/jellyfin/jellyfin-ffmpeg/releases/download/v6.0-5/jellyfin-ffmpeg_6.0-5_portable_linux64-gpl.tar.xz -o jellyfin-ffmpeg.tar.xz
+  if [ ! -e /usr/local/bin/jellyfin-ffmpeg ]; then
+    if [ ! -e /usr/lib/jellyfin-ffmpeg/ffmpeg ]; then
+      yay -Sy --noconfirm jellyfin-ffmpeg
     fi
-    tar -xf jellyfin-ffmpeg.tar.xz
-    sudo mv ffmpeg /usr/local/bin/jellyfin-ffmpeg
-    popd
+    sudo ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/jellyfin-ffmpeg
   fi
   sudo cp "$HERE/static/jellyfin_conf" /etc/conf.d/jellyfin
   sudo systemctl start jellyfin.service
