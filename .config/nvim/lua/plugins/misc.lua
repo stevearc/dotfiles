@@ -56,8 +56,7 @@ return {
   {
     "ojroques/nvim-osc52",
     -- Only change the clipboard if we're in a SSH session
-    cond = os.getenv("SSH_CLIENT") ~= nil,
-    enabled = vim.fn.has("nvim-0.10") == 0,
+    cond = os.getenv("SSH_CLIENT") ~= nil and (os.getenv("TMUX") ~= nil or vim.fn.has("nvim-0.10") == 0),
     config = function()
       local osc52 = require("osc52")
       local function copy(lines, _) osc52.copy(table.concat(lines, "\n")) end

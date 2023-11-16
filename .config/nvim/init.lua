@@ -127,20 +127,6 @@ else
   vim.o.termguicolors = true
 end
 
-if vim.fn.has("nvim-0.10") == 1 then
-  vim.g.clipboard = {
-    name = "OSC 52",
-    copy = {
-      ["+"] = require("vim.clipboard.osc52").copy,
-      ["*"] = require("vim.clipboard.osc52").copy,
-    },
-    paste = {
-      ["+"] = require("vim.clipboard.osc52").paste,
-      ["*"] = require("vim.clipboard.osc52").paste,
-    },
-  }
-end
-
 vim.filetype.add({
   extension = {
     cconf = "python",
