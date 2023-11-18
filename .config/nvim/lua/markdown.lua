@@ -27,22 +27,43 @@ local function replace_marker(replacement)
   vim.api.nvim_buf_set_text(0, start_row, start_col, end_row, end_col, { replacement })
 end
 
-M.task_mark_done = function()
-  replace_marker("[x]")
-end
+M.task_mark_done = function() replace_marker("[x]") end
 
-M.task_mark_undone = function()
-  replace_marker("[ ]")
-end
+M.task_mark_undone = function() replace_marker("[ ]") end
 
 local code_blocks = [[
 (fenced_code_block (code_fence_content) @block)
 ]]
 
+local function set_highlight()
+  local normal_float = vim.api.nvim_get_hl(0, { name = "NormalFloat", link = false })
+  vim.api.nvim_set_hl(0, "markdownCodeBlock", {
+    bg = normal_float.bg,
+    ctermbg = normal_float.ctermbg,
+  })
+end
+
+local initialized = false
+local function initialize()
+  if initialized then
+    return
+  end
+  set_highlight()
+  vim.api.nvim_create_autocmd("ColorScheme", {
+    desc = "Recreate markdownCodeBlock highlight",
+    pattern = "*",
+    callback = set_highlight,
+  })
+
+  initialized = true
+end
+
 M.update_code_highlights = function(bufnr)
   if vim.fn.has("nvim-0.10") == 0 then
     return
   end
+  initialize()
+
   local ns = vim.api.nvim_create_namespace("MarkdownStyle")
   vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
 
@@ -57,7 +78,7 @@ M.update_code_highlights = function(bufnr)
   for _, match in query:iter_matches(root, bufnr) do
     local block = match[query.captures.block]
     vim.api.nvim_buf_set_extmark(bufnr, ns, block:start(), 0, {
-      line_hl_group = "NormalFloat",
+      line_hl_group = "markdownCodeBlock",
       end_row = block:end_() - 1,
     })
   end
