@@ -32,6 +32,7 @@ return {
           end,
         },
       },
+      is_always_hidden = function(name, bufnr) return name == ".." end,
     },
     config = function(_, opts)
       local oil = require("oil")
