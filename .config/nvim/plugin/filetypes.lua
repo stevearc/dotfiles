@@ -83,6 +83,9 @@ ftplugin.extend_all({
   markdown = {
     opt = {
       conceallevel = 2,
+      shiftwidth = 2,
+      tabstop = 2,
+      softtabstop = 2,
       formatoptions = "jqlnr",
       comments = "sb:- [x],mb:- [ ],b:-,b:*,b:>",
       linebreak = true,
@@ -99,9 +102,7 @@ ftplugin.extend_all({
       vim.api.nvim_clear_autocmds({ buffer = bufnr, group = aug })
       vim.api.nvim_create_autocmd({ "TextChanged", "InsertLeave" }, {
         buffer = bufnr,
-        callback = vim.schedule_wrap(function(args)
-          require("markdown").update_code_highlights(bufnr)
-        end),
+        callback = vim.schedule_wrap(function(args) require("markdown").update_code_highlights(bufnr) end),
       })
     end,
   },
@@ -140,9 +141,12 @@ ftplugin.extend_all({
           vim.lsp.buf.formatting({})
         end, { buffer = bufnr })
       end
-      vim.keymap.set("n", "<leader>e", function()
-        run_file({ "python", vim.api.nvim_buf_get_name(0) })
-      end, { buffer = bufnr })
+      vim.keymap.set(
+        "n",
+        "<leader>e",
+        function() run_file({ "python", vim.api.nvim_buf_get_name(0) }) end,
+        { buffer = bufnr }
+      )
     end,
   },
   qf = {
@@ -155,16 +159,17 @@ ftplugin.extend_all({
   rust = {
     compiler = "cargo",
     callback = function(bufnr)
-      vim.keymap.set("n", "<leader>e", function()
-        run_file({ "cargo", "run" })
-      end, { buffer = bufnr })
+      vim.keymap.set("n", "<leader>e", function() run_file({ "cargo", "run" }) end, { buffer = bufnr })
     end,
   },
   sh = {
     callback = function(bufnr)
-      vim.keymap.set("n", "<leader>e", function()
-        run_file({ "bash", vim.api.nvim_buf_get_name(0) })
-      end, { buffer = bufnr })
+      vim.keymap.set(
+        "n",
+        "<leader>e",
+        function() run_file({ "bash", vim.api.nvim_buf_get_name(0) }) end,
+        { buffer = bufnr }
+      )
     end,
   },
   supercollider = {

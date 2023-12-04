@@ -6,9 +6,7 @@ for i = 1, 9 do
 end
 vim.keymap.set("t", [[\`]], [[<C-\><C-N>:BufferLast<CR>]])
 
-local function is_floating_win(winid)
-  return vim.api.nvim_win_get_config(winid or 0).relative ~= ""
-end
+local function is_floating_win(winid) return vim.api.nvim_win_get_config(winid or 0).relative ~= "" end
 
 ftplugin.extend("terminal", {
   opt = {
@@ -25,6 +23,7 @@ ftplugin.extend("terminal", {
           vim.api.nvim_win_close(0, false)
         end
         vim.api.nvim_win_set_buf(0, bufnr)
+        vim.bo[bufnr].buflisted = true
       end,
     },
     {
