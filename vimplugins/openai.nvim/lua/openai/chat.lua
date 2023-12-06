@@ -23,8 +23,19 @@ local function parse_settings(bufnr)
   if not yaml_tree then
     return {}
   end
-  local root = yaml_tree:parse()[1]:root()
-  return yaml.decode_node(bufnr, root) or {}
+
+  local metadata_root = nil
+  local trees = yaml_tree:parse()
+  for _, tree in ipairs(trees) do
+    local root = tree:root()
+    if root:start() <= 1 then
+      metadata_root = root
+    end
+  end
+  if not metadata_root then
+    return {}
+  end
+  return yaml.decode_node(bufnr, metadata_root) or {}
 end
 
 ---@param bufnr integer
