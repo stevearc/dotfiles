@@ -67,12 +67,9 @@ dc-install-syncthing() {
 
 DC_INSTALL_JELLYFIN_DOC="Jellyfin media server"
 dc-install-jellyfin() {
-  pacman -Qm | grep -q jellyfin-server-bin || yay -Sy --noconfirm jellyfin-server-bin jellyfin-web
+  pacman -Q | grep -q jellyfin-server || pacman -Sy --noconfirm jellyfin-server jellyfin-web jellyfin-ffmpeg
   sudo pacman -Sy --noconfirm rocm-opencl-runtime libva-mesa-driver
   if [ ! -e /usr/local/bin/jellyfin-ffmpeg ]; then
-    if [ ! -e /usr/lib/jellyfin-ffmpeg/ffmpeg ]; then
-      yay -Sy --noconfirm jellyfin-ffmpeg
-    fi
     sudo ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/jellyfin-ffmpeg
   fi
   sudo cp "$HERE/static/jellyfin_conf" /etc/conf.d/jellyfin
