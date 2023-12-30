@@ -308,6 +308,21 @@ install-hooks() {
   done
 }
 
+update() {
+  git fetch
+  local cur
+  cur=$(git branch --show-current)
+  local main
+  main=$(git main)
+  git rebase "origin/$main" "$main"
+  if git branch | grep -q master-passing-tests; then
+    git rebase origin/master-passing-tests master-passing-tests
+  fi
+  if [ -n "$cur" ]; then
+    git checkout "$cur"
+  fi
+}
+
 cmd=$1
 shift
 "$cmd" "$@"

@@ -52,3 +52,6 @@
 [submodule "vimplugins/conform.nvim"]
 	path = vimplugins/conform.nvim
 	url = https://github.com/stevearc/conform.nvim
+[submodule "gitstack"]
+	path = gitstack
+	url = https://github.com/stevearc/gitstack.git

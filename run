@@ -90,17 +90,17 @@ Opts:
   -c      Copy files instead of symbolic linking"
   while getopts "hc" opt; do
     case $opt in
-      c)
-        symbolic=
-        ;;
-      h)
-        echo "$usage"
-        exit
-        ;;
-      \?)
-        echo "$usage"
-        exit 1
-        ;;
+    c)
+      symbolic=
+      ;;
+    h)
+      echo "$usage"
+      exit
+      ;;
+    \?)
+      echo "$usage"
+      exit 1
+      ;;
     esac
   done
   shift $((OPTIND - 1))
@@ -124,6 +124,13 @@ Opts:
   else
     rsync -lrp bin "$HOME/.local/bin"
     cp "$HERE/parseargs/parseargs.sh" "$HOME/.local/bin/"
+  fi
+
+  mkdir -p "$HOME/.local/share"
+  if [ $symbolic ]; then
+    link "$HERE/gitstack/gitstack.py" "$HOME/.local/share/gitstack.py"
+  else
+    cp "$HERE/gitstack/gitstack.py" "$HOME/.local/share/gitstack.py"
   fi
 
   mkdir -p ~/.config
@@ -212,20 +219,20 @@ main() {
   fi
   while getopts "hfv" opt; do
     case $opt in
-      h)
-        dotcmd-help
-        exit
-        ;;
-      f)
-        clear-checkpoints
-        ;;
-      v)
-        set -x
-        ;;
-      \?)
-        dotcmd-help
-        exit 1
-        ;;
+    h)
+      dotcmd-help
+      exit
+      ;;
+    f)
+      clear-checkpoints
+      ;;
+    v)
+      set -x
+      ;;
+    \?)
+      dotcmd-help
+      exit 1
+      ;;
     esac
   done
   shift $((OPTIND - 1))

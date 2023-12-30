@@ -6,9 +6,13 @@ import re
 import shutil
 import subprocess
 import sys
+from functools import cache
 from typing import Any, Dict, List, Literal, Optional, Tuple, overload
 
 DEBUG = False
+USER = os.environ["USER"]
+STACK_RE = re.compile(r"^(.*)\-(\d+)$")
+
 
 # TODO
 # - Extend a stack that has already been merged by passing in a PR
@@ -65,6 +69,7 @@ def git_lines(*args, **kwargs) -> List[str]:
         return []
 
 
+@cache
 def remote_main_branch() -> str:
     proc = subprocess.run(
         ["git", "symbolic-ref", "refs/remotes/origin/HEAD"],
@@ -76,10 +81,8 @@ def remote_main_branch() -> str:
     return "master"
 
 
-MASTER = remote_main_branch()
-ORIGIN_MASTER = "origin/" + MASTER
-USER = os.environ["USER"]
-STACK_RE = re.compile(r"^(.*)\-(\d+)$")
+def get_origin_master() -> str:
+    return "origin/" + remote_main_branch()
 
 
 class Stack:
@@ -162,7 +165,7 @@ class Stack:
     def create_prs(self, before_branch: Optional[str] = None) -> List["Child"]:
         total = len(self)
         created = []
-        rel = MASTER
+        rel = remote_main_branch()
         body_file = os.path.join(
             git("rev-parse", "--show-toplevel"), ".github", "PULL_REQUEST_TEMPLATE.md"
         )
@@ -458,7 +461,9 @@ def list_branches() -> List[str]:
     return [b.strip() for b in git_lines("branch", "--format=%(refname:short)")]
 
 
-def list_merged_branches(branch: str = ORIGIN_MASTER) -> List[str]:
+def list_merged_branches(branch: Optional[str] = None) -> List[str]:
+    if branch is None:
+        branch = get_origin_master()
     return [
         b.strip()
         for b in git_lines("branch", "--format=%(refname:short)", "--merged", branch)
@@ -594,7 +599,9 @@ def tag_commits(tag: str, refs: str):
             )
 
 
-def merge_base(branch: str, ref2: str = ORIGIN_MASTER) -> str:
+def merge_base(branch: str, ref2: Optional[str] = None) -> str:
+    if ref2 is None:
+        ref2 = get_origin_master()
     return git("merge-base", branch, ref2)
 
 
@@ -635,7 +642,9 @@ def switch_branch(branch: str):
     git("checkout", branch)
 
 
-def create_branch(branch: str, start: str = MASTER):
+def create_branch(branch: str, start: Optional[str] = None):
+    if start is None:
+        start = remote_main_branch()
     git("checkout", "-b", branch, start)
 
 
@@ -935,7 +944,7 @@ def cmd_update(args):
         git("fetch", capture_output=False)
     for branch in list_branches():
         # FIXME This is to catch master-passing-tests. There's probably a better way to do this.
-        if branch.startswith(MASTER):
+        if branch.startswith(remote_main_branch()):
             git("rebase", "origin/" + branch, branch)
     switch_branch(cur)
 
@@ -958,7 +967,7 @@ def _add_cmd_test(parser):
 def cmd_test(args):
     test_branch_name = f"{USER}-TEST"
     if args.test_cmd == "reset":
-        switch_branch(MASTER)
+        switch_branch(remote_main_branch())
         for branch in list_branches():
             if branch.startswith(test_branch_name):
                 delete_branch(branch, True)
@@ -978,22 +987,22 @@ def cmd_test(args):
         git("commit", "--allow-empty", "-m", "Fix up a PR")
         switch_branch(test_branch_name)
     elif args.test_cmd == "tidy_rebase":
-        create_branch(test_branch_name, MASTER + "^")
+        create_branch(test_branch_name, remote_main_branch() + "^")
         git("commit", "--allow-empty", "-m", "Test commit 1")
         git("commit", "--allow-empty", "-m", "Test commit 2")
         git("commit", "--allow-empty", "-m", "Test commit 3")
         make_stack()
         switch_branch(test_branch_name + "-1")
-        git("rebase", MASTER)
+        git("rebase", remote_main_branch())
         switch_branch(test_branch_name)
     elif args.test_cmd == "old_stack":
-        create_branch(test_branch_name, MASTER + "^")
+        create_branch(test_branch_name, remote_main_branch() + "^")
         git("commit", "--allow-empty", "-m", "Test commit 1")
         git("commit", "--allow-empty", "-m", "Test commit 2")
         git("commit", "--allow-empty", "-m", "Test commit 3")
         make_stack()
     elif args.test_cmd == "incomplete_stack":
-        create_branch(test_branch_name, MASTER + "^")
+        create_branch(test_branch_name, remote_main_branch() + "^")
         git("commit", "--allow-empty", "-m", "Test commit 1")
         git("commit", "--allow-empty", "-m", "Test commit 2")
         make_stack()
