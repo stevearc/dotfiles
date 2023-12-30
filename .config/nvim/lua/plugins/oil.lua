@@ -13,7 +13,6 @@ return {
     opts = {
       delete_to_trash = true,
       skip_confirm_for_simple_edits = true,
-      restore_win_options = false,
       prompt_save_on_select_new_entry = false,
       keymaps = {
         ["`"] = "actions.tcd",
