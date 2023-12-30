@@ -223,6 +223,21 @@ function Chat.new(args)
   return self
 end
 
+---@param bufnr integer
+---@return integer[]
+local function get_windows_to_scroll(bufnr)
+  local lnum = vim.api.nvim_buf_line_count(bufnr)
+  local last_line = vim.api.nvim_buf_get_lines(bufnr, -2, -1, true)[1]
+  local ret = {}
+  for _, winid in ipairs(util.buf_list_wins(bufnr)) do
+    local cursor = vim.api.nvim_win_get_cursor(winid)
+    if cursor[1] == lnum and cursor[2] >= last_line:len() - 1 then
+      table.insert(ret, winid)
+    end
+  end
+  return ret
+end
+
 function Chat:submit()
   local settings, messages = parse_messages_buffer(self.bufnr)
   vim.bo[self.bufnr].modified = false
@@ -230,6 +245,9 @@ function Chat:submit()
   local function finalize()
     vim.bo[self.bufnr].modified = false
     vim.bo[self.bufnr].modifiable = true
+  end
+  if vim.api.nvim_get_current_buf() == self.bufnr then
+    util.scroll_to_end()
   end
   local new_message = messages[#messages]
   self.client:stream_chat_completion(
@@ -251,13 +269,19 @@ function Chat:submit()
         if delta.content then
           new_message.content = new_message.content .. delta.content
         end
+        local scroll_wins = get_windows_to_scroll(self.bufnr)
         render_messages(self.bufnr, settings, messages)
-        util.buf_scroll_to_end(self.bufnr)
+        for _, winid in ipairs(scroll_wins) do
+          util.scroll_to_end(winid)
+        end
       end
       if done then
+        local scroll_wins = get_windows_to_scroll(self.bufnr)
         table.insert(messages, { role = "user", content = "" })
         render_messages(self.bufnr, settings, messages)
-        util.buf_scroll_to_end(self.bufnr)
+        for _, winid in ipairs(scroll_wins) do
+          util.scroll_to_end(winid)
+        end
         finalize()
       end
     end
