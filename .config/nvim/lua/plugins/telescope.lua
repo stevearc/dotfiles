@@ -7,9 +7,7 @@ function stevearc.find_files(...)
     vim.notify("No fuzzy finder installed", vim.log.levels.ERROR)
   end
 end
-vim.keymap.set("n", "<leader>ff", function()
-  stevearc.find_files()
-end, { desc = "[F]ind [F]iles" })
+vim.keymap.set("n", "<leader>ff", function() stevearc.find_files() end, { desc = "[F]ind [F]iles" })
 
 vim.keymap.set("n", "<leader>fn", function()
   require("telescope").load_extension("gkeep")
@@ -96,7 +94,11 @@ return {
         gkeep = {
           find_method = "title",
         },
-        aerial = {},
+        aerial = {
+          show_nesting = {
+            python = true,
+          },
+        },
       },
     },
     config = function(_, setup_opts)
