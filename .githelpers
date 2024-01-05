@@ -268,21 +268,50 @@ confirm() {
   done
 }
 
+prompt_delete() {
+  local branch="${1?Usage: prompt_delete BRANCH}"
+
+  while true; do
+    echo -e '\033[1;34m'
+    read -r -p "Delete ${branch}? [y,n,d,q,?] " response
+    echo -e '\033[0m'
+    case $response in
+    [yY])
+      git branch -D "$branch"
+      echo "Deleted $branch"
+      return
+      ;;
+    [nN])
+      echo "Skipping $branch"
+      return
+      ;;
+    [dD])
+      git diff --ignore-all-space "$(git merge-base "$(git main)" "$branch")" "$branch"
+      ;;
+    [sS])
+      git diff --stat --ignore-all-space "$(git merge-base "$(git main)" "$branch")" "$branch"
+      ;;
+    [qQ])
+      return 1
+      ;;
+    *)
+      echo "y - delete this branch"
+      echo "n - do nothing"
+      echo "d - show diff"
+      echo "s - show diff --stat"
+      echo "q - quit; do nothing with this branch or any others"
+      echo "? - print help"
+      ;;
+    esac
+  done
+}
+
 delete_merged() {
-  # Now find local branches with no remote
-  for branch in $(git branch --format "%(refname:short) %(upstream)" | awk '{if (!$2) print $1;}') $(git branch --no-color --merged "$(git main)" | grep -v '\*\|master\|develop\|main'); do
-    if git rev-parse "$branch" >/dev/null 2>&1; then
-      pretty_git_log -20 "$branch"
-      echo ""
-      if confirm "Delete $branch?" "n"; then
-        local deleted=1
-        git branch -d "$branch" || deleted=
-        if [ ! $deleted ]; then
-          if confirm "Force delete $branch?" "n"; then
-            git branch -D "$branch"
-          fi
-        fi
-      fi
+  for branch in $(git branch --format '%(refname:short) %(upstream:track)' | grep '\[gone\]$' | cut -f 1 -d ' '); do
+    pretty_git_log -10 "$branch"
+    echo ""
+    if ! prompt_delete "$branch"; then
+      return
     fi
   done
 }
