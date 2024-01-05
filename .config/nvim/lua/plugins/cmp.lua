@@ -61,46 +61,49 @@ return {
     })
 
     local formatting = {}
-    p.require("lspkind", function(lspkind)
-      formatting.format = lspkind.cmp_format({
-        mode = "symbol",
-        symbol_map = {
-          Copilot = " ",
-          Class = "󰆧 ",
-          Color = "󰏘 ",
-          Constant = "󰏿 ",
-          Constructor = " ",
-          Enum = " ",
-          EnumMember = " ",
-          Event = "",
-          Field = " ",
-          File = "󰈙 ",
-          Folder = "󰉋 ",
-          Function = "󰊕 ",
-          Interface = " ",
-          Keyword = "󰌋 ",
-          Method = "󰊕 ",
-          Module = " ",
-          Operator = "󰆕 ",
-          Property = " ",
-          Reference = "󰈇 ",
-          Snippet = " ",
-          Struct = "󰆼 ",
-          Text = "󰉿 ",
-          TypeParameter = "󰉿 ",
-          Unit = "󰑭",
-          Value = "󰎠 ",
-          Variable = "󰀫 ",
-        },
-        menu = {
-          buffer = "[buf]",
-          nvim_lsp = "[LSP]",
-          nvim_lua = "[api]",
-          path = "[path]",
-          luasnip = "[snip]",
-        },
-      })
-    end)
+    p.require(
+      "lspkind",
+      function(lspkind)
+        formatting.format = lspkind.cmp_format({
+          mode = "symbol",
+          symbol_map = {
+            Copilot = " ",
+            Class = "󰆧 ",
+            Color = "󰏘 ",
+            Constant = "󰏿 ",
+            Constructor = " ",
+            Enum = " ",
+            EnumMember = " ",
+            Event = "",
+            Field = " ",
+            File = "󰈙 ",
+            Folder = "󰉋 ",
+            Function = "󰊕 ",
+            Interface = " ",
+            Keyword = "󰌋 ",
+            Method = "󰊕 ",
+            Module = " ",
+            Operator = "󰆕 ",
+            Property = " ",
+            Reference = "󰈇 ",
+            Snippet = " ",
+            Struct = "󰆼 ",
+            Text = "󰉿 ",
+            TypeParameter = "󰉿 ",
+            Unit = "󰑭",
+            Value = "󰎠 ",
+            Variable = "󰀫 ",
+          },
+          menu = {
+            buffer = "[buf]",
+            nvim_lsp = "[LSP]",
+            nvim_lua = "[api]",
+            path = "[path]",
+            luasnip = "[snip]",
+          },
+        })
+      end
+    )
 
     cmp.setup({
       mapping = mapping,
@@ -133,9 +136,7 @@ return {
       },
 
       snippet = {
-        expand = function(args)
-          luasnip.lsp_expand(args.body)
-        end,
+        expand = function(args) luasnip.lsp_expand(args.body) end,
       },
 
       experimental = {
@@ -143,8 +144,6 @@ return {
       },
     })
 
-    vim.api.nvim_create_user_command("CmpInfo", function()
-      cmp.status()
-    end, {})
+    vim.api.nvim_create_user_command("CmpInfo", function() cmp.status() end, {})
   end,
 }

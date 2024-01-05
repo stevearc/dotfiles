@@ -6,28 +6,33 @@ return {
   event = "InsertEnter *",
   config = function()
     local luasnip = require("luasnip")
+    local has_vim_snippet, snippet = pcall(require, "vim.snippet")
     require("luasnip.loaders.from_vscode").lazy_load()
     vim.keymap.set("s", "<Tab>", "<Plug>luasnip-jump-next")
     vim.keymap.set("s", "<C-h>", "<Plug>luasnip-jump-prev")
     vim.keymap.set("s", "<C-l>", "<Plug>luasnip-jump-next")
-    vim.keymap.set({ "i", "s" }, "<C-k>", function()
-      pcall(luasnip.change_choice, -1)
-    end)
-    vim.keymap.set({ "i", "s" }, "<C-j>", function()
-      pcall(luasnip.change_choice, 1)
-    end)
+    vim.keymap.set({ "i", "s" }, "<C-k>", function() pcall(luasnip.change_choice, -1) end)
+    vim.keymap.set({ "i", "s" }, "<C-j>", function() pcall(luasnip.change_choice, 1) end)
 
     local aug = vim.api.nvim_create_augroup("ClearLuasnipSession", { clear = true })
+    -- Can't use InsertLeave here because that fires when we go to select mode
     vim.api.nvim_create_autocmd("CursorHold", {
+      desc = "Deactivate snippet after leaving insert/select mode",
       pattern = "*",
-      -- Can't use InsertLeave here because that fires when we go to select mode
-      command = "silent! LuaSnipUnlinkCurrent",
       group = aug,
+      callback = function()
+        vim.cmd.LuaSnipUnlinkCurrent({ mods = { emsg_silent = true } })
+        if has_vim_snippet then
+          snippet.exit()
+        end
+      end,
     })
 
     vim.keymap.set("i", "<C-h>", function()
       if luasnip.get_active_snip() then
         luasnip.jump(-1)
+      elseif has_vim_snippet and snippet.active() then
+        snippet.jump(-1)
       else
         local cur = vim.api.nvim_win_get_cursor(0)
         pcall(vim.api.nvim_win_set_cursor, 0, { cur[1], cur[2] - 1 })
@@ -36,6 +41,8 @@ return {
     vim.keymap.set("i", "<C-l>", function()
       if luasnip.get_active_snip() then
         luasnip.jump(1)
+      elseif has_vim_snippet and snippet.active() then
+        snippet.jump(1)
       else
         local cur = vim.api.nvim_win_get_cursor(0)
         pcall(vim.api.nvim_win_set_cursor, 0, { cur[1], cur[2] + 1 })
