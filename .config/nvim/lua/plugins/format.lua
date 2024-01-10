@@ -42,6 +42,13 @@ return {
       ["_"] = { "trim_whitespace", "trim_newlines" },
     },
     formatters = {
+      injected = {
+        options = {
+          lang_to_formatters = {
+            html = {},
+          },
+        },
+      },
       shfmt = {
         prepend_args = { "-i", "2" },
       },
