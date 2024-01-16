@@ -34,8 +34,7 @@ return {
         end)
       )
     end)
-  end,
-  init = function()
+
     -- Shim for vim.ui.open
     if vim.ui.open then
       return
