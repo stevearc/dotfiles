@@ -46,7 +46,7 @@ return {
         indent = {
           enable = true,
           disable = function(lang, bufnr)
-            if lang == "lua" then -- or lang == "python" then
+            if lang == "lua" or lang == "python" then
               return true
             else
               return should_disable(lang, bufnr)
