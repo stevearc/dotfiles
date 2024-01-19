@@ -273,7 +273,7 @@ prompt_delete() {
 
   while true; do
     echo -e '\033[1;34m'
-    read -r -p "Delete ${branch}? [y,n,d,q,?] " response
+    read -r -p "Delete ${branch}? [y,n,d,s,q,?] " response
     echo -e '\033[0m'
     case $response in
     [yY])
