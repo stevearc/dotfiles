@@ -198,8 +198,8 @@ local Overseer = {
 local Diagnostics = {
   condition = function() return #vim.diagnostic.get(0, { severity = { min = vim.diagnostic.severity.WARN } }) > 0 end,
   static = {
-    error_icon = vim.fn.sign_getdefined("DiagnosticSignError")[1].text,
-    warn_icon = vim.fn.sign_getdefined("DiagnosticSignWarn")[1].text,
+    error_icon = vim.g.nerd_font and "󰅚 " or "E",
+    warn_icon = vim.g.nerd_font and "󰀪 " or "W",
   },
   init = function(self)
     self.errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
@@ -266,7 +266,13 @@ local ArduinoStatus = {
 -- root cause, but I'm done debugging this for today.
 conditions.lsp_attached = function()
   local lsp = rawget(vim, "lsp")
-  return lsp and next(lsp.get_active_clients({ bufnr = 0 })) ~= nil
+  if not lsp then
+    return false
+  elseif lsp.get_clients then
+    return next(lsp.get_clients({ bufnr = 0 })) ~= nil
+  else
+    return next(lsp.get_active_clients({ bufnr = 0 })) ~= nil
+  end
 end
 
 local LSPActive = {
@@ -278,7 +284,13 @@ local LSPActive = {
       local names = {}
       local lsp = rawget(vim, "lsp")
       if lsp then
-        for _, server in pairs(lsp.get_active_clients({ bufnr = 0 })) do
+        local clients
+        if lsp.get_clients then
+          clients = lsp.get_clients({ bufnr = 0 })
+        else
+          clients = lsp.get_active_clients({ bufnr = 0 })
+        end
+        for _, server in pairs(clients) do
           table.insert(names, server.name)
         end
       end
