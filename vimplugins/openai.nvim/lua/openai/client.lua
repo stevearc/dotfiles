@@ -114,6 +114,7 @@ function Client:stream_call(url, payload, cb)
   payload.stream = true
   local cmd = {
     "curl",
+    "--no-buffer",
     url,
     "-H",
     "Content-Type: application/json",
