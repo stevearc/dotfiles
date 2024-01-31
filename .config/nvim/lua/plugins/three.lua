@@ -39,8 +39,8 @@ return {
       vim.keymap.set("n", "H", three.prev, { desc = "Previous buffer" })
       vim.keymap.set("n", "<C-l>", three.move_right, { desc = "Move buffer right" })
       vim.keymap.set("n", "<C-h>", three.move_left, { desc = "Move buffer left" })
-      vim.keymap.set("n", "<C-j>", three.wrap(three.next_tab, { wrap = true }, { desc = "[G]oto next [T]ab" }))
-      vim.keymap.set("n", "<C-k>", three.wrap(three.prev_tab, { wrap = true }, { desc = "[G]oto prev [T]ab" }))
+      vim.keymap.set({ "n", "t" }, "<C-j>", three.wrap(three.next_tab, { wrap = true }, { desc = "[G]oto next [T]ab" }))
+      vim.keymap.set({ "n", "t" }, "<C-k>", three.wrap(three.prev_tab, { wrap = true }, { desc = "[G]oto prev [T]ab" }))
       for i = 1, 9 do
         vim.keymap.set("n", "<leader>" .. i, three.wrap(three.jump_to, i))
       end
@@ -63,31 +63,19 @@ return {
       vim.keymap.set("n", "<C-w><C-b>", three.clone_tab, { desc = "Clone tab" })
       vim.keymap.set("n", "<C-w><C-n>", "<cmd>tabnew | set nobuflisted<CR>", { desc = "New tab" })
       vim.keymap.set("n", "<C-w>`", three.toggle_scope_by_dir, { desc = "Toggle tab scoping by directory" })
-      vim.api.nvim_create_user_command("BufCloseAll", function()
-        three.close_all_buffers()
-      end, {})
+      vim.api.nvim_create_user_command("BufCloseAll", function() three.close_all_buffers() end, {})
       vim.api.nvim_create_user_command("BufCloseAllButCurrent", function()
-        three.close_all_buffers(function(info)
-          return info.bufnr ~= vim.api.nvim_get_current_buf()
-        end)
+        three.close_all_buffers(function(info) return info.bufnr ~= vim.api.nvim_get_current_buf() end)
       end, {})
       vim.api.nvim_create_user_command("BufCloseAllButPinned", function()
-        three.close_all_buffers(function(info)
-          return not info.pinned
-        end)
+        three.close_all_buffers(function(info) return not info.pinned end)
       end, {})
-      vim.api.nvim_create_user_command("BufHideAll", function()
-        three.hide_all_buffers()
-      end, {})
+      vim.api.nvim_create_user_command("BufHideAll", function() three.hide_all_buffers() end, {})
       vim.api.nvim_create_user_command("BufHideAllButCurrent", function()
-        three.hide_all_buffers(function(info)
-          return info.bufnr ~= vim.api.nvim_get_current_buf()
-        end)
+        three.hide_all_buffers(function(info) return info.bufnr ~= vim.api.nvim_get_current_buf() end)
       end, {})
       vim.api.nvim_create_user_command("BufHideAllButPinned", function()
-        three.hide_all_buffers(function(info)
-          return not info.pinned
-        end)
+        three.hide_all_buffers(function(info) return not info.pinned end)
       end, {})
 
       vim.keymap.set("n", "<C-w>+", function()
@@ -97,9 +85,7 @@ return {
       vim.keymap.set("n", "<C-w>z", "<cmd>resize | vertical resize<CR>", {})
 
       vim.keymap.set("n", "<leader>fp", three.open_project, { desc = "[F]ind [P]roject" })
-      vim.api.nvim_create_user_command("ProjectDelete", function()
-        three.remove_project()
-      end, {})
+      vim.api.nvim_create_user_command("ProjectDelete", function() three.remove_project() end, {})
     end,
   },
 }
