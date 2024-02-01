@@ -65,6 +65,17 @@ dc-install-syncthing() {
   fi
 }
 
+dc-install-plex() {
+  pacman -Q | grep -q plex-media-server || yay -Sy --noconfirm plex-media-server
+  sudo systemctl start plexmediaserver.service
+  sudo systemctl enable plexmediaserver.service
+  if hascmd firewall-cmd; then
+    sudo firewall-cmd --zone=home --add-service=plex
+    sudo firewall-cmd --zone=home --permanent --add-service=plex
+  fi
+  test -e /etc/cron.hourly/chown_plex || sudo cp "$HERE/static/chown_plex" /etc/cron.hourly/
+}
+
 DC_INSTALL_JELLYFIN_DOC="Jellyfin media server"
 dc-install-jellyfin() {
   pacman -Q | grep -q jellyfin-server || pacman -Sy --noconfirm jellyfin-server jellyfin-web jellyfin-ffmpeg

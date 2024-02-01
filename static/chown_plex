@@ -1,0 +1,3 @@
+#!/bin/bash
+set -e
+chown -R plex:stevearc /mnt/storage/plex
