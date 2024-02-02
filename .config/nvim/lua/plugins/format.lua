@@ -58,7 +58,12 @@ return {
       },
     },
     log_level = vim.log.levels.TRACE,
-    format_after_save = { timeout_ms = 5000, lsp_fallback = true },
+    format_after_save = function(bufnr)
+      if vim.b[bufnr].disable_autoformat then
+        return
+      end
+      return { timeout_ms = 5000, lsp_fallback = true }
+    end,
   },
   init = function() vim.o.formatexpr = "v:lua.require'conform'.formatexpr()" end,
   config = function(_, opts)
