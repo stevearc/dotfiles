@@ -128,7 +128,8 @@ _get_repo_url() {
       # Trim the git@ from the start
       sed 's/^.*@//' |
       sed 's|:|/|' |
-      sed 's|^|https://|'
+      sed 's|^|https://|' |
+      sed 's/\.git$//'
   fi
 }
 
