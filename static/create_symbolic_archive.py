@@ -4,25 +4,26 @@ import os
 
 ARCHIVE = "/mnt/storage/archive"
 SYMBOLIC_ARCHIVE = "/mnt/storage/symbolic_archive"
-LINKS = "/mnt/storage/plex"
+LINK_ROOTS = ["/mnt/storage/plex", "/mnt/storage/audiobooks"]
 
 
 def main() -> None:
     inodes = {}
     i = 0
-    for root, _dirs, files in os.walk(LINKS):
-        for file in files:
-            fullpath = os.path.join(root, file)
-            stat = os.stat(fullpath)
-            inodes[stat.st_ino] = fullpath
-            i += 1
-            if i % 1000 == 0:
-                print(f"Reading file {i}")
+    for link_root in LINK_ROOTS:
+        for root, _dirs, files in os.walk(link_root):
+            for file in files:
+                fullpath = os.path.join(root, file)
+                stat = os.stat(fullpath)
+                inodes[stat.st_ino] = fullpath
+                i += 1
+                if i % 1000 == 0:
+                    print(f"Reading file {i}")
 
     i = 0
     for root, _dirs, files in os.walk(ARCHIVE):
         rel_root = os.path.relpath(root, ARCHIVE)
-        dest_root = os.path.join(SYMBOLIC_ARCHIVE, rel_root)
+        dest_root = os.path.normpath(os.path.join(SYMBOLIC_ARCHIVE, rel_root))
         os.makedirs(dest_root, exist_ok=True)
         for file in files:
             i += 1
@@ -40,8 +41,15 @@ def main() -> None:
                         if existing_symbolic_path == symbolic_path:
                             continue
                     os.unlink(dest_path)
+                elif os.path.islink(dest_path):
+                    # Remove broken symlink
+                    os.unlink(dest_path)
                 os.symlink(symbolic_path, dest_path)
             else:
+                if os.path.islink(dest_path) and not os.path.exists(dest_path):
+                    # Remove broken symlink
+                    os.unlink(dest_path)
+
                 if os.path.exists(dest_path):
                     dest_stat = os.stat(dest_path)
                     if stat.st_ino != dest_stat.st_ino:
