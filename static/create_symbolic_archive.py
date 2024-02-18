@@ -4,7 +4,8 @@ import os
 
 ARCHIVE = "/mnt/storage/archive"
 SYMBOLIC_ARCHIVE = "/mnt/storage/symbolic_archive"
-LINKS = "/mnt/storage/jellyfin"
+LINKS = "/mnt/storage/plex"
+
 
 def main() -> None:
     inodes = {}
@@ -44,10 +45,13 @@ def main() -> None:
                 if os.path.exists(dest_path):
                     dest_stat = os.stat(dest_path)
                     if stat.st_ino != dest_stat.st_ino:
-                        raise Exception(f'Attempting to create hard link "{dest_path}" -> "{src_path}", but it already points to another file')
+                        raise Exception(
+                            f'Attempting to create hard link "{dest_path}" -> "{src_path}", but it already points to another file'
+                        )
                 else:
                     os.link(src_path, dest_path)
     print("Done")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

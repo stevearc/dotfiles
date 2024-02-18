@@ -300,7 +300,7 @@ dotcmd-beelink() {
   dc-install-common
   dc-install-neovim
   dotcmd-desktop
-  dc-install-jellyfin
+  dc-install-plex
   sudo cp "$HERE/static/rsync_retroarch_saves" /etc/cron.hourly/
   sudo cp "$HERE/static/create_symbolic_archive.py" /etc/cron.hourly/create_symbolic_archive
   sudo cp "$HERE/static/storage_backup" /etc/cron.d/storage_backup
