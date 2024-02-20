@@ -27,9 +27,7 @@ myWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConf
 hs.alert.show("Config loaded")
 
 --Predicate that checks if a window belongs to a screen
-function isInScreen(screen, win)
-  return win:screen() == screen
-end
+function isInScreen(screen, win) return win:screen() == screen end
 
 -- include minimized/hidden windows, current Space & screen only
 local switchers = setmetatable({}, {
@@ -75,26 +73,22 @@ end
 --   end)
 -- end
 
-hs.hotkey.bind({ "cmd", "shift" }, "d", function()
-  log.i("Debug")
+hs.hotkey.bind({ "cmd", "shift" }, "d", function() log.i("Debug") end)
+
+hs.hotkey.bind({ "cmd", "shift" }, "c", function() hs.toggleConsole() end)
+
+hs.hotkey.bind({ "cmd" }, "h", function()
+  local win = hs.window.focusedWindow()
+  local screen = win:screen()
+  focusScreen(screen:previous())
 end)
 
-hs.hotkey.bind({ "cmd", "shift" }, "c", function()
-  hs.toggleConsole()
+hs.hotkey.bind({ "cmd" }, "l", function()
+  local win = hs.window.focusedWindow()
+  local screen = win:screen()
+  focusScreen(screen:next())
 end)
 
--- hs.hotkey.bind({'cmd'}, 'h', function()
---   local win = hs.window.focusedWindow()
---   local screen = win:screen()
---   focusScreen(screen:previous())
--- end)
---
--- hs.hotkey.bind({'cmd'}, 'l', function()
---   local win = hs.window.focusedWindow()
---   local screen = win:screen()
---   focusScreen(screen:next())
--- end)
---
 -- hs.hotkey.bind({'cmd', 'ctrl'}, 'h', function()
 --   local win = hs.window.focusedWindow()
 --   local screen = win:screen()
@@ -133,15 +127,7 @@ end)
 --   win:setFrame(f)
 -- end)
 
--- hs.hotkey.bind({"cmd"}, "Return", function()
---   local win = hs.window.focusedWindow()
---   local f = win:frame()
---   local screen = win:screen()
---   local max = screen:frame()
---
---   f.x = max.x
---   f.y = max.y
---   f.w = max.w
---   f.h = max.h
---   win:setFrame(f)
--- end)
+hs.hotkey.bind({ "cmd" }, "Return", function()
+  local win = hs.window.focusedWindow()
+  win:maximize()
+end)
