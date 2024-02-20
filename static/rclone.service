@@ -15,7 +15,7 @@ ExecStart= rclone mount \
     --vfs-cache-max-size 2G \
     --log-level INFO \
     --log-file %h/.cache/rclone/rclone.log \
-    drive:/Dropbox %h/Dropbox
+    drive:/ %h/Drive
 ExecStop=/bin/fusermount -u %h/Dropbox
 
 [Install]
