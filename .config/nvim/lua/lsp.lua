@@ -26,7 +26,7 @@ M.on_attach = function(client, bufnr)
   safemap("definitionProvider", "n", "gd", cancelable("textDocument/definition"), "[G]oto [D]efinition")
   safemap("declarationProvider", "n", "gD", cancelable("textDocument/declaration"), "[G]oto [D]eclaration")
   safemap("typeDefinitionProvider", "n", "gy", cancelable("textDocument/typeDefinition"), "[G]oto T[y]pe Definition")
-  safemap("implementationProvider", "n", "gi", cancelable("textDocument/implementation"), "[G]oto [I]mplementation")
+  safemap("implementationProvider", "n", "gI", cancelable("textDocument/implementation"), "[G]oto [I]mplementation")
   safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", "[G]oto [R]eferences")
   -- Only map K if keywordprg is not ':help'
   if vim.fn.has("nvim-0.10") == 0 and vim.bo[bufnr].keywordprg ~= ":help" then
@@ -82,8 +82,6 @@ M.safe_setup = function(name, config)
 end
 
 M.capabilities = vim.lsp.protocol.make_client_capabilities()
-p.require("cmp_nvim_lsp", function(cmp_nvim_lsp)
-  M.capabilities = cmp_nvim_lsp.default_capabilities()
-end)
+p.require("cmp_nvim_lsp", function(cmp_nvim_lsp) M.capabilities = cmp_nvim_lsp.default_capabilities() end)
 
 return M
