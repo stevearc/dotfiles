@@ -2,27 +2,19 @@ local uv = vim.uv or vim.loop
 return {
   "mfussenegger/nvim-lint",
   ft = {
-    "javascript",
-    "javascriptreact",
     "lua",
     "python",
     "rst",
     "sh",
-    "typescript",
-    "typescriptreact",
     "vim",
     "yaml",
   },
   opts = {
     linters_by_ft = {
-      javascript = { "eslint_d" },
-      javascriptreact = { "eslint_d" },
       lua = { "luacheck" },
       python = { "mypy", "pylint" },
       rst = { "rstlint" },
       sh = { "shellcheck" },
-      typescript = { "eslint_d" },
-      typescriptreact = { "eslint_d" },
       vim = { "vint" },
       yaml = { "yamllint" },
     },
@@ -47,9 +39,7 @@ return {
           0,
           vim.schedule_wrap(function()
             if vim.api.nvim_buf_is_valid(bufnr) then
-              vim.api.nvim_buf_call(bufnr, function()
-                lint.try_lint(nil, { ignore_errors = true })
-              end)
+              vim.api.nvim_buf_call(bufnr, function() lint.try_lint(nil, { ignore_errors = true }) end)
             end
           end)
         )

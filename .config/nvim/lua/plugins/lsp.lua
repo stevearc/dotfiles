@@ -110,6 +110,7 @@ return {
       local lspservers = {
         "bashls",
         "cssls",
+        "eslint",
         "gdscript",
         "gopls",
         "html",
