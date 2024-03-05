@@ -7,10 +7,10 @@ return {
       enabled = true,
       notify = false,
     },
-    tab_buf_filter = function(tabpage, bufnr)
-      local dir = vim.fn.getcwd(-1, vim.api.nvim_tabpage_get_number(tabpage))
-      return vim.startswith(vim.api.nvim_buf_get_name(bufnr), dir)
-    end,
+    -- tab_buf_filter = function(tabpage, bufnr)
+    --   local dir = vim.fn.getcwd(-1, vim.api.nvim_tabpage_get_number(tabpage))
+    --   return vim.startswith(vim.api.nvim_buf_get_name(bufnr), dir)
+    -- end,
     buf_filter = function(bufnr)
       if not require("resession").default_buf_filter(bufnr) then
         return false

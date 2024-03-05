@@ -150,11 +150,13 @@ local FullFileName = {
     if vim.bo.modified then
       fg = "yellow"
     else
-      fg = conditions.is_active() and "tablinesel_fg" or "tabline_fg"
+      -- fg = conditions.is_active() and "tablinesel_fg" or "tabline_fg"
+      fg = "tabline_fg"
     end
     return {
       fg = fg,
-      bg = conditions.is_active() and "tablinesel_bg" or "winbar_bg",
+      -- bg = conditions.is_active() and "tablinesel_bg" or "winbar_bg",
+      bg = "winbar_bg",
     }
   end,
   FileName,

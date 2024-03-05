@@ -15,6 +15,14 @@ return {
     "stevearc/three.nvim",
     event = "VeryLazy",
     opts = {
+      bufferline = {
+        icon = {
+          pin = "",
+          pin_divider = "║",
+        },
+        events = { "BufWritePost", "BufWinLeave" },
+        should_display = function(tabpage, bufnr, ts) return vim.bo[bufnr].modified end,
+      },
       projects = {
         allowlist = {
           vim.fn.stdpath("data") .. "/lazy",
@@ -61,21 +69,29 @@ return {
       end, { desc = "[B]uffer [M]ove" })
       vim.keymap.set("n", "<C-w><C-t>", "<cmd>tabclose<CR>", { desc = "Close tab" })
       vim.keymap.set("n", "<C-w><C-b>", three.clone_tab, { desc = "Clone tab" })
-      vim.keymap.set("n", "<C-w><C-n>", "<cmd>tabnew | set nobuflisted<CR>", { desc = "New tab" })
-      vim.keymap.set("n", "<C-w>`", three.toggle_scope_by_dir, { desc = "Toggle tab scoping by directory" })
-      vim.api.nvim_create_user_command("BufCloseAll", function() three.close_all_buffers() end, {})
-      vim.api.nvim_create_user_command("BufCloseAllButCurrent", function()
-        three.close_all_buffers(function(info) return info.bufnr ~= vim.api.nvim_get_current_buf() end)
-      end, {})
-      vim.api.nvim_create_user_command("BufCloseAllButPinned", function()
-        three.close_all_buffers(function(info) return not info.pinned end)
-      end, {})
+      vim.keymap.set(
+        "n",
+        "<C-w><C-n>",
+        "<cmd>tabnew | set nobuflisted | setlocal bufhidden=wipe<CR>",
+        { desc = "New tab" }
+      )
+      vim.api.nvim_create_user_command("BufClean", function(args)
+        local visible_buffers = {}
+        for _, tabpage in ipairs(vim.api.nvim_list_tabpages()) do
+          local ts = three.get_tab_state(tabpage)
+          for _, bufnr in ipairs(ts.buffers) do
+            visible_buffers[bufnr] = true
+          end
+        end
+        for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+          if (vim.bo[bufnr].buflisted or args.bang) and not visible_buffers[bufnr] then
+            three.close_buffer(bufnr)
+          end
+        end
+      end, { desc = "Delete all buffers that are not visible or in the bufferline", bang = true })
       vim.api.nvim_create_user_command("BufHideAll", function() three.hide_all_buffers() end, {})
       vim.api.nvim_create_user_command("BufHideAllButCurrent", function()
         three.hide_all_buffers(function(info) return info.bufnr ~= vim.api.nvim_get_current_buf() end)
-      end, {})
-      vim.api.nvim_create_user_command("BufHideAllButPinned", function()
-        three.hide_all_buffers(function(info) return not info.pinned end)
       end, {})
 
       vim.keymap.set("n", "<C-w>+", function()
