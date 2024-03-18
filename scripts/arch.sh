@@ -120,6 +120,7 @@ dc-install-common() {
 
   hascmd direnv || yay -S --noconfirm direnv
   hascmd shellcheck || yay -S --noconfirm shellcheck-bin
+  hascmd fswatch || yay -S --noconfirm fswatch
 }
 
 # shellcheck disable=SC2034
