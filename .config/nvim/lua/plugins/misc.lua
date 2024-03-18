@@ -178,5 +178,9 @@ return {
       vim.g.matchup_matchparen_offscreen = {}
     end,
   },
+  { -- placeholder configured by machine-local config
+    "nathanmsmith/livegrep.nvim",
+    lazy = true,
+  },
   { "levouh/tint.nvim", opts = {} },
 }
