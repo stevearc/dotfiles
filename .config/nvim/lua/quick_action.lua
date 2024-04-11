@@ -13,7 +13,19 @@ local registered_actions = {}
 M.run_action = function(name, fallback)
   name = name:lower()
   local actions = vim.tbl_filter(function(action)
-    return not action.condition or action.condition()
+    if not action.condition then
+      return true
+    end
+    local ok, active = pcall(action.condition)
+    if not ok then
+      vim.notify_once(
+        string.format("Error while checking condition for action %s: %s", name, active),
+        vim.log.levels.ERROR
+      )
+      return false
+    else
+      return active
+    end
   end, registered_actions[name])
 
   if #actions == 0 then
@@ -26,9 +38,7 @@ M.run_action = function(name, fallback)
   else
     vim.ui.select(actions, {
       prompt = "Action",
-      format_item = function(action)
-        return action.name
-      end,
+      format_item = function(action) return action.name end,
     }, function(action)
       if action then
         action.action()
@@ -45,9 +55,7 @@ M.set_keymap = function(mode, lhs, name, opts)
   opts = vim.tbl_deep_extend("keep", opts or {}, {
     desc = string.format("Run action %s", name),
   })
-  vim.keymap.set(mode, lhs, function()
-    M.run_action(name, lhs)
-  end, opts)
+  vim.keymap.set(mode, lhs, function() M.run_action(name, lhs) end, opts)
 end
 
 ---@param name string

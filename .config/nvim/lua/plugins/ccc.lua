@@ -12,7 +12,7 @@ return {
         if not has_ccc then
           return false
         end
-        local pickers = config.get("pickers")
+        local pickers = config.options.pickers
         local cursor = vim.api.nvim_win_get_cursor(0)
         local lnum = cursor[1]
         local line = vim.api.nvim_buf_get_lines(0, lnum - 1, lnum, true)[1]
@@ -36,9 +36,7 @@ return {
         end
         return false
       end,
-      action = function()
-        vim.cmd("CccPick")
-      end,
+      action = function() vim.cmd("CccPick") end,
     })
   end,
   config = function()
