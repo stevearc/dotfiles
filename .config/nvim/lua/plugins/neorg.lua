@@ -1,7 +1,13 @@
 return {
   "nvim-neorg/neorg",
-  dependencies = { "nvim-lua/plenary.nvim", "nvim-treesitter/nvim-treesitter", "jbyuki/venn.nvim" },
-  build = ":Neorg sync-parsers",
+  dependencies = {
+    {
+      "vhyrro/luarocks.nvim",
+      priority = 1000,
+      config = true,
+    },
+    "jbyuki/venn.nvim",
+  },
   keys = {
     { "<CR>", ":VBox<CR>", mode = "v" },
   },
@@ -59,29 +65,4 @@ return {
       },
     },
   },
-  config = function(_, opts)
-    local neorg = require("neorg")
-    neorg.setup(opts)
-
-    local p = require("p")
-
-    p.require("quick_action", function(quick_action)
-      quick_action.add("menu", {
-        name = "Toggle todo status",
-        condition = function()
-          if vim.bo.filetype ~= "norg" then
-            return false
-          end
-          local lnum = vim.api.nvim_win_get_cursor(0)[1] - 1
-          local todo_module = neorg.modules.get_module("core.qol.todo_items")
-          local item = todo_module and todo_module.get_todo_item_from_cursor(0, lnum)
-          local row = item and item:start()
-          return row == lnum
-        end,
-        action = function()
-          vim.cmd("Neorg keybind norg core.qol.todo_items.todo.task_cycle")
-        end,
-      })
-    end)
-  end,
 }
