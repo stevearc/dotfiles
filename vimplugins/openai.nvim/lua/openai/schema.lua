@@ -1,3 +1,4 @@
+local islist = vim.islist or vim.tbl_islist
 local M = {}
 
 M.get_default = function(schema, defaults)
@@ -38,9 +39,9 @@ local function validate_type(schema, value)
     end
   elseif ptype == "list" then
     -- TODO validate subtype
-    return type(value) == "table" and vim.tbl_islist(value)
+    return type(value) == "table" and islist(value)
   elseif ptype == "map" then
-    local valid = type(value) == "table" and (vim.tbl_isempty(value) or not vim.tbl_islist(value))
+    local valid = type(value) == "table" and (vim.tbl_isempty(value) or not islist(value))
     -- TODO validate subtype and subtype_key
     if valid then
       -- Hack to make sure empty dicts get serialized properly
