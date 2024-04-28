@@ -27,21 +27,24 @@ M.on_attach = function(client, bufnr)
   safemap("declarationProvider", "n", "gD", cancelable("textDocument/declaration"), "[G]oto [D]eclaration")
   safemap("typeDefinitionProvider", "n", "gy", cancelable("textDocument/typeDefinition"), "[G]oto T[y]pe Definition")
   safemap("implementationProvider", "n", "gI", cancelable("textDocument/implementation"), "[G]oto [I]mplementation")
-  safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", "[G]oto [R]eferences")
   -- Only map K if keywordprg is not ':help'
   if vim.fn.has("nvim-0.10") == 0 and vim.bo[bufnr].keywordprg ~= ":help" then
     safemap("hoverProvider", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", "Show hover information")
   end
-  safemap("signatureHelpProvider", "i", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", "Function signature help")
-  safemap("codeActionProvider", "n", "<leader>fa", "<cmd>lua vim.lsp.buf.code_action()<CR>", "[F]ind Code [A]ction")
-  safemap(
-    "codeActionProvider",
-    "v",
-    "<leader>fa",
-    ":<C-U>lua vim.lsp.buf.range_code_action()<CR>",
-    "[F]ind Code [A]ction"
-  )
-  safemap("renameProvider", "n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
+
+  if vim.fn.has("nvim-0.10") == 0 then
+    safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", "[G]oto [R]eferences")
+    safemap(
+      "signatureHelpProvider",
+      "i",
+      "<c-s>",
+      "<cmd>lua vim.lsp.buf.signature_help()<CR>",
+      "Function signature help"
+    )
+    safemap("codeActionProvider", "n", "crr", "<cmd>lua vim.lsp.buf.code_action()<CR>", "[F]ind Code [A]ction")
+    safemap("codeActionProvider", "v", "<C-r>", ":<C-U>lua vim.lsp.buf.range_code_action()<CR>", "[F]ind Code [A]ction")
+    safemap("renameProvider", "n", "crn", "<cmd>lua vim.lsp.buf.rename()<CR>")
+  end
 
   if client.server_capabilities.documentHighlightProvider and not client.name:match("sorbet$") then
     vim.api.nvim_create_autocmd({ "CursorHold" }, {
