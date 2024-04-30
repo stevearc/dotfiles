@@ -86,67 +86,67 @@ setup-kde() {
     firewall-cmd --permanent --zone=home --add-service=kdeconnect
   fi
   # Disable baloo file indexer
-  balooctl disable
+  hascmd balooctl && balooctl disable
   # Disable screen corner magic [Workspace Behavior > Screen Edges]
   for pos in Bottom BottomLeft BottomRight Left Right Top TopLeft TopRight; do
-    kwriteconfig5 --file ~/.config/kwinrc --group ElectricBorders --key "$pos" None
+    kwriteconfig6 --file ~/.config/kwinrc --group ElectricBorders --key "$pos" None
   done
   # Four virtual desktops [Workspace Behavior > Virtual Desktops]
   for i in 1 2 3 4; do
-    grep -q "^Id_$i=" ~/.config/kwinrc || kwriteconfig5 --file ~/.config/kwinrc --group Desktops --key "Id_$i" "$(python -c "import uuid; print(str(uuid.uuid4()))")"
+    grep -q "^Id_$i=" ~/.config/kwinrc || kwriteconfig6 --file ~/.config/kwinrc --group Desktops --key "Id_$i" "$(python -c "import uuid; print(str(uuid.uuid4()))")"
   done
-  kwriteconfig5 --file ~/.config/kwinrc --group Desktops --key Number 4
-  kwriteconfig5 --file ~/.config/kwinrc --group Desktops --key Rows 1
+  kwriteconfig6 --file ~/.config/kwinrc --group Desktops --key Number 4
+  kwriteconfig6 --file ~/.config/kwinrc --group Desktops --key Rows 1
   # Immediate desktop switch [Workspace Behavior > Virtual Desktops]
-  kwriteconfig5 --file ~/.config/kwinrc --group Plugins --key slideEnabled false
+  kwriteconfig6 --file ~/.config/kwinrc --group Plugins --key slideEnabled false
   # Faster animations [Workspace Behavior > General Behavior]
-  kwriteconfig5 --file ~/.config/kdeglobals --group KDE --key AnimationDurationFactor 0.125
+  kwriteconfig6 --file ~/.config/kdeglobals --group KDE --key AnimationDurationFactor 0.125
 
   # Global shortcuts
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{3266e259-e66d-4ae2-b7bd-b013fb04b811}' "Alt+Shift+R,none,KRunner"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{686a288d-cf2e-4345-bc3d-bde3b6aa2229}' "Ctrl+Alt+T,none,Launch Konsole"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{6b5c0aeb-f76a-48c4-b890-e997d33083ec}' "Alt+Shift+Return,none,Kitty"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{94d72d73-7359-4a07-bf76-1be49f4b577c}' "Alt+Shift+P,none,KRunner"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group org.kde.krunner.desktop --key '_launch' "$(echo -e "Search\tAlt+Space\tAlt+Shift+P,Alt+Space\tAlt+F2\tSearch,KRunner")"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{3266e259-e66d-4ae2-b7bd-b013fb04b811}' "Alt+Shift+R,none,KRunner"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{686a288d-cf2e-4345-bc3d-bde3b6aa2229}' "Ctrl+Alt+T,none,Launch Konsole"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{6b5c0aeb-f76a-48c4-b890-e997d33083ec}' "Alt+Shift+Return,none,Kitty"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{94d72d73-7359-4a07-bf76-1be49f4b577c}' "Alt+Shift+P,none,KRunner"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group org.kde.krunner.desktop --key '_launch' "$(echo -e "Search\tAlt+Space\tAlt+Shift+P,Alt+Space\tAlt+F2\tSearch,KRunner")"
 
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Close' "Alt+W,Alt+F4,Close Window"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Fullscreen' "F11,none,Make Window Fullscreen"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Maximize' "Alt+Return,none,Maximize Window"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom' "Alt+Down,Meta+Down,Quick Tile Window to the Bottom"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom Left' "Alt+Shift+Left,none,Quick Tile Window to the Bottom Left"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom Right' "Alt+Shift+Down,none,Quick Tile Window to the Bottom Right"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Left' "Alt+Left,Meta+Left,Quick Tile Window to the Left"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Right' "Alt+Right,Meta+Right,Quick Tile Window to the Right"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top' "Alt+Up,Meta+Up,Quick Tile Window to the Top"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top Left' "Alt+Shift+Up,none,Quick Tile Window to the Top Left"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top Right' "Alt+Shift+Right,none,Quick Tile Window to the Top Right"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 1' "Alt+1,Ctrl+F1,Switch to Desktop 1"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 2' "Alt+2,Ctrl+F2,Switch to Desktop 2"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 3' "Alt+3,Ctrl+F3,Switch to Desktop 3"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 4' "Alt+4,Ctrl+F4,Switch to Desktop 4"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 1' "Alt+!,none,Window to Desktop 1"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 2' "Alt+@,none,Window to Desktop 2"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 3' "Alt+#,none,Window to Desktop 3"
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 4' 'Alt+$,none,Window to Desktop 4'
-  kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group ksmserver --key "Lock Session" "$(echo -e "Meta+L\tCtrl+Alt+L\tScreensaver,Meta+L\tCtrl+Alt+L\tScreensaver,Lock Session")"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Close' "Alt+W,Alt+F4,Close Window"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Fullscreen' "F11,none,Make Window Fullscreen"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Maximize' "Alt+Return,none,Maximize Window"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom' "Alt+Down,Meta+Down,Quick Tile Window to the Bottom"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom Left' "Alt+Shift+Left,none,Quick Tile Window to the Bottom Left"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom Right' "Alt+Shift+Down,none,Quick Tile Window to the Bottom Right"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Left' "Alt+Left,Meta+Left,Quick Tile Window to the Left"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Right' "Alt+Right,Meta+Right,Quick Tile Window to the Right"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top' "Alt+Up,Meta+Up,Quick Tile Window to the Top"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top Left' "Alt+Shift+Up,none,Quick Tile Window to the Top Left"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top Right' "Alt+Shift+Right,none,Quick Tile Window to the Top Right"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 1' "Alt+1,Ctrl+F1,Switch to Desktop 1"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 2' "Alt+2,Ctrl+F2,Switch to Desktop 2"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 3' "Alt+3,Ctrl+F3,Switch to Desktop 3"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 4' "Alt+4,Ctrl+F4,Switch to Desktop 4"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 1' "Alt+!,none,Window to Desktop 1"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 2' "Alt+@,none,Window to Desktop 2"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 3' "Alt+#,none,Window to Desktop 3"
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 4' 'Alt+$,none,Window to Desktop 4'
+  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group ksmserver --key "Lock Session" "$(echo -e "Meta+L\tCtrl+Alt+L\tScreensaver,Meta+L\tCtrl+Alt+L\tScreensaver,Lock Session")"
 
   # Krunner
-  kwriteconfig5 --file ~/.config/krunnerrc --group General --key "FreeFloating" "true"
-  kwriteconfig5 --file ~/.config/krunnerrc --group Plugins --key "bookmarksEnabled" "false"
-  kwriteconfig5 --file ~/.config/krunnerrc --group Plugins --key "calculatorEnabled" "false"
-  kwriteconfig5 --file ~/.config/krunnerrc --group Plugins --key "recentdocumentsEnabled" "false"
-  kwriteconfig5 --file ~/.config/krunnerrc --group Plugins --key "webshortcutsEnabled" "false"
+  kwriteconfig6 --file ~/.config/krunnerrc --group General --key "FreeFloating" "true"
+  kwriteconfig6 --file ~/.config/krunnerrc --group Plugins --key "bookmarksEnabled" "false"
+  kwriteconfig6 --file ~/.config/krunnerrc --group Plugins --key "calculatorEnabled" "false"
+  kwriteconfig6 --file ~/.config/krunnerrc --group Plugins --key "recentdocumentsEnabled" "false"
+  kwriteconfig6 --file ~/.config/krunnerrc --group Plugins --key "webshortcutsEnabled" "false"
 
   # Make capslock control
-  kwriteconfig5 --file ~/.config/kxkbrc --group Layout Options "caps:ctrl_modifier"
+  kwriteconfig6 --file ~/.config/kxkbrc --group Layout Options "caps:ctrl_modifier"
 
   # Hide title bar for maximized windows
-  kwriteconfig5 --file ~/.config/kwinrc --group Windows --key BorderlessMaximizedWindows true
+  kwriteconfig6 --file ~/.config/kwinrc --group Windows --key BorderlessMaximizedWindows true
 
   # Reload changes
   qdbus org.kde.KWin /KWin reconfigure
   qdbus org.kde.keyboard /modules/khotkeys reread_configuration
-  kquitapp5 plasmashell
+  kquitapp6 plasmashell
   kstart5 plasmashell
 }
 
@@ -221,12 +221,6 @@ dc-install-xpadneo() {
   sudo ./uninstall.sh || :
   sudo ./install.sh
   popd >/dev/null
-}
-
-dc-install-kitty() {
-  hascmd kitty && return
-  curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-  link ~/.local/kitty.app/bin/kitty ~/.local/bin/kitty
 }
 
 # shellcheck disable=SC2034

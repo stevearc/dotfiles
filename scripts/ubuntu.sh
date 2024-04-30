@@ -13,6 +13,12 @@ platform-setup() {
   checkpoint platform-setup
 }
 
+dc-install-kitty() {
+  hascmd kitty && return
+  curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+  link ~/.local/kitty.app/bin/kitty ~/.local/bin/kitty
+}
+
 install-language-python() {
   cp "$HERE/.pylintrc" "$HOME"
   sudo apt-get install -yq \

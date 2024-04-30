@@ -5,7 +5,14 @@ platform-setup() {
   has-checkpoint platform-setup && return
 
   sudo pacman -Syuq --noconfirm
-  sudo pacman -Sq --noconfirm yay binutils fakeroot curl wget clang
+  sudo pacman -Sq --noconfirm binutils fakeroot curl wget clang base-devel git
+  if ! hascmd yay; then
+    pushd /tmp
+    [ -e yay ] || git clone https://aur.archlinux.org/yay.git
+    cd yay
+    makepkg -si
+    popd
+  fi
   checkpoint platform-setup
 }
 
@@ -101,11 +108,13 @@ dc-install-jellyfin() {
 DC_INSTALL_COMMON_DOC="Common unix utilities like tmux, netcat, etc"
 dc-install-common() {
   sudo pacman -Syq --noconfirm \
+    fzf \
     gnu-netcat \
     htop \
     inotify-tools \
     iotop \
     jq \
+    less \
     lsof \
     openssh \
     ripgrep \
@@ -166,6 +175,7 @@ dotcmd-desktop() {
     echo "$DOTCMD_DESKTOP_DOC"
     return
   fi
+  dc-install-nerd-font
   sudo pacman -Syq --noconfirm \
     bluedevil \
     blueman \
@@ -217,7 +227,6 @@ dotcmd-pibox() {
     nfs-utils \
     openssh \
     transmission-cli
-  dc-install-kitty
   dc-install-airvpn
   # This is configured on the AirVPN website
   local vpn_port=23701
