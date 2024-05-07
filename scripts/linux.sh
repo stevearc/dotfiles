@@ -28,6 +28,14 @@ dc-install-nvm() {
   fi
 }
 
+DC_INSTALL_BALENA_DOC="Balena Etcher for creating bootable drives"
+dc-install-balena() {
+  local version=1.18.11
+  local filename="balenaEtcher-${version}-x64.AppImage"
+  curl -o "https://github.com/balena-io/etcher/releases/download/v${version}/${filename}" -o "$HOME/Downloads/${filename}"
+  "$HERE/bin/appimage-install.sh" "$HOME/Downloads/${filename}"
+}
+
 install-language-vim() {
   dc-install-nvm
   yarn global add -s vim-language-server
