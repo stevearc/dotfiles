@@ -75,6 +75,10 @@ setup-kde() {
       mirror "$src" "$dest" 1
     fi
   done
+    cat >~/.config/plasma-workspace/env/path.sh <<EOF
+#!/bin/bash
+export PATH=\$HOME/.local/bin:\$PATH
+EOF
   if hascmd ufw; then
     sudo ufw allow proto udp from 192.168.1.0/24 to any port 1714:1764 comment 'kdeconnect'
     sudo ufw allow proto tcp from 192.168.1.0/24 to any port 1714:1764 comment 'kdeconnect'

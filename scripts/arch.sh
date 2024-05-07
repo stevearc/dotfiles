@@ -116,6 +116,7 @@ dc-install-common() {
     jq \
     less \
     lsof \
+    man \
     openssh \
     ripgrep \
     rsync \
@@ -178,7 +179,6 @@ dotcmd-desktop() {
   dc-install-nerd-font
   sudo pacman -Syq --noconfirm \
     bluedevil \
-    blueman \
     bluez \
     ffmpeg \
     flatpak \

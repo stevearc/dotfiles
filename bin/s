@@ -6,15 +6,15 @@ if [ -z "$1" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
 
 elif [ "$1" == "l" ] || [ "$1" == "lock" ]; then
   if [[ $XDG_CURRENT_DESKTOP =~ "KDE" ]]; then
-    qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock
+    qdbus6 org.freedesktop.ScreenSaver /ScreenSaver Lock
   else
     i3lock -t -f -e -i ~/.config/backgrounds/805740.png
   fi
 
 elif [ "$1" == "o" ] || [ "$1" == "logout" ]; then
   if [[ $XDG_CURRENT_DESKTOP =~ "KDE" ]]; then
-    # qdbus org.kde.ksmserver /KSMServer org.kde.KSMServerInterface.logout 0 0 2
-    qdbus org.kde.Shutdown /Shutdown logout
+    # qdbus6 org.kde.ksmserver /KSMServer org.kde.KSMServerInterface.logout 0 0 2
+    qdbus6 org.kde.Shutdown /Shutdown logout
   else
     qtile shell -c "shutdown()"
   fi
@@ -37,14 +37,14 @@ elif [ "$1" == "h" ] || [ "$1" == "hibernate" ]; then
 
 elif [ "$1" == "d" ] || [ "$1" == "shutdown" ]; then
   if [[ $XDG_CURRENT_DESKTOP =~ "KDE" ]]; then
-    qdbus org.kde.Shutdown /Shutdown logoutAndShutdown
+    qdbus6 org.kde.Shutdown /Shutdown logoutAndShutdown
   else
     shutdown -h now
   fi
 
 elif [ "$1" == "r" ] || [ "$1" == "reboot" ]; then
   if [[ $XDG_CURRENT_DESKTOP =~ "KDE" ]]; then
-    qdbus org.kde.Shutdown /Shutdown logoutAndReboot
+    qdbus6 org.kde.Shutdown /Shutdown logoutAndReboot
   else
     reboot
   fi
