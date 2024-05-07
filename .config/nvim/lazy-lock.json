@@ -12,7 +12,7 @@
   "copilot.lua": { "branch": "master", "commit": "f7612f5af4a7d7615babf43ab1e67a2d790c13a6" },
   "crates.nvim": { "branch": "main", "commit": "3cee6e68f7a84873454fcfd52556bf817db0c5df" },
   "fidget.nvim": { "branch": "main", "commit": "1ba38e4cbb24683973e00c2e36f53ae64da38ef5" },
-  "firenvim": { "branch": "master", "commit": "3363c140dca2ef0b89e2be0317917f077d752cd7" },
+  "firenvim": { "branch": "master", "commit": "03ba12a5a92a02d171005775a8150998c4060a74" },
   "flatten.nvim": { "branch": "main", "commit": "e420e531d2ab24aebcf7b3c9fca28e6c5c34964d" },
   "fzf-lua": { "branch": "main", "commit": "be720e04de38921606c39a8541d11219fd5c84ac" },
   "heirline.nvim": { "branch": "master", "commit": "03cff30d7e7d3ba6fdc00925f015822f79cef908" },
