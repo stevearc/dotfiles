@@ -161,10 +161,6 @@ return {
     end,
   },
   {
-    "nvim-treesitter/playground",
-    cmd = { "TSPlaygroundToggle", "TSHighlightCapturesUnderCursor" },
-  },
-  {
     "nvim-treesitter/nvim-treesitter-context",
     opts = {
       multiline_threshold = 3,

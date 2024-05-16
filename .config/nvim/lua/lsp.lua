@@ -32,19 +32,11 @@ M.on_attach = function(client, bufnr)
     safemap("hoverProvider", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", "Show hover information")
   end
 
-  if vim.fn.has("nvim-0.10") == 0 then
-    safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", "[G]oto [R]eferences")
-    safemap(
-      "signatureHelpProvider",
-      "i",
-      "<c-s>",
-      "<cmd>lua vim.lsp.buf.signature_help()<CR>",
-      "Function signature help"
-    )
-    safemap("codeActionProvider", "n", "crr", "<cmd>lua vim.lsp.buf.code_action()<CR>", "[F]ind Code [A]ction")
-    safemap("codeActionProvider", "v", "<C-r>", ":<C-U>lua vim.lsp.buf.range_code_action()<CR>", "[F]ind Code [A]ction")
-    safemap("renameProvider", "n", "crn", "<cmd>lua vim.lsp.buf.rename()<CR>")
-  end
+  safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", "[G]oto [R]eferences")
+  safemap("signatureHelpProvider", "i", "<c-s>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", "Function signature help")
+  safemap("codeActionProvider", "n", "crr", "<cmd>lua vim.lsp.buf.code_action()<CR>", "Code action")
+  safemap("codeActionProvider", "v", "<C-r>", ":<C-U>lua vim.lsp.buf.range_code_action()<CR>", "Range code action")
+  safemap("renameProvider", "n", "crn", "<cmd>lua vim.lsp.buf.rename()<CR>", "[C]hange [R]e[n]ame")
 
   if client.server_capabilities.documentHighlightProvider and not client.name:match("sorbet$") then
     vim.api.nvim_create_autocmd({ "CursorHold" }, {
@@ -58,6 +50,13 @@ M.on_attach = function(client, bufnr)
       callback = vim.lsp.buf.clear_references,
     })
   end
+
+  vim.keymap.set(
+    "n",
+    "gtt",
+    function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end,
+    { desc = "Inlay hint [T]ype [T]oggle" }
+  )
 end
 
 ---@param name string

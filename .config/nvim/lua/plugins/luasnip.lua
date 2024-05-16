@@ -23,7 +23,7 @@ return {
       callback = function()
         vim.cmd.LuaSnipUnlinkCurrent({ mods = { emsg_silent = true } })
         if has_vim_snippet then
-          snippet.exit()
+          snippet.stop()
         end
       end,
     })

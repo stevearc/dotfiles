@@ -25,12 +25,13 @@ return {
           return nil
         end
         local client = vim.lsp.get_client_by_id(ctx.client_id)
+        assert(client)
 
         -- textDocument/definition can return Location or Location[]
         -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
 
         local has_telescope = pcall(require, "telescope")
-        if vim.tbl_islist(result) then
+        if vim.islist(result) then
           if #result == 1 or (#result == 2 and locations_equal(result[1], result[2])) then
             pcall(vim.lsp.util.jump_to_location, result[1], client.offset_encoding, false)
           elseif has_telescope then
@@ -75,6 +76,7 @@ return {
       local diagnostics_handler = vim.lsp.handlers["textDocument/publishDiagnostics"]
       vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, context, config)
         local client = vim.lsp.get_client_by_id(context.client_id)
+        assert(client)
         if client.config.diagnostics ~= false then
           diagnostics_handler(err, result, context, config)
         end
@@ -200,6 +202,9 @@ return {
         cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
         settings = {
           Lua = {
+            hint = {
+              enable = true,
+            },
             IntelliSense = {
               traceLocalSet = true,
             },

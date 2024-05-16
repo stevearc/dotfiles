@@ -7,7 +7,6 @@ return {
     ft = "arduino",
     init = function() vim.g.arduino_serial_cmd = "picocom {port} -b {baud} -l" end,
   },
-  "gioele/vim-autoswap",
   { "tpope/vim-eunuch", ft = { "sh" }, cmd = { "Remove", "Delete" } },
   "tpope/vim-repeat",
   { "tpope/vim-endwise", event = "InsertEnter" },
@@ -43,14 +42,6 @@ return {
       -- cmd = { "pair-ls", "lsp", "-signal", "wss://localhost:8080" },
       -- cmd = { "pair-ls", "lsp", "-forward", "wss://localhost:8080" },
     },
-  },
-  {
-    "numToStr/Comment.nvim",
-    keys = {
-      { "gc", mode = { "n", "x" } },
-      { "gcc", mode = "n" },
-    },
-    config = true,
   },
   { "nvim-tree/nvim-web-devicons", cond = vim.g.nerd_font, opts = { default = true }, lazy = true, config = true },
   {
