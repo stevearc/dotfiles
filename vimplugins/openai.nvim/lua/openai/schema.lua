@@ -124,13 +124,12 @@ M.static.chat_completion_settings = {
     order = 1,
     type = "enum",
     desc = "ID of the model to use. See the model endpoint compatibility table for details on which models work with the Chat API.",
-    default = "gpt-4",
+    default = "gpt-4o",
     choices = {
+      "gpt-4o",
       "gpt-4",
-      "gpt-4-vision-preview",
-      "gpt-4-32k",
+      "gpt-4-turbo",
       "gpt-3.5-turbo",
-      "gpt-3.5-turbo-16k",
     },
   },
   temperature = {
