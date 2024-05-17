@@ -9,10 +9,6 @@ function stevearc.find_files(...)
 end
 vim.keymap.set("n", "<leader>ff", function() stevearc.find_files() end, { desc = "[F]ind [F]iles" })
 
-vim.keymap.set("n", "<leader>fn", function()
-  require("telescope").load_extension("gkeep")
-  vim.cmd([[Telescope gkeep]])
-end)
 vim.keymap.set("n", "<leader>fd", function()
   require("telescope").load_extension("aerial")
   vim.cmd("Telescope aerial")
@@ -22,21 +18,16 @@ vim.keymap.set("i", "<C-a>", function()
   require("telescope").extensions.luasnip.luasnip()
 end, { desc = "[S]nippets" })
 
-local function find_dotfiles()
-  stevearc.find_files({
-    cwd = string.format("%s/.config/nvim/", os.getenv("HOME")),
-    follow = true,
-    hidden = true,
-    previewer = false,
-  })
-end
-local function find_local_files()
-  stevearc.find_files({
-    cwd = string.format("%s/.local/share/nvim-local/", os.getenv("HOME")),
-    follow = true,
-    hidden = true,
-    previewer = false,
-  })
+---@param path string
+local function find_in_home(path)
+  return function()
+    stevearc.find_files({
+      cwd = os.getenv("HOME") .. "/" .. path,
+      follow = true,
+      hidden = true,
+      previewer = false,
+    })
+  end
 end
 return {
   {
@@ -46,8 +37,9 @@ return {
     },
     cmd = "Telescope",
     keys = {
-      { "<leader>f.", find_dotfiles, { desc = "[F]ind [.]otfiles" }, mode = "n" },
-      { "<leader>fl", find_local_files, { desc = "[F]ind [L]ocal nvim files" }, mode = "n" },
+      { "<leader>f.", find_in_home(".config/nvim"), { desc = "[F]ind [.]otfiles" }, mode = "n" },
+      { "<leader>fn", find_in_home("Sync"), { desc = "[F]ind [.]otfiles" }, mode = "n" },
+      { "<leader>fl", find_in_home(".local/share/nvim-local"), { desc = "[F]ind [L]ocal nvim files" }, mode = "n" },
       {
         "<leader>bb",
         "<cmd>lua require('telescope.builtin').buffers({previewer=false, only_cwd=true})<cr>",

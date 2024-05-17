@@ -22,9 +22,6 @@
 [submodule "vimplugins/stickybuf.nvim"]
 	path = vimplugins/stickybuf.nvim
 	url = https://github.com/stevearc/stickybuf.nvim.git
-[submodule "vimplugins/gkeep.nvim"]
-	path = vimplugins/gkeep.nvim
-	url = https://github.com/stevearc/gkeep.nvim.git
 [submodule "vimplugins/dressing.nvim"]
 	path = vimplugins/dressing.nvim
 	url = https://github.com/stevearc/dressing.nvim.git
