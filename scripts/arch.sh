@@ -185,6 +185,7 @@ dotcmd-desktop() {
     gtk2 \
     kitty \
     libnotify \
+    nfs-utils \
     steam \
     vlc \
     wl-clipboard \
