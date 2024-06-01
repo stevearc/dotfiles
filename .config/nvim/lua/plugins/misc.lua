@@ -46,8 +46,9 @@ return {
   { "nvim-tree/nvim-web-devicons", cond = vim.g.nerd_font, opts = { default = true }, lazy = true, config = true },
   {
     "ojroques/nvim-osc52",
-    -- Only change the clipboard if we're in a SSH session
-    cond = os.getenv("SSH_CLIENT") ~= nil and (os.getenv("TMUX") ~= nil or vim.fn.has("nvim-0.10") == 0),
+    -- Only change the clipboard if we're in a SSH session and using tmux (nvim 0.10 has osc52
+    -- support built-in otherwise)
+    cond = os.getenv("SSH_CLIENT") ~= nil and os.getenv("TMUX") ~= nil,
     config = function()
       local osc52 = require("osc52")
       local function copy(lines, _) osc52.copy(table.concat(lines, "\n")) end

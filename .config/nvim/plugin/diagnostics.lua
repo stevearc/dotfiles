@@ -9,13 +9,6 @@ local icons = vim.g.nerd_font and {
   Info = ".",
   Hint = ".",
 }
-if vim.fn.has("nvim-0.10") == 0 then
-  for _, lvl in ipairs({ "Error", "Warn", "Info", "Hint" }) do
-    local hl = "DiagnosticSign" .. lvl
-    local highlight_lnum = lvl == "Error" or lvl == "Warn"
-    vim.fn.sign_define(hl, { text = icons[lvl], texthl = hl, linehl = "", numhl = highlight_lnum and hl or "" })
-  end
-end
 
 vim.diagnostic.config({
   float = {

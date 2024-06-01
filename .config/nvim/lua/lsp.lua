@@ -27,10 +27,6 @@ M.on_attach = function(client, bufnr)
   safemap("declarationProvider", "n", "gD", cancelable("textDocument/declaration"), "[G]oto [D]eclaration")
   safemap("typeDefinitionProvider", "n", "gy", cancelable("textDocument/typeDefinition"), "[G]oto T[y]pe Definition")
   safemap("implementationProvider", "n", "gI", cancelable("textDocument/implementation"), "[G]oto [I]mplementation")
-  -- Only map K if keywordprg is not ':help'
-  if vim.fn.has("nvim-0.10") == 0 and vim.bo[bufnr].keywordprg ~= ":help" then
-    safemap("hoverProvider", "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", "Show hover information")
-  end
 
   safemap("referencesProvider", "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", "[G]oto [R]eferences")
   safemap("signatureHelpProvider", "i", "<c-s>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", "Function signature help")

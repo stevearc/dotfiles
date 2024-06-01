@@ -59,9 +59,6 @@ local function initialize()
 end
 
 M.update_code_highlights = function(bufnr)
-  if vim.fn.has("nvim-0.10") == 0 then
-    return
-  end
   initialize()
 
   local ns = vim.api.nvim_create_namespace("MarkdownStyle")
