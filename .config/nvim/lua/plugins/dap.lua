@@ -40,20 +40,11 @@ return {
       local dapui = require("dapui")
       local dap = require("dap")
       dapui.setup()
-      dap.listeners.after.event_initialized["dapui_config"] = function()
-        dapui.open()
-      end
-      dap.listeners.before.event_terminated["dapui_config"] = function()
-        dapui.close()
-      end
-      dap.listeners.before.event_exited["dapui_config"] = function()
-        dapui.close()
-      end
-      vim.schedule(function()
-        require("dap.ext.vscode").json_decode = require("overseer.json").decode
-        require("dap.ext.vscode").load_launchjs(nil, { node = { "typescript", "javascript" } })
-        require("overseer").patch_dap(true)
-      end)
+      dap.listeners.after.event_initialized["dapui_config"] = function() dapui.open() end
+      dap.listeners.before.event_terminated["dapui_config"] = function() dapui.close() end
+      dap.listeners.before.event_exited["dapui_config"] = function() dapui.close() end
+      require("overseer").enable_dap(true)
+      require("dap.ext.vscode").load_launchjs(nil, { node = { "typescript", "javascript" } })
     end,
   },
 }
