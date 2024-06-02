@@ -2,6 +2,11 @@
 set -e
 
 platform-setup() {
+  # Make pacman display packages in a vertical list
+  if ! grep -q "^VerbosePkgLists" /etc/pacman.conf; then
+    echo "VerbosePkgLists" | sudo tee -a /etc/pacman.conf
+  fi
+
   has-checkpoint platform-setup && return
 
   sudo pacman -Syuq --noconfirm
