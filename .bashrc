@@ -57,6 +57,12 @@ fi
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
   . /etc/bash_completion
 fi
+# For some reason on arch these completions are not sourced by default
+if [ -d /usr/share/bash-completion/completions ]; then
+  for c in /usr/share/bash-completion/completions/*; do
+    source "$c" 2>/dev/null
+  done
+fi
 if [ $MAC ] && command -v brew >/dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
   . $(brew --prefix)/etc/bash_completion
 fi
