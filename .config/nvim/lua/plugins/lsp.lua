@@ -73,15 +73,6 @@ return {
       vim.lsp.handlers["textDocument/signatureHelp"] =
         vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 
-      local diagnostics_handler = vim.lsp.handlers["textDocument/publishDiagnostics"]
-      vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, context, config)
-        local client = vim.lsp.get_client_by_id(context.client_id)
-        assert(client)
-        if client.config.diagnostics ~= false then
-          diagnostics_handler(err, result, context, config)
-        end
-      end
-
       vim.lsp.handlers["window/showMessage"] = function(_err, result, context, _config)
         local client_id = context.client_id
         local message_type = result.type
@@ -144,6 +135,28 @@ return {
         },
       })
 
+      local sumneko_root_path = os.getenv("HOME") .. "/.local/share/nvim/language-servers/lua-language-server"
+      local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
+      lsp.safe_setup("lua_ls", {
+        cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
+        settings = {
+          Lua = {
+            hint = {
+              enable = true,
+            },
+            IntelliSense = {
+              traceLocalSet = true,
+            },
+            diagnostics = {
+              globals = { "assert", "it", "describe", "before_each", "after_each", "a" },
+            },
+            telemetry = {
+              enable = false,
+            },
+          },
+        },
+      })
+
       lsp.safe_setup("flow", {
         root_dir = function(fname)
           local util = require("lspconfig.util")
@@ -189,38 +202,16 @@ return {
   },
 
   {
-    "folke/neodev.nvim",
-    opts = { experimental = { pathStrict = true } },
+    "folke/lazydev.nvim",
+    dependencies = {
+      { "Bilal2453/luvit-meta" },
+    },
     ft = "lua",
-    dependencies = { "neovim/nvim-lspconfig" },
-    config = function(_, opts)
-      require("neodev").setup(opts)
-      local lsp = require("lsp")
-      local sumneko_root_path = os.getenv("HOME") .. "/.local/share/nvim/language-servers/lua-language-server"
-      local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
-      lsp.safe_setup("lua_ls", {
-        cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
-        settings = {
-          Lua = {
-            hint = {
-              enable = true,
-            },
-            IntelliSense = {
-              traceLocalSet = true,
-            },
-            diagnostics = {
-              globals = { "vim", "it", "describe", "before_each", "after_each", "a" },
-            },
-            telemetry = {
-              enable = false,
-            },
-            workspace = {
-              checkThirdParty = false,
-            },
-          },
-        },
-      })
-    end,
+    opts = {
+      library = {
+        vim.env.LAZY .. "/luvit-meta/library",
+      },
+    },
   },
   {
     "pmizio/typescript-tools.nvim",
