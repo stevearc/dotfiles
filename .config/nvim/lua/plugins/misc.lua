@@ -145,7 +145,6 @@ return {
   {
     "ggandor/lightspeed.nvim",
     keys = {
-      { "<leader>s", "<Plug>Lightspeed_omni_s", desc = "Lightspeed search", mode = "" },
       { "gs", "<Plug>Lightspeed_omni_s", desc = "Lightspeed search", mode = "" },
     },
     opts = {
@@ -176,4 +175,35 @@ return {
     lazy = true,
   },
   { "levouh/tint.nvim", opts = {} },
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    init = function()
+      vim.o.timeout = true
+      vim.o.timeoutlen = 300
+    end,
+    opts = {
+      plugins = {
+        spelling = {
+          enabled = false,
+        },
+      },
+      triggers_nowait = {
+        "<c-r>",
+      },
+    },
+    config = function(_, opts)
+      local wk = require("which-key")
+      wk.setup(opts)
+      wk.register({
+        b = { name = "Buffers" },
+        d = { name = "Debugger" },
+        f = { name = "Fuzzy find" },
+        g = { name = "Git" },
+        o = { name = "Overseer" },
+        s = { name = "Sessions" },
+        t = { name = "Tests" },
+      }, { prefix = "<leader>" })
+    end,
+  },
 }

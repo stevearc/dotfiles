@@ -12,15 +12,9 @@ local function bufgrep(text)
 end
 
 vim.keymap.set("n", "gw", "<cmd>cclose | Grep <cword><CR>", { desc = "Grep for word" })
-vim.keymap.set("n", "gbw", function()
-  bufgrep(vim.fn.expand("<cword>"))
-end, { desc = "grep open buffers for word" })
-vim.keymap.set("n", "gbW", function()
-  bufgrep(vim.fn.expand("<cWORD>"))
-end, { desc = "Grep open buffers for WORD" })
-vim.api.nvim_create_user_command("Bufgrep", function(params)
-  bufgrep(params.args)
-end, { nargs = "+" })
+vim.keymap.set("n", "gbw", function() bufgrep(vim.fn.expand("<cword>")) end, { desc = "grep open buffers for word" })
+vim.keymap.set("n", "gbW", function() bufgrep(vim.fn.expand("<cWORD>")) end, { desc = "Grep open buffers for WORD" })
+vim.api.nvim_create_user_command("Bufgrep", function(params) bufgrep(params.args) end, { nargs = "+" })
 
 return {
   {
@@ -32,10 +26,10 @@ return {
     ft = "qf",
     cmd = { "QNext", "QPrev", "QFToggle", "QFOpen", "LLToggle" },
     keys = {
-      { "<C-N>", "<cmd>QNext<CR>", mode = "n" },
-      { "<C-P>", "<cmd>QPrev<CR>", mode = "n" },
-      { "<leader>q", "<cmd>QFToggle!<CR>", mode = "n" },
-      { "<leader>l", "<cmd>LLToggle!<CR>", mode = "n" },
+      { "<C-N>", "<cmd>QNext<CR>", desc = "[N]ext in quickfix" },
+      { "<C-P>", "<cmd>QPrev<CR>", desc = "[P]rev in quickfix" },
+      { "<leader>q", "<cmd>QFToggle!<CR>", desc = "Toggle [Q]uickfix" },
+      { "<leader>l", "<cmd>LLToggle!<CR>", desc = "Toggle [L]oclist" },
     },
     config = function()
       require("qf_helper").setup({

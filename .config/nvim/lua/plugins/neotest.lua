@@ -29,11 +29,13 @@ return {
       "<leader>tn",
       function() require("neotest").run.run({}) end,
       mode = "n",
+      desc = "[T]est [N]earest",
     },
     {
-      "<leader>tt",
+      "<leader>tf",
       function() require("neotest").run.run({ vim.api.nvim_buf_get_name(0) }) end,
       mode = "n",
+      desc = "[T]est [F]ile",
     },
     {
       "<leader>ta",
@@ -43,26 +45,31 @@ return {
         end
       end,
       mode = "n",
+      desc = "[T]est [A]ll",
     },
     {
       "<leader>tl",
       function() require("neotest").run.run_last() end,
       mode = "n",
+      desc = "[T]est [L]ast",
     },
     {
       "<leader>td",
       function() require("neotest").run.run({ strategy = "dap" }) end,
       mode = "n",
+      desc = "[T]est [D]ebug",
     },
     {
       "<leader>tp",
       function() require("neotest").summary.toggle() end,
       mode = "n",
+      desc = "[T]est [P]anel toggle",
     },
     {
       "<leader>to",
       function() require("neotest").output.open({ short = true }) end,
       mode = "n",
+      desc = "[T]est [O]utput",
     },
   },
   config = function()
