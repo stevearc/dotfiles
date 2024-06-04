@@ -125,16 +125,5 @@ return {
         enabled = true,
       },
     })
-    vim.keymap.set("n", "<leader>tn", function() neotest.run.run({}) end)
-    vim.keymap.set("n", "<leader>tt", function() neotest.run.run({ vim.api.nvim_buf_get_name(0) }) end)
-    vim.keymap.set("n", "<leader>ta", function()
-      for _, adapter_id in ipairs(neotest.run.adapters()) do
-        neotest.run.run({ suite = true, adapter = adapter_id })
-      end
-    end)
-    vim.keymap.set("n", "<leader>tl", function() neotest.run.run_last() end)
-    vim.keymap.set("n", "<leader>td", function() neotest.run.run({ strategy = "dap" }) end)
-    vim.keymap.set("n", "<leader>tp", function() neotest.summary.toggle() end)
-    vim.keymap.set("n", "<leader>to", function() neotest.output.open({ short = true }) end)
   end,
 }

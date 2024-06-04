@@ -77,6 +77,20 @@ return {
         cb()
       end
       vim.api.nvim_create_user_command("OverseerDebugParser", 'lua require("overseer").debug_parser()', {})
+      vim.api.nvim_create_user_command("OverseerTestOutput", function(params)
+        vim.cmd.tabnew()
+        vim.bo.bufhidden = "wipe"
+        overseer.create_view(0, {
+          select = function(self, tasks)
+            for _, task in ipairs(tasks) do
+              if task.metadata.neotest_group_id then
+                return task
+              end
+            end
+            self:dispose()
+          end,
+        })
+      end, {})
       vim.api.nvim_create_user_command("Grep", function(params)
         local args = vim.fn.expandcmd(params.args)
         -- Insert args at the '$*' in the grepprg
