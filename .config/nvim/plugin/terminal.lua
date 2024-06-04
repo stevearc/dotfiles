@@ -1,10 +1,6 @@
 local p = require("p")
 local ftplugin = p.require("ftplugin")
 vim.keymap.set("t", "\\\\", [[<C-\><C-N>]])
-for i = 1, 9 do
-  vim.keymap.set("t", string.format([[\%d]], i), string.format([[<C-\><C-N>:BufferGoto %d<CR>]], i))
-end
-vim.keymap.set("t", [[\`]], [[<C-\><C-N>:BufferLast<CR>]])
 
 local function is_floating_win(winid) return vim.api.nvim_win_get_config(winid or 0).relative ~= "" end
 
@@ -33,13 +29,16 @@ ftplugin.extend("terminal", {
   },
 })
 
+local function make_cursor_red()
+  vim.api.nvim_set_hl(0, "TermCursor", { fg = "red", ctermfg = "DarkRed", reverse = true })
+end
 local aug = vim.api.nvim_create_augroup("TerminalDefaults", {})
-vim.cmd([[highlight TermCursor ctermfg=DarkRed guifg=red]])
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
   group = aug,
-  command = "highlight TermCursor ctermfg=DarkRed guifg=red",
+  callback = make_cursor_red,
 })
+make_cursor_red()
 
 vim.api.nvim_create_autocmd("TermOpen", {
   desc = "Auto enter insert mode when opening a terminal",
@@ -48,19 +47,19 @@ vim.api.nvim_create_autocmd("TermOpen", {
   callback = function()
     -- Wait briefly just in case we immediately switch out of the buffer
     vim.defer_fn(function()
-      if vim.bo.buftype == "terminal" then
-        vim.cmd([[startinsert]])
+      if vim.bo.buftype == "terminal" and not vim.b.overseer_task then
+        vim.cmd.startinsert()
       end
     end, 100)
   end,
 })
 
 local dir_to_buf = {}
+local global_bufs = {}
 
 local function is_open()
-  local bufnr = vim.api.nvim_get_current_buf()
-  for _, v in pairs(dir_to_buf) do
-    if bufnr == v then
+  for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    if vim.w[winid].is_floating_term then
       return true
     end
   end
@@ -68,19 +67,19 @@ local function is_open()
 end
 
 local function close()
-  if vim.api.nvim_get_mode().mode == "t" then
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-\\><C-N>", true, true, true), "n", false)
+  for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    if vim.w[winid].is_floating_term then
+      vim.api.nvim_win_close(winid, true)
+    end
   end
-  vim.api.nvim_win_close(0, true)
 end
 
-local function open()
-  local cwd = vim.fn.getcwd(0)
-  local bufnr = dir_to_buf[cwd]
+---@param bufnr? integer Optional existing buffer
+---@return integer bufnr
+local function open(bufnr)
   local open_term = false
   if not bufnr or not vim.api.nvim_buf_is_valid(bufnr) then
     bufnr = vim.api.nvim_create_buf(false, true)
-    dir_to_buf[cwd] = bufnr
     open_term = true
     vim.api.nvim_create_autocmd("BufLeave", {
       desc = "Close floating window when leaving terminal buffer",
@@ -111,9 +110,8 @@ local function open()
     row = padding,
     col = padding,
   })
-  -- vim.api.nvim_win_set_option(winid, "winblend", 3)
-  local autocmd_id
-  autocmd_id = vim.api.nvim_create_autocmd("VimResized", {
+  vim.w[winid].is_floating_term = true
+  vim.api.nvim_create_autocmd("VimResized", {
     desc = "Resize floating terminal on vim resize",
     callback = function()
       if vim.api.nvim_win_is_valid(winid) then
@@ -122,7 +120,7 @@ local function open()
         vim.api.nvim_win_set_width(winid, width)
         vim.api.nvim_win_set_height(winid, height)
       else
-        vim.api.nvim_del_autocmd(autocmd_id)
+        return true
       end
     end,
   })
@@ -139,14 +137,21 @@ local function open()
       end,
     })
   end
-  vim.cmd([[startinsert]])
+  vim.cmd.startinsert()
+
+  return bufnr
 end
 
 local function toggle()
   if is_open() then
     close()
+  elseif vim.v.count == 0 then
+    local cwd = vim.fn.getcwd(0)
+    local bufnr = open(dir_to_buf[cwd])
+    dir_to_buf[cwd] = bufnr
   else
-    open()
+    local bufnr = open(global_bufs[vim.v.count])
+    global_bufs[vim.v.count] = bufnr
   end
 end
 
