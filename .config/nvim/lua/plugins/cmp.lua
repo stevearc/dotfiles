@@ -110,7 +110,10 @@ return {
       formatting = formatting,
 
       sources = {
-        { name = "copilot" },
+        {
+          name = "lazydev",
+          group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+        },
         { name = "crates" },
         { name = "nvim_lua" },
         { name = "nvim_lsp" },
