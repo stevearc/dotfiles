@@ -23,11 +23,10 @@ return {
       "OverseerToggle",
     },
     keys = {
-      { "<leader>oo", "<cmd>OverseerToggle<CR>", mode = "n", desc = "[O]verseer [O]pen" },
+      { "<leader>oo", "<cmd>OverseerToggle!<CR>", mode = "n", desc = "[O]verseer [O]pen" },
       { "<leader>or", "<cmd>OverseerRun<CR>", mode = "n", desc = "[O]verseer [R]un" },
       { "<leader>oc", "<cmd>OverseerRunCmd<CR>", mode = "n", desc = "[O]verseer run [C]ommand" },
       { "<leader>ol", "<cmd>OverseerLoadBundle<CR>", mode = "n", desc = "[O]verseer [L]oad" },
-      { "<leader>ob", "<cmd>OverseerToggle! bottom<CR>", mode = "n", desc = "[O]verseer open [B]ottom" },
       { "<leader>od", "<cmd>OverseerQuickAction<CR>", mode = "n", desc = "[O]verseer [D]o quick action" },
       { "<leader>os", "<cmd>OverseerTaskAction<CR>", mode = "n", desc = "[O]verseer [S]elect task action" },
     },
@@ -46,6 +45,11 @@ return {
           level = vim.log.levels.DEBUG,
         },
       },
+      task_list = {
+        bindings = {
+          dd = "Dispose",
+        },
+      },
       task_launcher = {
         bindings = {
           n = {
@@ -59,7 +63,7 @@ return {
           "on_output_summarize",
           "on_exit_set_status",
           { "on_complete_notify", system = "unfocused" },
-          "on_complete_dispose",
+          { "on_complete_dispose", require_view = { "SUCCESS", "FAILURE" } },
         },
         default_neotest = {
           "unique",
@@ -80,7 +84,8 @@ return {
       vim.api.nvim_create_user_command("OverseerTestOutput", function(params)
         vim.cmd.tabnew()
         vim.bo.bufhidden = "wipe"
-        overseer.create_view(0, {
+        local TaskView = require("overseer.task_view")
+        TaskView.new(0, {
           select = function(self, tasks)
             for _, task in ipairs(tasks) do
               if task.metadata.neotest_group_id then
@@ -116,7 +121,7 @@ return {
               items_only = true,
             },
             -- We don't care to keep this around as long as most tasks
-            { "on_complete_dispose", timeout = 30 },
+            { "on_complete_dispose", timeout = 30, require_view = {} },
             "default",
           },
         })
