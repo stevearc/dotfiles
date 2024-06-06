@@ -310,7 +310,7 @@ dc-install-dolphin() {
 }
 
 dotcmd-beelink() {
-  sudo pacman -Syq --noconfirm cronie
+  sudo pacman -Syq --noconfirm cronie nfs-utils
   sudo systemctl enable cronie.service
   sudo systemctl start cronie.service
   dc-install-common
@@ -324,6 +324,12 @@ dotcmd-beelink() {
   sudo chmod 644 /etc/cron.d/storage_backup
   mkdir -p ~/.config/autostart
   cp "$HERE/static/autostart/steam.desktop" ~/.config/autostart/
+
+  sudo cp "$HERE/static/nfs-storage.exports" /etc/exports.d/
+  if hascmd firewall-cmd; then
+    sudo firewall-cmd --zone=home --add-port=2049/tcp
+    sudo firewall-cmd --permanent --zone=home --add-port=2049/tcp
+  fi
 }
 
 dc-install-rclone() {
@@ -394,7 +400,7 @@ dc-install-calibreweb() {
 dc-install-nfs-mount() {
   sudo mkdir -p /mnt/storage
 
-  grep "$MEDIA_SERVER_IP" /etc/fstab >/dev/null || echo "${MEDIA_SERVER_IP}:/mnt/storage   /mnt/storage   nfs   defaults,timeo=900,retrans=5,_netdev	0 0" | sudo tee -a /etc/fstab >/dev/null
+  grep "$MEDIA_SERVER_IP" /etc/fstab >/dev/null || echo "${MEDIA_SERVER_IP}:/mnt/storage /mnt/storage nfs _netdev,noauto,x-systemd.automount,x-systemd.mount-timeout=10,timeo=14,x-systemd.idle-timeout=1min  0 0" | sudo tee -a /etc/fstab >/dev/null
 }
 
 # shellcheck disable=SC2034
