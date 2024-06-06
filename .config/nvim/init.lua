@@ -195,7 +195,11 @@ end
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "WinNew", "VimResized" }, {
   desc = "Always keep the cursor vertically centered",
   pattern = "*",
-  callback = function() set_scrolloff(0) end,
+  callback = function()
+    if not vim.b.overseer_task then
+      set_scrolloff(0)
+    end
+  end,
   group = aug,
 })
 
