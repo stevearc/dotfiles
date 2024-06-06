@@ -54,6 +54,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- Options
+vim.o.breakindent = true -- Preserve indent when wrapping
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 vim.o.expandtab = true -- Turn tabs into spaces
 vim.o.formatoptions = "rqnlj"
