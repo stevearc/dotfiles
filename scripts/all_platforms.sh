@@ -26,6 +26,7 @@ configure-git() {
   git config --global diff.algorithm patience
   git config --global fetch.prune true
   git config --global diff.colorMoved zebra
+  git config --global push.autoSetupRemote true
   # This was causing massive lag
   # git config --global core.fsmonitor true
 
