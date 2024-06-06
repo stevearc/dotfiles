@@ -61,6 +61,13 @@ ftplugin.extend_all({
       list = false,
       textwidth = 80,
     },
+    callback = function(bufnr)
+      vim.api.nvim_create_user_command("Browse", function()
+        local filename = vim.fn.expand("%:t:r")
+        local url = "https://neovim.io/doc/user/" .. filename .. ".html"
+        vim.ui.open(url)
+      end, {})
+    end,
   },
   lua = {
     abbr = {
