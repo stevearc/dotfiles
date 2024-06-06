@@ -120,7 +120,14 @@ local FileType = {
 
 local FileName = {
   provider = function(self)
-    local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":.")
+    local filename
+    local has_oil, oil = pcall(require, "oil")
+    if has_oil then
+      filename = oil.get_current_dir()
+    end
+    if not filename then
+      filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":.")
+    end
     if filename == "" then
       return "[No Name]"
     end
