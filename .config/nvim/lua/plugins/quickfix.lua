@@ -31,10 +31,9 @@ return {
       { "<leader>q", "<cmd>QFToggle!<CR>", desc = "Toggle [Q]uickfix" },
       { "<leader>l", "<cmd>LLToggle!<CR>", desc = "Toggle [L]oclist" },
     },
-    config = function()
-      require("qf_helper").setup({
-        prefer_loclist = false,
-      })
-    end,
+    opts = {
+      prefer_loclist = false,
+      default_bindings = false,
+    },
   },
 }
