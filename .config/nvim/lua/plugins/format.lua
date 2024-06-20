@@ -8,7 +8,7 @@ return {
     {
       "=",
       function()
-        require("conform").format({ async = true, lsp_fallback = true }, function(err)
+        require("conform").format({ async = true, lsp_format = "fallback" }, function(err)
           if not err then
             if vim.startswith(vim.api.nvim_get_mode().mode:lower(), "v") then
               vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
@@ -63,7 +63,7 @@ return {
       if vim.b[bufnr].disable_autoformat then
         return
       end
-      return { timeout_ms = 5000, lsp_fallback = true }
+      return { timeout_ms = 5000, lsp_format = "fallback" }
     end,
   },
   init = function() vim.o.formatexpr = "v:lua.require'conform'.formatexpr()" end,
@@ -73,5 +73,6 @@ return {
       opts.format_after_save = false
     end
     require("conform").setup(opts)
+    vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
   end,
 }
