@@ -1,3 +1,4 @@
+local p = require("p")
 return {
   {
     "neovim/nvim-lspconfig",
@@ -10,9 +11,67 @@ return {
         config = true,
       },
     },
-    config = function()
+    opts = {
+      servers = {
+        bashls = {},
+        clangd = {
+          filetypes = { "c", "cpp", "objc", "objcpp" },
+        },
+        cssls = {},
+        eslint = {},
+        flow = {
+          root_dir = function(fname)
+            local util = require("lspconfig.util")
+            -- Disable flow when a typescript project is detected
+            if util.root_pattern("tsconfig.json")(fname) then
+              return nil
+            end
+            return util.root_pattern(".flowconfig")(fname)
+          end,
+          cmd = { "flow", "lsp", "--lazy" },
+          settings = {
+            flow = {
+              coverageSeverity = "warn",
+              showUncovered = true,
+              stopFlowOnExit = false,
+              useBundledFlow = false,
+            },
+          },
+        },
+        gdscript = {},
+        gopls = {},
+        html = {},
+        jsonls = function()
+          return {
+            filetypes = { "json", "jsonc", "json5" },
+            settings = {
+              json = {
+                schemas = p.require("schemastore").json.schemas(),
+              },
+            },
+          }
+        end,
+        omnisharp = {},
+        pyright = {},
+        rust_analyzer = {},
+        sorbet = {
+          cmd = { "bundle", "exec", "srb", "tc", "--lsp" },
+        },
+        vimls = {},
+        yamlls = function()
+          return {
+            settings = {
+              yaml = {
+                schemas = p.require("schemastore").json.schemas(),
+              },
+            },
+          }
+        end,
+        zls = {},
+      },
+    },
+    config = function(_, opts)
       local lsp = require("lsp")
-      local p = require("p")
       -- vim.lsp.set_log_level("debug")
 
       local function locations_equal(loc1, loc2)
@@ -100,40 +159,14 @@ return {
       end
 
       -- Configure the LSP servers
-      local lspservers = {
-        "bashls",
-        "cssls",
-        "eslint",
-        "gdscript",
-        "gopls",
-        "html",
-        "omnisharp",
-        "pyright",
-        "rust_analyzer",
-        "vimls",
-        "zls",
-      }
-      for _, server in ipairs(lspservers) do
-        lsp.safe_setup(server)
+      for k, v in pairs(opts.servers) do
+        if v then
+          if type(v) == "function" then
+            v = v()
+          end
+          lsp.safe_setup(k, v)
+        end
       end
-      lsp.safe_setup("yamlls", {
-        settings = {
-          yaml = {
-            schemas = p.require("schemastore").json.schemas(),
-          },
-        },
-      })
-      lsp.safe_setup("clangd", {
-        filetypes = { "c", "cpp", "objc", "objcpp" },
-      })
-      lsp.safe_setup("jsonls", {
-        filetypes = { "json", "jsonc", "json5" },
-        settings = {
-          json = {
-            schemas = p.require("schemastore").json.schemas(),
-          },
-        },
-      })
 
       local sumneko_root_path = os.getenv("HOME") .. "/.local/share/nvim/language-servers/lua-language-server"
       local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
@@ -156,32 +189,6 @@ return {
           },
         },
       })
-
-      lsp.safe_setup("flow", {
-        root_dir = function(fname)
-          local util = require("lspconfig.util")
-          -- Disable flow when a typescript project is detected
-          if util.root_pattern("tsconfig.json")(fname) then
-            return nil
-          end
-          return util.root_pattern(".flowconfig")(fname)
-        end,
-        cmd = { "flow", "lsp", "--lazy" },
-        settings = {
-          flow = {
-            coverageSeverity = "warn",
-            showUncovered = true,
-            stopFlowOnExit = false,
-            useBundledFlow = false,
-          },
-        },
-      })
-
-      -- conflicts with work
-      -- lspconfig.sorbet.setup({
-      --   capabilities = lsp.capabilities,
-      --   cmd = { "bundle", "exec", "srb", "tc", "--lsp" },
-      -- })
 
       local group = vim.api.nvim_create_augroup("LspSetup", {})
       vim.api.nvim_create_autocmd("LspAttach", {
