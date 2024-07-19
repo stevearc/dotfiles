@@ -1,4 +1,17 @@
-local prettier = { "prettierd", "prettier" }
+local prettier = { "prettierd", "prettier", stop_after_first = true }
+---@param bufnr integer
+---@param ... string
+---@return string
+local function first(bufnr, ...)
+  local conform = require("conform")
+  for i = 1, select("#", ...) do
+    local formatter = select(i, ...)
+    if conform.get_formatter_info(formatter, bufnr).available then
+      return formatter
+    end
+  end
+  return select(1, ...)
+end
 
 return {
   "stevearc/conform.nvim",
@@ -8,9 +21,10 @@ return {
     {
       "=",
       function()
-        require("conform").format({ async = true, lsp_format = "fallback" }, function(err)
+        require("conform").format({ async = true }, function(err)
           if not err then
-            if vim.startswith(vim.api.nvim_get_mode().mode:lower(), "v") then
+            local mode = vim.api.nvim_get_mode().mode
+            if vim.startswith(string.lower(mode), "v") then
               vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
             end
           end
@@ -20,20 +34,26 @@ return {
       desc = "Format buffer",
     },
   },
+  ---@module "conform"
+  ---@type conform.setupOpts
   opts = {
+    default_format_opts = {
+      lsp_format = "fallback",
+    },
     formatters_by_ft = {
-      javascript = { prettier },
-      typescript = { prettier },
-      javascriptreact = { prettier },
-      typescriptreact = { prettier },
-      css = { prettier },
-      html = { prettier },
-      json = { prettier },
-      jsonc = { prettier },
-      yaml = { prettier },
-      markdown = { prettier, "injected" },
+      javascript = prettier,
+      typescript = prettier,
+      javascriptreact = prettier,
+      typescriptreact = prettier,
+      css = prettier,
+      graphql = prettier,
+      html = prettier,
+      json = prettier,
+      json5 = prettier,
+      jsonc = prettier,
+      yaml = prettier,
+      markdown = function(bufnr) return { first(bufnr, "prettierd", "prettier"), "injected" } end,
       norg = { "injected" },
-      graphql = { prettier },
       lua = { "stylua" },
       go = { "goimports", "gofmt" },
       query = { "format-queries" },
@@ -50,11 +70,9 @@ return {
           },
         },
       },
-      shfmt = {
-        prepend_args = { "-i", "2" },
-      },
       -- Dealing with old version of prettierd that doesn't support range formatting
       prettierd = {
+        ---@diagnostic disable-next-line: assign-type-mismatch
         range_args = false,
       },
     },

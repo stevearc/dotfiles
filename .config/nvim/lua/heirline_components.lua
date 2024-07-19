@@ -312,11 +312,14 @@ local LSPActive = {
       end
       local conform = package.loaded.conform
       if conform and vim.bo.buftype == "" then
-        local formatters = conform.list_formatters(0)
-        if not conform.will_fallback_lsp() then
+        local formatters, format_with_lsp = conform.list_formatters_to_run(0)
+        if format_with_lsp or not vim.tbl_isempty(formatters) then
           table.insert(names, "⫽")
           for _, formatter in ipairs(formatters) do
             table.insert(names, formatter.name)
+          end
+          if format_with_lsp then
+            table.insert(names, "LSP")
           end
         end
       end
