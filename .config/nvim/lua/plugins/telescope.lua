@@ -38,7 +38,7 @@ return {
     cmd = "Telescope",
     keys = {
       { "<leader>f.", find_in_home(".config/nvim"), desc = "[F]ind [.]otfiles" },
-      { "<leader>fn", find_in_home("Sync"), desc = "[F]ind [.]otfiles" },
+      { "<leader>fn", find_in_home("Sync"), desc = "[F]ind [N]otes" },
       { "<leader>fl", find_in_home(".local/share/nvim-local"), desc = "[F]ind [L]ocal nvim files" },
       {
         "<leader>bb",
@@ -124,6 +124,9 @@ return {
     "ibhagwan/fzf-lua",
     enabled = vim.fn.executable("fzf") == 1,
     lazy = true,
+    keys = {
+      { "<leader>fu", "<CMD>FzfLua blines<CR>", desc = "[F]ind b[u]ffer line" },
+    },
     config = function()
       local fzf = require("fzf-lua")
       fzf.setup({
