@@ -98,6 +98,7 @@ ftplugin.extend_all({
       linebreak = true,
       wrap = true,
       suffixesadd = ".md",
+      undofile = true,
     },
     keys = {
       { "<leader>td", require("markdown").task_mark_done },
@@ -111,6 +112,24 @@ ftplugin.extend_all({
         buffer = bufnr,
         callback = vim.schedule_wrap(function(args) require("markdown").update_code_highlights(bufnr) end),
       })
+      vim.keymap.set("i", "<Tab>", function()
+        local line = vim.api.nvim_get_current_line()
+        local col = vim.api.nvim_win_get_cursor(0)[2]
+        local is_list = line:match("^%s*[%-%*]%s*$") or line:match("^%s*[%-%*]%s*%[.%]%s*$")
+        if col == #line and is_list then
+          return "<C-o>>><C-o>$"
+        end
+        return "<Tab>"
+      end, { expr = true, buffer = bufnr })
+      vim.keymap.set("i", "<BS>", function()
+        local line = vim.api.nvim_get_current_line()
+        local col = vim.api.nvim_win_get_cursor(0)[2]
+        local is_list = line:match("^%s+[%-%*]%s+$") or line:match("^%s+[%-%*]%s*%[.%]%s+$")
+        if col == #line and is_list then
+          return "<C-o><<<C-o>$"
+        end
+        return "<BS>"
+      end, { expr = true, buffer = bufnr })
     end,
   },
   ["neotest-summary"] = {
