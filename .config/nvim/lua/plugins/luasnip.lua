@@ -4,12 +4,14 @@ return {
     "stevearc/vim-vscode-snippets",
   },
   event = "InsertEnter *",
+  keys = {
+    { "<Tab>", mode = "x" },
+  },
   opts = {
     modules = {},
   },
   config = function(_, opts)
     local luasnip = require("luasnip")
-    local has_vim_snippet, snippet = pcall(require, "vim.snippet")
     require("luasnip.loaders.from_vscode").lazy_load()
     vim.keymap.set({ "i", "s" }, "<C-k>", function() pcall(luasnip.change_choice, -1) end)
     vim.keymap.set({ "i", "s" }, "<C-j>", function() pcall(luasnip.change_choice, 1) end)
@@ -22,17 +24,15 @@ return {
       group = aug,
       callback = function()
         vim.cmd.LuaSnipUnlinkCurrent({ mods = { emsg_silent = true } })
-        if has_vim_snippet then
-          snippet.stop()
-        end
+        vim.snippet.stop()
       end,
     })
 
     vim.keymap.set({ "i", "s" }, "<C-h>", function()
       if luasnip.get_active_snip() then
         luasnip.jump(-1)
-      elseif has_vim_snippet and snippet.active() then
-        snippet.jump(-1)
+      elseif vim.snippet.active() then
+        vim.snippet.jump(-1)
       else
         local cur = vim.api.nvim_win_get_cursor(0)
         pcall(vim.api.nvim_win_set_cursor, 0, { cur[1], cur[2] - 1 })
@@ -43,11 +43,23 @@ return {
         luasnip.expand_or_jump()
       elseif luasnip.get_active_snip() then
         luasnip.jump(1)
-      elseif has_vim_snippet and snippet.active() then
-        snippet.jump(1)
+      elseif vim.snippet.active() then
+        vim.snippet.jump(1)
       else
         local cur = vim.api.nvim_win_get_cursor(0)
         pcall(vim.api.nvim_win_set_cursor, 0, { cur[1], cur[2] + 1 })
+      end
+    end)
+
+    vim.keymap.set({ "i", "s" }, "<Tab>", function()
+      if luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      elseif luasnip.get_active_snip() then
+        luasnip.jump(1)
+      elseif vim.snippet.active() then
+        vim.snippet.jump(1)
+      else
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, true, true), "n", true)
       end
     end)
 

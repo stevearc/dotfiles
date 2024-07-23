@@ -115,18 +115,21 @@ ftplugin.extend_all({
       vim.keymap.set("i", "<Tab>", function()
         local line = vim.api.nvim_get_current_line()
         local col = vim.api.nvim_win_get_cursor(0)[2]
-        local is_list = line:match("^%s*[%-%*]%s*$") or line:match("^%s*[%-%*]%s*%[.%]%s*$")
+        line = line:sub(1, col)
+        local is_list = line:match("^%s*[%-%*]%s*")
         if col == #line and is_list then
-          return "<C-o>>><C-o>$"
+          return "<Left><C-o>>><C-o><Right>" .. string.rep("<Right>", vim.bo.tabstop)
         end
         return "<Tab>"
       end, { expr = true, buffer = bufnr })
       vim.keymap.set("i", "<BS>", function()
         local line = vim.api.nvim_get_current_line()
         local col = vim.api.nvim_win_get_cursor(0)[2]
+        local max_left = #line - col
+        line = line:sub(1, col)
         local is_list = line:match("^%s+[%-%*]%s+$") or line:match("^%s+[%-%*]%s*%[.%]%s+$")
         if col == #line and is_list then
-          return "<C-o><<<C-o>$"
+          return "<C-o><<<C-o>" .. string.rep("<Left>", math.min(max_left, vim.bo.tabstop))
         end
         return "<BS>"
       end, { expr = true, buffer = bufnr })
