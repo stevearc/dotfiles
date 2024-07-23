@@ -19,7 +19,7 @@ return {
   cmd = { "ConformInfo" },
   keys = {
     {
-      "=",
+      "gqq",
       function()
         require("conform").format({ async = true }, function(err)
           if not err then
@@ -91,6 +91,5 @@ return {
       opts.format_after_save = false
     end
     require("conform").setup(opts)
-    vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
   end,
 }
