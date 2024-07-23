@@ -62,6 +62,7 @@ Options:
   -s START       Start time
   -t DURATION    Duration of gif
   -f FPS         Frames per Second (default 12)
+  -c MAX_COLORS  Maximum palette colors (default 32)
   -w WIDTH       Width of resulting gif (default 1280)
 "
   parseargs "$usage" "$@"
@@ -73,7 +74,7 @@ Options:
   if [ -n "$DURATION" ]; then
     durationargs="-t '$DURATION'"
   fi
-  _run "ffmpeg $startargs $durationargs -i '$INPUT' -filter_complex '[0:v] fps=${FPS-12},scale=w=${WIDTH-1280}:h=-1,split [a][b];[a] palettegen [p];[b][p] paletteuse' '$OUTPUT'"
+  _run "ffmpeg $startargs $durationargs -i '$INPUT' -filter_complex '[0:v] fps=${FPS-12},scale=w=${WIDTH-1280}:h=-1,split [a][b];[a] palettegen=max_colors=${MAX_COLORS-32} [p];[b][p] paletteuse' '$OUTPUT'"
 }
 _togif_doc() {
   echo "Convert a video into a GIF"
