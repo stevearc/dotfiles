@@ -4,13 +4,13 @@ return {
     "stevearc/vim-vscode-snippets",
   },
   event = "InsertEnter *",
-  config = function()
+  opts = {
+    modules = {},
+  },
+  config = function(_, opts)
     local luasnip = require("luasnip")
     local has_vim_snippet, snippet = pcall(require, "vim.snippet")
     require("luasnip.loaders.from_vscode").lazy_load()
-    vim.keymap.set("s", "<Tab>", "<Plug>luasnip-jump-next")
-    vim.keymap.set("s", "<C-h>", "<Plug>luasnip-jump-prev")
-    vim.keymap.set("s", "<C-l>", "<Plug>luasnip-jump-next")
     vim.keymap.set({ "i", "s" }, "<C-k>", function() pcall(luasnip.change_choice, -1) end)
     vim.keymap.set({ "i", "s" }, "<C-j>", function() pcall(luasnip.change_choice, 1) end)
 
@@ -28,7 +28,7 @@ return {
       end,
     })
 
-    vim.keymap.set("i", "<C-h>", function()
+    vim.keymap.set({ "i", "s" }, "<C-h>", function()
       if luasnip.get_active_snip() then
         luasnip.jump(-1)
       elseif has_vim_snippet and snippet.active() then
@@ -38,8 +38,10 @@ return {
         pcall(vim.api.nvim_win_set_cursor, 0, { cur[1], cur[2] - 1 })
       end
     end)
-    vim.keymap.set("i", "<C-l>", function()
-      if luasnip.get_active_snip() then
+    vim.keymap.set({ "i", "s" }, "<C-l>", function()
+      if luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      elseif luasnip.get_active_snip() then
         luasnip.jump(1)
       elseif has_vim_snippet and snippet.active() then
         snippet.jump(1)
@@ -106,6 +108,42 @@ return {
           end
         end
         return snippet
+      end,
+    })
+
+    local function load_snippets(reload)
+      for k in pairs(opts.modules) do
+        local mod = "snippets." .. k
+        if reload then
+          package.loaded[mod] = nil
+        end
+        local ok, err = pcall(require, mod)
+        if not ok then
+          vim.notify(string.format("Error loading snippet module '%s': %s", k, err), vim.log.levels.ERROR)
+        end
+      end
+    end
+    local function reload()
+      require("luasnip.loaders.from_vscode").load()
+      load_snippets(true)
+    end
+
+    load_snippets(false)
+    vim.api.nvim_create_user_command("LuaSnipReload", reload, { bar = true })
+    vim.api.nvim_create_autocmd("BufWritePost", {
+      desc = "Reload snippets on write",
+      pattern = "*",
+      group = aug,
+      callback = function(args)
+        local bufname = vim.api.nvim_buf_get_name(args.buf)
+        if
+          bufname:match("/snippets/.+%.lua$")
+          or bufname:match("/snippets/.+%.json$")
+          or bufname:match("package.json$")
+        then
+          vim.notify("Reloading snippets", vim.log.levels.INFO)
+          reload()
+        end
       end,
     })
   end,
