@@ -188,22 +188,19 @@ return {
           enabled = false,
         },
       },
-      triggers_nowait = {
-        "<c-r>",
-      },
     },
     config = function(_, opts)
       local wk = require("which-key")
       wk.setup(opts)
-      wk.register({
-        b = { name = "Buffers" },
-        d = { name = "Debugger" },
-        f = { name = "Fuzzy find" },
-        g = { name = "Git" },
-        o = { name = "Overseer" },
-        s = { name = "Sessions" },
-        t = { name = "Tests" },
-      }, { prefix = "<leader>" })
+      wk.add({
+        { "<leader>b", group = "Buffers" },
+        { "<leader>d", group = "Debugger" },
+        { "<leader>f", group = "Fuzzy find" },
+        { "<leader>g", group = "Git" },
+        { "<leader>o", group = "Overseer" },
+        { "<leader>s", group = "Sessions" },
+        { "<leader>t", group = "Tests" },
+      })
     end,
   },
 }
