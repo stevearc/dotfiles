@@ -188,9 +188,11 @@ dotcmd-desktop() {
     ffmpeg \
     flatpak \
     gtk2 \
+    kdeconnect \
     kitty \
     libnotify \
     nfs-utils \
+    sshfs \
     steam \
     vlc \
     wl-clipboard \
