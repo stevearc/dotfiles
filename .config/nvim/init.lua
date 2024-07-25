@@ -388,6 +388,18 @@ local specs = {
         end
         pending_notifications = nil
       end, 200)
+      -- hack around https://github.com/rcarriga/nvim-notify/issues/189
+      local util = require("notify.stages.util")
+      local get_slot_range = util.get_slot_range
+      util.get_slot_range = function(direction)
+        local a, b = get_slot_range(direction)
+        if direction == util.DIRECTION.TOP_DOWN then
+          b = b - 1
+        elseif direction == util.DIRECTION.BOTTOM_UP then
+          a = a - 1
+        end
+        return a, b
+      end
     end,
   },
 }
