@@ -127,7 +127,7 @@ end)
 --   win:setFrame(f)
 -- end)
 
-hs.hotkey.bind({ "cmd" }, "Return", function()
+hs.hotkey.bind({ "cmd" }, "m", function()
   local win = hs.window.focusedWindow()
   win:maximize()
 end)
