@@ -15,25 +15,46 @@ vim.keymap.set("n", "gw", "<cmd>cclose | Grep <cword><CR>", { desc = "Grep for w
 vim.keymap.set("n", "gbw", function() bufgrep(vim.fn.expand("<cword>")) end, { desc = "grep open buffers for word" })
 vim.keymap.set("n", "gbW", function() bufgrep(vim.fn.expand("<cWORD>")) end, { desc = "Grep open buffers for WORD" })
 vim.api.nvim_create_user_command("Bufgrep", function(params) bufgrep(params.args) end, { nargs = "+" })
+vim.keymap.set("n", "<C-p>", "<cmd>cprev<CR>", { desc = "Previous quickfix item" })
+vim.keymap.set("n", "<C-n>", "<cmd>cnext<CR>", { desc = "Next quickfix item" })
 
 return {
   {
-    "stefandtw/quickfix-reflector.vim",
-    ft = "qf",
-  },
-  {
-    "stevearc/qf_helper.nvim",
-    ft = "qf",
-    cmd = { "QNext", "QPrev", "QFToggle", "QFOpen", "LLToggle" },
-    keys = {
-      { "<C-N>", "<cmd>QNext<CR>", desc = "[N]ext in quickfix" },
-      { "<C-P>", "<cmd>QPrev<CR>", desc = "[P]rev in quickfix" },
-      { "<leader>q", "<cmd>QFToggle!<CR>", desc = "Toggle [Q]uickfix" },
-      { "<leader>l", "<cmd>LLToggle!<CR>", desc = "Toggle [L]oclist" },
-    },
+    "stevearc/quicker.nvim",
+    lazy = false,
+    ---@module "quicker"
+    ---@type quicker.SetupOptions
     opts = {
-      prefer_loclist = false,
-      default_bindings = false,
+      keys = {
+        {
+          ">",
+          function()
+            require("quicker").expand({ before = 2, after = 2, add_to_existing = true })
+            vim.api.nvim_win_set_height(0, math.min(20, vim.api.nvim_buf_line_count(0)))
+          end,
+          desc = "Expand quickfix context",
+        },
+        {
+          "<",
+          function()
+            require("quicker").collapse()
+            vim.api.nvim_win_set_height(0, math.max(4, math.min(10, vim.api.nvim_buf_line_count(0))))
+          end,
+          desc = "Collapse quickfix context",
+        },
+      },
+    },
+    keys = {
+      {
+        "<leader>q",
+        function() require("quicker").toggle({}) end,
+        desc = "Toggle [Q]uickfix",
+      },
+      {
+        "<leader>l",
+        function() require("quicker").toggle({ loclist = true }) end,
+        desc = "Toggle [L]oclist",
+      },
     },
   },
 }

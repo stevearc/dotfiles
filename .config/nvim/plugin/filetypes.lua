@@ -178,13 +178,6 @@ ftplugin.extend_all({
       )
     end,
   },
-  qf = {
-    opt = {
-      winfixheight = true,
-      relativenumber = false,
-      buflisted = false,
-    },
-  },
   rust = {
     compiler = "cargo",
     callback = function(bufnr)

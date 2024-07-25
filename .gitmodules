@@ -52,3 +52,6 @@
 [submodule "gitstack"]
 	path = gitstack
 	url = https://github.com/stevearc/gitstack.git
+[submodule "vimplugins/quicker.nvim"]
+	path = vimplugins/quicker.nvim
+	url = https://github.com/stevearc/quicker.nvim.git
