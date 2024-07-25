@@ -119,7 +119,11 @@ configure-git() {
   git config --global core.excludesFile '~/.config/global-git-ignore'
   mkdir -p ~/.config
   touch ~/.config/global-git-ignore
-  grep tags ~/.config/global-git-ignore >/dev/null 2>&1 || echo tags >>~/.config/global-git-ignore
+  grep ^tags$ ~/.config/global-git-ignore >/dev/null 2>&1 || echo tags >>~/.config/global-git-ignore
+  grep ^tags.files$ ~/.config/global-git-ignore >/dev/null 2>&1 || echo tags.files >>~/.config/global-git-ignore
+  grep ^tags.lock$ ~/.config/global-git-ignore >/dev/null 2>&1 || echo tags.lock >>~/.config/global-git-ignore
+  grep ^tags.temp$ ~/.config/global-git-ignore >/dev/null 2>&1 || echo tags.temp >>~/.config/global-git-ignore
+  grep ^tags.rev$ ~/.config/global-git-ignore >/dev/null 2>&1 || echo tags.rev >>~/.config/global-git-ignore
   grep .DS_Store ~/.config/global-git-ignore >/dev/null 2>&1 || echo .DS_Store >>~/.config/global-git-ignore
   grep .nvim.lua ~/.config/global-git-ignore >/dev/null 2>&1 || echo .nvim.lua >>~/.config/global-git-ignore
   grep __pycache__ ~/.config/global-git-ignore >/dev/null 2>&1 || echo __pycache__ >>~/.config/global-git-ignore

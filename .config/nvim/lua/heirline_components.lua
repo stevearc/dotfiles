@@ -204,6 +204,11 @@ local Overseer = {
   rpad(OverseerTasksForStatus("FAILURE")),
 }
 
+local Gutentags = {
+  condition = function() return vim.fn.exists("*gutentags#statusline") == 1 end,
+  provider = function(self) return vim.fn["gutentags#statusline"](" ") end,
+}
+
 local Diagnostics = {
   condition = function() return #vim.diagnostic.get(0, { severity = { min = vim.diagnostic.severity.WARN } }) > 0 end,
   static = {
@@ -394,6 +399,7 @@ return {
   FileIcon = FileIcon,
   FileType = FileType,
   FullFileName = FullFileName,
+  Gutentags = Gutentags,
   Overseer = Overseer,
   Diagnostics = Diagnostics,
   setup_colors = setup_colors,

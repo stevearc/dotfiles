@@ -33,6 +33,7 @@ return {
         comp.rpad(comp.ConjoinStatus),
         comp.rpad(comp.ArduinoStatus),
         comp.rpad(comp.SessionName),
+        comp.rpad(comp.Gutentags),
         comp.rpad(comp.Overseer),
         comp.rpad(comp.FileType),
         comp.Ruler
