@@ -74,8 +74,8 @@ return {
   },
   config = function()
     local neotest = require("neotest")
-    -- require("neotest.logging"):set_level("trace")
     neotest.setup({
+      -- log_level = vim.log.levels.INFO,
       adapters = {
         require("neotest-python")({
           dap = { justMyCode = false },
@@ -123,6 +123,12 @@ return {
       },
       status = {
         enabled = true,
+      },
+      quickfix = {
+        enabled = false,
+      },
+      watch = {
+        enabled = false,
       },
     })
   end,
