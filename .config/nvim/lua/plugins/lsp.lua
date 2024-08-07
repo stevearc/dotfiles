@@ -1,4 +1,22 @@
 local p = require("p")
+
+local function locations_equal(loc1, loc2)
+  return (loc1.uri or loc1.targetUri) == (loc2.uri or loc2.targetUri)
+    and (loc1.range or loc1.targetSelectionRange).start.line == (loc2.range or loc2.targetSelectionRange).start.line
+end
+
+local function all_locations_equal(locs)
+  local last_loc
+  for i = 1, #locs do
+    local loc = locs[i]
+    if last_loc and not locations_equal(loc, last_loc) then
+      return false
+    end
+    last_loc = loc
+  end
+  return true
+end
+
 return {
   {
     "neovim/nvim-lspconfig",
@@ -73,12 +91,6 @@ return {
     config = function(_, opts)
       local lsp = require("lsp")
       -- vim.lsp.set_log_level("debug")
-
-      local function locations_equal(loc1, loc2)
-        return (loc1.uri or loc1.targetUri) == (loc2.uri or loc2.targetUri)
-          and (loc1.range or loc1.targetSelectionRange).start.line
-            == (loc2.range or loc2.targetSelectionRange).start.line
-      end
       local function location_handler(_, result, ctx, _)
         if result == nil or vim.tbl_isempty(result) then
           return nil
@@ -91,32 +103,32 @@ return {
 
         local has_telescope = pcall(require, "telescope")
         if vim.islist(result) then
-          if #result == 1 or (#result == 2 and locations_equal(result[1], result[2])) then
+          if all_locations_equal(result) then
             pcall(vim.lsp.util.jump_to_location, result[1], client.offset_encoding, false)
           elseif has_telescope then
-            local opts = {}
+            local ts_opts = {}
             local pickers = require("telescope.pickers")
             local finders = require("telescope.finders")
             local make_entry = require("telescope.make_entry")
             local conf = require("telescope.config").values
             local items = vim.lsp.util.locations_to_items(result, client.offset_encoding)
             pickers
-              .new(opts, {
+              .new(ts_opts, {
                 prompt_title = "LSP Locations",
                 finder = finders.new_table({
                   results = items,
-                  entry_maker = make_entry.gen_from_quickfix(opts),
+                  entry_maker = make_entry.gen_from_quickfix(ts_opts),
                 }),
-                previewer = conf.qflist_previewer(opts),
-                sorter = conf.generic_sorter(opts),
+                previewer = conf.qflist_previewer(ts_opts),
+                sorter = conf.generic_sorter(ts_opts),
               })
               :find()
           else
-            vim.fn.setqflist({}, " ", {
+            vim.fn.setloclist(0, {}, " ", {
               title = "LSP locations",
               items = vim.lsp.util.locations_to_items(result, client.offset_encoding),
             })
-            vim.cmd.copen({ mods = { split = "botright" } })
+            vim.cmd.lopen()
           end
         else
           vim.lsp.util.jump_to_location(result, client.offset_encoding)
