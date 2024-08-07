@@ -4,10 +4,14 @@ local p = require("p")
 
 -- Profiling
 local should_profile = os.getenv("NVIM_PROFILE")
+-- NVIM_PROFILE=mod:othermod nvim
+-- NVIM_PROFILE=* nvim
+-- NVIM_PROFILE=start:* nvim
+-- NVIM_PROFILE_SAMPLE=0.3 NVIM_PROFILE=start:* nvim
+-- NVIM_PROFILE=none nvim
 if should_profile then
   vim.opt.runtimepath:append("~/dotfiles/vimplugins/profile.nvim")
   local profile = require("profile")
-  profile.set_sample_rate(0.1)
   profile.instrument_autocmds()
   local method = "instrument"
   if should_profile:lower():match("^start") then
@@ -18,7 +22,16 @@ if should_profile then
   if vim.tbl_isempty(patterns) then
     table.insert(patterns, "*")
   end
-  profile[method](unpack(patterns))
+  local sample_rate = tonumber(os.getenv("NVIM_PROFILE_SAMPLE"))
+  if sample_rate then
+    profile.set_sample_rate(sample_rate)
+  elseif vim.tbl_contains(patterns, "*") then
+    profile.set_sample_rate(0.1)
+  end
+
+  if #patterns ~= 1 or patterns[1] ~= "none" then
+    profile[method](unpack(patterns))
+  end
 
   local function toggle_profile()
     if profile.is_recording() then
