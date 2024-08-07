@@ -177,7 +177,7 @@ return {
   { "levouh/tint.nvim", opts = {} },
   {
     "folke/which-key.nvim",
-    event = "VeryLazy",
+    cmd = "WhichKey",
     init = function()
       vim.o.timeout = true
       vim.o.timeoutlen = 300
