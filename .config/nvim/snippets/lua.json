@@ -3,6 +3,10 @@
     "prefix": "ps",
     "body": ["print(string.format(\"$1\", $2))"]
   },
+  "vim.log.levels": {
+    "prefix": "vll",
+    "body": ["vim.log.levels.$0"]
+  },
   "string.format": {
     "prefix": "sf",
     "body": ["string.format(\"${1:$TM_SELECTED_TEXT}\", $2)"]
@@ -34,5 +38,25 @@
   "if": {
     "prefix": "if",
     "body": ["if $1 then", "  ${0:$TM_SELECTED_TEXT}", "end"]
+  },
+  "if-else": {
+    "prefix": "ife",
+    "body": ["if $1 then", "  ${1:$TM_SELECTED_TEXT}", "else", "  $0", "end"]
+  },
+  "profile.log_start": {
+    "prefix": "pls",
+    "body": ["profile.log_start($1)"]
+  },
+  "profile.log_end": {
+    "prefix": "ple",
+    "body": ["profile.log_end($1)"]
+  },
+  "profile.log": {
+    "prefix": "pl",
+    "body": [
+      "profile.log_start($1)",
+      "$TM_SELECTED_TEXT",
+      "profile.log_end($1)"
+    ]
   }
 }
