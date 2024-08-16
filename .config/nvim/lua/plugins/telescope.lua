@@ -99,9 +99,13 @@ return {
           find_method = "title",
         },
         aerial = {
-          show_nesting = {
-            python = true,
-          },
+          format_symbol = function(symbol_path, filetype)
+            if filetype == "json" or filetype == "yaml" or filetype == "python" then
+              return table.concat(symbol_path, " > ")
+            else
+              return symbol_path[#symbol_path]
+            end
+          end,
         },
       },
     },
