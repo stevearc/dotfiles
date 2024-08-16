@@ -21,7 +21,7 @@ vim.keymap.set("n", "<C-n>", "<cmd>cnext<CR>", { desc = "Next quickfix item" })
 return {
   {
     "stevearc/quicker.nvim",
-    lazy = false,
+    event = "FileType qf",
     ---@module "quicker"
     ---@type quicker.SetupOptions
     opts = {
