@@ -178,10 +178,6 @@ return {
   {
     "folke/which-key.nvim",
     cmd = "WhichKey",
-    init = function()
-      vim.o.timeout = true
-      vim.o.timeoutlen = 300
-    end,
     opts = {
       plugins = {
         spelling = {
@@ -201,6 +197,8 @@ return {
         { "<leader>s", group = "Sessions" },
         { "<leader>t", group = "Tests" },
       })
+      vim.o.timeout = true
+      vim.o.timeoutlen = 300
     end,
   },
 }
