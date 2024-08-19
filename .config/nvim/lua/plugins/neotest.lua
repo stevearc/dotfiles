@@ -72,64 +72,87 @@ return {
       desc = "[T]est [O]utput",
     },
   },
-  config = function()
-    local neotest = require("neotest")
-    neotest.setup({
-      -- log_level = vim.log.levels.INFO,
-      adapters = {
-        require("neotest-python")({
-          dap = { justMyCode = false },
-        }),
-        require("neotest-plenary"),
-        require("neotest-go"),
-        require("neotest-jest")({
+  opts = {
+    -- log_level = vim.log.levels.INFO,
+    adapters = {
+      ["neotest-python"] = {
+        dap = { justMyCode = false },
+      },
+      ["neotest-plenary"] = false,
+      ["neotest-go"] = false,
+      ["neotest-jest"] = function()
+        return {
           cwd = require("neotest-jest").root,
-        }),
+        }
+      end,
+    },
+    discovery = {
+      enabled = false,
+    },
+    consumers = {
+      overseer = function() return require("neotest.consumers.overseer") end,
+    },
+    summary = {
+      mappings = {
+        attach = "a",
+        expand = "l",
+        expand_all = "L",
+        jumpto = "gf",
+        output = "o",
+        run = "<C-r>",
+        short = "p",
+        stop = "u",
       },
-      discovery = {
-        enabled = false,
-      },
-      consumers = {
-        overseer = require("neotest.consumers.overseer"),
-      },
-      summary = {
-        mappings = {
-          attach = "a",
-          expand = "l",
-          expand_all = "L",
-          jumpto = "gf",
-          output = "o",
-          run = "<C-r>",
-          short = "p",
-          stop = "u",
-        },
-      },
-      icons = {
-        passed = " ",
-        running = " ",
-        failed = " ",
-        unknown = " ",
-        running_animated = vim.tbl_map(
-          function(s) return s .. " " end,
-          { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
-        ),
-      },
-      diagnostic = {
-        enabled = true,
-      },
-      output = {
-        enabled = true,
-        open_on_run = false,
-      },
-      status = {
-        enabled = true,
-      },
-      quickfix = {
-        enabled = false,
-      },
-      watch = {
-        enabled = false,
-      },
-    })
+    },
+    icons = {
+      passed = " ",
+      running = " ",
+      failed = " ",
+      unknown = " ",
+      running_animated = vim.tbl_map(
+        function(s) return s .. " " end,
+        { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
+      ),
+    },
+    diagnostic = {
+      enabled = true,
+    },
+    output = {
+      enabled = true,
+      open_on_run = false,
+    },
+    status = {
+      enabled = true,
+    },
+    quickfix = {
+      enabled = false,
+    },
+    watch = {
+      enabled = false,
+    },
+  },
+  config = function(_, opts)
+    local neotest = require("neotest")
+    opts = vim.deepcopy(opts)
+
+    local adapters = {}
+    for k, v in pairs(opts.adapters) do
+      if type(v) == "function" then
+        table.insert(adapters, require(k)(v()))
+      elseif v then
+        table.insert(adapters, require(k)(v))
+      else
+        table.insert(adapters, require(k))
+      end
+    end
+    opts.adapters = adapters
+
+    for k, v in pairs(opts.consumers) do
+      if type(v) == "function" then
+        opts.consumers[k] = v()
+      end
+    end
+
+    neotest.setup(opts)
   end,
 }
