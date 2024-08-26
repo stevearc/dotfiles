@@ -42,6 +42,11 @@ return {
           end,
           desc = "Collapse quickfix context",
         },
+        {
+          "gdt",
+          "<CMD>g/test.*┃/d<CR>:w<CR>",
+          desc = "Delete lines with 'test'",
+        },
       },
     },
     keys = {
