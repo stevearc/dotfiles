@@ -1,5 +1,7 @@
 return {
   "nvim-neorg/neorg",
+  -- Disable Neorg for now
+  enabled = false,
   dependencies = {
     "jbyuki/venn.nvim",
   },
