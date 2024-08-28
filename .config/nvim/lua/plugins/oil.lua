@@ -10,6 +10,12 @@ return {
   },
   {
     "stevearc/oil.nvim",
+    lazy = false,
+    cmd = { "Oil" },
+    keys = {
+      { "-", "<CMD>Oil<CR>", desc = "Open parent directory" },
+      { "_", function() require("oil").open(vim.fn.getcwd()) end, desc = "Open cwd" },
+    },
     opts = {
       delete_to_trash = true,
       skip_confirm_for_simple_edits = true,
@@ -39,8 +45,6 @@ return {
     config = function(_, opts)
       local oil = require("oil")
       oil.setup(opts)
-      vim.keymap.set("n", "-", oil.open, { desc = "Open parent directory" })
-      vim.keymap.set("n", "_", function() oil.open(vim.fn.getcwd()) end, { desc = "Open cwd" })
       local function find_files()
         local dir = oil.get_current_dir()
         if vim.api.nvim_win_get_config(0).relative ~= "" then
