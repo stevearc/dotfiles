@@ -19,6 +19,7 @@ configure-git() {
   git config --global diff.colorMoved zebra
   git config --global push.autoSetupRemote true
   git config --global push.default upstream
+  git config --global --add --bool rebase.updateRefs true
   # This was causing massive lag
   # git config --global core.fsmonitor true
 
