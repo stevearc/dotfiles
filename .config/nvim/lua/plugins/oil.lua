@@ -16,15 +16,40 @@ return {
       { "-", "<CMD>Oil<CR>", desc = "Open parent directory" },
       { "_", function() require("oil").open(vim.fn.getcwd()) end, desc = "Open cwd" },
     },
+    ---@module 'oil'
+    ---@type oil.SetupOpts
     opts = {
       delete_to_trash = true,
       skip_confirm_for_simple_edits = true,
       prompt_save_on_select_new_entry = false,
       experimental_watch_for_changes = true,
+      win_options = {
+        concealcursor = "n",
+      },
       keymaps = {
         ["`"] = "actions.tcd",
         ["~"] = "<cmd>edit $HOME<CR>",
         ["<leader>t"] = "actions.open_terminal",
+        ["<leader>ff"] = {
+          function()
+            local dir = require("oil").get_current_dir()
+            if vim.api.nvim_win_get_config(0).relative ~= "" then
+              vim.api.nvim_win_close(0, true)
+            end
+            stevearc.find_files({ cwd = dir, hidden = true })
+          end,
+          desc = "[F]ind [F]iles in dir",
+        },
+        ["<leader>fg"] = {
+          function()
+            local dir = require("oil").get_current_dir()
+            if vim.api.nvim_win_get_config(0).relative ~= "" then
+              vim.api.nvim_win_close(0, true)
+            end
+            require("telescope.builtin").live_grep({ cwd = dir })
+          end,
+          desc = "[F]ind by [G]rep in dir",
+        },
         ["gd"] = {
           desc = "Toggle detail view",
           callback = function()
@@ -45,36 +70,10 @@ return {
     config = function(_, opts)
       local oil = require("oil")
       oil.setup(opts)
-      local function find_files()
-        local dir = oil.get_current_dir()
-        if vim.api.nvim_win_get_config(0).relative ~= "" then
-          vim.api.nvim_win_close(0, true)
-        end
-        stevearc.find_files({ cwd = dir, hidden = true })
-      end
-
-      local function livegrep()
-        local dir = oil.get_current_dir()
-        if vim.api.nvim_win_get_config(0).relative ~= "" then
-          vim.api.nvim_win_close(0, true)
-        end
-        require("telescope.builtin").live_grep({ cwd = dir })
-      end
 
       local p = require("p")
       local ftplugin = p.require("ftplugin")
       ftplugin.set("oil", {
-        keys = {
-          { "<leader>ff", find_files, desc = "[F]ind [F]iles in dir" },
-          { "<leader>fg", livegrep, desc = "[F]ind by [G]rep in dir" },
-        },
-        opt = {
-          conceallevel = 3,
-          concealcursor = "n",
-          list = false,
-          wrap = false,
-          signcolumn = "no",
-        },
         callback = function(bufnr)
           vim.api.nvim_buf_create_user_command(
             bufnr,
