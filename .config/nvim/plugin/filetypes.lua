@@ -103,17 +103,11 @@ ftplugin.extend_all({
       wrap = true,
     },
     keys = {
-      { "<leader>td", require("markdown").task_mark_done },
-      { "<leader>tu", require("markdown").task_mark_undone },
+      { "<leader>td", require("markdown").task_mutate("x") },
+      { "<leader>tu", require("markdown").task_mutate(" ") },
+      { "<leader>tp", require("markdown").task_mutate("-") },
     },
     callback = function(bufnr)
-      require("markdown").update_code_highlights(bufnr)
-      local aug = vim.api.nvim_create_augroup("MarkdownStyling", {})
-      vim.api.nvim_clear_autocmds({ buffer = bufnr, group = aug })
-      vim.api.nvim_create_autocmd({ "TextChanged", "InsertLeave" }, {
-        buffer = bufnr,
-        callback = vim.schedule_wrap(function(args) require("markdown").update_code_highlights(bufnr) end),
-      })
       vim.keymap.set("i", "<Tab>", function()
         local line = vim.api.nvim_get_current_line()
         local col = vim.api.nvim_win_get_cursor(0)[2]

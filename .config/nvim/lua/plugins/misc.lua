@@ -201,4 +201,18 @@ return {
       vim.o.timeoutlen = 300
     end,
   },
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    ft = "markdown",
+    cmd = "RenderMarkdown",
+    opts = {
+      heading = {
+        sign = false,
+      },
+      code = {
+        sign = false,
+      },
+    },
+    dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
+  },
 }
