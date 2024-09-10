@@ -51,7 +51,7 @@ local function parse_messages_buffer(bufnr)
     captures[v] = k
   end
   local message = {}
-  for _, match in query:iter_matches(root, bufnr) do
+  for _, match in query:iter_matches(root, bufnr, nil, nil, { all = false }) do
     if match[captures.role] then
       if not vim.tbl_isempty(message) then
         table.insert(ret, message)
