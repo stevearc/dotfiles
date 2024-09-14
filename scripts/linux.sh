@@ -1,6 +1,18 @@
 #!/bin/bash
 set -e
 
+DOTCMD_VIRT_SHARED_FOLDER_DOC="Set up a shared folder in a virtual machine guest"
+dotcmd-virt-shared-folder() {
+  local name="${1?Usage: ./run virt-shared-folder <sharename> <dest>}"
+  local dest="${2?Usage: ./run virt-shared-folder <sharename> <dest>}"
+  if ! grep -q "^$name" /etc/fstab; then
+    echo -e "$name\t$dest\tvirtiofs\tdefaults\t0\t0" | sudo tee -a /etc/fstab
+    sudo systemctl daemon-reload
+    sudo mount "$name"
+    echo "Don't forget to add hardware > filesystem and also enable shared memory"
+  fi
+}
+
 dc-install-nvm() {
   if [ -e ~/.bash.d/nvm.sh ]; then
     source ~/.bash.d/nvm.sh || :
@@ -116,7 +128,7 @@ install-language-zig() {
 install-language-go() {
   if [ ! -e ~/.local/share/go ]; then
     pushd /tmp
-    local pkg="go1.20.4.linux-amd64.tar.gz"
+    local pkg="go1.23.1.linux-amd64.tar.gz"
     if [ ! -e "$pkg" ]; then
       wget -O "$pkg" "https://golang.org/dl/$pkg"
     fi

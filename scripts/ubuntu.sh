@@ -265,8 +265,6 @@ dc-install-neovim() {
       sudo apt-get install -y neovim
     fi
   fi
-
-  post-install-neovim
 }
 
 # shellcheck disable=SC2034
@@ -348,11 +346,7 @@ dotcmd-desktop() {
     vlc \
     xbindkeys \
     zenity
-  if ! hascmd alacritty; then
-    install-language-rust
-    sudo apt install -yq libxcb-shape0-dev libxcb-xfixes0-dev libxcb-render0-dev
-    cargo install alacritty
-  fi
+  dc-install-kitty
 
   if ! grep -q "GRUB_TIMEOUT=4" /etc/default/grub; then
     sudo sed -ie 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=4/' /etc/default/grub

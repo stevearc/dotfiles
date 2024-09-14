@@ -1,3 +1,3 @@
 #!/bin/bash
 set -e
-rsync -a /home/stevearc/.config/transmission-daemon/torrents/ /mnt/storage/torrents_archive/
+rsync -a --delete /home/stevearc/.config/transmission-daemon/torrents/ /mnt/storage/torrents_archive/

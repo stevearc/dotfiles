@@ -87,7 +87,10 @@ class Torrent:
 
 def _setup_logging(args: argparse.Namespace) -> None:
     logfile = os.path.join(
-        os.getenv("HOME") or "/home/stevearc", ".cache", "transmission-done-script.log"
+        os.getenv("HOME") or "/home/stevearc",
+        ".local",
+        "state",
+        "transmission-done-script.log",
     )
     handler = logging.handlers.RotatingFileHandler(
         logfile, maxBytes=1024 * 1000 * 4, backupCount=1

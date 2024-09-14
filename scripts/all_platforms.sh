@@ -9,15 +9,6 @@ fetch-nerd-font() {
   rm -f UbuntuMono.zip
 }
 
-post-install-neovim() {
-  [ -d ~/.envs ] || mkdir ~/.envs
-  [ -d ~/.envs/py3 ] || python3 -m venv ~/.envs/py3
-  ~/.envs/py3/bin/pip install -q wheel
-  ~/.envs/py3/bin/pip install -q pynvim || ~/.envs/py3/bin/pip install -i https://pypi.org/simple -q pynvim
-
-  # nvim --headless +UpdateRemotePlugins +qall >/dev/null
-}
-
 configure-git() {
   git config --global user.email >/dev/null || git config --global user.email stevearc@stevearc.com
   git config --global color.ui auto

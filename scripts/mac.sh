@@ -46,7 +46,6 @@ setup-configs() {
 
 dc-install-neovim() {
   brew install neovim
-  post-install-neovim
 }
 
 install-language-python() {

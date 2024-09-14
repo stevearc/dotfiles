@@ -4,7 +4,7 @@ set -e
 platform-setup() {
   # Make pacman display packages in a vertical list
   if ! grep -q "^VerbosePkgLists" /etc/pacman.conf; then
-    echo "VerbosePkgLists" | sudo tee -a /etc/pacman.conf
+    sudo sed -i -e 's/^.*VerbosePkgLists$/VerbosePkgLists/' /etc/pacman.conf
   fi
 
   has-checkpoint platform-setup && return
@@ -12,6 +12,7 @@ platform-setup() {
   sudo pacman -Syuq --noconfirm
   sudo pacman -Sq --noconfirm binutils fakeroot curl wget clang base-devel git
   if ! hascmd yay; then
+    install-language-go
     pushd /tmp
     [ -e yay ] || git clone https://aur.archlinux.org/yay.git
     cd yay
@@ -59,12 +60,13 @@ install-language-lua() {
 
 DC_INSTALL_VIRTMANAGER_DOC="virt-manager virtualization tool"
 dc-install-virtmanager() {
-  sudo pacman -Syq --noconfirm virt-manager qemu virt-viewer dnsmasq vde2 bridge-utils libguestfs
+  sudo pacman -Syq --noconfirm virt-manager qemu-full virt-viewer dnsmasq vde2 bridge-utils libguestfs
   sudo cp "$HERE/static/libvirtd.conf" /etc/libvirt/libvirtd.conf
   sed -e "s/USER/$USER/" <"$HERE/static/qemu.conf" | sudo tee /etc/libvirt/qemu.conf >/dev/null
   sudo systemctl enable libvirtd
   sudo systemctl start libvirtd
   sudo usermod -a -G libvirt "$USER"
+  sudo virsh net-autostart default
 }
 
 dc-install-syncthing() {
@@ -141,11 +143,9 @@ dc-install-common() {
 # shellcheck disable=SC2034
 DC_INSTALL_NEOVIM_DOC="<3"
 dc-install-neovim() {
-  install-language-python
   if ! hascmd nvim; then
     sudo pacman -Syq --noconfirm neovim
   fi
-  post-install-neovim
 }
 
 # shellcheck disable=SC2034
@@ -187,6 +187,7 @@ dotcmd-desktop() {
     bluez \
     ffmpeg \
     flatpak \
+    firefox \
     gtk2 \
     kdeconnect \
     kitty \
@@ -198,7 +199,10 @@ dotcmd-desktop() {
     wl-clipboard \
     zenity
   hascmd tomb || yay -S --noconfirm tomb # gtk2 above is a dependency
-  pacman -Qm | grep -q xpadneo || yay -S --noconfirm xpadneo-dkms
+  if ! pacman -Qm | grep -q xpadneo; then
+    sudo pacman -Syq --noconfirm linux-headers
+    yay -S --noconfirm xpadneo-dkms
+  fi
   setup-desktop-generic
   sudo systemctl enable bluetooth.service
   sudo systemctl restart bluetooth.service
@@ -217,11 +221,6 @@ dotcmd-desktop() {
 # shellcheck disable=SC2034
 DOTCMD_PIBOX_DOC="Set up the raspberry pi"
 dotcmd-pibox() {
-  sudo cp "$HERE/static/NetworkManager.conf" /etc/NetworkManager
-  if ! ifconfig wlan0 | grep -q inet; then
-    nmcli dev wifi connect slugnet -a
-  fi
-
   dc-install-common
   dc-install-neovim
   dotcmd-dotfiles
@@ -232,12 +231,8 @@ dotcmd-pibox() {
     dhcpcd \
     fuse2 \
     kitty \
-    nfs-utils \
     openssh \
     transmission-cli
-  dc-install-airvpn
-  # This is configured on the AirVPN website
-  local vpn_port=23701
 
   sudo systemctl enable sshd.service
   sudo systemctl start sshd.service
@@ -246,33 +241,17 @@ dotcmd-pibox() {
 
   test -e /etc/cron.hourly/rsync_torrents || sudo cp "$HERE/static/rsync_torrents" /etc/cron.hourly/
 
-  if sudo firewall-cmd --state; then
-    # Set the current zone to home
-    sudo firewall-cmd --zone=home --change-interface=wlan0
-    sudo firewall-cmd --zone=home --change-interface=end0
-    sudo firewall-cmd --zone=home --change-interface=wlan0 --permanent
-    sudo firewall-cmd --zone=home --change-interface=end0 --permanent
-    # Open ports for ssh
-    sudo firewall-cmd --zone=home --add-port=22/tcp
-    sudo firewall-cmd --permanent --zone=home --add-port=22/tcp
-    # Transmission
-    sudo firewall-cmd --zone=home --add-port=9091/tcp
-    sudo firewall-cmd --permanent --zone=home --add-port=9091/tcp
-    if [ -n "$vpn_port" ]; then
-      sudo firewall-cmd --zone=home --add-port="${vpn_port}/tcp"
-      sudo firewall-cmd --permanent --zone=home --add-port="${vpn_port}/tcp"
-      sudo firewall-cmd --zone=public --add-port="${vpn_port}/tcp"
-      sudo firewall-cmd --permanent --zone=public --add-port="${vpn_port}/tcp"
-    fi
+  # faster startup
+  if [ -e /etc/default/grub ] && ! grep -q GRUB_TIMEOUT=1 /etc/default/grub; then
+    sudo sed -i -e 's/^GRUB_TIMEOUT.*$/GRUB_TIMEOUT=1/' /etc/default/grub
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
   fi
-
-  # Storage drive
-  dc-install-nfs-mount
 
   # Transmission-daemon
   if [ ! -e /etc/systemd/system/transmission-daemon.service ]; then
-    sed -e "s/PEER_PORT/$vpn_port/" "$HERE/static/transmission-daemon.service" | sudo tee /etc/systemd/system/transmission-daemon.service >/dev/null
+    sudo cp "$HERE/static/transmission-daemon.service" /etc/systemd/system/transmission-daemon.service
     sudo systemctl daemon-reload
+    mkdir -p ~/.config/transmission-daemon
     test -e ~/.config/transmission-daemon/settings.json || echo "{}" >~/.config/transmission-daemon/settings.json
     sudo systemctl stop transmission-daemon
     cat ~/.config/transmission-daemon/settings.json |
@@ -285,6 +264,35 @@ dotcmd-pibox() {
     sudo systemctl enable transmission-daemon
     sudo systemctl start transmission-daemon
   fi
+
+  # Port forwarding
+  if [ ! -e /etc/systemd/system/proton-port-forward.service ]; then
+    sudo cp "$HERE/static/proton-port-forward.service" /etc/systemd/system/proton-port-forward.service
+    sudo systemctl daemon-reload
+  fi
+
+  setup-kde
+  kde-auto-login
+  dotcmd-virt-shared-folder storage /mnt/storage
+  dc-install-protonvpn
+  dc-install-power-always-on
+}
+
+dc-install-protonvpn() {
+  sudo pacman -Syq --noconfirm wireguard-tools systemd-resolvconf
+  sudo systemctl enable --now systemd-resolved
+  if sudo test ! -e /etc/wireguard/US.conf; then
+    echo "Download a wireguard conf and put it in /etc/wireguard/"
+    echo "Put the following lines under the [Interface]"
+    echo '    PostUp = iptables -I OUTPUT ! -o %i -m mark ! --mark $(wg show %i fwmark) -m addrtype ! --dst-type LOCAL -j REJECT'
+    echo '    PreDown = iptables -D OUTPUT ! -o %i -m mark ! --mark $(wg show %i fwmark) -m addrtype ! --dst-type LOCAL -j REJECT'
+    echo "Then symlink it to /etc/wireguard/US.conf"
+    read -r
+    xdg-open https://account.protonvpn.com/downloads
+  fi
+  sudo systemctl enable wg-quick@US.service
+  sudo systemctl daemon-reload
+  sudo systemctl start wg-quick@US
 }
 
 DC_INSTALL_DOLPHIN_DOC="The Dolphin core for RetroArch"
@@ -311,14 +319,37 @@ dc-install-dolphin() {
   popd >/dev/null
 }
 
+DC_INSTALL_POWER_ALWAYS_ON="Set KDE settings to never suspend"
+dc-install-power-always-on() {
+  cat >~/.config/powerdevilrc <<EOF
+[AC][Display]
+TurnOffDisplayIdleTimeoutSec=-1
+TurnOffDisplayWhenIdle=false
+
+[AC][SuspendAndShutdown]
+AutoSuspendAction=0
+PowerButtonAction=8
+EOF
+  cat >~/.config/kscreenlockerrc <<EOF
+[Daemon]
+Autolock=false
+Timeout=0
+EOF
+}
+
 dotcmd-beelink() {
   sudo pacman -Syq --noconfirm cronie nfs-utils
   sudo systemctl enable cronie.service
   sudo systemctl start cronie.service
+  sudo systemctl enable sshd.service
+  sudo systemctl start sshd.service
   dc-install-common
   dc-install-neovim
   dotcmd-desktop
+  kde-auto-login
+  dc-install-power-always-on
   dc-install-plex
+  dc-install-virtmanager
   sudo cp "$HERE/static/rsync_retroarch_saves" /etc/cron.hourly/
   sudo cp "$HERE/static/create_symbolic_archive.py" /etc/cron.hourly/create_symbolic_archive
   sudo cp "$HERE/static/storage_backup" /etc/cron.d/storage_backup
@@ -327,10 +358,24 @@ dotcmd-beelink() {
   mkdir -p ~/.config/autostart
   cp "$HERE/static/autostart/steam.desktop" ~/.config/autostart/
 
-  sudo cp "$HERE/static/nfs-storage.exports" /etc/exports.d/
+  if [ ! -e /etc/exports.d/nfs-storage.exports ]; then
+    sudo cp "$HERE/static/nfs-storage.exports" /etc/exports.d/
+    sudo exportfs -arv
+    sudo systemctl enable nfs-server.service
+    sudo systemctl start nfs-server.service
+  fi
+
   if hascmd firewall-cmd; then
     sudo firewall-cmd --zone=home --add-port=2049/tcp
     sudo firewall-cmd --permanent --zone=home --add-port=2049/tcp
+  fi
+
+  # set up drive
+  sudo mkdir -p /mnt/storage
+  if ! grep -q '/mnt/storage' /etc/fstab; then
+    echo -e "UUID=4f0ff868-2052-4a18-b683-f4abc2bd0233\t/mnt/storage\text4\trw,relatime\t0\t0" | sudo tee -a /etc/fstab
+    sudo systemctl daemon-reload
+    sudo mount -a
   fi
 }
 

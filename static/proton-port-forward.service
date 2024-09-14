@@ -1,0 +1,17 @@
+[Unit]
+Description=Set up port forwarding for ProtonVPN
+Requires=transmission-daemon.service
+
+[Service]
+User = stevearc
+Type = simple
+ExecStart = /home/stevearc/dotfiles/static/port_forward.py
+Restart = always
+RestartSec = 30
+IOSchedulingClass = best-effort
+IOSchedulingPriority = 7
+Nice = 10
+TimeoutStopSec = 10
+
+[Install]
+WantedBy=default.target

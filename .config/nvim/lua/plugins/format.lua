@@ -48,7 +48,7 @@ return {
       css = prettier,
       graphql = prettier,
       html = prettier,
-      json = prettier,
+      json = { "prettierd", "prettier", "jq", stop_after_first = true },
       json5 = prettier,
       jsonc = prettier,
       yaml = prettier,

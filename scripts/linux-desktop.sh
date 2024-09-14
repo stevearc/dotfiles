@@ -14,6 +14,9 @@ declare -r DESKTOP_CONFIGS="
   qtile
   rofi
   yamllint
+  kxkbrc
+  krunnerrc
+  kglobalshortcutsrc
 "
 
 setup-gnome() {
@@ -75,7 +78,9 @@ setup-kde() {
       mirror "$src" "$dest" 1
     fi
   done
-    cat >~/.config/plasma-workspace/env/path.sh <<EOF
+  sudo pacman -Syq --noconfirm qt5-tools
+  mkdir -p ~/.config/plasma-workspace/env
+  cat >~/.config/plasma-workspace/env/path.sh <<EOF
 #!/bin/bash
 export PATH=\$HOME/.local/bin:\$PATH
 EOF
@@ -105,53 +110,15 @@ EOF
   kwriteconfig6 --file ~/.config/kwinrc --group Plugins --key slideEnabled false
   # Faster animations [Workspace Behavior > General Behavior]
   kwriteconfig6 --file ~/.config/kdeglobals --group KDE --key AnimationDurationFactor 0.125
-
-  # Global shortcuts
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{3266e259-e66d-4ae2-b7bd-b013fb04b811}' "Alt+Shift+R,none,KRunner"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{686a288d-cf2e-4345-bc3d-bde3b6aa2229}' "Ctrl+Alt+T,none,Launch Konsole"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{6b5c0aeb-f76a-48c4-b890-e997d33083ec}' "Alt+Shift+Return,none,Kitty"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group khotkeys --key '{94d72d73-7359-4a07-bf76-1be49f4b577c}' "Alt+Shift+P,none,KRunner"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group org.kde.krunner.desktop --key '_launch' "$(echo -e "Search\tAlt+Space\tAlt+Shift+P,Alt+Space\tAlt+F2\tSearch,KRunner")"
-
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Close' "Alt+W,Alt+F4,Close Window"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Fullscreen' "F11,none,Make Window Fullscreen"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Maximize' "Alt+Return,none,Maximize Window"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom' "Alt+Down,Meta+Down,Quick Tile Window to the Bottom"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom Left' "Alt+Shift+Left,none,Quick Tile Window to the Bottom Left"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom Right' "Alt+Shift+Down,none,Quick Tile Window to the Bottom Right"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Left' "Alt+Left,Meta+Left,Quick Tile Window to the Left"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Right' "Alt+Right,Meta+Right,Quick Tile Window to the Right"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top' "Alt+Up,Meta+Up,Quick Tile Window to the Top"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top Left' "Alt+Shift+Up,none,Quick Tile Window to the Top Left"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top Right' "Alt+Shift+Right,none,Quick Tile Window to the Top Right"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 1' "Alt+1,Ctrl+F1,Switch to Desktop 1"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 2' "Alt+2,Ctrl+F2,Switch to Desktop 2"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 3' "Alt+3,Ctrl+F3,Switch to Desktop 3"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Switch to Desktop 4' "Alt+4,Ctrl+F4,Switch to Desktop 4"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 1' "Alt+!,none,Window to Desktop 1"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 2' "Alt+@,none,Window to Desktop 2"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 3' "Alt+#,none,Window to Desktop 3"
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group kwin --key 'Window to Desktop 4' 'Alt+$,none,Window to Desktop 4'
-  kwriteconfig6 --file ~/.config/kglobalshortcutsrc --group ksmserver --key "Lock Session" "$(echo -e "Meta+L\tCtrl+Alt+L\tScreensaver,Meta+L\tCtrl+Alt+L\tScreensaver,Lock Session")"
-
-  # Krunner
-  kwriteconfig6 --file ~/.config/krunnerrc --group General --key "FreeFloating" "true"
-  kwriteconfig6 --file ~/.config/krunnerrc --group Plugins --key "bookmarksEnabled" "false"
-  kwriteconfig6 --file ~/.config/krunnerrc --group Plugins --key "calculatorEnabled" "false"
-  kwriteconfig6 --file ~/.config/krunnerrc --group Plugins --key "recentdocumentsEnabled" "false"
-  kwriteconfig6 --file ~/.config/krunnerrc --group Plugins --key "webshortcutsEnabled" "false"
-
-  # Make capslock control
-  kwriteconfig6 --file ~/.config/kxkbrc --group Layout Options "caps:ctrl_modifier"
-
+  kwriteconfig6 --file ~/.config/kdeglobals --group KDE --key LookAndFeelPackage org.kde.breezedark.desktop
   # Hide title bar for maximized windows
   kwriteconfig6 --file ~/.config/kwinrc --group Windows --key BorderlessMaximizedWindows true
+}
 
-  # Reload changes
-  qdbus org.kde.KWin /KWin reconfigure
-  qdbus org.kde.keyboard /modules/khotkeys reread_configuration
-  kquitapp6 plasmashell
-  kstart5 plasmashell
+kde-auto-login() {
+  sudo kwriteconfig6 --file /etc/sddm.conf.d/kde_settings.conf --group Autologin --key Relogin false
+  sudo kwriteconfig6 --file /etc/sddm.conf.d/kde_settings.conf --group Autologin --key User "$USER"
+  sudo kwriteconfig6 --file /etc/sddm.conf.d/kde_settings.conf --group Autologin --key Session plasma
 }
 
 setup-xfce() {
@@ -206,7 +173,6 @@ EOF
     chmod +x ~/.local/bin/yt-dlp
   fi
   flatpak install --user --noninteractive flathub com.spotify.Client com.discordapp.Discord com.google.Chrome org.signal.Signal
-  dc-install-kitty
   dc-install-rclone
 }
 
