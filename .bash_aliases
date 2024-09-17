@@ -18,6 +18,9 @@ alias pm-rm-orphans='sudo pacman -Qtdq | sudo pacman -Rns -'
 alias pm-rm-cache='sudo pacman -Scc'
 pm-why-installed() {
   local package="${1?Usage: pm-why-installed <package>}"
+  if ! command -v pactree >/dev/null; then
+    sudo pacman -Syq --noconfirm pacman-contrib
+  fi
   comm -12 <(pacman -Qeq | sort) <(pactree -r -l -u "$package" | sort)
 }
 
