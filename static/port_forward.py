@@ -61,7 +61,7 @@ def _setup_logging() -> None:
         os.getenv("HOME") or "/home/stevearc",
         ".local",
         "state",
-        "transmission-done-script.log",
+        "port_forward.log",
     )
     handler = logging.handlers.RotatingFileHandler(
         logfile, maxBytes=1024 * 1000 * 4, backupCount=1
