@@ -25,7 +25,7 @@ def refresh_protonvpn_forwarded_port() -> int:
     port = None
     for protocol in ["tcp", "udp"]:
         log.info(f"Running natpmpc to forward {protocol} port")
-        command = ["natpmpc", "-g", gateway, "-a", "0", "0", protocol, "60"]
+        command = ["natpmpc", "-g", gateway, "-a", "1", "0", protocol, "60"]
         result = subprocess.run(command, capture_output=True)
         stdout = result.stdout.decode()
         stderr = result.stderr.decode()
