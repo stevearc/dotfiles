@@ -1,13 +1,14 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 import json
-import logging as log
+import logging
+import logging.handlers
 import os
 import re
 import subprocess
 import time
 from typing import Optional
 
-torrent_port_label = "ProtonVPN torrent"
+log = logging.getLogger(__name__)
 gateway = "10.2.0.1"
 home = os.getenv("HOME") or "/home/stevearc"
 settings_file = os.path.join(home, ".config", "transmission-daemon", "settings.json")
@@ -21,22 +22,23 @@ def find_previous_port() -> Optional[int]:
         return settings.get("peer-port")
 
 
+port_pattern = re.compile(r"^Mapped public port (\d+) protocol", re.MULTILINE)
+
+
 def refresh_protonvpn_forwarded_port() -> int:
     port = None
     for protocol in ["tcp", "udp"]:
-        log.info(f"Running natpmpc to forward {protocol} port")
+        log.debug(f"Running natpmpc to forward {protocol} port")
         command = ["natpmpc", "-g", gateway, "-a", "1", "0", protocol, "60"]
         result = subprocess.run(command, capture_output=True)
         stdout = result.stdout.decode()
         stderr = result.stderr.decode()
         if result.returncode != 0:
             raise RuntimeError("natpmpc error:\n" + stdout + "\n" + stderr)
-        line = stdout.splitlines()[-3]
-        match = re.match(r"^Mapped public port (\d+) protocol", line)
+        match = port_pattern.search(stdout)
         assert match, "natpmpc output could not be parsed:\n" + stdout
-        port = match.group(1)
-        port = int(port)
-        log.info(f"Forwarded ProtonVPN {protocol} port: {port}")
+        port = int(match.group(1))
+        log.debug(f"Forwarded ProtonVPN {protocol} port: {port}")
     assert port
     return port
 
@@ -54,13 +56,24 @@ def update_transmission_port(port: int):
         json.dump(settings, ofile, indent=2)
 
 
-def main():
-    log.basicConfig(
-        filename=os.path.join(home, ".local", "state", "port_forward.log"),
-        filemode="a",
-        format="%(asctime)s - %(message)s",
-        level=log.INFO,
+def _setup_logging() -> None:
+    logfile = os.path.join(
+        os.getenv("HOME") or "/home/stevearc",
+        ".local",
+        "state",
+        "transmission-done-script.log",
     )
+    handler = logging.handlers.RotatingFileHandler(
+        logfile, maxBytes=1024 * 1000 * 4, backupCount=1
+    )
+    formatter = logging.Formatter("%(levelname)s %(asctime)s [%(name)s] %(message)s")
+    handler.setFormatter(formatter)
+    logging.root.addHandler(handler)
+    logging.root.setLevel(logging.INFO)
+
+
+def main():
+    _setup_logging()
 
     try:
         previous_port = find_previous_port()
