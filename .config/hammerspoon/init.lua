@@ -39,16 +39,15 @@ local switchers = setmetatable({}, {
   end,
 })
 
--- Trying out AltTab instead
--- hs.hotkey.bind('cmd','`',function()
---   local switcher = switchers[hs.window.focusedWindow():screen():id()]
---   switcher:next()
--- end)
---
--- hs.hotkey.bind('cmd-shift','`',function()
---   local switcher = switchers[hs.window.focusedWindow():screen():name()]
---   switcher:previous()
--- end)
+hs.hotkey.bind("cmd", "`", function()
+  local switcher = switchers[hs.window.focusedWindow():screen():id()]
+  switcher:next()
+end)
+
+hs.hotkey.bind("cmd-shift", "`", function()
+  local switcher = switchers[hs.window.focusedWindow():screen():name()]
+  switcher:previous()
+end)
 
 function focusScreen(screen)
   --Get windows within screen, ordered from front to back.
