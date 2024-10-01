@@ -173,6 +173,7 @@ EOF
     chmod +x ~/.local/bin/yt-dlp
   fi
   flatpak install --user --noninteractive flathub com.spotify.Client com.discordapp.Discord com.google.Chrome org.signal.Signal
+  flatpak install --system flathub com.github.tchx84.Flatseal
   dc-install-rclone
 }
 
