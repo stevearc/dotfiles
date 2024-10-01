@@ -268,7 +268,9 @@ dotcmd-pibox() {
   # Port forwarding
   if [ ! -e /etc/systemd/system/proton-port-forward.service ]; then
     sudo cp "$HERE/static/proton-port-forward.service" /etc/systemd/system/proton-port-forward.service
+    sudo systemctl enable proton-port-forward
     sudo systemctl daemon-reload
+    sudo systemctl start proton-port-forward
   fi
 
   setup-kde
