@@ -178,23 +178,6 @@ EOF
 }
 
 # shellcheck disable=SC2034
-DC_INSTALL_XPADNEO_DOC="Drivers for Xbox controller"
-dc-install-xpadneo() {
-  pushd /tmp >/dev/null
-  local latest_release
-  latest_release="$(curl -s https://api.github.com/repos/atar-axis/xpadneo/releases | jq -r ".[].tag_name" | sort -V -r | head -1)"
-  if [ ! -e xpadneo ]; then
-    git clone https://github.com/atar-axis/xpadneo.git
-  fi
-  cd xpadneo
-  git fetch --tags
-  git checkout "$latest_release"
-  sudo ./uninstall.sh || :
-  sudo ./install.sh
-  popd >/dev/null
-}
-
-# shellcheck disable=SC2034
 DC_INSTALL_NERD_FONT_DOC="Font with icons"
 dc-install-nerd-font() {
   mkdir -p ~/.local/share/fonts

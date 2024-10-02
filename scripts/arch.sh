@@ -200,7 +200,7 @@ dotcmd-desktop() {
     zenity
   hascmd tomb || yay -S --noconfirm tomb # gtk2 above is a dependency
   if ! pacman -Qm | grep -q xpadneo; then
-    sudo pacman -Syq --noconfirm linux-headers
+    sudo pacman -Syq --noconfirm linux linux-headers
     yay -S --noconfirm xpadneo-dkms
   fi
   setup-desktop-generic
@@ -450,6 +450,13 @@ dc-install-nfs-mount() {
   sudo mkdir -p /mnt/storage
 
   grep "$MEDIA_SERVER_IP" /etc/fstab >/dev/null || echo "${MEDIA_SERVER_IP}:/mnt/storage /mnt/storage nfs _netdev,noauto,x-systemd.automount,x-systemd.mount-timeout=10,timeo=14,x-systemd.idle-timeout=1min  0 0" | sudo tee -a /etc/fstab >/dev/null
+}
+
+# shellcheck disable=SC2034
+DC_INSTALL_XPADNEO_DOC="Drivers for Xbox controller"
+dc-install-xpadneo() {
+  sudo pacman -Syq --noconfirm linux-headers
+  yay -S --noconfirm xpadneo-dkms
 }
 
 # shellcheck disable=SC2034
