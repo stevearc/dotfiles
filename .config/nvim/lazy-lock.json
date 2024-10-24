@@ -22,6 +22,7 @@
   "livegrep.nvim": { "branch": "main", "commit": "d11a5feb2dfb9c3b3936f3b3a24ac99a534d3f9f" },
   "lspkind.nvim": { "branch": "master", "commit": "59c3f419af48a2ffb2320cea85e44e5a95f71664" },
   "luvit-meta": { "branch": "main", "commit": "ce76f6f6cdc9201523a5875a4471dcfe0186eb60" },
+  "multicursor.nvim": { "branch": "main", "commit": "cb8ee9dde77da5bf5ef7d3d2a3898fe2082834e8" },
   "neorg": { "branch": "main", "commit": "e5e797e6eddcb6efb1d2c3fc2612b31ad9a76cef" },
   "neotest": { "branch": "master", "commit": "6d3d22cdad49999ef774ebe1bc250a4994038964" },
   "neotest-go": { "branch": "main", "commit": "92950ad7be2ca02a41abca5c6600ff6ffaf5b5d6" },

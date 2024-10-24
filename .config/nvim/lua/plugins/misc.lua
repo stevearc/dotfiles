@@ -193,6 +193,7 @@ return {
         { "<leader>d", group = "Debugger" },
         { "<leader>f", group = "Fuzzy find" },
         { "<leader>g", group = "Git" },
+        { "<leader>j", group = "Multicursor" },
         { "<leader>o", group = "Overseer" },
         { "<leader>s", group = "Sessions" },
         { "<leader>t", group = "Tests" },
