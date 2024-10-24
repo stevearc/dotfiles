@@ -25,6 +25,10 @@
         "path": "snippets/lua.json"
       },
       {
+        "language": "make",
+        "path": "snippets/make.json"
+      },
+      {
         "language": "markdown",
         "path": "snippets/markdown.json"
       },
