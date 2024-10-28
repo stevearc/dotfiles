@@ -351,13 +351,6 @@ vim.api.nvim_create_user_command("H", function(params)
   vim.api.nvim_win_set_height(0, height)
 end, { nargs = 1 })
 
--- Generate helptags after startup
-vim.defer_fn(function()
-  if not vim.bo.filetype:match("^git") then
-    vim.cmd.helptags({ args = { "ALL" } })
-  end
-end, 1000)
-
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not uv.fs_stat(lazypath) then
