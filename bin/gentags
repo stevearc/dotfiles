@@ -1,4 +1,6 @@
 #!/bin/bash
-set -e
+set -eo pipefail
 
-rg --files | ctags -R --links=no -L - 2>&1 | grep -v "ignoring null tag"
+rm -f tags.temp
+rg --files | ctags -f tags.temp --links=no -L - 2>&1 | grep -v "ignoring null tag"
+mv tags.temp tags

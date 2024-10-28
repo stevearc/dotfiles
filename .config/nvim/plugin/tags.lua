@@ -45,6 +45,35 @@ local function get_current_rev(root)
   end
 end
 
+local timer = vim.uv.new_timer()
+
+---@param root string
+local function update_tags(root)
+  local ok, overseer = pcall(require, "overseer")
+  if not ok then
+    timer:stop()
+    return
+  end
+  local task = overseer.new_task({
+    name = "ctags " .. root,
+    cmd = "rg --files | ctags -f tags.temp --links=no -L -",
+    cwd = root,
+    components = {
+      { "on_complete_notify", { statuses = { "FAILURE" }, system = "unfocused" } },
+      "unique",
+      "default",
+    },
+  })
+  task:subscribe("on_complete", function(_, status)
+    if status == "SUCCESS" then
+      if vim.fn.rename(root .. "/tags.temp", root .. "/tags") ~= 0 then
+        vim.notify("Failed to rename tags.temp to tags", vim.log.levels.ERROR)
+      end
+    end
+  end)
+  task:start()
+end
+
 local function update_project_tags()
   if not is_plugged_in() then
     return
@@ -58,28 +87,15 @@ local function update_project_tags()
   if last_updated_rev == current_rev then
     return
   end
-  local ok = pcall(vim.cmd.GutentagsUpdate, { bang = true })
-  if ok then
-    save_rev(root, current_rev)
-  end
+  update_tags(root)
+  save_rev(root, current_rev)
 end
 
-return {
-  "ludovicchabant/vim-gutentags",
-  cond = function() return vim.fn.executable("ctags") == 1 end,
-  init = function()
-    -- vim.g.gutentags_enabled = false
-    vim.g.gutentags_generate_on_new = false
-    vim.g.gutentags_file_list_command = "rg --files"
+vim.api.nvim_create_autocmd("DirChanged", {
+  desc = "Update tags on directory change",
+  group = "StevearcNewConfig",
+  callback = update_project_tags,
+})
 
-    local aug = vim.api.nvim_create_augroup("Gutentags", { clear = true })
-    vim.api.nvim_create_autocmd("DirChanged", {
-      desc = "Update tags on directory change",
-      group = aug,
-      callback = update_project_tags,
-    })
-    local timer = vim.uv.new_timer()
-    -- maybe update project tags 10 seconds after startup, then every 4 minutes
-    timer:start(10 * 1000, 240 * 1000, vim.schedule_wrap(update_project_tags))
-  end,
-}
+-- maybe update project tags 10 seconds after startup, then every 4 minutes
+timer:start(10 * 1000, 240 * 1000, vim.schedule_wrap(update_project_tags))
