@@ -193,6 +193,7 @@ dotcmd-desktop() {
     kitty \
     libnotify \
     nfs-utils \
+    spectacle \
     sshfs \
     steam \
     vlc \

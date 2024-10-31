@@ -95,9 +95,6 @@ return {
         },
       },
       extensions = {
-        gkeep = {
-          find_method = "title",
-        },
         aerial = {
           format_symbol = function(symbol_path, filetype)
             if filetype == "json" or filetype == "yaml" or filetype == "python" then
