@@ -55,3 +55,6 @@
 [submodule "vimplugins/quicker.nvim"]
 	path = vimplugins/quicker.nvim
 	url = https://github.com/stevearc/quicker.nvim.git
+[submodule "vimplugins/nvim-lint"]
+	path = vimplugins/nvim-lint
+	url = https://github.com/stevearc/nvim-lint
