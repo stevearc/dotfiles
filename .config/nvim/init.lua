@@ -49,6 +49,27 @@ if should_profile then
   vim.keymap.set("n", "<f1>", toggle_profile, { desc = "Toggle profiling" })
 end
 
+local _jit_profiling = false
+local function toggle_jit_profile()
+  local outfile = vim.fn.stdpath("cache") .. "/jit.log"
+  if _jit_profiling then
+    _jit_profiling = false
+    require("jit.p").stop()
+    vim.ui.input({ prompt = "Save profile to:", completion = "file", default = "profile.txt" }, function(filename)
+      if filename then
+        vim.uv.fs_rename(outfile, filename)
+        vim.notify(string.format("Wrote %s", filename))
+      end
+    end)
+  else
+    _jit_profiling = true
+    -- See https://luajit.org/ext_profiler.html for flags
+    require("jit.p").start("3Fpli1s", outfile)
+    vim.notify("Started LuaJIT profiling")
+  end
+end
+vim.keymap.set("n", "<f2>", toggle_jit_profile, { desc = "Toggle LuaJIT profiling" })
+
 local uv = vim.uv or vim.loop
 vim.g.python3_host_prog = os.getenv("HOME") .. "/.envs/py3/bin/python"
 if not uv.fs_stat(vim.g.python3_host_prog) then
@@ -56,9 +77,6 @@ if not uv.fs_stat(vim.g.python3_host_prog) then
   vim.g.loaded_python3_provider = 0
 end
 local aug = vim.api.nvim_create_augroup("StevearcNewConfig", {})
-
-vim.keymap.set("n", "<f2>", [[<cmd>lua require("plenary.profile").start("profile.log", {flame = true})<cr>]])
-vim.keymap.set("n", "<f3>", [[<cmd>lua require("plenary.profile").stop()<cr>]])
 
 vim.g.nerd_font = true
 
