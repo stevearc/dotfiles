@@ -59,8 +59,9 @@ local function update_tags(root)
     cmd = "rg --files | ctags -f tags.temp --links=no -L -",
     cwd = root,
     components = {
-      { "on_complete_notify", { statuses = { "FAILURE" }, system = "unfocused" } },
+      { "on_complete_notify", statuses = { "FAILURE" }, system = "unfocused" },
       "unique",
+      { "on_complete_dispose", statuses = { "SUCCESS", "CANCELED" }, timeout = 5 },
       "default",
     },
   })
