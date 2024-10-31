@@ -1,17 +1,22 @@
 #!/bin/bash
 PROFILE_STARTUP=
-if [ -n "$PROFILE_STARTUP" ]; then
-  PS4='+ $(date "+%s.%N")\011 '
-  prof_file=/tmp/bashstart.$$.log
-  exec 3>&2 2>$prof_file
-  set -x
-fi
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 OSNAME=$(uname -s)
 if [ "$OSNAME" = "Darwin" ]; then
   MAC=1
+fi
+
+if [ -n "$PROFILE_STARTUP" ]; then
+  if [ $MAC ]; then
+    PS4='+ $(gdate "+%s.%N")\011 '
+  else
+    PS4='+ $(date "+%s.%N")\011 '
+  fi
+  prof_file=/tmp/bashstart.$$.log
+  exec 3>&2 2>$prof_file
+  set -x
 fi
 
 # Disable XON/XOFF flow control because it collides with C-s
@@ -71,15 +76,16 @@ if [ $MAC ] && command -v brew >/dev/null && [ -f $(brew --prefix)/etc/bash_comp
   . $(brew --prefix)/etc/bash_completion
 fi
 
-export EDITOR=vim
 if command -v nvim >/dev/null; then
   alias vim="nvim"
-  alias vi="vim"
+  alias vi="nvim"
   export EDITOR=nvim
+else
+  export EDITOR=vim
 fi
-
 export GIT_EDITOR="$EDITOR"
 export SVN_EDITOR="$EDITOR"
+
 if command -v firefox >/dev/null; then
   export BROWSER=firefox
 else
