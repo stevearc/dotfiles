@@ -2,7 +2,6 @@ local uv = vim.uv or vim.loop
 return {
   -- "mfussenegger/nvim-lint",
   "stevearc/nvim-lint",
-  branch = "stevearc-async-cancel",
   ft = {
     "lua",
     "python",
