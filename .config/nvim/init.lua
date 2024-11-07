@@ -329,13 +329,7 @@ vim.keymap.set("i", "<C-e>", "<C-o>$")
 -- This lets our bash aliases know to use nvr instead of nvim
 vim.env.NVIM_LISTEN_ADDRESS = vim.v.servername
 
-p.require("tags", function(tags)
-  tags.setup({
-    on_attach = function(bufnr)
-      vim.keymap.set("n", "<C-]>", tags.goto_definition, { buffer = bufnr, desc = "Goto tag" })
-    end,
-  })
-end)
+vim.keymap.set("n", "<C-]>", function() require("tags").goto_definition() end, { desc = "Goto tag" })
 
 -- Makes * and # work in visual mode
 function stevearc.visual_set_search(cmdtype)

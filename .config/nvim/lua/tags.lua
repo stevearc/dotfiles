@@ -1,45 +1,14 @@
 local M = {}
 
-local default_config = {
-  on_attach = nil,
-}
+---@class Tag
+---@field cmd string
+---@field filename string
+---@field kind string
+---@field name string
+---@field static integer
 
-local config = {}
-
-local function try_attach(bufnr)
-  local tagfiles = vim.fn.tagfiles()
-  if #tagfiles == 0 then
-    return
-  end
-  local attached = pcall(vim.api.nvim_buf_get_var, bufnr, "tags_attached")
-  if attached then
-    return
-  end
-  if config.on_attach then
-    config.on_attach(bufnr)
-  end
-  vim.api.nvim_buf_set_var(bufnr, "tags_attached", true)
-end
-
-M.setup = function(opts)
-  config = vim.tbl_deep_extend("force", default_config, opts or {})
-
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = "*",
-    group = vim.api.nvim_create_augroup("TagAttach", {}),
-    callback = function(params)
-      try_attach(params.buf)
-    end,
-  })
-end
-
-local function tagjump(word, idx, regex)
-  if regex then
-    word = "/" .. word
-  end
-  vim.cmd(string.format("%dtag %s", idx, word))
-end
-
+---@param opts {max_tag_len?: integer, show_line?: boolean}
+---@return fun(tag: Tag): table
 local function gen_entry_maker(opts)
   local entry_display = require("telescope.pickers.entry_display")
   local utils = require("telescope.utils")
@@ -78,8 +47,6 @@ local function gen_entry_maker(opts)
       cmd = tag.cmd,
       tag = tag.name,
       filename = tag.filename,
-      col = 1,
-      lnum = tag.lnum and tonumber(tag.lnum) or 1,
     }
   end
 end
@@ -107,24 +74,23 @@ local function new_previewer(opts)
       end
     end,
 
-    get_buffer_by_name = function(_, entry)
-      return entry.filename
-    end,
+    get_buffer_by_name = function(_, entry) return entry.filename end,
 
     define_preview = function(self, entry, status)
       conf.buffer_previewer_maker(entry.filename, self.state.bufnr, {
         bufname = self.state.bufname,
         winid = self.state.winid,
         callback = function(bufnr)
-          pcall(vim.api.nvim_buf_call, bufnr, function()
-            determine_jump(self, bufnr, entry)
-          end)
+          pcall(vim.api.nvim_buf_call, bufnr, function() determine_jump(self, bufnr, entry) end)
         end,
       })
     end,
   })
 end
 
+---@param word string
+---@param candidates Tag[]
+---@param callback fun(idx: integer)
 local function choose(word, candidates, callback)
   local ok, pickers = pcall(require, "telescope.pickers")
   if ok then
@@ -181,18 +147,30 @@ local function choose(word, candidates, callback)
   end
 end
 
+---@param tag Tag
+local function jump_to_tag(tag)
+  vim.cmd.edit({ args = { tag.filename } })
+  local search_reg = vim.fn.getreg("/")
+  vim.cmd(tag.cmd)
+  vim.fn.setreg("/", search_reg)
+  vim.cmd.nohlsearch()
+end
+
+---@param word string
+---@param candidates Tag[]
+---@param regex boolean
 local function jump_to(word, candidates, regex)
   if #candidates == 0 then
     vim.notify(string.format("No tag found for '%s'", word), vim.log.levels.WARN)
   elseif #candidates == 1 then
-    tagjump(word, 1, regex)
+    jump_to_tag(candidates[1])
   else
-    choose(word, candidates, function(idx)
-      tagjump(word, idx, regex)
-    end)
+    choose(word, candidates, function(idx) jump_to_tag(candidates[idx]) end)
   end
 end
 
+---@param word string
+---@return string
 local function make_exact(word)
   local ret = word
   if string.find(word, "%^") ~= 1 then
@@ -204,6 +182,8 @@ local function make_exact(word)
   return ret
 end
 
+---@param word? string
+---@param opts? {match?: "smart" | "exact" | "raw"}
 M.goto_definition = function(word, opts)
   word = word or vim.fn.expand("<cword>")
   opts = vim.tbl_deep_extend("keep", opts or {}, {
