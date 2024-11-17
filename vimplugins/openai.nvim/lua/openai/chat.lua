@@ -9,10 +9,6 @@ local chat_query = [[
   (atx_h1_marker)
   heading_content: (_) @role
   )
-
-(section
-  [(paragraph) (fenced_code_block) (list)] @text
-  )
 ]]
 
 ---@param bufnr integer
@@ -38,6 +34,15 @@ local function parse_settings(bufnr)
   return yaml.decode_node(bufnr, metadata_root) or {}
 end
 
+---@param node TSNode
+local function first_content_child(node)
+  for child in node:iter_children() do
+    if child:type() ~= "minus_metadata" then
+      return child
+    end
+  end
+end
+
 ---@param bufnr integer
 ---@return table
 ---@return openai.ChatMessage[]
@@ -50,29 +55,46 @@ local function parse_messages_buffer(bufnr)
   for k, v in pairs(query.captures) do
     captures[v] = k
   end
-  local message = {}
+  local function add_section(role_node, end_node)
+    local start_lnum = role_node:start() + 1
+    local end_lnum
+
+    if end_node then
+      end_lnum = end_node:start() - 1
+    else
+      end_lnum = vim.api.nvim_buf_line_count(bufnr)
+    end
+
+    if start_lnum >= end_lnum then
+      return
+    end
+    table.insert(ret, {
+      role = vim.trim(vim.treesitter.get_node_text(role_node, bufnr):lower()),
+      content = table.concat(vim.api.nvim_buf_get_lines(bufnr, start_lnum, end_lnum, true), "\n"),
+    })
+  end
+
+  local last_section
   for _, match in query:iter_matches(root, bufnr, nil, nil, { all = false }) do
     if match[captures.role] then
-      if not vim.tbl_isempty(message) then
-        table.insert(ret, message)
-        message = { role = "", content = "" }
+      local new_section = match[captures.role]
+      if last_section then
+        add_section(last_section, new_section)
       end
-      message.role = vim.trim(vim.treesitter.get_node_text(match[captures.role], bufnr):lower())
-    elseif match[captures.text] then
-      local text = vim.trim(vim.treesitter.get_node_text(match[captures.text], bufnr))
-      if message.content then
-        message.content = message.content .. "\n\n" .. text
-      else
-        message.content = text
-      end
-      -- If there's no role because they just started typing in a blank file, assign the user role
-      if not message.role then
-        message.role = "user"
-      end
+      last_section = new_section
     end
   end
-  if not vim.tbl_isempty(message) then
-    table.insert(ret, message)
+
+  if last_section then
+    add_section(last_section)
+  else
+    -- We didn't have any sections, the user may have just started typing a message without adding a
+    -- # user header. Parse it as such
+    local content_node = first_content_child(root)
+    table.insert(ret, {
+      role = "user",
+      content = vim.trim(vim.treesitter.get_node_text(content_node, bufnr)),
+    })
   end
   return parse_settings(bufnr), ret
 end
