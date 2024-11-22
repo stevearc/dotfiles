@@ -25,8 +25,6 @@ if should_profile then
   local sample_rate = tonumber(os.getenv("NVIM_PROFILE_SAMPLE"))
   if sample_rate then
     profile.set_sample_rate(sample_rate)
-  elseif vim.tbl_contains(patterns, "*") then
-    profile.set_sample_rate(0.1)
   end
 
   if #patterns ~= 1 or patterns[1] ~= "none" then
