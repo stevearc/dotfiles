@@ -46,6 +46,9 @@ return {
       opts = {
         disable_winbar_cb = function(args)
           local buf = args.buf
+          if not vim.api.nvim_buf_is_valid(buf) then
+            return true
+          end
           local ignore_buftype = vim.tbl_contains({ "prompt", "nofile", "terminal", "quickfix" }, vim.bo[buf].buftype)
           local filetype = vim.bo[buf].filetype
           local ignore_filetype = filetype == "fugitive" or filetype == "qf" or filetype:match("^git")
