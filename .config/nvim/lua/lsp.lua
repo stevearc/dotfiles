@@ -100,6 +100,9 @@ M.safe_setup = function(name, config)
 end
 
 M.capabilities = vim.lsp.protocol.make_client_capabilities()
-p.require("cmp_nvim_lsp", function(cmp_nvim_lsp) M.capabilities = cmp_nvim_lsp.default_capabilities() end)
+local has_cmp_lsp, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
+if has_cmp_lsp then
+  M.capabilities = vim.tbl_deep_extend("force", M.capabilities, cmp_nvim_lsp.default_capabilities())
+end
 
 return M
