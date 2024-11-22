@@ -8,7 +8,7 @@ local function bufgrep(text)
     end
   end
   vim.cmd.vimgrep({ args = { string.format("/%s/gj", text), "##" }, mods = { silent = true } })
-  vim.cmd("QFOpen!")
+  require("quicker").open({ open_cmd_mods = { split = "botright" } })
 end
 
 vim.keymap.set("n", "gw", "<cmd>cclose | Grep <cword><CR>", { desc = "Grep for word" })
@@ -27,6 +27,9 @@ return {
     ---@module "quicker"
     ---@type quicker.SetupOptions
     opts = {
+      follow = {
+        enabled = true,
+      },
       keys = {
         {
           ">",
@@ -56,6 +59,11 @@ return {
         "<leader>q",
         function() require("quicker").toggle({ open_cmd_mods = { split = "botright" } }) end,
         desc = "Toggle [Q]uickfix",
+      },
+      {
+        "<leader>/",
+        function() require("quicker").find_file() end,
+        desc = "[/]earch for quickfix file",
       },
       {
         "<leader>l",

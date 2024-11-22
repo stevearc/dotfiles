@@ -71,6 +71,7 @@ return {
         end,
         omnisharp = {},
         pyright = {},
+        ruff = {},
         rust_analyzer = {},
         sorbet = {
           cmd = { "bundle", "exec", "srb", "tc", "--lsp" },
@@ -135,6 +136,8 @@ return {
         end
       end
 
+      -- TODO this is all going to get deprecated in v0.11 and removed in v0.13
+      -- Will need to find some other way to customize the handlers
       vim.lsp.handlers["textDocument/declaration"] = location_handler
       vim.lsp.handlers["textDocument/definition"] = location_handler
       vim.lsp.handlers["textDocument/typeDefinition"] = location_handler

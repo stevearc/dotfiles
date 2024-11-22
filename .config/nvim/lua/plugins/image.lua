@@ -3,7 +3,7 @@ local is_mac = uv.os_uname().sysname == "Darwin"
 
 return {
   "3rd/image.nvim",
-  ft = { "markdown", "norg", "oil" },
+  ft = { "markdown", "oil" },
   build = function()
     local has_magick = pcall(require, "magick")
     if not has_magick and vim.fn.executable("luarocks") == 1 then

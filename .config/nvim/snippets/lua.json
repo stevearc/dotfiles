@@ -3,6 +3,26 @@
     "prefix": "ps",
     "body": ["print(string.format(\"$1\", $2))"]
   },
+  "function": {
+    "prefix": "f",
+    "body": ["function($1)", "  $0", "end"]
+  },
+  "local": {
+    "prefix": "l",
+    "body": ["local $0"]
+  },
+  "require": {
+    "prefix": "r",
+    "body": ["require(\"$1\")"]
+  },
+  "documentation class": {
+    "prefix": ["cls", "dc"],
+    "body": ["---@class (exact) $1", "---@field $2"]
+  },
+  "documentation function": {
+    "prefix": "df",
+    "body": ["---$1", "---@param $1", "---@return $2"]
+  },
   "vim.log.levels": {
     "prefix": "vll",
     "body": ["vim.log.levels.$0"]
