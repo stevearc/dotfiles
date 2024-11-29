@@ -116,11 +116,11 @@ install-language-zig() {
     rm -rf "$HOME/.local/share/nvim/language-servers/zls"
     mkdir -p ~/.local/share/nvim/language-servers/zls
     pushd ~/.local/share/nvim/language-servers/zls >/dev/null
-    curl -L https://github.com/zigtools/zls/releases/latest/download/zls-x86_64-linux.tar.gz -o zls-x86_64-linux.tar.gz
-    tar -zxf zls-x86_64-linux.tar.gz
-    rm -f zls-x86_64-linux.tar.gz
-    chmod +x "$HOME/.local/share/nvim/language-servers/zls/bin/zls"
-    ln -sf "$HOME/.local/share/nvim/language-servers/zls/bin/zls" "$HOME/.local/bin/zls"
+    curl -L https://github.com/zigtools/zls/releases/latest/download/zls-x86_64-linux.tar.xz -o zls-x86_64-linux.tar.xz
+    tar -xf zls-x86_64-linux.tar.xz
+    rm -f zls-x86_64-linux.tar.xz
+    chmod +x "$HOME/.local/share/nvim/language-servers/zls/zls"
+    ln -sf "$HOME/.local/share/nvim/language-servers/zls/zls" "$HOME/.local/bin/zls"
     popd >/dev/null
   fi
 }
