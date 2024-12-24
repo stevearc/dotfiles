@@ -6,5 +6,25 @@
   "codeblock": {
     "prefix": "code",
     "body": ["```$1", "$0", "```"]
+  },
+  "note": {
+    "prefix": ["callout-note", "note"],
+    "body": ["> [!NOTE]", "> $0"]
+  },
+  "tip": {
+    "prefix": ["callout-tip", "tip"],
+    "body": ["> [!TIP]", "> $0"]
+  },
+  "important": {
+    "prefix": ["callout-important", "important"],
+    "body": ["> [!IMPORTANT]", "> $0"]
+  },
+  "warning": {
+    "prefix": ["callout-warning", "warning"],
+    "body": ["> [!WARNING]", "> $0"]
+  },
+  "caution": {
+    "prefix": ["callout-caution", "caution"],
+    "body": ["> [!CAUTION]", "> $0"]
   }
 }
