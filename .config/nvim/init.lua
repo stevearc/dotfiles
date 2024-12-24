@@ -179,7 +179,7 @@ vim.api.nvim_create_autocmd({ "VimEnter", "WinEnter", "BufWinEnter" }, {
 vim.api.nvim_create_autocmd("WinLeave", {
   desc = "Clear the cursor line highlight when leaving a window",
   pattern = "*",
-  command = "setlocal nocursorline",
+  command = "if &bt != 'quickfix' | setlocal nocursorline | endif",
   group = aug,
 })
 

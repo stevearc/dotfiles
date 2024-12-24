@@ -16,9 +16,6 @@
 [submodule "vimplugins/scnvim"]
 	path = vimplugins/scnvim
 	url = https://github.com/stevearc/scnvim.git
-[submodule "vimplugins/qf_helper.nvim"]
-	path = vimplugins/qf_helper.nvim
-	url = https://github.com/stevearc/qf_helper.nvim.git
 [submodule "vimplugins/stickybuf.nvim"]
 	path = vimplugins/stickybuf.nvim
 	url = https://github.com/stevearc/stickybuf.nvim.git

@@ -12,7 +12,7 @@ return {
         ["@text.reference"] = { link = "@keyword" },
         ["@text.literal"] = { style = "" }, -- Don't italicize
         ["@codeblock"] = { bg = "palette.bg0" },
-        ["@neorg.markup.strikethrough"] = { fg = "palette.comment", style = "strikethrough" },
+        ["QuickFixLine"] = { bg = "palette.sel1" },
       },
     },
   },

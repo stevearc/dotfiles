@@ -12,7 +12,7 @@ local function bufgrep(text)
 end
 
 vim.keymap.set("n", "gw", "<cmd>cclose | Grep <cword><CR>", { desc = "Grep for word" })
-vim.keymap.set("n", "gbw", function() bufgrep(vim.fn.expand("<cword>")) end, { desc = "grep open buffers for word" })
+vim.keymap.set("n", "gbw", function() bufgrep(vim.fn.expand("<cword>")) end, { desc = "Grep open buffers for word" })
 vim.keymap.set("n", "gbW", function() bufgrep(vim.fn.expand("<cWORD>")) end, { desc = "Grep open buffers for WORD" })
 vim.api.nvim_create_user_command("Bufgrep", function(params) bufgrep(params.args) end, { nargs = "+" })
 vim.keymap.set("n", "<C-p>", "<cmd>cprev<CR>", { desc = "Previous quickfix item" })
@@ -49,8 +49,8 @@ return {
         },
         {
           "gdt",
-          "<CMD>g/test.*┃/d<CR>:w<CR>",
-          desc = "Delete lines with 'test'",
+          "<CMD>g/test.* /d<CR>:w<CR>",
+          desc = "Delete lines with 'test' in the filename",
         },
       },
     },
@@ -59,11 +59,6 @@ return {
         "<leader>q",
         function() require("quicker").toggle({ open_cmd_mods = { split = "botright" } }) end,
         desc = "Toggle [Q]uickfix",
-      },
-      {
-        "<leader>/",
-        function() require("quicker").find_file() end,
-        desc = "[/]earch for quickfix file",
       },
       {
         "<leader>l",
