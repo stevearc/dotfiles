@@ -27,8 +27,8 @@ return {
         concealcursor = "n",
       },
       keymaps = {
-        ["`"] = "actions.tcd",
-        ["~"] = "<cmd>edit $HOME<CR>",
+        ["`"] = { "actions.cd", opts = { scope = "tab" }, mode = "n" },
+        ["~"] = { "<cmd>edit $HOME<CR>", mode = "n", desc = "Open CWD" },
         ["<leader>t"] = "actions.open_terminal",
         ["<leader>ff"] = {
           function()
