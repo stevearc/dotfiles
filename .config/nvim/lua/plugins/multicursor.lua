@@ -22,7 +22,7 @@ return {
     },
     -- Append/insert for each line of visual selections.
     { "I", mc.insertVisual, mode = "v", desc = "Insert at the beginning of visual selection" },
-    { "A", mc.insertVisual, mode = "v", desc = "Append to each line of visual selection" },
+    { "A", mc.appendVisual, mode = "v", desc = "Append to each line of visual selection" },
     {
       "<leader>jj",
       function() mc.matchCursors("[^[:space:]].*$") end,

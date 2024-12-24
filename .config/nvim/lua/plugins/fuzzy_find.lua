@@ -1,22 +1,4 @@
-function stevearc.find_files(...)
-  pcall(require, "telescope")
-  pcall(require, "fzf-lua")
-  if stevearc._find_files_impl then
-    stevearc._find_files_impl(...)
-  else
-    vim.notify("No fuzzy finder installed", vim.log.levels.ERROR)
-  end
-end
-vim.keymap.set("n", "<leader>ff", function() stevearc.find_files() end, { desc = "[F]ind [F]iles" })
-
-vim.keymap.set("n", "<leader>fd", function()
-  require("telescope").load_extension("aerial")
-  vim.cmd("Telescope aerial")
-end, { desc = "[F]ind [D]ocument symbol" })
-vim.keymap.set("i", "<C-a>", function()
-  require("telescope").load_extension("luasnip")
-  require("telescope").extensions.luasnip.luasnip()
-end, { desc = "[S]nippets" })
+function stevearc.find_files() vim.notify("No fuzzy finder installed", vim.log.levels.ERROR) end
 
 ---@param path string
 local function find_in_home(path)
@@ -29,7 +11,30 @@ local function find_in_home(path)
     })
   end
 end
+
 return {
+  {
+    "ibhagwan/fzf-lua",
+    enabled = vim.fn.executable("fzf") == 1,
+    lazy = true,
+    keys = {
+      { "<leader>fu", "<CMD>FzfLua blines<CR>", desc = "[F]ind b[u]ffer line" },
+    },
+    config = function()
+      local fzf = require("fzf-lua")
+      fzf.setup({
+        global_git_icons = false,
+        files = {
+          previewer = false,
+        },
+        git = {
+          files = {
+            previewer = false,
+          },
+        },
+      })
+    end,
+  },
   {
     "nvim-telescope/telescope.nvim",
     dependencies = {
@@ -37,9 +42,6 @@ return {
     },
     cmd = "Telescope",
     keys = {
-      { "<leader>f.", find_in_home(".config/nvim"), desc = "[F]ind [.]otfiles" },
-      { "<leader>fn", find_in_home("Sync"), desc = "[F]ind [N]otes" },
-      { "<leader>fl", find_in_home(".local/share/nvim-local"), desc = "[F]ind [L]ocal nvim files" },
       {
         "<leader>bb",
         "<cmd>lua require('telescope.builtin').buffers({previewer=false, only_cwd=true})<cr>",
@@ -106,49 +108,71 @@ return {
         },
       },
     },
-    config = function(_, setup_opts)
-      local telescope = require("telescope")
-      telescope.setup(setup_opts)
+  },
 
-      if not stevearc._find_files_impl then
-        stevearc._find_files_impl = function(opts)
+  {
+    "telescope-aerial",
+    virtual = true,
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      "stevearc/aerial.nvim",
+    },
+    keys = {
+      { "<leader>fd", "<CMD>Telescope aerial<CR>", desc = "[F]ind [D]ocument symbol" },
+    },
+    config = function() require("telescope").load_extension("aerial") end,
+  },
+
+  {
+    "telescope-luasnip",
+    virtual = true,
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      "L3MON4D3/LuaSnip",
+    },
+    keys = {
+      {
+        "<C-a>",
+        "<CMD>lua require('telescope').extensions.luasnip.luasnip()<CR>",
+        desc = "[A]ll snippets",
+        mode = "i",
+      },
+    },
+    config = function() require("telescope").load_extension("luasnip") end,
+  },
+
+  {
+    "fuzzy-find",
+    virtual = true,
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      "ibhagwan/fzf-lua",
+    },
+    keys = {
+      { "<leader>ff", function() stevearc.find_files() end, desc = "[F]ind [F]iles" },
+      { "<leader>f.", find_in_home(".config/nvim"), desc = "[F]ind [.]otfiles" },
+      { "<leader>fn", find_in_home("Sync"), desc = "[F]ind [N]otes" },
+      { "<leader>fl", find_in_home(".local/share/nvim-local"), desc = "[F]ind [L]ocal nvim files" },
+    },
+    config = function()
+      local has_fzf, fzf = pcall(require, "fzf-lua")
+      if has_fzf then
+        stevearc.find_files = function(opts)
+          opts = opts or {}
+          -- git_files fails to find new files, which I often want
+          -- if not opts.cwd and vim.fn.isdirectory(".git") == 1 then
+          --   fzf.git_files(opts)
+          -- else
+          fzf.files(opts)
+          -- end
+        end
+      else
+        stevearc.find_files = function(opts)
           opts = vim.tbl_deep_extend("keep", opts or {}, {
             previewer = false,
           })
           require("telescope.builtin").find_files(opts)
         end
-      end
-    end,
-  },
-
-  {
-    "ibhagwan/fzf-lua",
-    enabled = vim.fn.executable("fzf") == 1,
-    lazy = true,
-    keys = {
-      { "<leader>fu", "<CMD>FzfLua blines<CR>", desc = "[F]ind b[u]ffer line" },
-    },
-    config = function()
-      local fzf = require("fzf-lua")
-      fzf.setup({
-        global_git_icons = false,
-        files = {
-          previewer = false,
-        },
-        git = {
-          files = {
-            previewer = false,
-          },
-        },
-      })
-      stevearc._find_files_impl = function(opts)
-        opts = opts or {}
-        -- git_files fails to find new files, which I often want
-        -- if not opts.cwd and vim.fn.isdirectory(".git") == 1 then
-        --   require("fzf-lua").git_files(opts)
-        -- else
-        require("fzf-lua").files(opts)
-        -- end
       end
     end,
   },
