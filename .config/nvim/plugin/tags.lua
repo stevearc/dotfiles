@@ -75,8 +75,12 @@ local function update_tags(root)
   task:start()
 end
 
+local function is_supported()
+  return is_plugged_in() and vim.fn.executable("ctags") == 1 and vim.fn.executable("rg") == 1
+end
+
 local function update_project_tags()
-  if not is_plugged_in() then
+  if not is_supported() then
     return
   end
   local root = vim.fs.root(0, ".git")
