@@ -173,6 +173,13 @@ dc-install-watchexec() {
   pacman -Syq --noconfirm watchexec
 }
 
+DOTCMD_FIX_XPADNEO_DOC="Fix the xpadneo drivers"
+dotcmd-fix-xpadneo() {
+  sudo pacman -Syq --noconfirm linux linux-headers
+  yay -R --noconfirm xpadneo-dkms
+  yay -S --noconfirm xpadneo-dkms
+}
+
 # shellcheck disable=SC2034
 DOTCMD_DESKTOP_DOC="Install config and settings for desktop environment"
 # shellcheck disable=SC2120
