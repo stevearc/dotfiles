@@ -17,7 +17,7 @@ return {
       end
       return visible_buffers[bufnr] or require("three").is_buffer_in_any_tab(bufnr)
     end,
-    extensions = { quickfix = {} },
+    extensions = { quickfix = {}, colorscheme = {} },
   },
   config = function(_, opts)
     local resession = require("resession")
