@@ -9,7 +9,7 @@ import sys
 import time
 from datetime import datetime
 from pprint import pformat, pprint
-from typing import Dict, List, Optional, Iterator, Any
+from typing import Any, Dict, Iterator, List, Optional
 
 import requests
 
@@ -100,9 +100,9 @@ def get_matching_snapshots(name: str, region: Optional[str] = None) -> List[Dict
     if not resp:
         return []
     snaps = []
-    for s in resp['snapshots']:
-        if s['name'].startswith(name):
-            if region is None or any([r.startswith(region) for r in s['regions']]):
+    for s in resp["snapshots"]:
+        if s["name"].startswith(name):
+            if region is None or any([r.startswith(region) for r in s["regions"]]):
                 snaps.append(s)
     snaps.sort(
         key=lambda s: datetime.strptime(s["created_at"], "%Y-%m-%dT%H:%M:%SZ"),
@@ -148,7 +148,7 @@ def cmd_up(args):
     if droplet:
         print(f"{args.name} is already running")
     else:
-        snaps = get_matching_snapshots(args.name, region = args.region)
+        snaps = get_matching_snapshots(args.name, region=args.region)
         if snaps:
             snap = snaps[0]
         else:
@@ -265,6 +265,7 @@ def promptyn(msg, default=None):
         elif not confirm and default is not None:
             return default
 
+
 def cmd_down_add_args(parser):
     parser.add_argument(
         "-n",
@@ -272,6 +273,7 @@ def cmd_down_add_args(parser):
         help="The name of the droplet to start (also used to match snapshot)",
         default=os.getenv("DO_DROPLET_NAME", "devi"),
     )
+
 
 def cmd_down(args):
     droplet = get_devbox(args.name)
@@ -285,6 +287,7 @@ def cmd_down(args):
     )
     print(f"Deleted droplet {args.name}")
 
+
 def cmd_snapshot_add_args(parser):
     parser.add_argument(
         "-n",
@@ -292,6 +295,7 @@ def cmd_snapshot_add_args(parser):
         help="The name of the droplet to start (also used to match snapshot)",
         default=os.getenv("DO_DROPLET_NAME", "devi"),
     )
+
 
 def cmd_snapshot(args):
     droplet = get_devbox(args.name)
@@ -306,8 +310,8 @@ def cmd_snapshot(args):
     action_id = action["id"]
     print("Snapshot starting...")
     while action["status"] == "in-progress":
-        time.sleep(20)
-        resp = call(f"/v2/images/{drop_id}/actions/{action_id}")
+        time.sleep(10)
+        resp = call(f"/v2/actions/{action_id}")
         if not resp:
             raise Exception("Missing action response")
         action = resp["action"]
@@ -353,6 +357,7 @@ def cmd_action(args):
     resp = call(f"/v2/droplets/{drop_id}/actions", "POST", type=args.action)
     pprint(resp)
 
+
 def cmd_gc_add_args(parser):
     parser.add_argument(
         "-n",
@@ -360,6 +365,7 @@ def cmd_gc_add_args(parser):
         help="The name of the droplet to start (also used to match snapshot)",
         default=os.getenv("DO_DROPLET_NAME", "devi"),
     )
+
 
 def cmd_gc(args):
     snaps = get_matching_snapshots(args.name)
@@ -407,6 +413,7 @@ def cmd_sizes(args):
     entries.sort()
     print_table(entries)
 
+
 def cmd_images_add_args(parser):
     parser.add_argument(
         "-r",
@@ -414,6 +421,7 @@ def cmd_images_add_args(parser):
         help="The DO region (default %(default)s)",
         default=os.getenv("DO_REGION", "sfo"),
     )
+
 
 def cmd_images(args):
     resp = call("/v2/images", per_page=200)
@@ -423,14 +431,14 @@ def cmd_images(args):
     entries = []
 
     for image in resp["images"]:
-        if image["status"] != 'available':
+        if image["status"] != "available":
             continue
         if not any(map(lambda r: r.startswith(args.region), image["regions"])):
             continue
         entries.append(
             (
                 str(image["id"]),
-                image['description'],
+                image["description"],
             )
         )
     entries.sort()
@@ -493,6 +501,7 @@ def cmd_del_key(args):
                 return
     print(f"No key '{args.name}' found")
 
+
 def print_table(table: List[List[str]]):
     max_len = [len(e) for e in table[0]]
     for entry in table:
@@ -503,6 +512,7 @@ def print_table(table: List[List[str]]):
         lines.append(" ".join([e.ljust(max_len[i]) for i, e in enumerate(entry)]))
     for line in lines:
         print(line)
+
 
 def _setup_logging(args: argparse.Namespace) -> None:
     handler = logging.StreamHandler(sys.stdout)
@@ -530,8 +540,12 @@ def main() -> None:
     subparsers = parser.add_subparsers(dest="cmd")
     cmd_up_add_args(subparsers.add_parser("up", help="Start the DO droplet"))
     cmd_down_add_args(subparsers.add_parser("down", help="Destroy the DO droplet"))
-    cmd_snapshot_add_args(subparsers.add_parser("snapshot", help="Take a snapshot of the DO droplet"))
-    cmd_gc_add_args(subparsers.add_parser("gc", help="Delete all snapshots but the most recent"))
+    cmd_snapshot_add_args(
+        subparsers.add_parser("snapshot", help="Take a snapshot of the DO droplet")
+    )
+    cmd_gc_add_args(
+        subparsers.add_parser("gc", help="Delete all snapshots but the most recent")
+    )
     cmd_sizes_add_args(
         subparsers.add_parser("sizes", help="List all droplet sizes for the region")
     )
