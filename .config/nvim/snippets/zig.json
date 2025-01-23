@@ -31,5 +31,13 @@
   "unwrap": {
     "prefix": ["uw"],
     "body": ["if ($1) |$2| {", "    $0", "}"]
+  },
+  "format method": {
+    "prefix": ["format"],
+    "body": [
+      "pub fn format(self: Self, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {",
+      "  $0",
+      "}"
+    ]
   }
 }

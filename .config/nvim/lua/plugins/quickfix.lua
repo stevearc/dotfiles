@@ -30,6 +30,9 @@ return {
       follow = {
         enabled = true,
       },
+      highlight = {
+        load_buffers = true,
+      },
       keys = {
         {
           ">",
