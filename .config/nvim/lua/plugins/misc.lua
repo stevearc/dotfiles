@@ -1,20 +1,23 @@
 return {
   { "stevearc/stickybuf.nvim", cmd = { "PinBuffer", "PinBuftype", "PinFiletype" }, opts = {} },
-  { "lambdalisue/suda.vim", cmd = { "SudaRead", "SudaWrite" } },
+  { "lambdalisue/suda.vim",    cmd = { "SudaRead", "SudaWrite" } },
   "wellle/targets.vim",
   {
     "stevearc/vim-arduino",
     ft = "arduino",
     init = function() vim.g.arduino_serial_cmd = "picocom {port} -b {baud} -l" end,
   },
-  { "tpope/vim-eunuch", ft = { "sh" }, cmd = { "Remove", "Delete" } },
+  { "tpope/vim-eunuch",  ft = { "sh" },        cmd = { "Remove", "Delete" } },
   "tpope/vim-repeat",
   { "tpope/vim-endwise", event = "InsertEnter" },
   "tpope/vim-surround",
-  { "tpope/vim-abolish", keys = {
-    { "cr", "<Plug>(abolish-coerce-word)", mode = "n" },
-  } },
-  { "docunext/closetag.vim", event = "InsertEnter *" },
+  {
+    "tpope/vim-abolish",
+    keys = {
+      { "cr", "<Plug>(abolish-coerce-word)", mode = "n" },
+    }
+  },
+  { "docunext/closetag.vim",    event = "InsertEnter *" },
   {
     "stevearc/scnvim",
     ft = "supercollider",
@@ -24,7 +27,7 @@ return {
     end,
   },
   { "dstein64/vim-startuptime", cmd = "StartupTime" },
-  { "Saecki/crates.nvim", cmd = "BufReadPre Cargo.toml", config = true },
+  { "Saecki/crates.nvim",       cmd = "BufReadPre Cargo.toml", config = true },
   "milisims/nvim-luaref",
   {
     "AckslD/nvim-FeMaco.lua",
@@ -43,7 +46,7 @@ return {
       -- cmd = { "pair-ls", "lsp", "-forward", "wss://localhost:8080" },
     },
   },
-  { "nvim-tree/nvim-web-devicons", cond = vim.g.nerd_font, opts = { default = true }, lazy = true, config = true },
+  { "nvim-tree/nvim-web-devicons", cond = vim.g.nerd_font,       opts = { default = true }, lazy = true, config = true },
   {
     "ojroques/nvim-osc52",
     -- Only change the clipboard if we're in a SSH session and using tmux (nvim 0.10 has osc52
@@ -84,7 +87,7 @@ return {
       },
     },
   },
-  { "stevearc/openai.nvim", cmd = { "AIChat", "AIEdit" }, config = true },
+  { "stevearc/openai.nvim",        cmd = { "AIChat", "AIEdit" }, config = true },
   {
     "willothy/flatten.nvim",
     opts = {
@@ -96,7 +99,7 @@ return {
         gitcommit = true,
         gitrebase = true,
       },
-      callbacks = {
+      hooks = {
         post_open = function(bufnr, winnr, ft, is_blocking)
           if is_blocking then
             vim.bo[bufnr].bufhidden = "wipe"

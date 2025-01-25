@@ -36,6 +36,7 @@ return {
             if vim.api.nvim_win_get_config(0).relative ~= "" then
               vim.api.nvim_win_close(0, true)
             end
+            require("lazy.core.loader").load("fuzzy-find", { cmd = "Lazy load" })
             stevearc.find_files({ cwd = dir, hidden = true })
           end,
           desc = "[F]ind [F]iles in dir",
