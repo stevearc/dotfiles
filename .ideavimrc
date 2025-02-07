@@ -1,0 +1,49 @@
+let mapleader=" "
+
+set breakindent
+set gdefault
+set ignorecase
+set jumpoptions=stack
+
+set smartcase
+set splitbelow
+set splitright
+set switchbuf=uselast
+set relativenumber
+set clipboard+=unnamed
+set incsearch
+set hlsearch
+set scrolloff=50
+
+set surround
+
+sethandler <C-v> a:vim
+sethandler H a:vim
+sethandler L a:vim
+sethandler <C-w> a:vim
+
+nmap [d <Action>(GotoPreviousError)
+nmap ]d <Action>(GotoNextError)
+
+nmap <leader>db <Action>(ToggleLineBreakpoint)
+nmap H :tabprevious<CR>
+nmap L :tabnext<CR>
+nmap [s <Action>(MethodUp)
+nmap ]s <Action>(MethodDown)
+
+nmap K <Action>(ShowErrorDescription)
+nmap <C-w><C-v> :vsplit<CR>
+nmap <C-w><C-s> :split<CR>
+nmap <leader>c :close<CR>
+nmap <leader>C <Action>(CloseContent)
+nmap gcc <Action>(CommentByLineComment)
+vmap gc <Action>(CommentByLineComment)<esc>
+nmap grn <Action>(RenameElement)
+nmap <leader>gd <Action>(GotoDeclaration)
+nmap <leader>gy <Action>(GotoTypeDeclaration)
+nmap <leader>gi <Action>(GotoImplementation)
+nmap <leader>grr <Action>(ShowUsages)
+nmap <leader>ff <Action>(GotoFile)
+nmap <leader>fc <Action>(GotoAction)
+nmap <leader>fd <Action>(FileStructurePopup)
+nmap <leader>bb <Action>(RecentFiles)
