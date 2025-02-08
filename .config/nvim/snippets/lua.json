@@ -63,6 +63,21 @@
     "prefix": "ife",
     "body": ["if $1 then", "  ${1:$TM_SELECTED_TEXT}", "else", "  $0", "end"]
   },
+  "treesitter parse": {
+    "prefix": "tsp",
+    "body": [
+      "local parser = vim.treesitter.get_parser(${1:bufnr}, \"$2\")",
+      "local root = parser:parse()[1]:root()"
+    ]
+  },
+  "treesitter iter query": {
+    "prefix": "tsq",
+    "body": [
+      "for id, node, metadata, match in ${1:query}:iter_captures(${2:root}, ${3:bufnr}) do",
+      "  $0",
+      "end"
+    ]
+  },
   "profile.log_start": {
     "prefix": "pls",
     "body": ["profile.log_start($1)"]
