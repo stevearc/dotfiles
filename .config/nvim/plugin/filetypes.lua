@@ -237,4 +237,29 @@ ftplugin.extend_all({
   },
 })
 
+-- Load *.srcjar files as zip files
+vim.api.nvim_create_autocmd("BufReadCmd", {
+  pattern = "*.srcjar",
+  group = "StevearcNewConfig",
+  command = 'call zip#Browse(expand("<amatch>"))',
+})
+
+-- keymap to go back to zipfile root after opening a file
+vim.api.nvim_create_autocmd("BufNew", {
+  pattern = "zipfile://*",
+  group = "StevearcNewConfig",
+  callback = function(args)
+    vim.keymap.set("n", "-", function()
+      local bufname = vim.api.nvim_buf_get_name(0)
+      local path = bufname:match("^.*://(.*)$")
+      local idx = path:find("::", 1, true)
+      if idx then
+        vim.cmd.edit({ args = { path:sub(1, idx - 1) } })
+      else
+        vim.notify("No parent file found", vim.log.levels.WARN)
+      end
+    end, { buffer = args.buf })
+  end,
+})
+
 ftplugin.setup()
