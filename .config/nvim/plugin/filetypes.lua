@@ -108,16 +108,17 @@ ftplugin.extend_all({
       { "<leader>tp", require("markdown").task_mutate("-") },
     },
     callback = function(bufnr)
-      vim.keymap.set("i", "<Tab>", function()
-        local line = vim.api.nvim_get_current_line()
-        local col = vim.api.nvim_win_get_cursor(0)[2]
-        line = line:sub(1, col)
-        local is_list = line:match("^%s*[%-%*]%s*")
-        if col == #line and is_list then
-          return "<Left><C-o>>><C-o><Right>" .. string.rep("<Right>", vim.bo.tabstop)
-        end
-        return "<Tab>"
-      end, { expr = true, buffer = bufnr })
+      -- TODO this breaks snippet expansion with <Tab>
+      -- vim.keymap.set("i", "<Tab>", function()
+      --   local line = vim.api.nvim_get_current_line()
+      --   local col = vim.api.nvim_win_get_cursor(0)[2]
+      --   line = line:sub(1, col)
+      --   local is_list = line:match("^%s*[%-%*]%s*")
+      --   if col == #line and is_list then
+      --     return "<Left><C-o>>><C-o><Right>" .. string.rep("<Right>", vim.bo.tabstop)
+      --   end
+      --   return "<Tab>"
+      -- end, { expr = true, buffer = bufnr })
       vim.keymap.set("i", "<BS>", function()
         local line = vim.api.nvim_get_current_line()
         local col = vim.api.nvim_win_get_cursor(0)[2]
