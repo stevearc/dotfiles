@@ -123,6 +123,15 @@ return {
       end,
     })
 
+    local function cmd(_, _, ...)
+      local proc = vim.system({ ... }):wait()
+      return vim.trim(proc.stdout)
+    end
+    luasnip.add_snippets("all", {
+      luasnip.snippet("ts", luasnip.function_node(cmd, {}, { user_args = { "date", "+%H:%M" } })),
+      luasnip.snippet("date", luasnip.function_node(cmd, {}, { user_args = { "date", "+%Y-%m-%d" } })),
+    })
+
     local function load_snippets(reload)
       for k in pairs(opts.modules) do
         local mod = "snippets." .. k
