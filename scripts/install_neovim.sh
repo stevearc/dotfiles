@@ -5,6 +5,7 @@ OSNAME=$(uname -s)
 if [ "$OSNAME" = "Darwin" ]; then
   MAC=1
 fi
+ARCH="$(uname -p)"
 
 main() {
   local usage="$0 [OPTS] [VERSION]
@@ -22,44 +23,44 @@ Options:
   unset OPTIND
   while getopts "hsln:d:-:" opt; do
     case $opt in
-      -)
-        case $OPTARG in
-          help)
-            echo "$usage"
-            return 0
-            ;;
-          list)
-            LIST=1
-            ;;
-          silent)
-            SILENT=1
-            ;;
-          *)
-            echo "$usage"
-            return 1
-            ;;
-        esac
-        ;;
-      h)
+    -)
+      case $OPTARG in
+      help)
         echo "$usage"
         return 0
         ;;
-      s)
-        SILENT=1
-        ;;
-      d)
-        DEST="$OPTARG"
-        ;;
-      n)
-        NAME="$OPTARG"
-        ;;
-      l)
+      list)
         LIST=1
         ;;
-      \?)
+      silent)
+        SILENT=1
+        ;;
+      *)
         echo "$usage"
         return 1
         ;;
+      esac
+      ;;
+    h)
+      echo "$usage"
+      return 0
+      ;;
+    s)
+      SILENT=1
+      ;;
+    d)
+      DEST="$OPTARG"
+      ;;
+    n)
+      NAME="$OPTARG"
+      ;;
+    l)
+      LIST=1
+      ;;
+    \?)
+      echo "$usage"
+      return 1
+      ;;
     esac
   done
   shift $((OPTIND - 1))
@@ -91,7 +92,8 @@ Options:
 _install_mac() {
   rm -rf .nvim-osx64
   [ -n "$SILENT" ] && silent="-s"
-  curl $silent -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz
+  local suffix="$(_get_dist_suffix)"
+  curl $silent -LO https://github.com/neovim/neovim/releases/download/nightly/nvim${suffix}.tar.gz
   tar xzf nvim-macos.tar.gz
   rm -f nvim-macos.tar.gz
   mv nvim-osx64 .nvim-osx64
@@ -102,7 +104,9 @@ _install_mac() {
 
 _install_linux() {
   [ -n "$SILENT" ] && silent="-s"
-  curl $silent -L "https://github.com/neovim/neovim/releases/download/$VERSION/nvim.appimage" -o nvim.appimage
+
+  local suffix="$(_get_dist_suffix)"
+  curl $silent -L "https://github.com/neovim/neovim/releases/download/$VERSION/nvim${suffix}.appimage" -o nvim.appimage
   chmod +x nvim.appimage
   mkdir -p "$DEST"
   if ! ./nvim.appimage --headless +qall >/dev/null 2>&1; then
@@ -117,6 +121,29 @@ _install_linux() {
     popd
   else
     mv nvim.appimage "$DEST/$NAME"
+  fi
+}
+
+_get_dist_suffix() {
+  # If the version is less than v0.10.4, use the old naming scheme
+  if [[ "$VERSION" =~ "^v" ]] && ! printf 'v0.10.4\n%s\n' "$VERSION" | sort -V -C; then
+    if [ -n "$MAC" ]; then
+      echo "-macos"
+    fi
+    return
+  fi
+
+  local suffix=""
+  if [ -n "$MAC" ]; then
+    suffix="-macos"
+  else
+    suffix="-linux"
+  fi
+
+  if [ "$ARCH" = "aarch64" ]; then
+    echo "$suffix-arm64"
+  else
+    echo "$suffix-x86_64"
   fi
 }
 
