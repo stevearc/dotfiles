@@ -46,7 +46,7 @@ shopt -s checkwinsize
 # Environment variables
 if [ $MAC ]; then
   export GOROOT="$(brew --prefix golang)/libexec"
-else
+elif [ -d "$HOME/.local/share/go" ]; then
   export GOROOT=$HOME/.local/share/go
 fi
 export GOPATH=~/go
