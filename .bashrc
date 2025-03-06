@@ -46,11 +46,13 @@ shopt -s checkwinsize
 # Environment variables
 if [ $MAC ]; then
   export GOROOT="$(brew --prefix golang)/libexec"
+  export PATH="$GOROOT/bin:$PATH"
 elif [ -d "$HOME/.local/share/go" ]; then
   export GOROOT=$HOME/.local/share/go
+  export PATH="$GOROOT/bin:$PATH"
 fi
 export GOPATH=~/go
-export PATH=$HOME/.local/bin:$GOROOT/bin:$GOPATH/bin:$PATH
+export PATH="$HOME/.local/bin:$GOPATH/bin:$PATH"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 # Alias definitions.
