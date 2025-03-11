@@ -61,8 +61,8 @@ return {
         desc = "[F]ind in open [B]uffers",
       },
       { "<leader>fh", "<cmd>Telescope help_tags<CR>", desc = "[F]ind in [H]elp" },
-      { "<leader>fc", "<cmd>Telescope commands<CR>",  desc = "[F]ind [C]ommand" },
-      { "<leader>fk", "<cmd>Telescope keymaps<CR>",   desc = "[F]ind [K]eymap" },
+      { "<leader>fc", "<cmd>Telescope commands<CR>", desc = "[F]ind [C]ommand" },
+      { "<leader>fk", "<cmd>Telescope keymaps<CR>", desc = "[F]ind [K]eymap" },
       {
         "<leader>fw",
         "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>",
@@ -113,16 +113,26 @@ return {
   },
 
   {
-    "telescope-aerial",
+    "snacks-aerial",
     virtual = true,
     dependencies = {
-      "nvim-telescope/telescope.nvim",
+      "folke/snacks.nvim",
       "stevearc/aerial.nvim",
     },
     keys = {
-      { "<leader>fd", "<CMD>Telescope aerial<CR>", desc = "[F]ind [D]ocument symbol" },
+      {
+        "<leader>fd",
+        function()
+          require("aerial").snacks_picker({
+            layout = {
+              preset = "dropdown",
+              preview = false,
+            },
+          })
+        end,
+        desc = "[F]ind [D]ocument symbol",
+      },
     },
-    config = function() require("telescope").load_extension("aerial") end,
   },
 
   {
@@ -151,9 +161,9 @@ return {
       "ibhagwan/fzf-lua",
     },
     keys = {
-      { "<leader>ff", function() stevearc.find_files() end,    desc = "[F]ind [F]iles" },
-      { "<leader>f.", find_in_home(".config/nvim"),            desc = "[F]ind [.]otfiles" },
-      { "<leader>fn", find_in_home("Sync"),                    desc = "[F]ind [N]otes" },
+      { "<leader>ff", function() stevearc.find_files() end, desc = "[F]ind [F]iles" },
+      { "<leader>f.", find_in_home(".config/nvim"), desc = "[F]ind [.]otfiles" },
+      { "<leader>fn", find_in_home("Sync"), desc = "[F]ind [N]otes" },
       { "<leader>fl", find_in_home(".local/share/nvim-local"), desc = "[F]ind [L]ocal nvim files" },
     },
     config = function()

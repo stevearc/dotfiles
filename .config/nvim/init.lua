@@ -1,6 +1,5 @@
 vim.loader.enable()
 _G.stevearc = {}
-local p = require("p")
 
 -- Profiling
 local should_profile = os.getenv("NVIM_PROFILE")
@@ -88,6 +87,7 @@ vim.opt.completeopt = { "menu", "menuone", "noselect" }
 vim.o.expandtab = true -- Turn tabs into spaces
 vim.o.formatoptions = "rqnlj"
 vim.o.gdefault = true -- Use 'g' flag by default with :s/foo/bar
+vim.opt.diffopt = "filler,internal,closeoff,algorithm:histogram,context:5,linematch:60"
 vim.o.exrc = true -- Load .nvim.lua files
 vim.o.guifont = "UbuntuMono Nerd Font:h10"
 vim.o.ignorecase = true
@@ -376,9 +376,21 @@ if not uv.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
 
-local pending_notifications = {}
-local old_notify = vim.notify
-vim.notify = function(...) table.insert(pending_notifications, vim.F.pack_len(...)) end
+_G.pending_notifications = {
+  old_notify = vim.notify,
+}
+local newNotify = function(...) table.insert(_G.pending_notifications, vim.F.pack_len(...)) end
+vim.notify = newNotify
+
+vim.defer_fn(function()
+  if vim.notify == newNotify then
+    vim.notify = _G.pending_notifications.old_notify
+  end
+  for _, args in ipairs(_G.pending_notifications) do
+    vim.notify(vim.F.unpack_len(args))
+  end
+  _G.pending_notifications = nil
+end, 1000)
 
 -- Add luarocks to rtp
 local home = uv.os_homedir()
@@ -387,38 +399,6 @@ package.path = package.path .. ";" .. home .. "/.luarocks/share/lua/5.1/?.lua;"
 
 local specs = {
   { import = "plugins" },
-  {
-    "rcarriga/nvim-notify",
-    event = "VeryLazy",
-    config = function()
-      vim.notify = old_notify
-      local notify = require("notify")
-      vim.notify = notify
-      notify.setup({
-        stages = "fade",
-        render = "minimal",
-        top_down = false,
-      })
-      vim.defer_fn(function()
-        for _, args in ipairs(pending_notifications) do
-          vim.notify(vim.F.unpack_len(args))
-        end
-        pending_notifications = nil
-      end, 200)
-      -- hack around https://github.com/rcarriga/nvim-notify/issues/189
-      local util = require("notify.stages.util")
-      local get_slot_range = util.get_slot_range
-      util.get_slot_range = function(direction)
-        local a, b = get_slot_range(direction)
-        if direction == util.DIRECTION.TOP_DOWN then
-          b = b - 1
-        elseif direction == util.DIRECTION.BOTTOM_UP then
-          a = a - 1
-        end
-        return a, b
-      end
-    end,
-  },
 }
 local localpath = vim.fn.stdpath("data") .. "-local"
 if uv.fs_stat(localpath) then

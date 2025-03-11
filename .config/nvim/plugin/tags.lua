@@ -76,7 +76,9 @@ local function update_tags(root)
 end
 
 local function is_supported()
-  return is_plugged_in() and vim.fn.executable("ctags") == 1 and vim.fn.executable("rg") == 1
+  -- Disabling this for now
+  return false
+  -- return is_plugged_in() and vim.fn.executable("ctags") == 1 and vim.fn.executable("rg") == 1
 end
 
 local function update_project_tags()

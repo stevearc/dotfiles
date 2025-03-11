@@ -24,10 +24,6 @@ return {
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
       "b0o/SchemaStore.nvim",
-      {
-        "j-hui/fidget.nvim",
-        config = true,
-      },
     },
     opts = {
       servers = {
