@@ -14,6 +14,35 @@ return {
       ui_select = true,
     },
   },
+  keys = {
+    {
+      "<leader>ba",
+      function()
+        Snacks.picker.buffers({ layout = {
+          preview = false,
+        } })
+      end,
+      desc = "[B]uffers [A]ll",
+    },
+    {
+      "<leader>bb",
+      function()
+        Snacks.picker.buffers({ layout = {
+          preview = false,
+        }, filter = { cwd = true } })
+      end,
+      desc = "[B]uffer [B]uffet",
+    },
+    { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
+    { "<leader>fu", function() Snacks.picker.lines() end, desc = "[F]ind b[u]ffer line" },
+    { "<leader>fb", function() Snacks.picker.grep_buffers() end, desc = "[F]ind in open [B]uffers" },
+    { "<leader>fg", function() Snacks.picker.grep() end, desc = "[F]ind by [G]rep" },
+    { "<leader>fh", function() Snacks.picker.help() end, desc = "[F]ind in [H]elp" },
+    { "<leader>fc", function() Snacks.picker.commands() end, desc = "[F]ind [C]ommand" },
+    { "<leader>fk", function() Snacks.picker.keymaps() end, desc = "[F]ind [K]eymap" },
+    { "<leader>fw", function() Snacks.picker.lsp_workspace_symbols() end, desc = "[F]ind [W]orkspace symbol" },
+  },
+  lazy = false,
   config = function(_, opts)
     require("snacks").setup(opts)
     vim.keymap.set("n", "z=", function()

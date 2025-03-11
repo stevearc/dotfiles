@@ -19,9 +19,6 @@
 [submodule "vimplugins/stickybuf.nvim"]
 	path = vimplugins/stickybuf.nvim
 	url = https://github.com/stevearc/stickybuf.nvim.git
-[submodule "vimplugins/dressing.nvim"]
-	path = vimplugins/dressing.nvim
-	url = https://github.com/stevearc/dressing.nvim.git
 [submodule "vimplugins/vim-vscode-snippets"]
 	path = vimplugins/vim-vscode-snippets
 	url = https://github.com/stevearc/vim-vscode-snippets.git

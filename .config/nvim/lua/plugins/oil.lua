@@ -47,7 +47,7 @@ return {
             if vim.api.nvim_win_get_config(0).relative ~= "" then
               vim.api.nvim_win_close(0, true)
             end
-            require("telescope.builtin").live_grep({ cwd = dir })
+            Snacks.picker.grep({ dirs = { dir } })
           end,
           desc = "[F]ind by [G]rep in dir",
         },

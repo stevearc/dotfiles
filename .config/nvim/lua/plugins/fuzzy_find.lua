@@ -17,9 +17,6 @@ return {
     "ibhagwan/fzf-lua",
     enabled = vim.fn.executable("fzf") == 1,
     lazy = true,
-    keys = {
-      { "<leader>fu", "<CMD>FzfLua blines<CR>", desc = "[F]ind b[u]ffer line" },
-    },
     config = function()
       local fzf = require("fzf-lua")
       fzf.setup({
@@ -43,33 +40,6 @@ return {
       "nvim-lua/plenary.nvim",
     },
     cmd = "Telescope",
-    keys = {
-      {
-        "<leader>bb",
-        "<cmd>lua require('telescope.builtin').buffers({previewer=false, only_cwd=true})<cr>",
-        desc = "[B]uffer [B]uffet",
-      },
-      {
-        "<leader>ba",
-        "<cmd>lua require('telescope.builtin').buffers({previewer=false})<cr>",
-        desc = "[B]uffers [A]ll",
-      },
-      { "<leader>fg", "<cmd>Telescope live_grep<CR>", desc = "[F]ind by [G]rep" },
-      {
-        "<leader>fb",
-        "<cmd>lua require('telescope.builtin').live_grep({grep_open_files = true})<cr>",
-        desc = "[F]ind in open [B]uffers",
-      },
-      { "<leader>fh", "<cmd>Telescope help_tags<CR>", desc = "[F]ind in [H]elp" },
-      { "<leader>fc", "<cmd>Telescope commands<CR>", desc = "[F]ind [C]ommand" },
-      { "<leader>fk", "<cmd>Telescope keymaps<CR>", desc = "[F]ind [K]eymap" },
-      {
-        "<leader>fw",
-        "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>",
-        desc = "[F]ind [W]orkspace symbol",
-      },
-      { "<leader>fq", "<cmd>Telescope quickfixhistory<CR>", desc = "[F]ind [Q]uickfix history" },
-    },
     opts = {
       pickers = {
         colorscheme = {
@@ -158,6 +128,7 @@ return {
     virtual = true,
     dependencies = {
       "nvim-telescope/telescope.nvim",
+      "folke/snacks.nvim",
       "ibhagwan/fzf-lua",
     },
     keys = {
@@ -177,6 +148,17 @@ return {
           -- else
           fzf.files(opts)
           -- end
+        end
+      elseif Snacks and Snacks.picker then
+        stevearc.find_files = function(opts)
+          opts = opts or {}
+          if opts.cwd then
+            opts.dirs = { opts.cwd }
+          end
+          opts.layout = {
+            preview = false,
+          }
+          Snacks.picker.files(opts)
         end
       else
         stevearc.find_files = function(opts)
