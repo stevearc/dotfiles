@@ -1,7 +1,6 @@
 local uv = vim.uv or vim.loop
 return {
-  -- "mfussenegger/nvim-lint",
-  "stevearc/nvim-lint",
+  "mfussenegger/nvim-lint",
   ft = {
     "lua",
     "python",
