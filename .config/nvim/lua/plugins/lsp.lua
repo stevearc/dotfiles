@@ -88,60 +88,59 @@ return {
     config = function(_, opts)
       local lsp = require("lsp")
       -- vim.lsp.set_log_level("debug")
-      local function location_handler(_, result, ctx, _)
-        if result == nil or vim.tbl_isempty(result) then
-          return nil
-        end
-        local client = vim.lsp.get_client_by_id(ctx.client_id)
-        assert(client)
 
-        -- textDocument/definition can return Location or Location[]
-        -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
-
-        local has_telescope = pcall(require, "telescope")
-        if vim.islist(result) then
-          if all_locations_equal(result) then
-            pcall(vim.lsp.util.jump_to_location, result[1], client.offset_encoding, false)
-          elseif has_telescope then
-            local ts_opts = {}
-            local pickers = require("telescope.pickers")
-            local finders = require("telescope.finders")
-            local make_entry = require("telescope.make_entry")
-            local conf = require("telescope.config").values
-            local items = vim.lsp.util.locations_to_items(result, client.offset_encoding)
-            pickers
-              .new(ts_opts, {
-                prompt_title = "LSP Locations",
-                finder = finders.new_table({
-                  results = items,
-                  entry_maker = make_entry.gen_from_quickfix(ts_opts),
-                }),
-                previewer = conf.qflist_previewer(ts_opts),
-                sorter = conf.generic_sorter(ts_opts),
-              })
-              :find()
-          else
-            vim.fn.setloclist(0, {}, " ", {
-              title = "LSP locations",
-              items = vim.lsp.util.locations_to_items(result, client.offset_encoding),
-            })
-            vim.cmd.lopen()
+      if vim.fn.has("nvim-0.11") == 0 then
+        local function location_handler(_, result, ctx, _)
+          if result == nil or vim.tbl_isempty(result) then
+            return nil
           end
-        else
-          vim.lsp.util.jump_to_location(result, client.offset_encoding)
+          local client = vim.lsp.get_client_by_id(ctx.client_id)
+          assert(client)
+
+          -- textDocument/definition can return Location or Location[]
+          -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
+
+          local has_telescope = pcall(require, "telescope")
+          if vim.islist(result) then
+            if all_locations_equal(result) then
+              pcall(vim.lsp.util.jump_to_location, result[1], client.offset_encoding, false)
+            elseif has_telescope then
+              local ts_opts = {}
+              local pickers = require("telescope.pickers")
+              local finders = require("telescope.finders")
+              local make_entry = require("telescope.make_entry")
+              local conf = require("telescope.config").values
+              local items = vim.lsp.util.locations_to_items(result, client.offset_encoding)
+              pickers
+                .new(ts_opts, {
+                  prompt_title = "LSP Locations",
+                  finder = finders.new_table({
+                    results = items,
+                    entry_maker = make_entry.gen_from_quickfix(ts_opts),
+                  }),
+                  previewer = conf.qflist_previewer(ts_opts),
+                  sorter = conf.generic_sorter(ts_opts),
+                })
+                :find()
+            else
+              vim.fn.setloclist(0, {}, " ", {
+                title = "LSP locations",
+                items = vim.lsp.util.locations_to_items(result, client.offset_encoding),
+              })
+              vim.cmd.lopen()
+            end
+          else
+            vim.lsp.util.jump_to_location(result, client.offset_encoding)
+          end
         end
+        vim.lsp.handlers["textDocument/declaration"] = location_handler
+        vim.lsp.handlers["textDocument/definition"] = location_handler
+        vim.lsp.handlers["textDocument/typeDefinition"] = location_handler
+        vim.lsp.handlers["textDocument/implementation"] = location_handler
+        vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+        vim.lsp.handlers["textDocument/signatureHelp"] =
+          vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
       end
-
-      -- TODO this is all going to get deprecated in v0.11 and removed in v0.13
-      -- Will need to find some other way to customize the handlers
-      vim.lsp.handlers["textDocument/declaration"] = location_handler
-      vim.lsp.handlers["textDocument/definition"] = location_handler
-      vim.lsp.handlers["textDocument/typeDefinition"] = location_handler
-      vim.lsp.handlers["textDocument/implementation"] = location_handler
-
-      vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
-      vim.lsp.handlers["textDocument/signatureHelp"] =
-        vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 
       vim.lsp.handlers["window/showMessage"] = function(_err, result, context, _config)
         local client_id = context.client_id
@@ -248,7 +247,7 @@ return {
           return ts_root
         end
         if vim.g.started_by_firenvim then
-          return util.path.dirname(fname)
+          return vim.fs.dirname(fname)
         end
         return nil
       end,
