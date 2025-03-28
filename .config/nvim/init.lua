@@ -216,11 +216,13 @@ vim.keymap.set("n", "k", [[(v:count > 5 ? "m'" . v:count . 'k' : 'gk')]], { expr
 
 local obs = false
 local function set_scrolloff(winid)
+  local scrolloff
   if obs then
-    vim.wo[winid].scrolloff = math.floor(math.max(10, vim.api.nvim_win_get_height(winid) / 10))
+    scrolloff = math.floor(math.max(10, vim.api.nvim_win_get_height(winid) / 10))
   else
-    vim.wo[winid].scrolloff = 1 + math.floor(vim.api.nvim_win_get_height(winid) / 2)
+    scrolloff = 1 + math.floor(vim.api.nvim_win_get_height(winid) / 2)
   end
+  vim.api.nvim_set_option_value("scrolloff", scrolloff, { scope = "local", win = winid })
 end
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "WinNew", "VimResized" }, {
   desc = "Always keep the cursor vertically centered",
