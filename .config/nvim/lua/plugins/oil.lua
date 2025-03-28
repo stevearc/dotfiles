@@ -29,6 +29,8 @@ return {
       keymaps = {
         ["`"] = { "actions.cd", opts = { scope = "tab" }, mode = "n" },
         ["~"] = { "<cmd>edit $HOME<CR>", mode = "n", desc = "Open CWD" },
+        ["<leader>y"] = { "actions.copy_to_system_clipboard", mode = { "n", "v" } },
+        ["<leader>p"] = "actions.paste_from_system_clipboard",
         ["<leader>t"] = "actions.open_terminal",
         ["<leader>ff"] = {
           function()
