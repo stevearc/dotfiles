@@ -327,9 +327,6 @@ vim.api.nvim_create_autocmd("BufNew", {
 vim.keymap.set("i", "<C-a>", "<C-o>^")
 vim.keymap.set("i", "<C-e>", "<C-o>$")
 
--- This lets our bash aliases know to use nvr instead of nvim
-vim.env.NVIM_LISTEN_ADDRESS = vim.v.servername
-
 vim.keymap.set("n", "<C-]>", function() require("tags").goto_definition() end, { desc = "Goto tag" })
 
 -- Makes * and # work in visual mode
@@ -435,7 +432,10 @@ require("lazy").setup({
 })
 
 if is_tty then
-  vim.cmd.colorscheme({ args = { "darkblue" } })
+  vim.cmd.colorscheme("darkblue")
 else
-  vim.cmd.colorscheme({ args = { "duskfox" } })
+  local ok = pcall(vim.cmd.colorscheme, "duskfox")
+  if not ok then
+    vim.cmd.colorscheme("habamax")
+  end
 end
