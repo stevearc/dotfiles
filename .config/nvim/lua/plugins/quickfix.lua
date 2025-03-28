@@ -16,9 +16,11 @@ vim.keymap.set("n", "gbw", function() bufgrep(vim.fn.expand("<cword>")) end, { d
 vim.keymap.set("n", "gbW", function() bufgrep(vim.fn.expand("<cWORD>")) end, { desc = "Grep open buffers for WORD" })
 vim.api.nvim_create_user_command("Bufgrep", function(params) bufgrep(params.args) end, { nargs = "+" })
 vim.keymap.set("n", "<C-p>", "<cmd>cprev<CR>", { desc = "Previous quickfix item" })
-vim.keymap.set("n", "[q", "<cmd>cprev<CR>", { desc = "Previous quickfix item" })
 vim.keymap.set("n", "<C-n>", "<cmd>cnext<CR>", { desc = "Next quickfix item" })
-vim.keymap.set("n", "]q", "<cmd>cnext<CR>", { desc = "Next quickfix item" })
+if vim.fn.has("nvim-0.11") == 0 then
+  vim.keymap.set("n", "[q", "<cmd>cprev<CR>", { desc = "Previous quickfix item" })
+  vim.keymap.set("n", "]q", "<cmd>cnext<CR>", { desc = "Next quickfix item" })
+end
 
 return {
   {
