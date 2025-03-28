@@ -19,10 +19,10 @@ if vim.fn.has("nvim-0.11") == 1 then
     jump = {
       severity = { min = vim.diagnostic.severity.W },
     },
-    underline = false,
-    virtual_lines = {
-      current_line = true,
+    virtual_text = {
+      severity = { min = vim.diagnostic.severity.W },
     },
+    underline = false,
     severity_sort = true,
     signs = {
       text = {
@@ -46,7 +46,6 @@ else
     },
     virtual_text = {
       severity = { min = vim.diagnostic.severity.W },
-      source = "if_many",
     },
     severity_sort = true,
     signs = {
