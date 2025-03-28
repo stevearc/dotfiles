@@ -162,6 +162,7 @@ for _, name in ipairs({ "config", "data", "state", "runtime", "cache" }) do
   vim.env[("XDG_%s_HOME"):format(name:upper())] = root .. "/" .. name
 end
 
+vim.g.mapleader = " "
 -- bootstrap lazy
 local lazypath = root .. "/plugins/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -178,7 +179,6 @@ vim.opt.runtimepath:prepend(lazypath)
 
 -- install plugins
 local plugins = {
-  "folke/tokyonight.nvim",
   -- add any other plugins here
 }
 require("lazy").setup(plugins, {
@@ -189,7 +189,7 @@ require("lazy").setup(plugins, {
   },
 })
 
-vim.cmd.colorscheme("tokyonight")
+vim.cmd.colorscheme("habamax")
 -- add anything else here
 EOF
   'nvim' "$name"
