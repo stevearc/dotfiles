@@ -124,7 +124,7 @@ vim.o.wildmenu = true
 vim.o.wildmode = "longest,list,full"
 if vim.fn.has("nvim-0.11") == 1 then
   vim.o.winborder = "rounded"
-  vim.o.messagesopt = "history:1000"
+  vim.o.messagesopt = "wait:0,history:1000"
   vim.o.tabclose = "uselast"
 end
 
