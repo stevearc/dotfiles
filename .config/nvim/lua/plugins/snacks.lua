@@ -12,6 +12,9 @@ return {
     },
     picker = {
       ui_select = true,
+      main = {
+        file = false,
+      },
     },
   },
   keys = {
