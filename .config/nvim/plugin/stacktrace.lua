@@ -1,6 +1,8 @@
 vim.api.nvim_create_user_command("Stacktrace", function(params)
   local bufnr = vim.api.nvim_create_buf(false, true)
+  vim.bo[bufnr].buftype = "acwrite"
   vim.bo[bufnr].bufhidden = "wipe"
+  vim.api.nvim_buf_set_name(bufnr, "stacktrace")
   local winid = vim.api.nvim_open_win(bufnr, true, {
     relative = "editor",
     width = vim.o.columns,
@@ -27,20 +29,22 @@ vim.api.nvim_create_user_command("Stacktrace", function(params)
     }).items
     -- Use :Stacktrace! to not filter out invalid lines
     if not params.bang then
-      items = vim.tbl_filter(function(item)
-        return item.valid == 1
-      end, items)
+      items = vim.tbl_filter(function(item) return item.valid == 1 end, items)
     end
     vim.fn.setqflist({}, " ", {
       title = "Stacktrace",
       items = items,
     })
-    vim.cmd("copen")
+    vim.cmd.copen()
   end
   vim.keymap.set("n", "q", cancel, { buffer = bufnr })
   vim.keymap.set({ "n", "i" }, "<C-c>", cancel, { buffer = bufnr })
   vim.keymap.set("n", "<CR>", confirm, { buffer = bufnr })
   vim.keymap.set({ "n", "i" }, "<C-s>", confirm, { buffer = bufnr })
+  vim.api.nvim_create_autocmd("BufWriteCmd", {
+    buffer = bufnr,
+    callback = confirm,
+  })
 end, {
   desc = "Parse a stacktrace using errorformat and add to quickfix",
   bang = true,
