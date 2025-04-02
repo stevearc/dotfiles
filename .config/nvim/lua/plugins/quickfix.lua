@@ -33,7 +33,7 @@ return {
         enabled = true,
       },
       highlight = {
-        load_buffers = true,
+        load_buffers = false,
       },
       keys = {
         {
