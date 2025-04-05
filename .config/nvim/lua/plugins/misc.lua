@@ -1,3 +1,5 @@
+local is_mac = vim.uv.os_uname().sysname == "Darwin"
+
 return {
   { "stevearc/stickybuf.nvim", cmd = { "PinBuffer", "PinBuftype", "PinFiletype" }, opts = {} },
   { "lambdalisue/suda.vim", cmd = { "SudaRead", "SudaWrite" } },
@@ -130,6 +132,7 @@ return {
   },
   {
     "zbirenbaum/copilot.lua",
+    cond = is_mac,
     cmd = "Copilot",
     event = "InsertEnter",
     opts = {
