@@ -214,11 +214,6 @@ return {
   },
 
   {
-    "stevearc/flow-coverage.nvim",
-    ft = { "javascript", "javascript.jsx", "javascriptreact" },
-  },
-
-  {
     "folke/lazydev.nvim",
     dependencies = {
       { "Bilal2453/luvit-meta" },
