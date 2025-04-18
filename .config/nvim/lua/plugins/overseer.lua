@@ -15,36 +15,22 @@ return {
     cmd = {
       "Grep",
       "Make",
-      "OverseerDebugParser",
-      "OverseerInfo",
+      "OverseerShell",
       "OverseerOpen",
       "OverseerRun",
-      "OverseerRunCmd",
       "OverseerToggle",
     },
     keys = {
       { "<leader>oo", "<cmd>OverseerToggle!<CR>", mode = "n", desc = "[O]verseer [O]pen" },
       { "<leader>or", "<cmd>OverseerRun<CR>", mode = "n", desc = "[O]verseer [R]un" },
-      { "<leader>oc", "<cmd>OverseerRunCmd<CR>", mode = "n", desc = "[O]verseer run [C]ommand" },
-      { "<leader>ol", "<cmd>OverseerLoadBundle<CR>", mode = "n", desc = "[O]verseer [L]oad" },
+      { "<leader>os", "<cmd>OverseerShell<CR>", mode = "n", desc = "[O]verseer [S]hell" },
       { "<leader>od", "<cmd>OverseerQuickAction<CR>", mode = "n", desc = "[O]verseer [D]o quick action" },
-      { "<leader>os", "<cmd>OverseerTaskAction<CR>", mode = "n", desc = "[O]verseer [S]elect task action" },
+      { "<leader>ot", "<cmd>OverseerTaskAction<CR>", mode = "n", desc = "[O]verseer [T]ask action" },
     },
     opts = {
-      templates = { builtin = true },
       strategy = { "jobstart" },
       dap = false,
-      log = {
-        {
-          type = "echo",
-          level = vim.log.levels.WARN,
-        },
-        {
-          type = "file",
-          filename = "overseer.log",
-          level = vim.log.levels.DEBUG,
-        },
-      },
+      log_level = vim.log.levels.TRACE,
       task_list = {
         bindings = {
           dd = "Dispose",
@@ -59,8 +45,6 @@ return {
       },
       component_aliases = {
         default = {
-          { "display_duration", detail_level = 2 },
-          "on_output_summarize",
           "on_exit_set_status",
           { "on_complete_notify", system = "unfocused" },
           { "on_complete_dispose", require_view = { "SUCCESS", "FAILURE" } },
@@ -73,8 +57,8 @@ return {
       },
       post_setup = {},
     },
+    init = function() vim.cmd.cnoreabbrev("OS OverseerShell") end,
     config = function(_, opts)
-      opts.templates = vim.tbl_keys(opts.templates)
       local overseer = require("overseer")
       overseer.setup(opts)
       for _, cb in pairs(opts.post_setup) do
