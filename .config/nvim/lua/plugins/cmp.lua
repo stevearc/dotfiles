@@ -1,5 +1,6 @@
 return {
   "hrsh7th/nvim-cmp",
+  cond = false,
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-buffer",
