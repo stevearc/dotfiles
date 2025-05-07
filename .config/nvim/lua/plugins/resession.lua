@@ -51,7 +51,7 @@ return {
       vim.cmd("qa")
     end)
 
-    if vim.tbl_contains(resession.list(), "__quicksave__") then
+    if vim.fn.argc() == 0 and vim.tbl_contains(resession.list(), "__quicksave__") then
       vim.defer_fn(function()
         resession.load("__quicksave__", { attach = false })
         local ok, err = pcall(resession.delete, "__quicksave__")

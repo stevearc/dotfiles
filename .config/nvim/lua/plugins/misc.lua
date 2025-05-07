@@ -98,6 +98,9 @@ return {
   { "stevearc/openai.nvim", cmd = { "AIChat", "AIEdit" }, config = true },
   {
     "willothy/flatten.nvim",
+    -- Disable when headless, because it causes neotest to hang
+    -- https://github.com/willothy/flatten.nvim/issues/106
+    cond = #vim.api.nvim_list_uis() > 0,
     opts = {
       window = {
         open = "tab",

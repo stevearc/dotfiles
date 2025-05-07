@@ -30,21 +30,20 @@ return {
       },
     },
     config = function()
-      -- dap.set_log_level("DEBUG")
-      vim.fn.sign_define("DapBreakpoint", { text = "•", texthl = "DiagnosticError", linehl = "", numhl = "" })
-      vim.fn.sign_define("DapBreakpointCondition", { text = "?", texthl = "DiagnosticError", linehl = "", numhl = "" })
-      vim.fn.sign_define("DapLogPoint", { text = "⁋", texthl = "", linehl = "", numhl = "" })
-      vim.fn.sign_define("DapStopped", { text = " ", texthl = "DiagnosticInfo", linehl = "", numhl = "" })
+      vim.fn.sign_define("DapBreakpoint", { text = " ", texthl = "Special", linehl = "", numhl = "" })
+      vim.fn.sign_define("DapBreakpointCondition", { text = " ", texthl = "Special", linehl = "", numhl = "" })
+      vim.fn.sign_define("DapLogPoint", { text = "⁋ ", texthl = "Special", linehl = "", numhl = "" })
+      vim.fn.sign_define("DapStopped", { text = " ", texthl = "Special", linehl = "", numhl = "" })
       vim.fn.sign_define("DapBreakpointRejected", { text = "X", texthl = "DiagnosticError", linehl = "", numhl = "" })
 
       local dapui = require("dapui")
       local dap = require("dap")
+      -- dap.set_log_level("DEBUG")
       dapui.setup()
       dap.listeners.after.event_initialized["dapui_config"] = function() dapui.open() end
       dap.listeners.before.event_terminated["dapui_config"] = function() dapui.close() end
       dap.listeners.before.event_exited["dapui_config"] = function() dapui.close() end
       require("overseer").enable_dap(true)
-      require("dap.ext.vscode").load_launchjs(nil, { node = { "typescript", "javascript" } })
     end,
   },
 }

@@ -73,7 +73,7 @@ return {
     },
   },
   opts = {
-    -- log_level = vim.log.levels.INFO,
+    -- log_level = vim.log.levels.TRACE,
     adapters = {
       ["neotest-python"] = {
         dap = { justMyCode = false },

@@ -5,7 +5,21 @@ return {
       "nvim-treesitter/nvim-treesitter-textobjects",
       "nvim-treesitter/nvim-treesitter-context",
     },
-    config = function()
+    opts = {
+      ensure_installed = {
+        bash = true,
+        comment = true,
+        git_rebase = true,
+        gitcommit = true,
+        lua = true,
+        luadoc = true,
+        markdown = true,
+        markdown_inline = true,
+        vim = true,
+        vimdoc = true,
+      },
+    },
+    config = function(_, opts)
       local queries = require("nvim-treesitter.query")
       local parsers = require("nvim-treesitter.parsers")
 
@@ -25,18 +39,7 @@ return {
       end
 
       require("nvim-treesitter.configs").setup({
-        ensure_installed = {
-          "bash",
-          "comment",
-          "git_rebase",
-          "gitcommit",
-          "lua",
-          "luadoc",
-          "markdown",
-          "markdown_inline",
-          "vim",
-          "vimdoc",
-        },
+        ensure_installed = vim.tbl_keys(opts.ensure_installed),
         ignore_install = { "supercollider", "phpdoc" },
         auto_install = true,
         highlight = {

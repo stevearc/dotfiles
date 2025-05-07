@@ -57,7 +57,7 @@ local function wrap_location_method(yield)
 
           vim.bo[b].buflisted = true
           vim.api.nvim_win_set_buf(winid, b)
-          vim.api.nvim_win_set_cursor(winid, { item.lnum, item.col - 1 })
+          pcall(vim.api.nvim_win_set_cursor, winid, { item.lnum, item.col - 1 })
           vim._with({ win = winid }, function()
             -- Open folds under the cursor
             vim.cmd("normal! zv")
