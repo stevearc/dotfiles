@@ -5,7 +5,9 @@ return {
     opts = {
       extensions = {
         overseer = {
-          status = { "RUNNING" },
+          filter = {
+            status = { "RUNNING" },
+          },
         },
       },
     },
@@ -27,20 +29,16 @@ return {
       { "<leader>od", "<cmd>OverseerQuickAction<CR>", mode = "n", desc = "[O]verseer [D]o quick action" },
       { "<leader>ot", "<cmd>OverseerTaskAction<CR>", mode = "n", desc = "[O]verseer [T]ask action" },
     },
+    ---@module 'overseer'
+    ---@type overseer.SetupOpts
     opts = {
       strategy = { "jobstart" },
       dap = false,
       log_level = vim.log.levels.TRACE,
-      task_list = {
-        bindings = {
-          dd = "Dispose",
-        },
-      },
-      task_launcher = {
-        bindings = {
-          n = {
-            ["<leader>c"] = "Cancel",
-          },
+      wrap_builtins = {
+        enabled = true,
+        partial_condition = {
+          noop = function(cmd, caller, opts) return true end,
         },
       },
       component_aliases = {
@@ -59,17 +57,24 @@ return {
     },
     init = function() vim.cmd.cnoreabbrev("OS OverseerShell") end,
     config = function(_, opts)
+      local partial = opts.wrap_builtins.partial_condition
+      opts.wrap_builtins.condition = function(cmd, caller, opts)
+        for _, v in pairs(partial) do
+          if not v(cmd, caller, opts) then
+            return false
+          end
+        end
+        return true
+      end
       local overseer = require("overseer")
       overseer.setup(opts)
       for _, cb in pairs(opts.post_setup) do
         cb()
       end
-      vim.api.nvim_create_user_command("OverseerDebugParser", 'lua require("overseer").debug_parser()', {})
       vim.api.nvim_create_user_command("OverseerTestOutput", function(params)
         vim.cmd.tabnew()
         vim.bo.bufhidden = "wipe"
-        local TaskView = require("overseer.task_view")
-        TaskView.new(0, {
+        overseer.create_task_output_view(0, {
           select = function(self, tasks)
             for _, task in ipairs(tasks) do
               if task.metadata.neotest_group_id then
@@ -79,7 +84,9 @@ return {
             self:dispose()
           end,
         })
-      end, {})
+      end, {
+        desc = "Open a new tab that displays the output of the most recent test",
+      })
       vim.api.nvim_create_user_command("Grep", function(params)
         local args = vim.fn.expandcmd(params.args)
         -- Insert args at the '$*' in the grepprg
@@ -92,6 +99,7 @@ return {
         if has_oil then
           cwd = oil.get_current_dir()
         end
+
         local task = overseer.new_task({
           cmd = cmd,
           cwd = cwd,
