@@ -22,7 +22,6 @@ return {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
     dependencies = {
-      -- "hrsh7th/cmp-nvim-lsp",
       "b0o/SchemaStore.nvim",
     },
     opts = {
@@ -221,7 +220,7 @@ return {
     ft = "lua",
     opts = {
       library = {
-        { path = "luvit-meta/library", words = { "vim%.uv", "vim%.loop" } },
+        { path = "${3rd}/luv/library", words = { "vim%.uv", "vim%.loop" } },
       },
     },
   },
