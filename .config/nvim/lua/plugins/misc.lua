@@ -28,9 +28,7 @@ return {
       vim.g.scnvim_eval_flash_repeats = 1
     end,
   },
-  { "dstein64/vim-startuptime", cmd = "StartupTime" },
   { "Saecki/crates.nvim", cmd = "BufReadPre Cargo.toml", config = true },
-  "milisims/nvim-luaref",
   {
     "AckslD/nvim-FeMaco.lua",
     cmd = "FeMaco",
@@ -72,28 +70,6 @@ return {
         paste = { ["+"] = paste, ["*"] = paste },
       }
     end,
-  },
-  {
-    "folke/zen-mode.nvim",
-    cmd = "ZenMode",
-    opts = {
-      window = {
-        options = {
-          relativenumber = false,
-          number = false,
-        },
-      },
-      plugins = {
-        alacritty = {
-          enabled = true,
-          font = "24",
-        },
-        kitty = {
-          enabled = true,
-          font = "24",
-        },
-      },
-    },
   },
   { "stevearc/openai.nvim", cmd = { "AIChat", "AIEdit" }, config = true },
   {
@@ -184,10 +160,6 @@ return {
       vim.g.matchup_matchparen_deferred_hide_delay = 400
       vim.g.matchup_matchparen_offscreen = {}
     end,
-  },
-  { -- placeholder configured by machine-local config
-    "nathanmsmith/livegrep.nvim",
-    lazy = true,
   },
   { "levouh/tint.nvim", opts = {} },
   {
