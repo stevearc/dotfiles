@@ -228,6 +228,18 @@ show_modified_files() {
   fi
 }
 
+show_modified_lines() {
+  git show --unified=0 --pretty="" -w "$@" | gawk '
+  /^diff --git/ {file=$4; sub("b/", "", file)}
+  /^@@.*\+[0-9,]+ @@/ {
+    match($0, /\+([0-9]+),?([0-9]+)? @@/, m);
+    lineno=m[1];
+    if (m[2] != "0")
+      print file ":" lineno;
+  }
+'
+}
+
 confirm() {
   # $1 (optional) [str] - Prompt string
   # $2 (optional) [y|n] - The default return value if user just hits enter
