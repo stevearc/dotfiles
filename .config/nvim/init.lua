@@ -346,9 +346,13 @@ vim.keymap.set("x", "#", ':lua stevearc.visual_set_search("?")<CR>?<C-R>=@/<CR><
 
 -- :W and :H to set win width/height
 vim.api.nvim_create_user_command("W", function(params)
-  local width = tonumber(params.fargs[1])
+  local width_str = params.fargs[1]
+  local width = tonumber(width_str)
   if not width then
     return
+  end
+  if width < 0 or width_str:sub(1, 1) == "+" then
+    width = vim.api.nvim_win_get_width(0) + width
   end
   if math.floor(width) ~= width then
     width = math.floor(width * vim.o.columns)
@@ -356,9 +360,13 @@ vim.api.nvim_create_user_command("W", function(params)
   vim.api.nvim_win_set_width(0, width)
 end, { nargs = 1 })
 vim.api.nvim_create_user_command("H", function(params)
-  local height = tonumber(params.fargs[1])
+  local height_str = params.fargs[1]
+  local height = tonumber(height_str)
   if not height then
     return
+  end
+  if height < 0 or height_str:sub(1, 1) == "+" then
+    height = vim.api.nvim_win_get_height(0) + height
   end
   if math.floor(height) ~= height then
     height = math.floor(height * vim.o.lines - vim.o.cmdheight)
