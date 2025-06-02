@@ -67,7 +67,7 @@ end
 return {
   "tpope/vim-fugitive",
   dependencies = { "tpope/vim-rhubarb" },
-  cmd = { "GitHistory", "Git", "GBrowse", "Gwrite", "GitEditDiff", "GitEditChanged" },
+  cmd = { "GitHistory", "Git", "GBrowse", "Gwrite", "GitEditDiff", "GitEditChanged", "GitEdit" },
   keys = {
     { "<leader>gh", "<cmd>GitHistory<CR>", desc = "[G]it [H]istory" },
     { "<leader>gb", "<cmd>Git blame<CR>", desc = "[G]it [B]lame" },
@@ -105,6 +105,36 @@ return {
       end)
     end, {
       desc = "Edit files that differ from master",
+    })
+
+    vim.api.nvim_create_user_command("GitEdit", function(params)
+      local git_dir = vim.fs.find(".git", { upward = true, path = vim.api.nvim_buf_get_name(0) })[1]
+      if not git_dir then
+        vim.notify("Not in a git repository", vim.log.levels.ERROR)
+        return
+      end
+      local root = vim.fs.dirname(git_dir)
+      local relpath = string.sub(vim.api.nvim_buf_get_name(0), root:len() + 2)
+      local proc = vim
+        .system({ "git", "rev-parse", "--verify", params.args }, {
+          cwd = root,
+        })
+        :wait()
+      if proc.code ~= 0 then
+        vim.notify("Invalid commit hash: " .. params.args, vim.log.levels.ERROR)
+        return
+      end
+      local rev = vim.trim(proc.stdout)
+      local lnum = vim.api.nvim_win_get_cursor(0)[1]
+      vim.cmd.edit({
+        args = {
+          "fugitive://" .. git_dir .. "//" .. rev .. "/" .. relpath,
+        },
+      })
+      pcall(vim.api.nvim_win_set_cursor, 0, { lnum, 0 })
+    end, {
+      desc = "Edit current file at a specific commit",
+      nargs = 1,
     })
   end,
 }
