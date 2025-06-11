@@ -9,6 +9,10 @@ return {
       appearance = {
         nerd_font_variant = "mono",
       },
+      cmdline = {
+        -- This seems to mess up completeopt=noselect
+        enabled = false,
+      },
       completion = { documentation = { auto_show = true } },
       sources = {
         default = { "lazydev", "lsp", "path", "snippets", "buffer" },
