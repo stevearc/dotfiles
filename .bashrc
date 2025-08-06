@@ -45,7 +45,7 @@ shopt -s checkwinsize
 
 # Environment variables
 if [ $MAC ]; then
-  export GOROOT="$(brew --prefix golang)/libexec"
+  export GOROOT="/opt/homebrew/opt/go/libexec"
   export PATH="$GOROOT/bin:$PATH"
 elif [ -d "$HOME/.local/share/go" ]; then
   export GOROOT=$HOME/.local/share/go
@@ -74,8 +74,8 @@ if [ -d /usr/share/bash-completion/completions ]; then
     source "$c" 2>/dev/null
   done
 fi
-if [ $MAC ] && command -v brew >/dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
-  . $(brew --prefix)/etc/bash_completion
+if [ -f /opt/homebrew/etc/bash_completion ]; then
+  . /opt/homebrew/etc/bash_completion
 fi
 
 if command -v nvim >/dev/null; then
@@ -110,10 +110,8 @@ sourcedir ~/.bash_env
 sourcedir ~/.bash.d
 sourcedir ~/.bash.completion
 
-if command -v yarn >/dev/null; then
-  pushd $HOME >/dev/null
-  export PATH="$(yarn global bin 2>/dev/null | grep -v "Using globally installed version of Yarn"):$PATH"
-  popd >/dev/null
+if [ -f ~/.yarn/bin ]; then
+  export PATH="$HOME/.yarn/bin:$PATH"
 fi
 export PATH="/usr/local/sbin:$PATH"
 export NVIM_LOG_FILE_PATH="$HOME/.nvimlog"
