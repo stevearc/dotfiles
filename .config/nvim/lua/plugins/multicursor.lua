@@ -11,7 +11,9 @@ return {
     { "<leader>jd", mc.duplicateCursors, desc = "duplicate cursors and disable the originals" },
     { "<leader>jr", mc.restoreCursors, desc = "restore deleted cursors" },
     { "<leader>ja", mc.alignCursors, desc = "align cursor columns" },
+    { "<leader>je", mc.enableCursors, desc = "enable cursors" },
     { "<leader>jx", mc.disableCursors, desc = "disable cursors" },
+    { "<leader>j/", mc.searchAllAddCursors, desc = "add cursor to all search results" },
     {
       "<leader>jn",
       function()
