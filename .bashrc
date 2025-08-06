@@ -113,6 +113,11 @@ sourcedir ~/.bash.completion
 if [ -f ~/.yarn/bin ]; then
   export PATH="$HOME/.yarn/bin:$PATH"
 fi
+
+if command -v fzf >/dev/null; then
+  eval "$(fzf --bash)"
+fi
+
 export PATH="/usr/local/sbin:$PATH"
 export NVIM_LOG_FILE_PATH="$HOME/.nvimlog"
 if command -v direnv >/dev/null; then
