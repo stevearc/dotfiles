@@ -203,6 +203,7 @@ dotcmd-desktop() {
     spectacle \
     sshfs \
     steam \
+    system-config-printer \
     vlc \
     wl-clipboard \
     zenity
@@ -211,6 +212,7 @@ dotcmd-desktop() {
     sudo pacman -Syq --noconfirm linux linux-headers
     yay -S --noconfirm xpadneo-dkms
   fi
+  yay -S --noconfirm brother-hll2350dw
   setup-desktop-generic
   sudo systemctl enable bluetooth.service
   sudo systemctl restart bluetooth.service
