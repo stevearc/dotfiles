@@ -619,6 +619,7 @@
                 "conditions": [
                   {
                     "bundle_identifiers": [
+                      "com.mitchellh.ghostty",
                       "org.alacritty",
                       "net.kovidgoyal.kitty",
                       "com.apple.Terminal",
@@ -649,6 +650,7 @@
                 "conditions": [
                   {
                     "bundle_identifiers": [
+                      "com.mitchellh.ghostty",
                       "org.alacritty",
                       "net.kovidgoyal.kitty",
                       "com.apple.Terminal",
@@ -676,6 +678,7 @@
                 "conditions": [
                   {
                     "bundle_identifiers": [
+                      "com.mitchellh.ghostty",
                       "org.alacritty",
                       "net.kovidgoyal.kitty",
                       "com.apple.Terminal",
@@ -703,6 +706,7 @@
                 "conditions": [
                   {
                     "bundle_identifiers": [
+                      "com.mitchellh.ghostty",
                       "org.alacritty",
                       "net.kovidgoyal.kitty",
                       "com.apple.Terminal",
@@ -729,6 +733,7 @@
                 "conditions": [
                   {
                     "bundle_identifiers": [
+                      "com.mitchellh.ghostty",
                       "org.alacritty",
                       "net.kovidgoyal.kitty",
                       "com.apple.Terminal",
@@ -755,6 +760,7 @@
                 "conditions": [
                   {
                     "bundle_identifiers": [
+                      "com.mitchellh.ghostty",
                       "org.alacritty",
                       "net.kovidgoyal.kitty",
                       "com.apple.Terminal",
@@ -781,6 +787,7 @@
                 "conditions": [
                   {
                     "bundle_identifiers": [
+                      "com.mitchellh.ghostty",
                       "org.alacritty",
                       "net.kovidgoyal.kitty",
                       "com.apple.Terminal",
@@ -807,6 +814,7 @@
                 "conditions": [
                   {
                     "bundle_identifiers": [
+                      "com.mitchellh.ghostty",
                       "org.alacritty",
                       "net.kovidgoyal.kitty",
                       "com.apple.Terminal",
@@ -833,6 +841,7 @@
                 "conditions": [
                   {
                     "bundle_identifiers": [
+                      "com.mitchellh.ghostty",
                       "org.alacritty",
                       "net.kovidgoyal.kitty",
                       "com.apple.Terminal",
@@ -914,4 +923,3 @@
     }
   ]
 }
-
