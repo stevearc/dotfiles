@@ -18,8 +18,6 @@ return {
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
       "nvim-tree/nvim-web-devicons",
-      -- Hack to ensure that lspkind-nvim is loaded
-      "hrsh7th/nvim-cmp",
     },
     cmd = { "AerialToggle", "AerialOpen", "AerialNext", "AerialPrev" },
     keys = {

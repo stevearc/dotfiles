@@ -1,4 +1,5 @@
 local is_mac = vim.uv.os_uname().sysname == "Darwin"
+local node = vim.uv.os_homedir() .. "/.nodenv/versions/23.11.0/bin/node"
 
 return {
   { "stevearc/stickybuf.nvim", cmd = { "PinBuffer", "PinBuftype", "PinFiletype" }, opts = {} },
@@ -111,7 +112,7 @@ return {
   },
   {
     "zbirenbaum/copilot.lua",
-    cond = is_mac,
+    cond = is_mac and vim.fn.filereadable(node) == 1,
     cmd = "Copilot",
     event = "InsertEnter",
     opts = {
@@ -131,6 +132,7 @@ return {
       panel = {
         enabled = false,
       },
+      copilot_node_command = vim.uv.os_homedir() .. "/.nodenv/versions/23.11.0/bin/node",
     },
   },
   {

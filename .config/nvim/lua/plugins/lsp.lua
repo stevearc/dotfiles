@@ -1,26 +1,9 @@
 local p = require("p")
 
-local function locations_equal(loc1, loc2)
-  return (loc1.uri or loc1.targetUri) == (loc2.uri or loc2.targetUri)
-    and (loc1.range or loc1.targetSelectionRange).start.line == (loc2.range or loc2.targetSelectionRange).start.line
-end
-
-local function all_locations_equal(locs)
-  local last_loc
-  for i = 1, #locs do
-    local loc = locs[i]
-    if last_loc and not locations_equal(loc, last_loc) then
-      return false
-    end
-    last_loc = loc
-  end
-  return true
-end
-
 return {
   {
     "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" },
+    event = "VeryLazy",
     dependencies = {
       "b0o/SchemaStore.nvim",
     },
@@ -64,6 +47,29 @@ return {
             },
           }
         end,
+        lua_ls = function()
+          local sumneko_root_path = vim.uv.os_homedir() .. "/.local/share/nvim/language-servers/lua-language-server"
+          local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
+          return {
+            cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
+            settings = {
+              Lua = {
+                hint = {
+                  enable = true,
+                },
+                IntelliSense = {
+                  traceLocalSet = true,
+                },
+                diagnostics = {
+                  globals = { "assert", "it", "describe", "before_each", "after_each", "a" },
+                },
+                telemetry = {
+                  enable = false,
+                },
+              },
+            },
+          }
+        end,
         omnisharp = {},
         pyright = {},
         ruff = {},
@@ -85,61 +91,7 @@ return {
       },
     },
     config = function(_, opts)
-      local lsp = require("lsp")
       -- vim.lsp.set_log_level("debug")
-
-      if vim.fn.has("nvim-0.11") == 0 then
-        local function location_handler(_, result, ctx, _)
-          if result == nil or vim.tbl_isempty(result) then
-            return nil
-          end
-          local client = vim.lsp.get_client_by_id(ctx.client_id)
-          assert(client)
-
-          -- textDocument/definition can return Location or Location[]
-          -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
-
-          local has_telescope = pcall(require, "telescope")
-          if vim.islist(result) then
-            if all_locations_equal(result) then
-              pcall(vim.lsp.util.jump_to_location, result[1], client.offset_encoding, false)
-            elseif has_telescope then
-              local ts_opts = {}
-              local pickers = require("telescope.pickers")
-              local finders = require("telescope.finders")
-              local make_entry = require("telescope.make_entry")
-              local conf = require("telescope.config").values
-              local items = vim.lsp.util.locations_to_items(result, client.offset_encoding)
-              pickers
-                .new(ts_opts, {
-                  prompt_title = "LSP Locations",
-                  finder = finders.new_table({
-                    results = items,
-                    entry_maker = make_entry.gen_from_quickfix(ts_opts),
-                  }),
-                  previewer = conf.qflist_previewer(ts_opts),
-                  sorter = conf.generic_sorter(ts_opts),
-                })
-                :find()
-            else
-              vim.fn.setloclist(0, {}, " ", {
-                title = "LSP locations",
-                items = vim.lsp.util.locations_to_items(result, client.offset_encoding),
-              })
-              vim.cmd.lopen()
-            end
-          else
-            vim.lsp.util.jump_to_location(result, client.offset_encoding)
-          end
-        end
-        vim.lsp.handlers["textDocument/declaration"] = location_handler
-        vim.lsp.handlers["textDocument/definition"] = location_handler
-        vim.lsp.handlers["textDocument/typeDefinition"] = location_handler
-        vim.lsp.handlers["textDocument/implementation"] = location_handler
-        vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
-        vim.lsp.handlers["textDocument/signatureHelp"] =
-          vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
-      end
 
       vim.lsp.handlers["window/showMessage"] = function(_err, result, context, _config)
         local client_id = context.client_id
@@ -173,31 +125,19 @@ return {
           if type(v) == "function" then
             v = v()
           end
-          lsp.safe_setup(k, v)
+          if not v then
+            vim.lsp.enable(k, false)
+          else
+            if vim.tbl_isempty(v) then
+              v = {}
+            end
+            if type(v) == "table" then
+              vim.lsp.config(k, v)
+            end
+            vim.lsp.enable(k, true)
+          end
         end
       end
-
-      local sumneko_root_path = os.getenv("HOME") .. "/.local/share/nvim/language-servers/lua-language-server"
-      local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
-      lsp.safe_setup("lua_ls", {
-        cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
-        settings = {
-          Lua = {
-            hint = {
-              enable = true,
-            },
-            IntelliSense = {
-              traceLocalSet = true,
-            },
-            diagnostics = {
-              globals = { "assert", "it", "describe", "before_each", "after_each", "a" },
-            },
-            telemetry = {
-              enable = false,
-            },
-          },
-        },
-      })
 
       local group = vim.api.nvim_create_augroup("LspSetup", {})
       vim.api.nvim_create_autocmd("LspAttach", {
@@ -206,7 +146,7 @@ return {
         group = group,
         callback = function(args)
           local client = vim.lsp.get_client_by_id(args.data.client_id)
-          lsp.on_attach(client, args.buf)
+          require("lsp_util").on_attach(client, args.buf)
         end,
       })
     end,
