@@ -3,9 +3,7 @@
 term = "xterm-256color"
 font-family = UbuntuMono Nerd Font
 font-size = 14
-fullscreen = true
 window-decoration = none
-macos-non-native-fullscreen = padded-notch
 custom-shader = cursor_smear.glsl
 
 # Nightfox colors for Ghostty
