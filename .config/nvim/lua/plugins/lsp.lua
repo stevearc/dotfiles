@@ -128,9 +128,6 @@ return {
           if not v then
             vim.lsp.enable(k, false)
           else
-            if vim.tbl_isempty(v) then
-              v = {}
-            end
             if type(v) == "table" then
               vim.lsp.config(k, v)
             end

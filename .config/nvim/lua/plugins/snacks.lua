@@ -64,9 +64,7 @@ return {
     -- Load notifier immediately because at require-time it calls nvim_create_namespace, and that
     -- will error if it's called inside a lua loop callback. Which sometimes happens.
     require("snacks.notifier")
-    vim.api.nvim_create_user_command("Notifications", function() Snacks.notifier.show_history() end, {
-      bang = true,
-    })
+    vim.api.nvim_create_user_command("Notifications", function() Snacks.notifier.show_history() end, {})
 
     -- LSP progress
     ---@type table<number, {token:lsp.ProgressToken, msg:string, done:boolean}[]>
