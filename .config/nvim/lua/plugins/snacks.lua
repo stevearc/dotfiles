@@ -66,10 +66,12 @@ return {
     require("snacks.notifier")
     vim.api.nvim_create_user_command("Notifications", function() Snacks.notifier.show_history() end, {})
 
+    local group = vim.api.nvim_create_augroup("LspProgress", {})
     -- LSP progress
     ---@type table<number, {token:lsp.ProgressToken, msg:string, done:boolean}[]>
     local progress = vim.defaulttable()
     vim.api.nvim_create_autocmd("LspProgress", {
+      group = group,
       ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
       callback = function(ev)
         local client = vim.lsp.get_client_by_id(ev.data.client_id)
@@ -96,16 +98,29 @@ return {
 
         local msg = {} ---@type string[]
         progress[client.id] = vim.tbl_filter(function(v) return table.insert(msg, v.msg) or not v.done end, p)
+        local final_message = vim.tbl_isempty(progress[client.id])
 
         local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
         vim.notify(table.concat(msg, "\n"), "info", {
-          id = "lsp_progress",
+          id = "lsp_progress:" .. tostring(client.id),
           title = client.name,
+          timeout = final_message,
+          history = final_message,
           opts = function(notif)
-            notif.icon = #progress[client.id] == 0 and " "
-              or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+            notif.icon = final_message and " " or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
           end,
         })
+      end,
+    })
+    vim.api.nvim_create_autocmd("LspDetach", {
+      group = group,
+      ---@param ev {data: {client_id: integer}}
+      callback = function(ev)
+        local client = vim.lsp.get_client_by_id(ev.data.client_id)
+        if not client or client:is_stopped() then
+          progress[ev.data.client_id] = nil
+          Snacks.notifier.hide("lsp_progress:" .. tostring(ev.data.client_id))
+        end
       end,
     })
   end,
