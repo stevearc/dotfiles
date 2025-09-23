@@ -83,13 +83,15 @@ return {
 
         for i = 1, #p + 1 do
           if i == #p + 1 or p[i].token == ev.data.params.token then
+            local prefix = ""
+            if value.kind == "end" then
+              prefix = "[ ]   "
+            elseif value.percentage then
+              prefix = string.format("[%3d%%] ", value.percentage)
+            end
             p[i] = {
               token = ev.data.params.token,
-              msg = ("[%3d%%] %s%s"):format(
-                value.kind == "end" and 100 or value.percentage or 100,
-                value.title or "",
-                value.message and (" **%s**"):format(value.message) or ""
-              ),
+              msg = prefix .. (value.title or "") .. (value.message and (" **%s**"):format(value.message) or ""),
               done = value.kind == "end",
             }
             break
