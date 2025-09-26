@@ -61,7 +61,7 @@ return {
       sh = { "shfmt" },
       python = { "isort", "black" },
       zig = { "zigfmt" },
-      ["_"] = { "trim_whitespace", "trim_newlines" },
+      ["_"] = { "trim_whitespace", "trim_newlines", lsp_format = "last" },
     },
     formatters = {
       injected = {
