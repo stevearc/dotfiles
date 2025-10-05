@@ -11,3 +11,4 @@ rclone sync -v /mnt/storage/pending s3:pibox-backups/pending/
 rclone sync -v /mnt/storage/games s3:pibox-backups/games/
 rclone sync -v /mnt/storage/symbolic_archive s3:pibox-backups/symbolic_archive --links
 rclone sync -v /mnt/storage/plex s3:pibox-backups/plex/
+echo "BACKUP COMPLETE"
