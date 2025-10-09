@@ -35,3 +35,19 @@ vim.diagnostic.config({
     },
   },
 })
+
+vim.api.nvim_create_user_command(
+  "Diagnostics",
+  function() vim.diagnostic.setqflist({ severity = { min = vim.diagnostic.severity.W } }) end,
+  { desc = "Show all diagnostics in the quickfix" }
+)
+
+vim.api.nvim_create_autocmd("DiagnosticChanged", {
+  group = vim.api.nvim_create_augroup("StevearcDiagnostics", {}),
+  callback = function()
+    local qflist = vim.fn.getqflist({ title = 1 })
+    if qflist.title == "Diagnostics" then
+      vim.diagnostic.setqflist({ open = false, severity = { min = vim.diagnostic.severity.W } })
+    end
+  end,
+})

@@ -93,12 +93,14 @@ local function render(bufnr)
   end
 end
 
+local initial_lines = { "errorformat: " }
+
 vim.api.nvim_create_user_command("Stacktrace", function(params)
   local bufnr = vim.api.nvim_create_buf(false, true)
   vim.bo[bufnr].buftype = "acwrite"
   vim.bo[bufnr].bufhidden = "wipe"
   vim.api.nvim_buf_set_name(bufnr, "stacktrace")
-  vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, { "errorformat: " })
+  vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, initial_lines)
   local winid = vim.api.nvim_open_win(bufnr, true, {
     relative = "editor",
     width = vim.o.columns - 2,
@@ -115,6 +117,7 @@ vim.api.nvim_create_user_command("Stacktrace", function(params)
   cancel = function()
     cancel = function() end
     confirm = function() end
+    initial_lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, true)
     if vim.api.nvim_win_is_valid(winid) then
       vim.api.nvim_win_close(winid, true)
     end
