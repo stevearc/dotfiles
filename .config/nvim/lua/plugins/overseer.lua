@@ -21,26 +21,38 @@ return {
       "OverseerOpen",
       "OverseerRun",
       "OverseerToggle",
+      "OverseerTestOutput",
     },
     keys = {
       { "<leader>oo", "<cmd>OverseerToggle!<CR>", mode = "n", desc = "[O]verseer [O]pen" },
       { "<leader>or", "<cmd>OverseerRun<CR>", mode = "n", desc = "[O]verseer [R]un" },
       { "<leader>os", "<cmd>OverseerShell<CR>", mode = "n", desc = "[O]verseer [S]hell" },
-      { "<leader>od", "<cmd>OverseerQuickAction<CR>", mode = "n", desc = "[O]verseer [D]o quick action" },
       { "<leader>ot", "<cmd>OverseerTaskAction<CR>", mode = "n", desc = "[O]verseer [T]ask action" },
+      {
+        "<leader>od",
+        function()
+          local overseer = require("overseer")
+          local task_list = require("overseer.task_list")
+          local tasks = overseer.list_tasks({
+            sort = task_list.sort_finished_recently,
+            include_ephemeral = true,
+          })
+          if vim.tbl_isempty(tasks) then
+            vim.notify("No tasks found", vim.log.levels.WARN)
+          else
+            local most_recent = tasks[1]
+            overseer.run_action(most_recent)
+          end
+        end,
+        mode = "n",
+        desc = "[O]verseer [D]o quick action",
+      },
     },
     ---@module 'overseer'
     ---@type overseer.SetupOpts
     opts = {
-      strategy = { "jobstart" },
       dap = false,
       log_level = vim.log.levels.TRACE,
-      wrap_builtins = {
-        enabled = true,
-        partial_condition = {
-          noop = function(cmd, caller, opts) return true end,
-        },
-      },
       component_aliases = {
         default = {
           "on_exit_set_status",
@@ -51,6 +63,12 @@ return {
           "unique",
           { "on_complete_notify", system = "unfocused", on_change = true },
           "default",
+        },
+      },
+      experimental_wrap_builtins = {
+        enabled = false,
+        partial_condition = {
+          noop = function(cmd, caller, opts) return true end,
         },
       },
       post_setup = {},
