@@ -131,6 +131,7 @@ dc-install-common() {
     tldr \
     tmux \
     tree \
+    tree-sitter-cli \
     unzip \
     wmctrl \
     xsel
