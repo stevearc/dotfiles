@@ -59,15 +59,19 @@ end
 ---@param files string[]
 local function open_files(files)
   vim.cmd.tabnew()
+  local has_three, three = pcall(require, "three")
   for _, file in ipairs(files) do
     vim.cmd.edit({ args = { file } })
+    if has_three then
+      three.set_pinned(vim.api.nvim_get_current_buf(), true)
+    end
   end
 end
 
 return {
   "tpope/vim-fugitive",
   dependencies = { "tpope/vim-rhubarb" },
-  cmd = { "GitHistory", "Git", "GBrowse", "Gwrite", "GitEditDiff", "GitEditChanged", "GitEdit" },
+  cmd = { "GitHistory", "Git", "GBrowse", "Gwrite", "GitEditDiffMaster", "GitEditDiff", "GitEdit" },
   keys = {
     { "<leader>gh", "<cmd>GitHistory<CR>", desc = "[G]it [H]istory" },
     { "<leader>gb", "<cmd>Git blame<CR>", desc = "[G]it [B]lame" },
@@ -77,7 +81,7 @@ return {
   config = function()
     vim.cmd("command! GitHistory Git! log -- %")
 
-    vim.api.nvim_create_user_command("GitEditChanged", function()
+    vim.api.nvim_create_user_command("GitEditDiff", function()
       run_files_cmd({ "git", "diff", "--name-only" }, function(files)
         if vim.tbl_isempty(files) then
           vim.notify("No uncommitted changes", vim.log.levels.INFO)
@@ -89,7 +93,7 @@ return {
       desc = "Edit files with uncommitted changes",
     })
 
-    vim.api.nvim_create_user_command("GitEditDiff", function()
+    vim.api.nvim_create_user_command("GitEditDiffMaster", function()
       merge_base(nil, nil, function(err, ref)
         if err or not ref then
           vim.notify("Error calculating merge base", vim.log.levels.ERROR)
