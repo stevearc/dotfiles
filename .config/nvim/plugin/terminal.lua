@@ -75,8 +75,9 @@ local function close()
 end
 
 ---@param bufnr? integer Optional existing buffer
+---@param background? boolean Open in background
 ---@return integer bufnr
-local function open(bufnr)
+local function open_terminal_win(bufnr, background)
   local open_term = false
   if not bufnr or not vim.api.nvim_buf_is_valid(bufnr) then
     bufnr = vim.api.nvim_create_buf(false, true)
@@ -137,22 +138,41 @@ local function open(bufnr)
       end,
     })
   end
-  vim.cmd.startinsert()
+  if background then
+    vim.api.nvim_win_close(winid, true)
+  else
+    vim.cmd.startinsert()
+  end
 
   return bufnr
+end
+
+---@param background? boolean Open in background
+local function open_dir(background)
+  local cwd = vim.fn.getcwd()
+  local bufnr = open_terminal_win(dir_to_buf[cwd], background)
+  dir_to_buf[cwd] = bufnr
 end
 
 local function toggle()
   if is_open() then
     close()
   elseif vim.v.count == 0 then
-    local cwd = vim.fn.getcwd(0)
-    local bufnr = open(dir_to_buf[cwd])
-    dir_to_buf[cwd] = bufnr
+    open_dir()
   else
-    local bufnr = open(global_bufs[vim.v.count])
+    local bufnr = open_terminal_win(global_bufs[vim.v.count])
     global_bufs[vim.v.count] = bufnr
   end
 end
 
 vim.keymap.set({ "n", "t" }, [[<C-\>]], toggle, { desc = "Toggle floating terminal" })
+
+-- preload the default terminal
+vim.defer_fn(function() open_dir(true) end, 1000)
+
+vim.api.nvim_create_autocmd("DirChanged", {
+  desc = "Preload a terminal for the new directory",
+  pattern = "*",
+  group = aug,
+  callback = function() open_dir(true) end,
+})
