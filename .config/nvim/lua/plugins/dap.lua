@@ -66,9 +66,19 @@ return {
           },
         },
       })
+      local function close()
+        dapui.close()
+        require("nvim-dap-virtual-text").refresh()
+      end
       dap.listeners.after.event_initialized["dapui_config"] = function() dapui.open() end
-      dap.listeners.before.event_terminated["dapui_config"] = function() dapui.close() end
-      dap.listeners.before.event_exited["dapui_config"] = function() dapui.close() end
+      dap.listeners.before.event_terminated["dapui_config"] = close
+      dap.listeners.before.event_exited["dapui_config"] = close
+      dap.listeners.on_session["dapui_config"] = function(_, new_session)
+        if not new_session then
+          close()
+        end
+      end
+
       require("overseer").enable_dap(true)
     end,
   },
