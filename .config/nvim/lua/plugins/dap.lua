@@ -8,14 +8,17 @@ return {
       { "stevearc/overseer.nvim" },
     },
     keys = {
-      { "<leader>dc", "<cmd>lua require'dap'.continue()<CR>", mode = "n", desc = "[D]ebug [C]ontinue" },
-      { "<leader>dj", "<cmd>lua require'dap'.step_over()<CR>", mode = "n", desc = "[D]ebug step over" },
-      { "<leader>di", "<cmd>lua require'dap'.step_into()<CR>", mode = "n", desc = "[D]ebug step [I]nto" },
-      { "<leader>do", "<cmd>lua require'dap'.step_out()<CR>", mode = "n", desc = "[D]ebug step [O]ut" },
-      { "<leader>dl", "<cmd>lua require'dap'.run_last()<CR>", mode = "n", desc = "[D]ebug run [L]ast" },
-      { "<leader>dr", "<cmd>lua require'dap'.repl.open()<CR>", mode = "n", desc = "[D]ebug open [R]epl" },
-      { "<leader>dq", "<cmd>lua require'dap'.terminate()<CR>", mode = "n", desc = "[D]ebug [Q]uit" },
-      { "<leader>db", "<cmd>lua require'dap'.toggle_breakpoint()<CR>", mode = "n", desc = "[D]ebug set [B]reakpoint" },
+      { "<leader>dc", "<cmd>lua require'dap'.continue()<CR>", desc = "[D]ebug [C]ontinue" },
+      { "<leader>dj", "<cmd>lua require'dap'.step_over()<CR>", desc = "[D]ebug step over" },
+      { "<leader>di", "<cmd>lua require'dap'.step_into()<CR>", desc = "[D]ebug step [I]nto" },
+      { "<leader>do", "<cmd>lua require'dap'.step_out()<CR>", desc = "[D]ebug step [O]ut" },
+      { "<leader>dl", "<cmd>lua require'dap'.run_last()<CR>", desc = "[D]ebug run [L]ast" },
+      { "<leader>dr", "<cmd>lua require'dap'.repl.open()<CR>", desc = "[D]ebug open [R]epl" },
+      { "<leader>dq", "<cmd>lua require'dap'.terminate()<CR>", desc = "[D]ebug [Q]uit" },
+      { "<leader>db", "<cmd>lua require'dap'.toggle_breakpoint()<CR>", desc = "[D]ebug set [B]reakpoint" },
+      { "<leader>dp", "<cmd>lua require'dap'.down()<CR>", desc = "[D]ebug down in stack" },
+      { "<leader>dn", "<cmd>lua require'dap'.up()<CR>", desc = "[D]ebug up in stack" },
+      { "<leader>dh", "<cmd>lua require'dap'.run_to_cursor()<CR>", desc = "[D]ebug run to [H]ere" },
       {
         "<leader>dB",
         function()
@@ -25,7 +28,6 @@ return {
             end
           end)
         end,
-        mode = "n",
         desc = "[D]ebug set conditional [B]reakpoint",
       },
     },
