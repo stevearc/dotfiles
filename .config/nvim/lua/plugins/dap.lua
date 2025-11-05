@@ -1,5 +1,14 @@
 return {
   {
+    "stevearc/resession.nvim",
+    lazy = true,
+    opts = {
+      extensions = {
+        dap = {},
+      },
+    },
+  },
+  {
     "mfussenegger/nvim-dap",
     dependencies = {
       { "leoluz/nvim-dap-go", config = true },
