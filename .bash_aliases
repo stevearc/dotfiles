@@ -34,8 +34,6 @@ alias gg='git grep -I'
 alias pdfcat='gs -q -sPAPERSIZE=letter -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf'
 alias dua='du -had 1 | sort -rh'
 alias tm='tmux'
-alias kt='kitty +kitten'
-alias icat='kitty +kitten icat'
 alias dfh='df -h | grep -v tmpfs | grep -v snap'
 if [ $MAC ]; then
   alias alert='notify -c $? "$(history|tail -n1|sed -e '\''s/^[[:space:]]*[0-9]*[[:space:]]*//;s/[;&|][[:space:]]*alert$//'\'')"'
@@ -51,24 +49,13 @@ alias bp='bluepill'
 alias bpe='bluepill enter'
 alias sct='systemctl'
 alias scu='systemctl --user'
+alias nvim-dbs='rm -f ~/.cache/nvim/debug-server.pipe; gdb -ex run --args nvim --headless --listen ~/.cache/nvim/debug-server.pipe'
+alias nvim-dbc='nvim --remote-ui --server ~/.cache/nvim/debug-server.pipe'
 zlibd() (printf "\x1f\x8b\x08\x00\x00\x00\x00\x00" | cat - $@ | gzip -dc)
-alias mosh='mosh -6'
 if [ $MAC ]; then
   idof() {
     osascript -e "id of app \"$*\""
   }
-fi
-ash() {
-  autossh -t "$@" 'tmux -2 attach || tmux new'
-}
-sash() {
-  autossh -t "$@" 'sudo tmux -2 attach || sudo tmux new'
-}
-if command -v rg >/dev/null; then
-  alias ag='rg'
-  alias ack='rg'
-elif command -v ag >/dev/null; then
-  alias ack='ag'
 fi
 and() {
   [ $? = 0 ] && "$@"
