@@ -389,6 +389,16 @@ local ProfileRecording = {
   },
 }
 
+local DAPStatus = {
+  condition = function() return package.loaded.dap and require("dap").session() ~= nil end,
+  provider = function() return " " .. require("dap").status() end,
+  hl = "Debug",
+  update = {
+    "User",
+    pattern = "DapProgressUpdate",
+  },
+}
+
 return {
   ViMode = ViMode,
   Ruler = Ruler,
@@ -408,4 +418,5 @@ return {
   stl_static = stl_static,
   ConjoinStatus = ConjoinStatus,
   ProfileRecording = ProfileRecording,
+  DAPStatus = DAPStatus,
 }

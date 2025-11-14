@@ -27,6 +27,7 @@ return {
         comp.lpad(comp.ProfileRecording),
         comp.lpad(comp.LSPActive),
         comp.lpad(comp.Diagnostics),
+        comp.lpad(comp.DAPStatus),
         require("statusline").left_components,
         { provider = "%=" },
         require("statusline").right_components,
