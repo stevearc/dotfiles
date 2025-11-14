@@ -68,11 +68,10 @@ install-language-js() {
 }
 
 install-language-lua() {
-  hascmd luacheck || brew install luacheck
   hascmd stylua || brew install stylua
 
   # Install lua language server
-  if [ ! -d ~/.local/share/nvim/language-servers/lua-language-server/bin/lua-language-server ]; then
+  if [ ! -e ~/.local/share/nvim/language-servers/lua-language-server/bin/lua-language-server ]; then
     mkdir -p ~/.local/share/nvim/language-servers/lua-language-server
     pushd ~/.local/share/nvim/language-servers/lua-language-server/
     local latest_version
@@ -84,6 +83,7 @@ install-language-lua() {
 }
 
 dc-install-yarn() {
+  hascmd node || brew install node
   hascmd yarn || brew install yarn
 }
 
@@ -99,6 +99,8 @@ install-language-bash() {
 DC_INSTALL_NERD_FONT_DOC="Font with icons"
 dc-install-nerd-font() {
   pushd /Library/Fonts/ >/dev/null
-  fetch-nerd-font
+  if [ ! -e 'Ubuntu Mono Nerd Font Complete.ttf' ]; then
+    fetch-nerd-font
+  fi
   popd >/dev/null
 }

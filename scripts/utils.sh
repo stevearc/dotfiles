@@ -68,7 +68,7 @@ link() {
   if [ $LINUX ]; then
     ln -sfT "$source" "$dest"
   elif [ $MAC ]; then
-    if [ -e "$dest" ]; then
+    if [ -L "$dest" ] || [ -e "$dest" ]; then
       rm -rf "$dest"
     fi
     ln -s "$source" "$dest"
