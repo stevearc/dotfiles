@@ -1,10 +1,8 @@
 return {
   {
     "nvim-treesitter/nvim-treesitter",
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter-textobjects",
-      "nvim-treesitter/nvim-treesitter-context",
-    },
+    branch = "main",
+    build = ":TSUpdate",
     opts = {
       ensure_installed = {
         bash = true,
@@ -20,147 +18,121 @@ return {
       },
     },
     config = function(_, opts)
-      local queries = require("nvim-treesitter.query")
-      local parsers = require("nvim-treesitter.parsers")
-
+      if vim.fn.executable("tree-sitter") == 0 then
+        vim.notify("[nvim-treesitter] Missing tree-sitter-cli", vim.log.levels.WARN)
+        return
+      end
+      local langs = {}
+      for k, v in pairs(opts.ensure_installed) do
+        if v then
+          table.insert(langs, k)
+        end
+      end
+      require("nvim-treesitter").install(langs)
       local disable_max_size = 2000000 -- 2MB
 
-      local function should_disable(lang, bufnr)
-        local size = vim.fn.getfsize(vim.api.nvim_buf_get_name(bufnr or 0))
-        -- size will be -2 if it doesn't fit into a number
-        if size > disable_max_size or size == -2 then
-          return true
-        end
-        -- The zig parser is insanely slow for some reason
-        if lang == "zig" then
-          return true
-        end
-        return false
-      end
-
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = vim.tbl_keys(opts.ensure_installed),
-        ignore_install = { "supercollider", "phpdoc" },
-        auto_install = true,
-        highlight = {
-          enable = true,
-          disable = should_disable,
-        },
-        indent = {
-          enable = true,
-          disable = function(lang, bufnr)
-            if lang == "lua" or lang == "python" then
+      vim.api.nvim_create_autocmd("FileType", {
+        desc = "Automatically install treesitter parser",
+        pattern = "*",
+        group = vim.api.nvim_create_augroup("treesitter_user_config", {}),
+        callback = function(args)
+          if vim.bo[args.buf].buftype == "" then
+            local size = vim.fn.getfsize(vim.api.nvim_buf_get_name(args.buf))
+            -- size will be -2 if it doesn't fit into a number
+            if size > disable_max_size or size == -2 then
               return true
-            else
-              return should_disable(lang, bufnr)
             end
-          end,
-        },
-        matchup = {
-          enable = true,
-          disable = should_disable,
-        },
-        textobjects = {
-          select = {
-            enable = true,
-            disable = should_disable,
-            lookahead = true,
-            keymaps = {
-              ["af"] = "@function.outer",
-              ["if"] = "@function.inner",
-              ["ac"] = "@class.outer",
-              ["ic"] = "@class.inner",
-              ["aa"] = "@parameter.outer",
-              ["ia"] = "@parameter.inner",
-              ["ab"] = "@block.outer",
-              ["ib"] = "@block.inner",
-              ["al"] = "@loop.outer",
-              ["il"] = "@loop.inner",
-              ["ai"] = "@conditional.outer",
-              ["ii"] = "@conditional.inner",
-            },
-            include_surrounding_whitespace = false,
-          },
-          move = {
-            enable = true,
-            set_jumps = true,
-            goto_next_start = {
-              ["]f"] = "@function.outer",
-              ["]c"] = "@class.outer",
-              ["]a"] = "@parameter.inner",
-              ["]b"] = "@block.outer",
-              ["]l"] = "@loop.outer",
-              ["]i"] = "@conditional.outer",
-            },
-            goto_next_end = {
-              ["]F"] = "@function.outer",
-              ["]C"] = "@class.outer",
-              ["]A"] = "@parameter.inner",
-              ["]B"] = "@block.outer",
-              ["]L"] = "@loop.outer",
-              ["]I"] = "@conditional.outer",
-            },
-            goto_previous_start = {
-              ["[f"] = "@function.outer",
-              ["[c"] = "@class.outer",
-              ["[a"] = "@parameter.inner",
-              ["[b"] = "@block.outer",
-              ["[l"] = "@loop.outer",
-              ["[i"] = "@conditional.outer",
-            },
-            goto_previous_end = {
-              ["[F"] = "@function.outer",
-              ["[C"] = "@class.outer",
-              ["[A"] = "@parameter.inner",
-              ["[B"] = "@block.outer",
-              ["[L"] = "@loop.outer",
-              ["[I"] = "@conditional.outer",
-            },
-          },
-        },
-      })
+          end
 
-      local function set_ts_win_defaults()
-        local parser_name = parsers.get_buf_lang()
-        if parsers.has_parser(parser_name) and not should_disable(parser_name, 0) then
-          local ok, has_folds = pcall(queries.get_query, parser_name, "folds")
-          if ok and has_folds then
-            if vim.wo.foldmethod == "manual" then
-              vim.api.nvim_win_set_var(0, "ts_prev_foldmethod", vim.wo.foldmethod)
-              vim.api.nvim_win_set_var(0, "ts_prev_foldexpr", vim.wo.foldexpr)
-              vim.wo.foldmethod = "expr"
-              vim.wo.foldexpr = "nvim_treesitter#foldexpr()"
+          local lang = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
+          require("nvim-treesitter").install(lang):await(function()
+            local ts_supported = pcall(vim.treesitter.start, args.buf)
+            if ts_supported then
+              vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
             end
-            return
-          end
-        end
-        if vim.wo.foldexpr == "nvim_treesitter#foldexpr()" then
-          local ok, prev_foldmethod = pcall(vim.api.nvim_win_get_var, 0, "ts_prev_foldmethod")
-          if ok and prev_foldmethod then
-            vim.api.nvim_win_del_var(0, "ts_prev_foldmethod")
-            vim.wo.foldmethod = prev_foldmethod
-          end
-          local ok2, prev_foldexpr = pcall(vim.api.nvim_win_get_var, 0, "ts_prev_foldexpr")
-          if ok2 and prev_foldexpr then
-            vim.api.nvim_win_del_var(0, "ts_prev_foldexpr")
-            vim.wo.foldexpr = prev_foldexpr
-          end
+          end)
+        end,
+      })
+    end,
+  },
+  {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    branch = "main",
+    init = function() vim.g.no_plugin_maps = true end,
+    opts = {
+      select = {
+        lookahead = true,
+      },
+      move = {
+        set_jumps = true,
+      },
+    },
+    config = function(_, opts)
+      require("nvim-treesitter-textobjects").setup(opts)
+      local keymaps = {
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["ac"] = "@class.outer",
+        ["ic"] = "@class.inner",
+        ["aa"] = "@parameter.outer",
+        ["ia"] = "@parameter.inner",
+        ["ab"] = "@block.outer",
+        ["ib"] = "@block.inner",
+        ["al"] = "@loop.outer",
+        ["il"] = "@loop.inner",
+        ["ai"] = "@conditional.outer",
+        ["ii"] = "@conditional.inner",
+      }
+      for k, v in pairs(keymaps) do
+        vim.keymap.set(
+          { "x", "o" },
+          k,
+          function() require("nvim-treesitter-textobjects.select").select_textobject(v, "textobjects") end
+        )
+      end
+      local move_maps = {
+        goto_next_start = {
+          ["]f"] = "@function.outer",
+          ["]c"] = "@class.outer",
+          ["]a"] = "@parameter.inner",
+          ["]b"] = "@block.outer",
+          ["]l"] = "@loop.outer",
+          ["]i"] = "@conditional.outer",
+        },
+        goto_next_end = {
+          ["]F"] = "@function.outer",
+          ["]C"] = "@class.outer",
+          ["]A"] = "@parameter.inner",
+          ["]B"] = "@block.outer",
+          ["]L"] = "@loop.outer",
+          ["]I"] = "@conditional.outer",
+        },
+        goto_previous_start = {
+          ["[f"] = "@function.outer",
+          ["[c"] = "@class.outer",
+          ["[a"] = "@parameter.inner",
+          ["[b"] = "@block.outer",
+          ["[l"] = "@loop.outer",
+          ["[i"] = "@conditional.outer",
+        },
+        goto_previous_end = {
+          ["[F"] = "@function.outer",
+          ["[C"] = "@class.outer",
+          ["[A"] = "@parameter.inner",
+          ["[B"] = "@block.outer",
+          ["[L"] = "@loop.outer",
+          ["[I"] = "@conditional.outer",
+        },
+      }
+      for method, maps in pairs(move_maps) do
+        for key, object in pairs(maps) do
+          vim.keymap.set(
+            { "n", "x", "o" },
+            key,
+            function() require("nvim-treesitter-textobjects.move")[method](object, "textobjects") end
+          )
         end
       end
-
-      local aug = vim.api.nvim_create_augroup("StevearcTSConfig", {})
-      vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter" }, {
-        desc = "Set treesitter defaults on win enter",
-        pattern = "*",
-        callback = set_ts_win_defaults,
-        group = aug,
-      })
-      vim.api.nvim_create_autocmd("ColorScheme", {
-        desc = "nvim-treesitter-context highlights",
-        pattern = "*",
-        command = "highlight link TreesitterContextLineNumber NormalFloat",
-        group = aug,
-      })
     end,
   },
   {
@@ -172,5 +144,15 @@ return {
         return vim.bo[bufnr].filetype ~= "zig"
       end,
     },
+    config = function(_, opts)
+      require("treesitter-context").setup(opts)
+      local aug = vim.api.nvim_create_augroup("StevearcTSConfig", {})
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        desc = "nvim-treesitter-context highlights",
+        pattern = "*",
+        command = "highlight link TreesitterContextLineNumber NormalFloat",
+        group = aug,
+      })
+    end,
   },
 }
