@@ -36,18 +36,6 @@ return {
     config = true,
   },
   {
-    "stevearc/pair-ls.nvim",
-    cmd = { "Pair", "PairConnect" },
-    config = true,
-    opts = {
-      cmd = { "pair-ls", "lsp" },
-      -- cmd = { "pair-ls", "lsp", "-port", "8080" },
-      -- cmd = { "pair-ls", "lsp", "-port", "8081" },
-      -- cmd = { "pair-ls", "lsp", "-signal", "wss://localhost:8080" },
-      -- cmd = { "pair-ls", "lsp", "-forward", "wss://localhost:8080" },
-    },
-  },
-  {
     "nvim-tree/nvim-web-devicons",
     cond = vim.g.nerd_font,
     opts = { default = true },

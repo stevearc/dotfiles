@@ -19,9 +19,6 @@
 [submodule "vimplugins/vim-vscode-snippets"]
 	path = vimplugins/vim-vscode-snippets
 	url = https://github.com/stevearc/vim-vscode-snippets.git
-[submodule "vimplugins/pair-ls.nvim"]
-	path = vimplugins/pair-ls.nvim
-	url = https://github.com/stevearc/pair-ls.nvim.git
 [submodule "vimplugins/overseer.nvim"]
 	path = vimplugins/overseer.nvim
 	url = https://github.com/stevearc/overseer.nvim.git
