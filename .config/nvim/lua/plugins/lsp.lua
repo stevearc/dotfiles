@@ -1,6 +1,7 @@
 local p = require("p")
 
 return {
+  { "j-hui/fidget.nvim", opts = {} },
   {
     "neovim/nvim-lspconfig",
     event = "VeryLazy",
