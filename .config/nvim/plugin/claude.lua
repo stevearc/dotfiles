@@ -69,7 +69,7 @@ local function start_proc(prompt)
     prompt = prompt,
     bufnr = bufnr,
     target_lnum = vim.api.nvim_win_get_cursor(0)[1],
-    messages = { "Starting claude..." },
+    messages = { prompt, "Starting claude..." },
   }, { __index = ClaudeProcess })
 
   vim.bo.modifiable = false
@@ -141,10 +141,14 @@ function ClaudeProcess:toggle_messages_win()
     title_pos = "center",
   })
 
-  vim.bo[self.messages_buf].filetype = "claude_messages"
-  local lines = { self.prompt }
+  vim.bo[self.messages_buf].filetype = "markdown"
+  vim.b[self.messages_buf].is_claude_messages = true
+  local lines = {}
   for _, msg in ipairs(self.messages) do
-    table.insert(lines, "")
+    if #lines > 0 then
+      table.insert(lines, "")
+      table.insert(lines, "---")
+    end
     vim.list_extend(lines, vim.split(msg, "\n"))
   end
   vim.api.nvim_buf_set_lines(self.messages_buf, 0, -1, false, lines)
@@ -176,8 +180,7 @@ end
 function ClaudeProcess:_on_msg(msg)
   table.insert(self.messages, msg)
   if self.messages_buf and vim.api.nvim_buf_is_valid(self.messages_buf) then
-    local new_lines = vim.split(msg, "\n")
-    table.insert(new_lines, 1, "")
+    local new_lines = vim.list_extend({ "", "---" }, vim.split(msg, "\n"))
     local nlines = vim.api.nvim_buf_line_count(self.messages_buf)
     vim.bo[self.messages_buf].modifiable = true
     vim.api.nvim_buf_set_lines(self.messages_buf, nlines, nlines, false, new_lines)
@@ -295,9 +298,9 @@ local actions = {
   },
   toggle_messages = {
     desc = "Toggle messages history",
-    cond = function() return procs[vim.api.nvim_get_current_buf()] ~= nil or vim.bo.filetype == "claude_messages" end,
+    cond = function() return procs[vim.api.nvim_get_current_buf()] ~= nil or vim.b.is_claude_messages end,
     callback = function()
-      if vim.bo.filetype == "claude_messages" then
+      if vim.b.is_claude_messages then
         vim.cmd.quit()
       else
         procs[vim.api.nvim_get_current_buf()]:toggle_messages_win()
