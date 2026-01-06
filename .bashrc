@@ -58,6 +58,9 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 if [ -e "$HOME/.yarn/bin" ]; then
   export PATH="$PATH:$HOME/.yarn/bin"
 fi
+if command -v npm >/dev/null 2>&1; then
+  PATH="$(npm prefix -g)/bin:$PATH"
+fi
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.

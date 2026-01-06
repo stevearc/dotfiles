@@ -27,7 +27,7 @@ install-language-python() {
   sudo pacman -Sq --noconfirm python ipython
   if ! hascmd pyright; then
     dc-install-nvm
-    yarn global add -s pyright
+    npm install -g pyright
   fi
   mkdir -p ~/.local/bin
   pushd ~/.local/bin >/dev/null
@@ -47,7 +47,7 @@ install-language-misc() {
 install-language-bash() {
   if ! hascmd bash-language-server; then
     dc-install-nvm
-    yarn global add bash-language-server
+    npm install -g bash-language-server
   fi
   hascmd shfmt || sudo pacman -Syq --noconfirm shfmt
 }

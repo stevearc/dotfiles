@@ -50,21 +50,21 @@ dc-install-neovim() {
 
 install-language-python() {
   if ! hascmd pyright; then
-    dc-install-yarn
-    yarn global add pyright
+    dc-install-node
+    npm install -g pyright
   fi
 }
 
 install-language-misc() {
-  dc-install-yarn
-  yarn global add yaml-language-server
-  yarn global add vscode-langservers-extracted
-  yarn global add vim-language-server
+  dc-install-node
+  npm install -g yaml-language-server
+  npm install -g vscode-langservers-extracted
+  npm install -g vim-language-server
 }
 
 install-language-js() {
-  dc-install-yarn
-  hascmd typescript-language-server || yarn global add typescript-language-server
+  dc-install-node
+  hascmd typescript-language-server || npm install -g typescript-language-server
 }
 
 install-language-lua() {
@@ -82,15 +82,15 @@ install-language-lua() {
   fi
 }
 
-dc-install-yarn() {
+dc-install-node() {
   hascmd node || brew install node
   hascmd yarn || brew install yarn
 }
 
 install-language-bash() {
   if ! hascmd bash-language-server; then
-    dc-install-yarn
-    yarn global add bash-language-server
+    dc-install-node
+    npm install -g bash-language-server
   fi
   hascmd shfmt || brew install shfmt
 }

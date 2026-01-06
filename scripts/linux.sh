@@ -35,9 +35,6 @@ dc-install-nvm() {
   node_version=$(nvm ls-remote | tail -n 1 | awk '{print $1}')
   nvm ls "$node_version" || nvm install --default "$node_version"
   nvm use default
-  if ! hascmd yarn; then
-    npm install -g yarn
-  fi
 }
 
 DC_INSTALL_BALENA_DOC="Balena Etcher for creating bootable drives"
@@ -50,7 +47,7 @@ dc-install-balena() {
 
 install-language-vim() {
   dc-install-nvm
-  yarn global add -s vim-language-server
+  npm install -g -s vim-language-server
   install-language-python
   if ! hascmd vint; then
     pushd ~/.local/bin
@@ -146,7 +143,7 @@ install-language-go() {
 
 install-language-js() {
   dc-install-nvm
-  yarn global add -s flow-bin typescript-language-server
+  npm install -g -s flow-bin typescript-language-server
 }
 
 # shellcheck disable=SC2034
@@ -206,7 +203,7 @@ install-lua-ls() {
 
 install-misc-languages() {
   dc-install-nvm
-  yarn global add -s bash-language-server vscode-langservers-extracted yaml-language-server
+  npm install -g -s bash-language-server vscode-langservers-extracted yaml-language-server
 }
 
 setup-ufw() {

@@ -33,7 +33,7 @@ install-language-python() {
   if [ "$1" != "--bare" ]; then
     if ! hascmd pyright; then
       dc-install-nvm
-      yarn global add -s pyright
+      npm install -g -s pyright
     fi
     pushd ~/.local/bin
     hascmd isort || "$HERE/scripts/make_standalone.py" isort
@@ -64,7 +64,7 @@ install-language-misc() {
 install-language-bash() {
   if ! hascmd bash-language-server; then
     dc-install-nvm
-    yarn global add bash-language-server
+    npm install -g bash-language-server
   fi
   if ! hascmd shfmt; then
     install-language-go
