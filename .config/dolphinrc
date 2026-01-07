@@ -13,7 +13,6 @@ Places Icons Static Size=22
 
 [MainWindow]
 MenuBar=Disabled
-ToolBarsMovable=Disabled
 
 [PreviewSettings]
 Plugins=svgthumbnail,fontthumbnail,exrthumbnail,windowsexethumbnail,cursorthumbnail,imagethumbnail,jpegthumbnail,kraorathumbnail,djvuthumbnail,opendocumentthumbnail,directorythumbnail,appimagethumbnail,audiothumbnail,windowsimagethumbnail,comicbookthumbnail,ebookthumbnail
