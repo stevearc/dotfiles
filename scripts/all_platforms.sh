@@ -99,6 +99,7 @@ configure-git() {
   git config --global alias.ls '!python ~/.local/share/gitstack.py list'
   git config --global alias.srom '!python ~/.local/share/gitstack.py rebase origin/$(git main)'
   git config --global alias.skd '!python ~/.local/share/gitstack.py --log-level debug'
+  git config --global alias.skri '!python ~/.local/share/gitstack.py rewrite'
   git config --global alias.skt '!python ~/dotfiles/gitstack/test_scenarios.py'
   git config --global alias.up '!bash ~/.githelpers update'
   git config --global alias.mine '!git log --author=$(git config --get user.email) --pretty=medium --compact-summary'
