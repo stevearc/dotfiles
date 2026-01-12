@@ -27,7 +27,7 @@ keyboard-shortcuts() {
 # shellcheck disable=SC2034
 DC_INSTALL_COMMON_DOC="Common unix utilities like tmux, netcat, etc"
 dc-install-common() {
-  brew install tmux karabiner-elements starship wget
+  brew install tmux karabiner-elements starship wget git-delta
   # Also needed to download https://share.esdf.io/uKVV63N0hA/ (tmux.terminfo)
   # and run tic -x tmux.terminfo
   setup-configs

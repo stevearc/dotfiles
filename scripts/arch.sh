@@ -10,7 +10,7 @@ platform-setup() {
   has-checkpoint platform-setup && return
 
   sudo pacman -Syuq --noconfirm
-  sudo pacman -Sq --noconfirm binutils fakeroot curl wget clang base-devel git
+  sudo pacman -Sq --noconfirm binutils fakeroot curl wget clang base-devel git git-delta
   if ! hascmd yay; then
     install-language-go
     pushd /tmp

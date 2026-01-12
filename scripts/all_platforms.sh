@@ -105,6 +105,13 @@ configure-git() {
   git config --global alias.mine '!git log --author=$(git config --get user.email) --pretty=medium --compact-summary'
   git config --global alias.touch 'commit --amend --reset-author --no-edit'
 
+  if hascmd delta; then
+    git config --global core.pager delta
+    git config --global interactive.diffFilter 'delta --color-only'
+    git config --global delta.navigate true
+    git config --global merge.conflictStyle zdiff3
+  fi
+
   git config --global color.decorate.HEAD 'bold red'
   git config --global color.decorate.branch green
   git config --global color.decorate.remoteBranch cyan
