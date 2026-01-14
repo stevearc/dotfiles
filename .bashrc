@@ -116,10 +116,6 @@ sourcedir ~/.bash_env
 sourcedir ~/.bash.d
 sourcedir ~/.bash.completion
 
-if [ -f ~/.yarn/bin ]; then
-  export PATH="$HOME/.yarn/bin:$PATH"
-fi
-
 if command -v fzf >/dev/null; then
   eval "$(fzf --bash)"
 fi
