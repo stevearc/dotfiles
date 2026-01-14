@@ -123,9 +123,16 @@ install-language-zig() {
 }
 
 install-language-go() {
-  if [ ! -e ~/.local/share/go ]; then
+  if ! hascmd go; then
     pushd /tmp
-    local pkg="go1.23.1.linux-amd64.tar.gz"
+    local arch="$(uname -p)"
+    local suffix
+    if [ "$arch" = "aarch64" ]; then
+      suffix="arm64"
+    else
+      suffix="amd64"
+    fi
+    local pkg="go1.23.1.linux-${suffix}.tar.gz"
     if [ ! -e "$pkg" ]; then
       wget -O "$pkg" "https://golang.org/dl/$pkg"
     fi
