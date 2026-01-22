@@ -351,3 +351,9 @@ end
 vim.keymap.set("n", "<leader>ii", choose_action, {
   desc = "Select and run claude action",
 })
+vim.keymap.set(
+  "n",
+  "<leader>yf",
+  function() vim.fn.setreg("+", vim.fn.expand("%:~")) end,
+  { desc = "[Y]ank [F]ilename" }
+)
