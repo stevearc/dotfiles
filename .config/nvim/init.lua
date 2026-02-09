@@ -312,7 +312,7 @@ vim.api.nvim_create_autocmd({ "CursorMovedI", "InsertLeave" }, {
 vim.api.nvim_create_autocmd("BufNew", {
   desc = "Edit files with :line at the end",
   pattern = "*",
-  group = aug,
+  group = vim.api.nvim_create_augroup("StevearcOmniEdit", {}),
   callback = function(args)
     local bufname = vim.api.nvim_buf_get_name(args.buf)
     local root, line = bufname:match("^(.*):(%d+)$")
