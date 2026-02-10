@@ -30,6 +30,13 @@ local function open_float(bufnr)
   })
 end
 
+local function leave_visual_mode()
+  local mode = vim.api.nvim_get_mode().mode
+  if vim.startswith(string.lower(mode), "v") then
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
+  end
+end
+
 function ClaudeProcess:_cleanup()
   if self.timer then
     self.timer:stop()
@@ -110,6 +117,19 @@ local function get_claude()
 
   _procs_by_tab[vim.api.nvim_get_current_tabpage()] = self
   return self
+end
+
+---@return integer?
+local function get_float_win()
+  local c = get_claude()
+  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    if vim.api.nvim_win_get_buf(win) == c.bufnr then
+      local config = vim.api.nvim_win_get_config(win)
+      if config.relative ~= "" then
+        return win
+      end
+    end
+  end
 end
 
 ---@return boolean
@@ -266,44 +286,22 @@ local actions = {
       local location = get_location()
       local c = get_claude()
       c:send_text(location .. " ")
-    end,
-  },
-  toggle_split = {
-    desc = "Open claude buffer in a vertical split",
-    callback = function()
-      local c = get_claude()
-      -- Check if there's already a window showing the claude buffer
-      for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-        if vim.api.nvim_win_get_buf(win) == c.bufnr then
-          vim.api.nvim_win_close(win, false)
-          return
-        end
-      end
-
-      vim.cmd.vsplit()
-      vim.api.nvim_win_set_buf(0, c.bufnr)
-      vim.wo.winfixwidth = true
+      leave_visual_mode()
+      open_float(c.bufnr)
       vim.cmd.startinsert()
     end,
   },
   toggle_float = {
     desc = "Open claude buffer in a floating window",
     callback = function()
-      local c = get_claude()
-      -- Check if there's already a floating window showing the claude buffer
-      for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-        if vim.api.nvim_win_get_buf(win) == c.bufnr then
-          local config = vim.api.nvim_win_get_config(win)
-          if config.relative ~= "" then
-            vim.api.nvim_win_close(win, false)
-            return
-          end
-        end
+      local winid = get_float_win()
+      if winid then
+        vim.api.nvim_win_close(winid, true)
+      else
+        local c = get_claude()
+        open_float(c.bufnr)
+        vim.cmd.startinsert()
       end
-
-      -- Create a floating window
-      open_float(c.bufnr)
-      vim.cmd.startinsert()
     end,
   },
   autofill = {
@@ -311,6 +309,7 @@ local actions = {
     mode = { "n", "v" },
     callback = function()
       local location = get_location({ context = "line" })
+      leave_visual_mode()
       local c = get_claude()
       c:send_text(
         string.format("Implement the missing code in %s. No need to run tests or format the code.", location),
@@ -335,7 +334,6 @@ end
 map_action("<leader>if", "autofill")
 map_action("<leader>ic", "send_location")
 map_action("<leader>iw", "toggle_float")
-map_action("<leader>il", "toggle_split")
 
 ---Show a menu to select and execute a Claude action
 local function choose_action()
