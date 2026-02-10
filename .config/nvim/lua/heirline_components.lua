@@ -399,6 +399,16 @@ local DAPStatus = {
   },
 }
 
+local ClaudeStatus = {
+  condition = function() return vim.t.claude_thinking end,
+  provider = function() return " " end,
+  hl = "DiagnosticOk",
+  update = {
+    "User",
+    pattern = "ClaudeStatus",
+  },
+}
+
 return {
   ViMode = ViMode,
   Ruler = Ruler,
@@ -419,4 +429,5 @@ return {
   ConjoinStatus = ConjoinStatus,
   ProfileRecording = ProfileRecording,
   DAPStatus = DAPStatus,
+  ClaudeStatus = ClaudeStatus,
 }

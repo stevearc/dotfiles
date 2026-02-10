@@ -31,6 +31,7 @@ return {
         require("statusline").left_components,
         { provider = "%=" },
         require("statusline").right_components,
+        comp.rpad(comp.ClaudeStatus),
         comp.rpad(comp.ConjoinStatus),
         comp.rpad(comp.ArduinoStatus),
         comp.rpad(comp.SessionName),
