@@ -55,5 +55,35 @@ return {
         end
       end,
     },
+    init = function()
+      local notifier = require("overseer.notifier").new({
+        system = "unfocused",
+        system_notify = function(message, level)
+          local has_stripe_utils, stripe_utils = pcall(require, "stripe_utils")
+          if not has_stripe_utils or not stripe_utils.is_remote_devbox() then
+            return false
+          end
+          local conf = stripe_utils.get_remote_conf()
+          message = string.format("[%s] %s", conf["box-name"], message)
+          stripe_utils.slack_notify(message)
+        end,
+      })
+
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "ClaudeStatus",
+        desc = "Send system notifications when Claude is done",
+        group = vim.api.nvim_create_augroup("StevearcClaude", {}),
+        callback = function(arg)
+          local thinking = arg.data.thinking
+          if thinking then
+            return
+          end
+          local tab = arg.data.tab
+          local cwd = vim.fs.basename(vim.fn.getcwd(-1, tab))
+          local message = string.format("Claude awaiting input in %s", cwd)
+          notifier:notify(message, vim.log.levels.INFO)
+        end,
+      })
+    end,
   },
 }

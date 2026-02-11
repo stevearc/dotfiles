@@ -52,7 +52,9 @@ function ClaudeProcess:_cleanup()
     self.timer:close()
     self.timer = nil
   end
-  vim.t[self.tab].claude_thinking = nil
+  if vim.api.nvim_tabpage_is_valid(self.tab) then
+    vim.t[self.tab].claude_thinking = nil
+  end
 end
 
 function ClaudeProcess:terminate()
@@ -175,9 +177,6 @@ function ClaudeProcess:_set_thinking(thinking)
       thinking = thinking,
     },
   })
-  if not thinking then
-    vim.notify("Claude is finished")
-  end
 end
 
 ---@param text string
