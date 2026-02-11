@@ -75,8 +75,8 @@ return {
     },
     init = function() vim.cmd.cnoreabbrev("OS OverseerShell") end,
     config = function(_, opts)
-      local partial = opts.wrap_builtins.partial_condition
-      opts.wrap_builtins.condition = function(cmd, caller, opts)
+      local partial = opts.experimental_wrap_builtins.partial_condition
+      opts.experimental_wrap_builtins.condition = function(cmd, caller, opts)
         for _, v in pairs(partial) do
           if not v(cmd, caller, opts) then
             return false
