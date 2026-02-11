@@ -9,12 +9,42 @@ local M = {}
 ---@field tab integer
 ---@field initialized boolean
 ---@field thinking boolean
----@field private timer uv.uv_timer_t
+---@field private timer? uv.uv_timer_t
 ---@field private command_buffer {[1]: string, [2]: nil|boolean}
+---@field private last_output_time number
 local ClaudeProcess = {}
 
 ---@type table<integer, ClaudeProcess>
 local _procs_by_tab = {}
+
+local _initialized = false
+local _last_keypress_time = 0
+
+local function _setup_global_handlers()
+  if _initialized then
+    return
+  end
+  _initialized = true
+
+  _last_keypress_time = vim.uv.now()
+
+  vim.on_key(function()
+    _last_keypress_time = vim.uv.now()
+  end)
+
+  vim.api.nvim_create_autocmd("TabClosed", {
+    group = vim.api.nvim_create_augroup("ClaudeTabClose", {}),
+    desc = "Clean up claude processes when tab is closed",
+    callback = vim.schedule_wrap(function()
+      for tid, p in pairs(_procs_by_tab) do
+        if not vim.api.nvim_tabpage_is_valid(tid) then
+          p:terminate()
+          _procs_by_tab[tid] = nil
+        end
+      end
+    end),
+  })
+end
 
 function ClaudeProcess:_cleanup()
   if self.timer then
@@ -45,6 +75,9 @@ M.get_proc = function()
     jid = vim.fn.jobstart({ "claude", "--permission-mode=acceptEdits", "--model", "opus" }, {
       pty = true,
       term = true,
+      on_stdout = vim.schedule_wrap(function()
+        self:_on_output()
+      end),
       on_exit = function()
         self:_cleanup()
       end,
@@ -58,40 +91,20 @@ M.get_proc = function()
   -- Set the scrollback to max
   vim.bo[bufnr].scrollback = 100000
 
-  local timer = assert(vim.uv.new_timer())
   ---@type ClaudeProcess
   self = setmetatable({
     bufnr = bufnr,
     jid = jid,
     initialized = false,
     thinking = false,
-    timer = timer,
     tab = vim.api.nvim_get_current_tabpage(),
     command_buffer = {},
+    last_output_time = vim.uv.now(),
   }, { __index = ClaudeProcess })
-  timer:start(
-    100,
-    100,
-    vim.schedule_wrap(function()
-      self:_render()
-    end)
-  )
 
   _procs_by_tab[vim.api.nvim_get_current_tabpage()] = self
   config.on_create(self)
-
-  vim.api.nvim_create_autocmd("TabClosed", {
-    group = vim.api.nvim_create_augroup("ClaudeTabClose", {}),
-    desc = "Clean up claude processes when tab is closed",
-    callback = vim.schedule_wrap(function()
-      for tid, p in pairs(_procs_by_tab) do
-        if not vim.api.nvim_tabpage_is_valid(tid) then
-          p:terminate()
-          _procs_by_tab[tid] = nil
-        end
-      end
-    end),
-  })
+  _setup_global_handlers()
 
   return self
 end
@@ -101,17 +114,10 @@ function ClaudeProcess:is_alive()
   return vim.fn.jobwait({ self.jid }, 0)[1] == -1
 end
 
----@return boolean
-function ClaudeProcess:_check_thinking()
-  for _, line in ipairs(vim.api.nvim_buf_get_lines(self.bufnr, -vim.o.lines, -1, false)) do
-    if vim.startswith(line, "✻ ") then
-      return true
-    end
-  end
-  return false
-end
+---Called when output is received from the job
+function ClaudeProcess:_on_output()
+  self.last_output_time = vim.uv.now()
 
-function ClaudeProcess:_render()
   if not self.initialized then
     local lines = vim.api.nvim_buf_get_lines(self.bufnr, 0, -1, false)
     for _, line in ipairs(lines) do
@@ -125,39 +131,53 @@ function ClaudeProcess:_render()
         end
       end
     end
+
+    return
   end
 
-  local thinking = self:_check_thinking()
-  if thinking ~= self.thinking then
-    if not thinking then
-      vim.notify("Claude is finished")
-    end
-    self.thinking = thinking
-    vim.api.nvim_exec_autocmds("User", {
-      pattern = "ClaudeStatus",
-      modeline = false,
-      data = {
-        tab = self.tab,
-        thinking = thinking,
-      },
-    })
+  if self.timer then
+    self.timer:stop()
+  else
+    self.timer = assert(vim.uv.new_timer())
   end
-  vim.t[self.tab].claude_thinking = thinking
+  self.timer:start(
+    1000,
+    0,
+    vim.schedule_wrap(function()
+      -- Set thinking=false after no output for 1 second
+      self:_set_thinking(false)
+    end)
+  )
+
+  if not self.thinking then
+    local now = vim.uv.now()
+    local time_since_keypress = now - _last_keypress_time
+    -- Set thinking=true when there is output in the claude window and it has been
+    -- 1 second since user pressed keys, OR user is in a different window
+    if time_since_keypress > 1000 or vim.api.nvim_get_current_buf() ~= self.bufnr then
+      self:_set_thinking(true)
+    end
+  end
 end
 
----Wait for claude to finish starting up
-function ClaudeProcess:_watch_for_init()
-  vim.wait(15000, function()
-    local lines = vim.api.nvim_buf_get_lines(self.bufnr, 0, -1, false)
-    for _, line in ipairs(lines) do
-      if vim.startswith(line, "❯ ") then
-        vim.notify("DEBUG: Found starting prompt")
-        self.initialized = true
-        return true
-      end
-    end
-    return false
-  end, 100)
+---@param thinking boolean
+function ClaudeProcess:_set_thinking(thinking)
+  if thinking == self.thinking then
+    return
+  end
+  self.thinking = thinking
+  vim.t[self.tab].claude_thinking = thinking
+  vim.api.nvim_exec_autocmds("User", {
+    pattern = "ClaudeStatus",
+    modeline = false,
+    data = {
+      tab = self.tab,
+      thinking = thinking,
+    },
+  })
+  if not thinking then
+    vim.notify("Claude is finished")
+  end
 end
 
 ---@param text string
