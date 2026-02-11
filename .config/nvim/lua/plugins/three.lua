@@ -27,6 +27,7 @@ return {
         allowlist = {
           vim.fn.stdpath("data") .. "/lazy",
           vim.fs.normalize("~/dotfiles/vimplugins/openai.nvim"),
+          vim.fs.normalize("~/dotfiles/vimplugins/claude.nvim"),
         },
         extra_allowlist = {},
         filter_dir = function(dir)

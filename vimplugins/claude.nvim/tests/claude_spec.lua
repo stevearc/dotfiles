@@ -1,0 +1,5 @@
+describe("claude", function()
+  it("loads", function()
+    require("claude")
+  end)
+end)

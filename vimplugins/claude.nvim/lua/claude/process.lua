@@ -1,12 +1,15 @@
+local config = require("claude.config")
+local window = require("claude.window")
+
 local M = {}
 
 ---@class (exact) ClaudeProcess
 ---@field bufnr integer
 ---@field jid integer
----@field private initialized boolean
----@field private thinking boolean
+---@field tab integer
+---@field initialized boolean
+---@field thinking boolean
 ---@field private timer uv.uv_timer_t
----@field private tab integer
 ---@field private command_buffer {[1]: string, [2]: nil|boolean}
 local ClaudeProcess = {}
 
@@ -55,36 +58,8 @@ M.get_proc = function()
   -- Set the scrollback to max
   vim.bo[bufnr].scrollback = 100000
 
-  -- TODO make these configurable
-  vim.keymap.set("t", "<C-i>", function()
-    vim.cmd.close()
-  end, { buffer = bufnr })
-
-  if Snacks then
-    vim.keymap.set("t", "@", function()
-      vim.api.nvim_win_close(0, true)
-      Snacks.picker.buffers({
-        layout = { preview = false },
-        on_close = function()
-          open_float(bufnr)
-          vim.api.nvim_feedkeys("i", "n", true)
-        end,
-        confirm = function(picker, item)
-          picker:close()
-          if item and item.file then
-            local filename = item.file
-            local cwd = vim.fn.getcwd()
-            if vim.startswith(filename, cwd) then
-              filename = filename:sub(cwd:len() + 2)
-            end
-            vim.api.nvim_chan_send(jid, "@" .. filename .. " ")
-          end
-        end,
-      })
-    end, { buffer = bufnr })
-  end
-
   local timer = assert(vim.uv.new_timer())
+  ---@type ClaudeProcess
   self = setmetatable({
     bufnr = bufnr,
     jid = jid,
@@ -103,6 +78,7 @@ M.get_proc = function()
   )
 
   _procs_by_tab[vim.api.nvim_get_current_tabpage()] = self
+  config.on_create(self)
 
   vim.api.nvim_create_autocmd("TabClosed", {
     group = vim.api.nvim_create_augroup("ClaudeTabClose", {}),
@@ -192,10 +168,11 @@ function ClaudeProcess:send_text(text, submit)
     return
   end
   pcall(vim.api.nvim_chan_send, self.jid, text)
+
   if submit then
     local winid
     if vim.api.nvim_get_current_buf() ~= self.bufnr then
-      winid = open_float(self.bufnr)
+      winid = window.open_float(self.bufnr)
     end
 
     local cr = "\r"
@@ -211,7 +188,6 @@ function ClaudeProcess:send_text(text, submit)
         vim.api.nvim_win_close(winid, true)
       end, 1000)
     end
-  else
   end
 end
 
