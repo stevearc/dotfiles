@@ -144,21 +144,20 @@ function ClaudeProcess:_on_output()
   end
 
   local user_typed_recently = vim.uv.now() - _last_keypress_time <= 1000
-  if self.thinking and not user_typed_recently then
-    -- Set thinking=false after no output for 1 second
-    self.timer:start(
-      1100,
-      0,
-      vim.schedule_wrap(function()
-        self:_set_thinking(false)
-      end)
-    )
-  end
-
-  if not self.thinking then
-    -- Set thinking=true when there is output in the claude window and it has been
-    -- 1 second since user pressed keys, OR user is in a different window
-    if not user_typed_recently or vim.api.nvim_get_current_buf() ~= self.bufnr then
+  local focused = vim.api.nvim_get_current_buf() == self.bufnr
+  if not user_typed_recently or not focused then
+    if self.thinking then
+      -- Set thinking=false after no output for 1 second
+      self.timer:start(
+        1100,
+        0,
+        vim.schedule_wrap(function()
+          self:_set_thinking(false)
+        end)
+      )
+    else
+      -- Set thinking=true when there is output in the claude window and it has been
+      -- 1 second since user pressed keys, OR user is in a different window
       self:_set_thinking(true)
     end
   end
