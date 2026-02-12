@@ -1,20 +1,6 @@
 local p = require("p")
 local ftplugin = p.require("ftplugin")
 
-local function run_file(cmd)
-  vim.cmd.update()
-  local task = require("overseer").new_task({
-    cmd = cmd,
-    components = { "unique", "default" },
-  })
-  task:start()
-  local bufnr = task:get_bufnr()
-  if bufnr then
-    vim.cmd.split()
-    vim.api.nvim_win_set_buf(0, bufnr)
-  end
-end
-
 ftplugin.extend_all({
   arduino = {
     keys = {
@@ -167,29 +153,10 @@ ftplugin.extend_all({
           vim.lsp.buf.formatting({})
         end, { buffer = bufnr })
       end
-      vim.keymap.set(
-        "n",
-        "<leader>e",
-        function() run_file({ "python", vim.api.nvim_buf_get_name(0) }) end,
-        { buffer = bufnr }
-      )
     end,
   },
   rust = {
     compiler = "cargo",
-    callback = function(bufnr)
-      vim.keymap.set("n", "<leader>e", function() run_file({ "cargo", "run" }) end, { buffer = bufnr })
-    end,
-  },
-  sh = {
-    callback = function(bufnr)
-      vim.keymap.set(
-        "n",
-        "<leader>e",
-        function() run_file({ "bash", vim.api.nvim_buf_get_name(0) }) end,
-        { buffer = bufnr }
-      )
-    end,
   },
   supercollider = {
     keys = {
