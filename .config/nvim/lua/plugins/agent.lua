@@ -78,7 +78,7 @@ return {
           if thinking then
             return
           end
-          local tab = arg.data.tab
+          local tab = vim.api.nvim_tabpage_get_number(arg.data.tab)
           local cwd = vim.fs.basename(vim.fn.getcwd(-1, tab))
           local message = string.format("Claude awaiting input in %s", cwd)
           notifier:notify(message, vim.log.levels.INFO)

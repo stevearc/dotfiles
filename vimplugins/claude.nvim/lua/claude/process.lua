@@ -143,7 +143,7 @@ function ClaudeProcess:_on_output()
     self.timer = assert(vim.uv.new_timer())
   end
   self.timer:start(
-    1000,
+    1100,
     0,
     vim.schedule_wrap(function()
       -- Set thinking=false after no output for 1 second
