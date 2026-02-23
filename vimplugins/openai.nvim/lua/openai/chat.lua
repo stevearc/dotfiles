@@ -55,6 +55,8 @@ local function parse_messages_buffer(bufnr)
   for k, v in pairs(query.captures) do
     captures[v] = k
   end
+  ---@param role_node TSNode
+  ---@param end_node? TSNode
   local function add_section(role_node, end_node)
     local start_lnum = role_node:start() + 1
     local end_lnum
@@ -75,9 +77,11 @@ local function parse_messages_buffer(bufnr)
   end
 
   local last_section
-  for _, match in query:iter_matches(root, bufnr, nil, nil, { all = false }) do
+  for _, match in query:iter_matches(root, bufnr, nil, nil) do
     if match[captures.role] then
-      local new_section = match[captures.role]
+      local nodes = match[captures.role]
+      -- Preserve the old iter_matches({all = false}) behavior
+      local new_section = nodes[#nodes]
       if last_section then
         add_section(last_section, new_section)
       end
