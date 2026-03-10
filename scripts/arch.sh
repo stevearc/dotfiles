@@ -115,6 +115,7 @@ dc-install-jellyfin() {
 DC_INSTALL_COMMON_DOC="Common unix utilities like tmux, netcat, etc"
 dc-install-common() {
   sudo pacman -Syq --noconfirm \
+    caligula \
     fzf \
     gnu-netcat \
     htop \
@@ -124,6 +125,7 @@ dc-install-common() {
     less \
     lsof \
     man \
+    ncdu \
     openssh \
     ripgrep \
     rsync \
