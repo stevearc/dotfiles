@@ -148,13 +148,19 @@ else
     __git_branch=$(git branch --no-color 2>/dev/null | grep -e ^* | sed -E s/^\\*\ \(.*\)$/\\1/ | sed -E s/^\\\(.*\\\)$/"$__cur_ref"/)
     echo $(echo $__git_branch | sed -E s/\(.+\)/\[\\1\]/)
   }
-  function hg_branch {
-    [ -n "$NO_SHOW_HG_BRANCH" ] && return
-    local branch=$(hg id -B -t 2>/dev/null)
-    if [ -n "$branch" ]; then
-      echo "[$branch]"
-    fi
-  }
+  if command -v hg >/dev/null; then
+    function hg_branch {
+      [ -n "$NO_SHOW_HG_BRANCH" ] && return
+      local branch=$(hg id -B -t 2>/dev/null)
+      if [ -n "$branch" ]; then
+        echo "[$branch]"
+      fi
+    }
+  else
+    function hg_branch {
+      true
+    }
+  fi
 
   __last_color="\[\033[00m\]"
   __user="\[\033[01;32m\]\u$__last_color"
