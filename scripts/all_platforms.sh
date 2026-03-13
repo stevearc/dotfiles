@@ -79,7 +79,6 @@ configure-git() {
   git config --global alias.popr '!git po && sleep 1 && git dopr'
   git config --global alias.findpr '!bash ~/.githelpers find_pull_request'
   git config --global alias.fix '!bash ~/.githelpers commit_fix'
-  git config --global alias.uu '!bash ~/.githelpers update_master'
   git config --global alias.l '!bash ~/.githelpers pretty_git_log_paged'
   git config --global alias.la '!git l --all'
   git config --global alias.ra '!git la -30'

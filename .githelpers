@@ -85,31 +85,6 @@ push_current_branch() {
   git push -u origin "$branch" "$@"
 }
 
-update_master() {
-  local changes
-  changes=$(git status --porcelain 2>/dev/null | grep -c -E "^(M| M)")
-  if [ "$changes" != "0" ]; then
-    git stash
-  fi
-
-  local branch
-  branch=$(git branch --show-current)
-  local master
-  master=$(git main)
-  if [ "$branch" != "$master" ]; then
-    git checkout "$master"
-  fi
-  git fetch -p
-  git rebase "origin/$master"
-  if [ "$branch" != "$master" ]; then
-    git checkout "$branch"
-  fi
-
-  if [ "$changes" != "0" ]; then
-    git stash pop
-  fi
-}
-
 _github() {
   local uri="$1"
   if [ -z "$GITHUB_TOKEN" ]; then
@@ -351,17 +326,26 @@ install-hooks() {
 }
 
 update() {
-  git fetch
+  local changes
+  changes=$(git status --porcelain 2>/dev/null | grep -c -E "^(M| M)")
+  if [ "$changes" != "0" ]; then
+    echo "Stashing uncommitted changes"
+    git stash
+  fi
+
+  git fetch -p
   local cur
   cur=$(git branch --show-current)
   local main
   main=$(git main)
   git rebase "origin/$main" "$main"
-  if git branch | grep -q master-passing-tests; then
-    git rebase origin/master-passing-tests master-passing-tests
-  fi
   if [ -n "$cur" ]; then
     git checkout "$cur"
+  fi
+
+  if [ "$changes" != "0" ]; then
+    echo "Restoring stashed changes"
+    git stash pop
   fi
 }
 
