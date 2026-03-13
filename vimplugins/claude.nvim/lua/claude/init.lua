@@ -84,4 +84,9 @@ M.run_action = function(action_name)
   end
 end
 
+---@param annotations claude.AnnotationLocation[]
+M.set_annotations = function(annotations)
+  require("claude.annotations").set(annotations)
+end
+
 return M
