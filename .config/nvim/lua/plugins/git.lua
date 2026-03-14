@@ -165,6 +165,21 @@ return {
     config = function(_, opts)
       require("codediff").setup(opts)
 
+      -- This is a hack around the issue with scrollbind leaking to windows in other tabpages
+      vim.api.nvim_create_autocmd("BufWinEnter", {
+        group = vim.api.nvim_create_augroup("StevearcCodeDiffHack", {}),
+        callback = function(args)
+          local accessors = require("codediff.ui.lifecycle.accessors")
+          local win = vim.api.nvim_get_current_win()
+          if vim.w[win].codediff_restore then
+            return
+          end
+          if accessors.find_tabpage_by_buffer(args.buf) then
+            vim.wo[win].scrollbind = false
+          end
+        end,
+      })
+
       vim.api.nvim_create_user_command("GitReview", function(params)
         local base = params.fargs[1]
         if not base then
