@@ -84,15 +84,15 @@ install-language-rust() {
 }
 
 install-language-zig() {
-  local ZIG_VERSION=$(curl -s https://api.github.com/repos/ziglang/zig/releases | jq -r ".[].tag_name" | head -n 1)
+  local ZIG_VERSION=$(curl -s https://ziglang.org/download/index.json | jq -r 'to_entries | map(select(.key != "master")) | sort_by(.key | split(".") | map(tonumber)) | last | .key')
   if ! hascmd zig; then
-    local dirname="zig-linux-x86_64-${ZIG_VERSION}"
-    local tarball="zig-linux-x86_64-${ZIG_VERSION}.tar.xz"
+    local dirname="zig-x86_64-linux-${ZIG_VERSION}"
+    local tarball="zig-x86_64-linux-${ZIG_VERSION}.tar.xz"
     local url="https://ziglang.org/download/${ZIG_VERSION}/$tarball"
     pushd /tmp >/dev/null
     curl -L "$url" -o "$tarball"
     tar -xf "$tarball"
-    rm -rf "$HOME/.local/share/zig-linux-x86_64-${ZIG_VERSION}"
+    rm -rf "$HOME/.local/share/zig-x86_64-linux-${ZIG_VERSION}"
     mv "$dirname" ~/.local/share
     ln -sf "$HOME/.local/share/${dirname}/zig" "$HOME/.local/bin/zig"
     popd >/dev/null
