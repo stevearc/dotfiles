@@ -65,14 +65,15 @@ or() {
   [ $? != 0 ] && "$@"
 }
 alias hr='history -c; history -r'
-__vimm() {
-  if git rev-parse --git-dir 2>/dev/null; then
-    nvim $(git sm @)
-  elif hg id 2>/dev/null; then
-    nvim $(hg mod)
-  fi
+
+tsh() {
+  [ -n "$TMUX" ] && tmux rename-session "$1"
+  until ssh -t "$1" 'tmux attach || tmux new'; do
+    clear
+    echo "reconnecting..."
+    sleep 2
+  done
 }
-alias vimm='__vimm'
 
 scsv() {
   local tmpfile
