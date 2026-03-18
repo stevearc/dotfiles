@@ -73,8 +73,10 @@ M.get_proc = function()
   local bufnr = vim.api.nvim_create_buf(false, true)
   local jid
   local self
+  local mode = "--dangerously-skip-permissions"
+  -- local mode = "--permission-mode=acceptEdits"
   vim.api.nvim_buf_call(bufnr, function()
-    jid = vim.fn.jobstart({ "claude", "--permission-mode=acceptEdits", "--model", "opus" }, {
+    jid = vim.fn.jobstart({ "claude", mode, "--model", "opus" }, {
       pty = true,
       term = true,
       on_stdout = vim.schedule_wrap(function()
