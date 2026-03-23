@@ -30,6 +30,8 @@ local function run_current_file(args)
       cmd = { "python", path }
     elseif vim.bo.filetype == "sh" then
       cmd = { "bash", path }
+    elseif vim.bo.filetype == "petal" then
+      cmd = { "petal", path }
     else
       vim.notify("Not sure how to run file", vim.log.levels.ERROR)
       return
