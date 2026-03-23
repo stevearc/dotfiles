@@ -349,6 +349,12 @@ update() {
   fi
 }
 
+new_branch() {
+  local name="${1?Usage: git nb <branch>}"
+  shift
+  git checkout --no-track -b "$name" "$(git mt)" "$@"
+}
+
 cmd=$1
 shift
 "$cmd" "$@"
