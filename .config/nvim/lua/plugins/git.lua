@@ -82,6 +82,7 @@ return {
       { "<leader>gb", "<cmd>Git blame<CR>", desc = "[G]it [B]lame" },
       { "<leader>gc", "<cmd>GBrowse!<CR>", desc = "[G]it [C]opy link" },
       { "<leader>gc", ":GBrowse!<CR>", mode = "v", desc = "[G]it [C]opy link" },
+      { "<leader>gw", ":GitWorktree<CR>", desc = "[G]it [W]orktree" },
     },
     config = function()
       vim.cmd("command! GitHistory Git! log -- %")
@@ -145,6 +146,22 @@ return {
         desc = "Edit current file at a specific commit",
         nargs = 1,
       })
+
+      vim.api.nvim_create_user_command("GitWorktree", function(params)
+        local repo = vim.fs.basename(vim.fn.getcwd())
+        vim.ui.input({ prompt = "worktree name", default = "../" .. repo .. "-" }, function(name)
+          if not name then
+            return
+          end
+          local proc = vim.system({ "git", "worktree", "add", name }):wait()
+          if proc ~= 0 then
+            vim.notify(string.format("Worktree error: %s", proc.stdout .. proc.stderr), vim.log.levels.ERROR)
+            return
+          end
+          vim.cmd.tabnew()
+          vim.cmd.tcd(name)
+        end)
+      end)
     end,
   },
   {
