@@ -3,6 +3,7 @@ set -e
 
 platform-setup() {
   has-checkpoint platform-setup && return
+  mkdir -p ~/.local/share
   sudo apt-get update -qq
   hascmd wget || sudo apt-get install -yq wget
   hascmd curl || sudo apt-get install -yq curl

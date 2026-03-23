@@ -45,17 +45,6 @@ dc-install-balena() {
   "$HERE/bin/appimage-install.sh" "$HOME/Downloads/${filename}"
 }
 
-install-language-vim() {
-  dc-install-nvm
-  npm install -g -s vim-language-server
-  install-language-python
-  if ! hascmd vint; then
-    pushd ~/.local/bin
-    "$HERE/scripts/make_standalone.py" -s vint vim-vint
-    popd
-  fi
-}
-
 install-language-java() {
   [ -e ~/.local/share/jdtls ] && return
   pushd /tmp >/dev/null
@@ -161,8 +150,11 @@ install-language-common() {
   install-language-go
   install-language-rust
   install-language-lua
-  install-language-vim
   install-language-misc
+}
+
+install-claude() {
+  curl -fsSL https://claude.ai/install.sh | bash
 }
 
 install-arduino() {

@@ -17,6 +17,8 @@ from urllib.request import Request, urlopen
 
 log = logging.getLogger("devbox")
 
+FORWARD_AGENT = False
+
 
 def fingerprint_key(filename: str) -> str:
     proc = subprocess.run(
@@ -119,8 +121,16 @@ def get_matching_snapshots(name: str, region: Optional[str] = None) -> List[Dict
     return snaps
 
 
-def get_or_import_arch_image(url: str, region: str) -> Dict:
-    """Check for an existing Arch custom image, or import one from URL."""
+def get_available_regions(region: str) -> List[str]:
+    """Get available region slugs matching a prefix."""
+    resp = call("/v2/regions")
+    if not resp:
+        return []
+    return [r["slug"] for r in resp["regions"] if r["available"] and r["slug"].startswith(region)]
+
+
+def find_arch_image() -> Optional[Dict]:
+    """Find an existing Arch custom image."""
     resp = call("/v2/images", type="custom", per_page=200)
     if resp:
         for image in resp["images"]:
@@ -129,6 +139,20 @@ def get_or_import_arch_image(url: str, region: str) -> Dict:
             ):
                 if image.get("status") == "available":
                     return image
+    return None
+
+
+def get_or_import_arch_image(url: str, region: str) -> Dict:
+    """Check for an existing Arch custom image, or import one from URL."""
+    image = find_arch_image()
+    if image:
+        created = datetime.strptime(image["created_at"], "%Y-%m-%dT%H:%M:%SZ")
+        age_days = (datetime.utcnow() - created).days
+        if age_days > 30:
+            print(f"Arch Linux image is {age_days} days old, re-importing...")
+            call(f"/v2/images/{image['id']}", "DELETE")
+        else:
+            return image
     print(f"Importing Arch Linux cloud image from {url}...")
     resp = call(
         "/v2/images",
@@ -136,9 +160,7 @@ def get_or_import_arch_image(url: str, region: str) -> Dict:
         name="arch-linux-cloudimg",
         url=url,
         distribution="Arch Linux",
-        region=select_region(
-            [f"{region}1", f"{region}2", f"{region}3"], region
-        ),
+        region=select_region(get_available_regions(region), region),
     )
     if not resp:
         raise Exception("No response from image import")
@@ -174,6 +196,7 @@ def cmd_up_add_args(parser):
     parser.add_argument(
         "--default-image",
         help="URL or ID of the default image if no snapshot exists (default Arch Linux cloud image)",
+        # From https://wiki.archlinux.org/title/Arch_Linux_on_a_VPS
         default="https://geo.mirror.pkgbuild.com/images/latest/Arch-Linux-x86_64-cloudimg.qcow2",
     )
 
@@ -241,12 +264,37 @@ runcmd:
         raise Exception(f"Could not find public IP address for {args.name}")
     public_ip = public_net[0]["ip_address"]
     update_ssh_config(args.name, public_ip)
+    if not FORWARD_AGENT:
+        copy_ssh_keys(args.name)
     print(f"Droplet {args.name} ready")
+
+
+def get_default_ssh_key() -> str:
+    """Get the path to the default SSH private key."""
+    ssh_dir = os.path.join(os.getenv("HOME", ""), ".ssh")
+    for key_type in ("id_ed25519", "id_ecdsa", "id_rsa", "id_dsa"):
+        path = os.path.join(ssh_dir, key_type)
+        if os.path.exists(path):
+            return path
+    raise Exception("No default SSH key found")
+
+
+def copy_ssh_keys(name: str):
+    """Copy the default SSH key pair to the remote machine."""
+    key_path = get_default_ssh_key()
+    pub_path = f"{key_path}.pub"
+    remote_key = os.path.basename(key_path)
+    print(f"Copying SSH key {remote_key} to {name}...")
+    subprocess.run(
+        ["scp", "-o", "StrictHostKeyChecking=no", key_path, pub_path, f"{name}:.ssh/"],
+        check=True,
+    )
 
 
 def update_ssh_config(name: str, ip: str):
     config_file = os.path.join(os.getenv("HOME", ""), ".ssh", "config")
-    lines = [f"Host {name}\n", f"  hostname {ip}\n", "  ForwardAgent yes\n"]
+    forward = "yes" if FORWARD_AGENT else "no"
+    lines = [f"Host {name}\n", f"  hostname {ip}\n", f"  ForwardAgent {forward}\n"]
     if not os.path.exists(config_file):
         fd = os.open(config_file, os.O_CREAT | os.O_WRONLY, 0o700)
         with open(fd, "w", encoding="utf-8") as ofile:
@@ -317,7 +365,7 @@ def cmd_down_add_args(parser):
     parser.add_argument(
         "-n",
         "--name",
-        help="The name of the droplet to start (also used to match snapshot)",
+        help="The name of the droplet to destroy",
         default=os.getenv("DO_DROPLET_NAME", "devi"),
     )
 
@@ -339,7 +387,7 @@ def cmd_snapshot_add_args(parser):
     parser.add_argument(
         "-n",
         "--name",
-        help="The name of the droplet to start (also used to match snapshot)",
+        help="The name of the droplet to snapshot",
         default=os.getenv("DO_DROPLET_NAME", "devi"),
     )
 
@@ -369,7 +417,7 @@ def cmd_action_add_args(parser):
     parser.add_argument(
         "-n",
         "--name",
-        help="The name of the droplet to start (also used to match snapshot)",
+        help="The name of the droplet",
         default=os.getenv("DO_DROPLET_NAME", "devi"),
     )
     parser.add_argument(
@@ -409,8 +457,14 @@ def cmd_gc_add_args(parser):
     parser.add_argument(
         "-n",
         "--name",
-        help="The name of the droplet to start (also used to match snapshot)",
+        help="The snapshot name prefix to match",
         default=os.getenv("DO_DROPLET_NAME", "devi"),
+    )
+    parser.add_argument(
+        "-f",
+        "--force",
+        action="store_true",
+        help="Delete all snapshots including the most recent",
     )
 
 
@@ -419,11 +473,55 @@ def cmd_gc(args):
     print("Found %d snapshots" % len(snaps))
     for snap in snaps:
         print("%s %s" % (snap["created_at"], snap["name"]))
-    for snap in snaps[1:]:
-        if promptyn("Delete snapshot %s from %s?" % (snap["name"], snap["created_at"])):
+    if args.force:
+        if not promptyn("Delete all %d snapshots?" % len(snaps)):
+            return
+        to_delete = snaps
+    else:
+        to_delete = snaps[1:]
+    for snap in to_delete:
+        if args.force or promptyn("Delete snapshot %s from %s?" % (snap["name"], snap["created_at"])):
             snap_id = snap["id"]
             print("Deleting snapshot %s [%s]" % (snap["name"], snap_id))
             call(f"/v2/images/{snap_id}", "DELETE")
+    print("Done")
+
+
+def cmd_snapshots_add_args(parser):
+    parser.add_argument(
+        "-n",
+        "--name",
+        help="The snapshot name prefix to match",
+        default=os.getenv("DO_DROPLET_NAME", "devi"),
+    )
+    parser.add_argument(
+        "-r",
+        "--region",
+        help="The DO region (default %(default)s)",
+        default=os.getenv("DO_REGION", "sfo"),
+    )
+
+
+def cmd_snapshots(args):
+    snaps = get_matching_snapshots(args.name, region=args.region)
+    if not snaps:
+        print("No snapshots found")
+        return
+    entries = []
+    for snap in snaps:
+        entries.append((str(snap["id"]), snap["created_at"], snap["name"], ", ".join(snap["regions"])))
+    print_table(entries)
+
+
+def cmd_del_image(args):
+    image = find_arch_image()
+    if not image:
+        print("No Arch Linux image found")
+        return
+    created = datetime.strptime(image["created_at"], "%Y-%m-%dT%H:%M:%SZ")
+    if not promptyn(f"Delete image {image['name']} (created {created.strftime('%Y-%m-%d')})?"):
+        return
+    call(f"/v2/images/{image['id']}", "DELETE")
     print("Done")
 
 
@@ -593,6 +691,9 @@ def main() -> None:
     cmd_gc_add_args(
         subparsers.add_parser("gc", help="Delete all snapshots but the most recent")
     )
+    cmd_snapshots_add_args(
+        subparsers.add_parser("snapshots", help="List matching snapshots")
+    )
     cmd_sizes_add_args(
         subparsers.add_parser("sizes", help="List all droplet sizes for the region")
     )
@@ -605,6 +706,7 @@ def main() -> None:
     cmd_add_key_add_args(
         subparsers.add_parser("add-key", help="Add ssh key to account")
     )
+    subparsers.add_parser("del-image", help="Delete the imported Arch Linux image")
     subparsers.add_parser("list-keys", help="List all ssh keys")
     cmd_del_key_add_args(subparsers.add_parser("del-key", help="Delete an ssh key"))
     args = parser.parse_args()
@@ -620,10 +722,14 @@ def main() -> None:
         cmd_gc(args)
     elif args.cmd == "action":
         cmd_action(args)
+    elif args.cmd == "snapshots":
+        cmd_snapshots(args)
     elif args.cmd == "sizes":
         cmd_sizes(args)
     elif args.cmd == "images":
         cmd_images(args)
+    elif args.cmd == "del-image":
+        cmd_del_image(args)
     elif args.cmd == "list-keys":
         cmd_list_keys(args)
     elif args.cmd == "add-key":

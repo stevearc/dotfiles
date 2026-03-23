@@ -2,6 +2,7 @@
 set -e
 
 platform-setup() {
+  mkdir -p ~/.local/share
   # Make pacman display packages in a vertical list
   if ! grep -q "^VerbosePkgLists" /etc/pacman.conf; then
     sudo sed -i -e 's/^.*VerbosePkgLists$/VerbosePkgLists/' /etc/pacman.conf
@@ -16,7 +17,7 @@ platform-setup() {
     pushd /tmp
     [ -e yay ] || git clone https://aur.archlinux.org/yay.git
     cd yay
-    makepkg -si
+    makepkg -si --noconfirm
     popd
   fi
   checkpoint platform-setup
@@ -31,9 +32,6 @@ install-language-python() {
   fi
   mkdir -p ~/.local/bin
   pushd ~/.local/bin >/dev/null
-  test -e isort || "$HERE/scripts/make_standalone.py" isort
-  test -e black || "$HERE/scripts/make_standalone.py" black
-  test -e autoimport || "$HERE/scripts/make_standalone.py" autoimport
   popd >/dev/null
 }
 
@@ -117,14 +115,14 @@ dc-install-common() {
   sudo pacman -Syq --noconfirm \
     caligula \
     fzf \
-    gnu-netcat \
+    openbsd-netcat \
     htop \
     inotify-tools \
     iotop \
     jq \
     less \
     lsof \
-    man \
+    man-db \
     ncdu \
     openssh \
     ripgrep \

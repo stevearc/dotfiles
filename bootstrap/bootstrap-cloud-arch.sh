@@ -4,7 +4,7 @@ set -ex
 
 pacman -Syu --noconfirm
 id -u stevearc 2>/dev/null || useradd -m -G wheel -s /bin/bash stevearc
-echo "stevearc ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/10-stevearc-no-pass
+echo "stevearc ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/10-stevearc-no-pass
 cp -r ~/.ssh /home/stevearc
 chown -R stevearc:stevearc /home/stevearc/.ssh
 pacman -S --noconfirm --needed git base-devel

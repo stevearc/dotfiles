@@ -55,6 +55,12 @@ export GOPATH=~/go
 export PATH="$HOME/.local/bin:$GOPATH/bin:$PATH"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
+# fixes SSH ForwardAgent interaction with tmux on remote servers
+if [ -n "$SSH_AUTH_SOCK" ] && [ "$SSH_AUTH_SOCK" != "$HOME/.ssh/auth_sock" ]; then
+  ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/auth_sock"
+  export SSH_AUTH_SOCK="$HOME/.ssh/auth_sock"
+fi
+
 if [ -e "$HOME/.yarn/bin" ]; then
   export PATH="$PATH:$HOME/.yarn/bin"
 fi
