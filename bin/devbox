@@ -191,7 +191,7 @@ def cmd_up_add_args(parser):
         default=os.getenv("DO_REGION", "sfo"),
     )
     parser.add_argument(
-        "-s", "--size", help="The size of the devbox", default="s-2vcpu-4gb"
+        "-s", "--size", help="The size of the devbox", default="g-4vcpu-16gb"
     )
     parser.add_argument(
         "--default-image",
@@ -212,6 +212,7 @@ def select_region(regions: List[str], region: str) -> str:
 
 def cmd_up(args):
     droplet = get_devbox(args.name)
+    fresh_image = False
     if droplet:
         print(f"{args.name} is already running")
     else:
@@ -219,6 +220,7 @@ def cmd_up(args):
         if snaps:
             snap = snaps[0]
         else:
+            fresh_image = True
             if args.default_image.startswith("http"):
                 snap = get_or_import_arch_image(args.default_image, args.region)
             else:
@@ -264,9 +266,16 @@ runcmd:
         raise Exception(f"Could not find public IP address for {args.name}")
     public_ip = public_net[0]["ip_address"]
     update_ssh_config(args.name, public_ip)
+    wait_for_ssh(args.name)
     if not FORWARD_AGENT:
         copy_ssh_keys(args.name)
     print(f"Droplet {args.name} ready")
+    if fresh_image:
+        print("Tailing cloud-init log (Ctrl-C to stop)...")
+        subprocess.run(
+            ["ssh", "-o", "StrictHostKeyChecking=no", args.name,
+             "tail", "-f", "/var/log/cloud-init-output.log"],
+        )
 
 
 def get_default_ssh_key() -> str:
@@ -277,6 +286,23 @@ def get_default_ssh_key() -> str:
         if os.path.exists(path):
             return path
     raise Exception("No default SSH key found")
+
+
+def wait_for_ssh(name: str):
+    """Wait until SSH connection to the host succeeds."""
+    print(f"Waiting for SSH on {name}...")
+    delay = 5
+    for attempt in range(5):
+        result = subprocess.run(
+            ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "ConnectTimeout=5",
+             name, "true"],
+        )
+        if result.returncode == 0:
+            return
+        print(f"  SSH not ready, retrying in {delay}s...")
+        time.sleep(delay)
+        delay *= 2
+    raise Exception(f"Failed to connect to {name} via SSH after 5 attempts")
 
 
 def copy_ssh_keys(name: str):
