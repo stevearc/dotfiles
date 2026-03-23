@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Command line tool for managing a Digital Ocean development box"""
 import argparse
+import json
 import logging
 import os
 import re
@@ -10,8 +11,9 @@ import time
 from datetime import datetime
 from pprint import pformat, pprint
 from typing import Any, Dict, Iterator, List, Optional
-
-import requests
+from urllib.error import HTTPError
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 log = logging.getLogger("devbox")
 
@@ -59,31 +61,37 @@ def load_ssh_keys() -> List[str]:
 def call(
     path: str, method: str = "GET", headers: Optional[Dict] = None, **data
 ) -> Optional[Dict]:
-    json_data = None
-    params = None
-    if method in ("POST", "PUT"):
-        json_data = data
-    else:
-        params = data
     secret = os.getenv("DO_SECRET_KEY")
     log.debug("%s %s: %s", method, path, pformat(data))
     headers = headers or {}
     headers["Authorization"] = f"Bearer {secret}"
-    resp = requests.request(
-        method,
-        f"https://api.digitalocean.com{path}",
-        headers=headers,
-        json=json_data,
-        params=params,
-    )
+    headers["Content-Type"] = "application/json"
+
+    url = f"https://api.digitalocean.com{path}"
+    body = None
+    if method in ("POST", "PUT"):
+        body = json.dumps(data).encode("utf-8") if data else None
+    elif data:
+        url = f"{url}?{urlencode(data)}"
+
+    req = Request(url, data=body, headers=headers, method=method)
     try:
-        response_data = resp.json()
-    except requests.exceptions.JSONDecodeError:
+        resp = urlopen(req)
+    except HTTPError as e:
         response_data = None
-    if not resp.ok:
+        try:
+            response_data = json.loads(e.read().decode("utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            pass
         log.error("%s: %s", path, pformat(response_data))
-        resp.raise_for_status()
-    return response_data
+        raise
+    raw = resp.read().decode("utf-8")
+    if not raw:
+        return None
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        return None
 
 
 def get_devbox(name: str) -> Optional[Dict]:
@@ -111,6 +119,42 @@ def get_matching_snapshots(name: str, region: Optional[str] = None) -> List[Dict
     return snaps
 
 
+def get_or_import_arch_image(url: str, region: str) -> Dict:
+    """Check for an existing Arch custom image, or import one from URL."""
+    resp = call("/v2/images", type="custom", per_page=200)
+    if resp:
+        for image in resp["images"]:
+            if "Arch-Linux" in image.get("name", "") or "arch-linux" in image.get(
+                "name", ""
+            ):
+                if image.get("status") == "available":
+                    return image
+    print(f"Importing Arch Linux cloud image from {url}...")
+    resp = call(
+        "/v2/images",
+        "POST",
+        name="arch-linux-cloudimg",
+        url=url,
+        distribution="Arch Linux",
+        region=select_region(
+            [f"{region}1", f"{region}2", f"{region}3"], region
+        ),
+    )
+    if not resp:
+        raise Exception("No response from image import")
+    image = resp["image"]
+    image_id = image["id"]
+    while image.get("status") != "available":
+        print(f"  Image status: {image.get('status', 'unknown')}...")
+        time.sleep(15)
+        resp = call(f"/v2/images/{image_id}")
+        if not resp:
+            raise Exception("Missing image response")
+        image = resp["image"]
+    print("Arch Linux image ready")
+    return image
+
+
 def cmd_up_add_args(parser):
     parser.add_argument(
         "-n",
@@ -129,8 +173,8 @@ def cmd_up_add_args(parser):
     )
     parser.add_argument(
         "--default-image",
-        help="The default image to use if no snapshot is present (default Ubuntu 22.04 LTS)",
-        default="112929454",
+        help="URL or ID of the default image if no snapshot exists (default Arch Linux cloud image)",
+        default="https://geo.mirror.pkgbuild.com/images/latest/Arch-Linux-x86_64-cloudimg.qcow2",
     )
 
 
@@ -152,10 +196,13 @@ def cmd_up(args):
         if snaps:
             snap = snaps[0]
         else:
-            resp = call(f"/v2/images/{args.default_image}")
-            if not resp:
-                raise Exception("Could not find default image")
-            snap = resp["image"]
+            if args.default_image.startswith("http"):
+                snap = get_or_import_arch_image(args.default_image, args.region)
+            else:
+                resp = call(f"/v2/images/{args.default_image}")
+                if not resp:
+                    raise Exception("Could not find default image")
+                snap = resp["image"]
             print(
                 "Could not find snapshot for %s. Using default image %s"
                 % (args.name, snap["name"])
@@ -172,7 +219,7 @@ def cmd_up(args):
             # TODO make this configurable
             user_data="""#cloud-config
 runcmd:
-  - 'curl https://raw.githubusercontent.com/stevearc/dotfiles/master/bootstrap/bootstrap-cloud.sh | /bin/bash -s'
+  - 'curl https://raw.githubusercontent.com/stevearc/dotfiles/master/bootstrap/bootstrap-cloud-arch.sh | /bin/bash -s'
             """,
         )
         if not resp:
