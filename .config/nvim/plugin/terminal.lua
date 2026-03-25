@@ -155,7 +155,9 @@ local function open_dir(background)
 end
 
 local function toggle()
-  if is_open() then
+  if is_floating_win() and vim.bo.buftype == "terminal" then
+    vim.api.nvim_win_close(0, true)
+  elseif is_open() then
     close()
   elseif vim.v.count == 0 then
     open_dir()
