@@ -28,6 +28,23 @@ return {
           table.insert(langs, k)
         end
       end
+      if vim.fn.isdirectory(vim.fn.expand("~/ws/petal")) == 1 then
+        vim.api.nvim_create_autocmd("User", {
+          pattern = "TSUpdate",
+          callback = function()
+            require("nvim-treesitter.parsers").petal = {
+              install_info = {
+                path = "~/ws/petal",
+                location = "tree-sitter-petal",
+                queries = "tree-sitter-petal/queries",
+              },
+            }
+          end,
+        })
+
+        table.insert(langs, "petal")
+      end
+
       require("nvim-treesitter").install(langs)
       local disable_max_size = 2000000 -- 2MB
 

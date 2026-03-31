@@ -72,6 +72,7 @@ return {
           }
         end,
         omnisharp = {},
+        petal = {},
         pyright = {},
         ruff = {},
         rust_analyzer = {},
