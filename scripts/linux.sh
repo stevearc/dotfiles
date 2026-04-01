@@ -74,7 +74,7 @@ install-language-rust() {
 
 install-language-zig() {
   local ZIG_VERSION=$(curl -s https://ziglang.org/download/index.json | jq -r 'to_entries | map(select(.key != "master")) | sort_by(.key | split(".") | map(tonumber)) | last | .key')
-  if ! hascmd zig; then
+  if ! hascmd zig || [ "$(zig version)" != "$ZIG_VERSION" ]; then
     local dirname="zig-x86_64-linux-${ZIG_VERSION}"
     local tarball="zig-x86_64-linux-${ZIG_VERSION}.tar.xz"
     local url="https://ziglang.org/download/${ZIG_VERSION}/$tarball"
@@ -86,19 +86,22 @@ install-language-zig() {
     ln -sf "$HOME/.local/share/${dirname}/zig" "$HOME/.local/bin/zig"
     popd >/dev/null
   fi
-  if ! hascmd zig-nightly; then
-    local tarball="zig-linux-x86_64-nightly.tar.xz"
-    local url
-    url="$(curl -s https://ziglang.org/download/index.json | jq -r '.master["x86_64-linux"].tarball')"
-    pushd /tmp >/dev/null
-    curl -L "$url" -o "$tarball"
-    rm -rf ~/.local/share/zig-nightly
-    mkdir -p ~/.local/share/zig-nightly
-    tar -xf "$tarball" --strip-components=1 -C ~/.local/share/zig-nightly
-    ln -sf "$HOME/.local/share/zig-nightly/zig" "$HOME/.local/bin/zig-nightly"
-    popd >/dev/null
-  fi
-  if ! hascmd zls; then
+
+  # install zig nightly
+  local tarball="zig-linux-x86_64-nightly.tar.xz"
+  local url
+  url="$(curl -s https://ziglang.org/download/index.json | jq -r '.master["x86_64-linux"].tarball')"
+  pushd /tmp >/dev/null
+  curl -L "$url" -o "$tarball"
+  rm -rf ~/.local/share/zig-nightly
+  mkdir -p ~/.local/share/zig-nightly
+  tar -xf "$tarball" --strip-components=1 -C ~/.local/share/zig-nightly
+  ln -sf "$HOME/.local/share/zig-nightly/zig" "$HOME/.local/bin/zig-nightly"
+  popd >/dev/null
+
+  local ZLS_LATEST
+  ZLS_LATEST=$(curl -s https://api.github.com/repos/zigtools/zls/releases/latest | jq -r .tag_name)
+  if ! hascmd zls || [ "$(zls --version)" != "$ZLS_LATEST" ]; then
     rm -rf "$HOME/.local/share/nvim/language-servers/zls"
     mkdir -p ~/.local/share/nvim/language-servers/zls
     pushd ~/.local/share/nvim/language-servers/zls >/dev/null
