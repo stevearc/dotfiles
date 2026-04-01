@@ -13,7 +13,7 @@ main() {
     exit 1
   fi
   mkdir -p ~/.local/share/appimages/icons
-  mv "$img" ~/.local/share/appimages || :
+  mv "$img" ~/.local/share/appimages 2>/dev/null || :
   img=$(basename "$img")
   cd ~/.local/share/appimages
   rm -rf squashfs-root
@@ -28,13 +28,17 @@ main() {
     exit 1
   fi
 
-  local icon
-  icon=$(find . -maxdepth 1 -name '*.png')
-  icon=${icon#./}
-  cp -L "$icon" ~/.local/share/appimages/icons
+  local icon_name
+  icon_name=$(grep -m1 '^Icon=' "$app" | cut -d= -f2)
+  if [ -z "$icon_name" ]; then
+    echo "Could not find Icon= in .desktop file" >&2
+    exit 1
+  fi
+  local icon_file="${icon_name}.png"
+  cp -L "$icon_file" ~/.local/share/appimages/icons
 
   setval "$app" "Exec" "$HOME/.local/share/appimages/$img"
-  setval "$app" "Icon" "$HOME/.local/share/appimages/icons/${icon%.png}"
+  setval "$app" "Icon" "$HOME/.local/share/appimages/icons/${icon_name}"
   mv "$app" ~/.local/share/applications
 }
 

@@ -45,6 +45,22 @@ dc-install-balena() {
   "$HERE/bin/appimage-install.sh" "$HOME/Downloads/${filename}"
 }
 
+DC_INSTALL_HANDY_DOC="Speech to text transcription"
+dc-install-handy() {
+  local LATEST
+  LATEST=$(curl -s https://api.github.com/repos/cjpais/Handy/releases/latest | jq -r .tag_name)
+  local version="${LATEST#v}"
+  local arch
+  arch="$(uname -m)"
+  if [ "$arch" = "x86_64" ]; then
+    arch="amd64"
+  fi
+  local filename="Handy_${version}_${arch}.AppImage"
+  curl -L "https://github.com/cjpais/Handy/releases/download/${LATEST}/${filename}" -o "$HOME/Downloads/${filename}"
+  chmod +x "$HOME/Downloads/${filename}"
+  "$HERE/bin/appimage-install.sh" "$HOME/Downloads/${filename}"
+}
+
 install-language-java() {
   [ -e ~/.local/share/jdtls ] && return
   pushd /tmp >/dev/null
@@ -124,7 +140,7 @@ install-language-go() {
     else
       suffix="amd64"
     fi
-    local pkg="go1.23.1.linux-${suffix}.tar.gz"
+    local pkg="go1.26.1.linux-${suffix}.tar.gz"
     if [ ! -e "$pkg" ]; then
       wget -O "$pkg" "https://golang.org/dl/$pkg"
     fi
