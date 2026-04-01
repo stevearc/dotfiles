@@ -169,6 +169,7 @@ vim.filetype.add({
     sky = "starlark",
     ptl = "petal",
     pt = "petal",
+    pti = "petal",
   },
   pattern = {
     [".*/%.vscode/.*%.json"] = "json5", -- These json files frequently have comments
