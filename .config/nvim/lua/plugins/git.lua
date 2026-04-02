@@ -161,7 +161,9 @@ return {
           vim.cmd.tabnew()
           vim.cmd.tcd(name)
         end)
-      end)
+      end, {
+        desc = "Create a git worktree and open it in a new tab",
+      })
     end,
   },
   {
