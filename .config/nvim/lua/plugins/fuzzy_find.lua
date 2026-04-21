@@ -133,8 +133,7 @@ return {
       "ibhagwan/fzf-lua",
     },
     keys = {
-      { "<leader>ff", function() stevearc.find_git_files() end, desc = "[F]ind [F]iles (git)" },
-      { "<leader>fa", function() stevearc.find_files() end, desc = "[F]ind [A]ll files" },
+      { "<leader>ff", function() stevearc.find_files() end, desc = "[F]ind [F]iles" },
       { "<leader>f.", find_in_home(".config/nvim"), desc = "[F]ind [.]otfiles" },
       { "<leader>fn", find_in_home("Sync"), desc = "[F]ind [N]otes" },
       { "<leader>fl", find_in_home(".local/share/nvim-local"), desc = "[F]ind [L]ocal nvim files" },
