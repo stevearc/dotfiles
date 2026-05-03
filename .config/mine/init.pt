@@ -1,0 +1,35 @@
+import editor
+import logging
+import lsp
+import picker
+
+logging.set_root_handler(logging.Level.info, "mine.log")
+# logging.set_handler("lsp", logging.Level.debug, nil)
+# logging.set_handler("jsonrpc", logging.Level.debug, nil)
+logging.set_handler("editor", logging.Level.debug, nil)
+editor.set_nerd_font(true)
+editor.set_vscrolloff(999)
+editor.set_theme("duskfox")
+editor.keymap(["normal"], "<space>ff", fn() {
+    picker.files()
+  })
+editor.keymap(["normal"], "<space>ft", fn() {
+    picker.themes()
+  })
+editor.keymap(["normal"], "<space>fb", fn() {
+    picker.buffers()
+  })
+editor.keymap(["normal"], "<space>bb", fn() {
+    picker.buffers()
+  })
+
+lsp.register(lsp.ServerConfig.new("zls", ["zig"], ["zls"],
+  root_markers = ["build.zig", "build.zig.zon", ".git"]))
+lsp.register(lsp.ServerConfig.new("rust-analyzer", ["rust"], ["rust-analyzer"],
+  root_markers = ["Cargo.toml", ".git"]))
+lsp.register(lsp.ServerConfig.new("gopls", ["go"], ["gopls"],
+  root_markers = ["go.mod", ".git"]))
+lsp.register(lsp.ServerConfig.new("lua-language-server", ["lua"], ["lua-language-server"],
+  root_markers = [".luarc.json", ".luarc.jsonc", ".git"]))
+lsp.register(lsp.ServerConfig.new("petal-lsp", ["petal"], ["petal", "lsp", "--log-level", "debug"],
+  root_markers = [".git"]))
