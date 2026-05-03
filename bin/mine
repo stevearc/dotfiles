@@ -1,0 +1,3 @@
+#!/bin/bash
+(cd ~/ws/mine && zig build >/dev/null || exit 1)
+exec ~/ws/mine/zig-out/bin/mine "$@"

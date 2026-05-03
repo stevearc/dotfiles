@@ -1,0 +1,3 @@
+#!/bin/bash
+(cd ~/ws/petal && make build >/dev/null || exit 1)
+exec ~/ws/petal/zig-out/bin/petal "$@"
