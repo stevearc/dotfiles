@@ -274,7 +274,7 @@ runcmd:
         print("Tailing cloud-init log (Ctrl-C to stop)...")
         subprocess.run(
             ["ssh", "-o", "StrictHostKeyChecking=no", args.name,
-             "tail", "-f", "/var/log/cloud-init-output.log"],
+             "sudo", "tail", "-f", "/var/log/cloud-init-output.log"],
         )
 
 
