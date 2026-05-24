@@ -31,7 +31,7 @@ return {
         vim.keymap.set("t", "<C-i>", function() vim.cmd.close() end, { buffer = bufnr })
 
         if Snacks then
-          vim.keymap.set("t", "@", function()
+          vim.keymap.set("t", "<C-f>", function()
             vim.api.nvim_win_close(0, true)
             Snacks.picker.buffers({
               layout = { preview = false },

@@ -8,29 +8,19 @@ local M = {}
 ---@field jid integer
 ---@field tab integer
 ---@field initialized boolean
----@field thinking boolean
----@field private timer? uv.uv_timer_t
 ---@field private command_buffer {[1]: string, [2]: nil|boolean}
----@field private last_output_time number
 local ClaudeProcess = {}
 
 ---@type table<integer, ClaudeProcess>
 local _procs_by_tab = {}
 
 local _initialized = false
-local _last_keypress_time = 0
 
 local function _setup_global_handlers()
   if _initialized then
     return
   end
   _initialized = true
-
-  _last_keypress_time = vim.uv.now()
-
-  vim.on_key(function()
-    _last_keypress_time = vim.uv.now()
-  end)
 
   vim.api.nvim_create_autocmd("TabClosed", {
     group = vim.api.nvim_create_augroup("ClaudeTabClose", {}),
@@ -47,11 +37,6 @@ local function _setup_global_handlers()
 end
 
 function ClaudeProcess:_cleanup()
-  if self.timer then
-    self.timer:stop()
-    self.timer:close()
-    self.timer = nil
-  end
   if vim.api.nvim_tabpage_is_valid(self.tab) then
     vim.t[self.tab].claude_thinking = nil
   end
@@ -100,10 +85,8 @@ M.get_proc = function()
     bufnr = bufnr,
     jid = jid,
     initialized = false,
-    thinking = false,
     tab = vim.api.nvim_get_current_tabpage(),
     command_buffer = {},
-    last_output_time = vim.uv.now(),
   }, { __index = ClaudeProcess })
 
   _procs_by_tab[vim.api.nvim_get_current_tabpage()] = self
@@ -120,67 +103,21 @@ end
 
 ---Called when output is received from the job
 function ClaudeProcess:_on_output()
-  self.last_output_time = vim.uv.now()
-
-  if not self.initialized then
-    local lines = vim.api.nvim_buf_get_lines(self.bufnr, 0, -1, false)
-    for _, line in ipairs(lines) do
-      if vim.startswith(line, "❯") then
-        self.initialized = true
-        if #self.command_buffer > 0 then
-          for _, v in ipairs(self.command_buffer) do
-            self:send_text(v[1], v[2])
-          end
-          self.command_buffer = {}
+  if self.initialized then
+    return
+  end
+  local lines = vim.api.nvim_buf_get_lines(self.bufnr, 0, -1, false)
+  for _, line in ipairs(lines) do
+    if vim.startswith(line, "❯") then
+      self.initialized = true
+      if #self.command_buffer > 0 then
+        for _, v in ipairs(self.command_buffer) do
+          self:send_text(v[1], v[2])
         end
+        self.command_buffer = {}
       end
     end
-
-    _last_keypress_time = vim.uv.now() + 2000
-    return
   end
-
-  if self.timer then
-    self.timer:stop()
-  else
-    self.timer = assert(vim.uv.new_timer())
-  end
-
-  local user_typed_recently = vim.uv.now() - _last_keypress_time <= 200
-  local focused = vim.api.nvim_get_current_buf() == self.bufnr
-  if not user_typed_recently or not focused then
-    if self.thinking then
-      -- Set thinking=false after no output for 4 seconds
-      self.timer:start(
-        4000,
-        0,
-        vim.schedule_wrap(function()
-          self:_set_thinking(false)
-        end)
-      )
-    else
-      -- Set thinking=true when there is output in the claude window and it has been
-      -- 1 second since user pressed keys, OR user is in a different window
-      self:_set_thinking(true)
-    end
-  end
-end
-
----@param thinking boolean
-function ClaudeProcess:_set_thinking(thinking)
-  if thinking == self.thinking then
-    return
-  end
-  self.thinking = thinking
-  vim.t[self.tab].claude_thinking = thinking
-  vim.api.nvim_exec_autocmds("User", {
-    pattern = "ClaudeStatus",
-    modeline = false,
-    data = {
-      tab = self.tab,
-      thinking = thinking,
-    },
-  })
 end
 
 ---@param text string
