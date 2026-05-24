@@ -134,7 +134,8 @@ dc-install-common() {
     tree-sitter-cli \
     unzip \
     wmctrl \
-    xsel
+    xsel \
+    yq
 
   hascmd direnv || yay -S --noconfirm direnv
   hascmd shellcheck || yay -S --noconfirm shellcheck-bin

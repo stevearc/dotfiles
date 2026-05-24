@@ -259,7 +259,7 @@ setup-qtile() {
 
 setup-docker() {
   mkdir -p ~/.docker-images
-  if ! grep -q "^data-root" /etc/docker/daemon.json; then
+  if ! grep -q "^data-root" /etc/docker/daemon.json 2>/dev/null; then
     if [ ! -e /etc/docker/daemon.json ]; then
       sudo mkdir -p /etc/docker
       echo "{}" | sudo tee /etc/docker/daemon.json >/dev/null
