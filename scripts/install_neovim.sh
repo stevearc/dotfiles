@@ -126,7 +126,7 @@ _install_linux() {
 
 _get_dist_suffix() {
   # If the version is less than v0.10.4, use the old naming scheme
-  if [[ "$VERSION" =~ "^v" ]] && ! printf 'v0.10.4\n%s\n' "$VERSION" | sort -V -C; then
+  if [[ "$VERSION" =~ ^v ]] && ! printf 'v0.10.4\n%s\n' "$VERSION" | sort -V -C; then
     if [ -n "$MAC" ]; then
       echo "-macos"
     fi
