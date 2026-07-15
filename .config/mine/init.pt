@@ -1,4 +1,5 @@
 import editor
+import format
 import logging
 import lsp
 import picker
@@ -12,24 +13,51 @@ editor.set_vscrolloff(999)
 editor.set_theme("duskfox")
 editor.keymap(["normal"], "<space>ff", fn() {
     picker.files()
-  })
+  }, desc = "[F]ind [F]iles")
 editor.keymap(["normal"], "<space>ft", fn() {
     picker.themes()
-  })
+  }, desc = "[F]ind [T]hemes")
 editor.keymap(["normal"], "<space>fb", fn() {
     picker.buffers()
-  })
+  }, desc = "[F]ind [B]uffers")
 editor.keymap(["normal"], "<space>bb", fn() {
     picker.buffers()
-  })
+  }, desc = "[B]uffers")
 
 lsp.register(lsp.ServerConfig.new("zls", ["zig"], ["zls"],
-  root_markers = ["build.zig", "build.zig.zon", ".git"]))
+    root_markers = ["build.zig", "build.zig.zon", ".git"]))
 lsp.register(lsp.ServerConfig.new("rust-analyzer", ["rust"], ["rust-analyzer"],
-  root_markers = ["Cargo.toml", ".git"]))
+    root_markers = ["Cargo.toml", ".git"]))
 lsp.register(lsp.ServerConfig.new("gopls", ["go"], ["gopls"],
-  root_markers = ["go.mod", ".git"]))
+    root_markers = ["go.mod", ".git"]))
 lsp.register(lsp.ServerConfig.new("lua-language-server", ["lua"], ["lua-language-server"],
-  root_markers = [".luarc.json", ".luarc.jsonc", ".git"]))
+    root_markers = [".luarc.json", ".luarc.jsonc", ".git"]))
 lsp.register(lsp.ServerConfig.new("petal-lsp", ["petal"], ["petal", "lsp", "--log-level", "debug"],
-  root_markers = [".git"]))
+    root_markers = [".git"]))
+
+# ── Formatting ───────────────────────────────────────────────
+# Migrated from the conform.nvim config (lua/plugins/format.lua). The built-in
+# formatter definitions (prettier, black, stylua, …) are pre-registered by the
+# defaults; here we just map them to filetypes. format-on-save and lsp_format
+# ("fallback") are on by default.
+
+# prettier, first-available (prettierd, else prettier)
+let prettier = ["prettierd", "prettier"]
+format.set_formatters("javascript", prettier, stop_after_first = true)
+format.set_formatters("typescript", prettier, stop_after_first = true)
+format.set_formatters("jsx", prettier, stop_after_first = true)
+format.set_formatters("tsx", prettier, stop_after_first = true)
+format.set_formatters("css", prettier, stop_after_first = true)
+format.set_formatters("graphql", prettier, stop_after_first = true)
+format.set_formatters("html", prettier, stop_after_first = true)
+format.set_formatters("yaml", prettier, stop_after_first = true)
+format.set_formatters("json", ["prettierd", "prettier", "jq"], stop_after_first = true)
+format.set_formatters("lua", ["stylua"])
+format.set_formatters("go", ["goimports", "gofmt"])
+format.set_formatters("bash", ["shfmt"])
+format.set_formatters("python", ["isort", "black"])
+format.set_formatters("zig", ["zigfmt"])
+# Not migrated: markdown/norg used conform's tree-sitter `injected` formatter
+# (intentionally unsupported), and the `_` fallback used conform's built-in
+# `trim_whitespace`/`trim_newlines` Lua formatters plus a per-ft `lsp_format`
+# override — neither of which mine has yet.
