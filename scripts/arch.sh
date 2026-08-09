@@ -297,9 +297,10 @@ dc-install-protonvpn() {
   sudo systemctl enable --now systemd-resolved
   if sudo test ! -e /etc/wireguard/US.conf; then
     echo "Download a wireguard conf and put it in /etc/wireguard/"
-    echo "Put the following lines under the [Interface]"
-    echo '    PostUp = iptables -I OUTPUT ! -o %i -m mark ! --mark $(wg show %i fwmark) -m addrtype ! --dst-type LOCAL -j REJECT'
-    echo '    PreDown = iptables -D OUTPUT ! -o %i -m mark ! --mark $(wg show %i fwmark) -m addrtype ! --dst-type LOCAL -j REJECT'
+    # BUG: the killswitch seems to break our port forwarding
+    # echo "Put the following lines under the [Interface]"
+    # echo '    PostUp = iptables -I OUTPUT ! -o %i -m mark ! --mark $(wg show %i fwmark) -m addrtype ! --dst-type LOCAL -j REJECT'
+    # echo '    PreDown = iptables -D OUTPUT ! -o %i -m mark ! --mark $(wg show %i fwmark) -m addrtype ! --dst-type LOCAL -j REJECT'
     echo "Then symlink it to /etc/wireguard/US.conf"
     read -r
     xdg-open https://account.protonvpn.com/downloads
