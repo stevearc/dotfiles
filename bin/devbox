@@ -188,7 +188,7 @@ def cmd_up_add_args(parser):
         "-r",
         "--region",
         help="The DO region (default %(default)s)",
-        default=os.getenv("DO_REGION", "sfo"),
+        default=os.getenv("DO_REGION", "nyc1"),
     )
     parser.add_argument(
         "-s", "--size", help="The size of the devbox", default="g-4vcpu-16gb"
@@ -524,7 +524,7 @@ def cmd_snapshots_add_args(parser):
         "-r",
         "--region",
         help="The DO region (default %(default)s)",
-        default=os.getenv("DO_REGION", "sfo"),
+        default=os.getenv("DO_REGION", "nyc1"),
     )
 
 
@@ -556,7 +556,7 @@ def cmd_sizes_add_args(parser):
         "-r",
         "--region",
         help="The DO region (default %(default)s)",
-        default=os.getenv("DO_REGION", "sfo"),
+        default=os.getenv("DO_REGION", "nyc1"),
     )
 
 
@@ -590,7 +590,7 @@ def cmd_images_add_args(parser):
         "-r",
         "--region",
         help="The DO region (default %(default)s)",
-        default=os.getenv("DO_REGION", "sfo"),
+        default=os.getenv("DO_REGION", "nyc1"),
     )
 
 
