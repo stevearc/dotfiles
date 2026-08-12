@@ -127,7 +127,8 @@ local function open_terminal_win(bufnr, background)
   })
 
   if open_term then
-    vim.fn.termopen(vim.o.shell, {
+    vim.fn.jobstart(vim.o.shell, {
+      term = true,
       on_exit = function(j, c)
         for _, win in ipairs(vim.api.nvim_list_wins()) do
           if vim.api.nvim_win_get_buf(win) == bufnr then

@@ -7,8 +7,6 @@ local M = {}
 ---@field bufnr integer
 ---@field jid integer
 ---@field tab integer
----@field initialized boolean
----@field private command_buffer {[1]: string, [2]: nil|boolean}
 local ClaudeProcess = {}
 
 ---@type table<integer, ClaudeProcess>
@@ -36,12 +34,6 @@ local function _setup_global_handlers()
   })
 end
 
-function ClaudeProcess:_cleanup()
-  if vim.api.nvim_tabpage_is_valid(self.tab) then
-    vim.t[self.tab].claude_thinking = nil
-  end
-end
-
 function ClaudeProcess:terminate()
   if self:is_alive() then
     vim.fn.jobstop(self.jid)
@@ -58,24 +50,16 @@ M.get_proc = function()
   local bufnr = vim.api.nvim_create_buf(false, true)
   local jid
   local self
-  local mode = "--dangerously-skip-permissions"
-  -- local mode = "--permission-mode=acceptEdits"
   vim.api.nvim_buf_call(bufnr, function()
-    jid = vim.fn.jobstart({ "claude", mode, "--model", "opus" }, {
+    jid = vim.fn.jobstart({ vim.o.shell }, {
       pty = true,
       term = true,
-      on_stdout = vim.schedule_wrap(function()
-        self:_on_output()
-      end),
-      on_exit = function()
-        self:_cleanup()
-      end,
     })
   end)
   if jid == 0 then
     error("Invalid arguments to jobstart")
   elseif jid == -1 then
-    error("'claude' is not executable")
+    error("shell is not executable")
   end
   -- Set the scrollback to max
   vim.bo[bufnr].scrollback = 100000
@@ -84,9 +68,7 @@ M.get_proc = function()
   self = setmetatable({
     bufnr = bufnr,
     jid = jid,
-    initialized = false,
     tab = vim.api.nvim_get_current_tabpage(),
-    command_buffer = {},
   }, { __index = ClaudeProcess })
 
   _procs_by_tab[vim.api.nvim_get_current_tabpage()] = self
@@ -101,32 +83,9 @@ function ClaudeProcess:is_alive()
   return vim.fn.jobwait({ self.jid }, 0)[1] == -1
 end
 
----Called when output is received from the job
-function ClaudeProcess:_on_output()
-  if self.initialized then
-    return
-  end
-  local lines = vim.api.nvim_buf_get_lines(self.bufnr, 0, -1, false)
-  for _, line in ipairs(lines) do
-    if vim.startswith(line, "❯") then
-      self.initialized = true
-      if #self.command_buffer > 0 then
-        for _, v in ipairs(self.command_buffer) do
-          self:send_text(v[1], v[2])
-        end
-        self.command_buffer = {}
-      end
-    end
-  end
-end
-
 ---@param text string
 ---@param submit? boolean
 function ClaudeProcess:send_text(text, submit)
-  if not self.initialized then
-    table.insert(self.command_buffer, { text, submit })
-    return
-  end
   pcall(vim.api.nvim_chan_send, self.jid, text)
 
   if submit then
