@@ -75,7 +75,15 @@ install-language-bash() {
 
 install-language-lua() {
   sudo apt-get install -qy lua-check ninja-build
-  hascmd cargo || cargo install stylua@0.18.2 --features lua52
+  if ! hascmd stylua; then
+    if hascmd brew; then
+      brew install stylua
+    elif hascmd cargo; then
+      cargo install stylua@2.4.1 --features lua52
+    else
+      echo "Cannot install stylua: missing brew or cargo"
+    fi
+  fi
   install-lua-ls
 }
 
