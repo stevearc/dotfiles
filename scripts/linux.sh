@@ -208,8 +208,13 @@ install-lua-ls() {
     cd lua-language-server
     local latest_version
     latest_version=$(curl -s https://api.github.com/repos/LuaLS/lua-language-server/releases/latest | jq -r .tag_name)
-    echo "https://github.com/LuaLS/lua-language-server/releases/download/${latest_version}/lua-language-server-${latest_version}-linux-x64.tar.gz"
-    curl -sL "https://github.com/LuaLS/lua-language-server/releases/download/${latest_version}/lua-language-server-${latest_version}-linux-x64.tar.gz" -o lua-language-server.tar.gz
+    local arch
+    case "$(uname -m)" in
+    aarch64 | arm64) arch="arm64" ;;
+    *) arch="x64" ;;
+    esac
+    echo "https://github.com/LuaLS/lua-language-server/releases/download/${latest_version}/lua-language-server-${latest_version}-linux-${arch}.tar.gz"
+    curl -sL "https://github.com/LuaLS/lua-language-server/releases/download/${latest_version}/lua-language-server-${latest_version}-linux-${arch}.tar.gz" -o lua-language-server.tar.gz
     tar -zxf lua-language-server.tar.gz
     rm -f lua-language-server.tar.gz
 
@@ -287,4 +292,11 @@ post-install-rclone() {
     systemctl --user enable rclone.service
     systemctl --user start rclone.service
   fi
+}
+
+dc-install-homebrew() {
+  hascmd brew && return
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >>~/.bashrc
 }
