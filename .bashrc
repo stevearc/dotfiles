@@ -9,10 +9,12 @@ if [ "$OSNAME" = "Darwin" ]; then
 fi
 
 if [ -n "$PROFILE_STARTUP" ]; then
-  if [ $MAC ]; then
-    PS4='+ $(gdate "+%s.%N")\011 '
+  if [ -n "$EPOCHREALTIME" ]; then
+    PS4='+ $EPOCHREALTIME\011$BASH_SOURCE:$LINENO\011 '
+  elif [ $MAC ]; then
+    PS4='+ $(gdate "+%s.%N")\011$BASH_SOURCE:$LINENO\011 '
   else
-    PS4='+ $(date "+%s.%N")\011 '
+    PS4='+ $(date "+%s.%N")\011$BASH_SOURCE:$LINENO\011 '
   fi
   prof_file=/tmp/bashstart.$$.log
   exec 3>&2 2>$prof_file
@@ -33,8 +35,17 @@ shopt -s histappend
 HISTSIZE=100000
 HISTFILESIZE=200000
 
-# After each command, append to the history file
-export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a"
+# After each command, append to the history file.
+_pc=$PROMPT_COMMAND
+# Strip every existing `history -a` regardless of which separator precedes or
+# follows it (direnv joins with `;`, we join with a newline), then add exactly one.
+_pc="${_pc//$'\n'history -a/}"
+_pc="${_pc//;history -a/}"
+_pc="${_pc//history -a$'\n'/}"
+_pc="${_pc//history -a;/}"
+[ "$_pc" = "history -a" ] && _pc=
+PROMPT_COMMAND="${_pc:+$_pc$'\n'}history -a"
+unset _pc
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -64,8 +75,17 @@ fi
 if [ -e "$HOME/.yarn/bin" ]; then
   export PATH="$PATH:$HOME/.yarn/bin"
 fi
+# Cache the npm prefix for faster startup
+# Delete ~/.cache/npm-prefix after changing node versions.
 if command -v npm >/dev/null 2>&1; then
-  PATH="$(npm prefix -g)/bin:$PATH"
+  _npm_prefix_cache="$HOME/.cache/npm-prefix"
+  if [ ! -s "$_npm_prefix_cache" ]; then
+    mkdir -p "$(dirname "$_npm_prefix_cache")"
+    npm prefix -g >"$_npm_prefix_cache" 2>/dev/null
+  fi
+  _npm_prefix=$(<"$_npm_prefix_cache")
+  [ -n "$_npm_prefix" ] && PATH="$_npm_prefix/bin:$PATH"
+  unset _npm_prefix_cache _npm_prefix
 fi
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -80,8 +100,8 @@ fi
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
   . /etc/bash_completion
 fi
-# For some reason on arch these completions are not sourced by default
-if [ -d /usr/share/bash-completion/completions ]; then
+# For some reason on arch these completions are not sourced by default.
+if [ -f /etc/arch-release ] && [ -d /usr/share/bash-completion/completions ]; then
   for c in /usr/share/bash-completion/completions/*; do
     source "$c" 2>/dev/null
   done
@@ -186,9 +206,6 @@ else
     echo "$(date +%H:%M:%S) "
   }
   PS1='$(__timestamp)'"$__user@$__host$__cur_location:$__git_branch_color"'$(git_branch)$(hg_branch)'"$__nvm_color"'$(__nvm_version)'"$__prompt_tail$__last_color "
-  if [ -n "$PROFILE_STARTUP" ]; then
-    export PS4='+$0.$LINENO: '
-  fi
 fi
 
 if [ -n "$PROFILE_STARTUP" ]; then
