@@ -8,12 +8,12 @@ local default_options = {
   },
 }
 
----@class claude.Config
----@field on_create fun(proc: ClaudeProcess)
+---@class agents.Config
+---@field on_create fun(proc: AgentsProcess)
 local M = {}
 
----@class (exact) claude.SetupOpts
----@field on_create? fun(proc: ClaudeProcess)
+---@class (exact) agents.SetupOpts
+---@field on_create? fun(proc: AgentsProcess)
 ---@field review? {wrap?:boolean, wrap_navigation?:boolean, default_register?:string, submit_prompt?:string}
 
 local has_setup = false
@@ -38,5 +38,5 @@ setmetatable(M, {
   end,
 })
 
----@cast M claude.Config
+---@cast M agents.Config
 return M

@@ -11,13 +11,13 @@ function M.open(initial, commit, opts)
     return
   end
   local bufnr = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_name(bufnr, "claude-review-comment://" .. bufnr)
+  vim.api.nvim_buf_set_name(bufnr, "agents-review-comment://" .. bufnr)
   -- acwrite makes :w dispatch to the buffer-local BufWriteCmd handler while
   -- retaining all other scratch-buffer behavior below.
   vim.bo[bufnr].buftype = "acwrite"
   vim.bo[bufnr].bufhidden = "wipe"
   vim.bo[bufnr].swapfile = false
-  vim.bo[bufnr].filetype = "claude-review-comment"
+  vim.bo[bufnr].filetype = "agents-review-comment"
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, vim.split(initial, "\n", { plain = true }))
   local width = math.min(math.max(60, math.floor(vim.o.columns * 0.6)), vim.o.columns - 4)
   local height =

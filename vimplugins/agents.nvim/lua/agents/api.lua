@@ -1,27 +1,27 @@
 local M = {}
 
 --- Set annotations to display as virtual lines and in the quickfix list
----@param annotations claude.AnnotationLocation[]
+---@param annotations agents.AnnotationLocation[]
 M.annotations_set = function(annotations)
-  require("claude.annotations").set(annotations)
+  require("agents.annotations").set(annotations)
 end
 
 --- Remove all annotations, clearing extmarks and the quickfix list
 M.annotations_clear = function()
-  require("claude.annotations").clear()
+  require("agents.annotations").clear()
 end
 
 --- Return the current list of annotations
----@return claude.AnnotationLocation[]
+---@return agents.AnnotationLocation[]
 M.annotations_get = function()
-  return require("claude.annotations").get()
+  return require("agents.annotations").get()
 end
 
----@class claude.EditorInfo
+---@class agents.EditorInfo
 ---@field width integer
 ---@field height integer
 
----@return claude.EditorInfo
+---@return agents.EditorInfo
 M.get_editor_info = function()
   return {
     width = vim.o.columns,
@@ -48,13 +48,13 @@ M.setqflist = function(content)
   vim.api.nvim_set_current_win(winid)
 end
 
----@class claude.CurrentContext
+---@class agents.CurrentContext
 ---@field filename string
 ---@field lnum integer
 ---@field col integer
 
 ---@param winid integer
----@return claude.CurrentContext
+---@return agents.CurrentContext
 local function make_context(winid)
   local cursor = vim.api.nvim_win_get_cursor(winid)
   local bufnr = vim.api.nvim_win_get_buf(winid)
@@ -68,7 +68,7 @@ end
 --- Get the filename and cursor position of the current window.
 --- Falls back to the first window with a normal buffer if the current buffer
 --- has a non-empty buftype.
----@return claude.CurrentContext?
+---@return agents.CurrentContext?
 M.get_current_context = function()
   if vim.bo.buftype == "" then
     return make_context(0)
@@ -82,7 +82,7 @@ M.get_current_context = function()
   end
 end
 
----@class claude.BufferInfo
+---@class agents.BufferInfo
 ---@field bufnr integer
 ---@field name string
 ---@field buftype string
@@ -92,7 +92,7 @@ end
 ---@field line_count integer -- 0 if not loaded
 
 ---@param bufnr integer
----@return claude.BufferInfo
+---@return agents.BufferInfo
 local function make_buffer_info(bufnr)
   local loaded = vim.api.nvim_buf_is_loaded(bufnr)
   return {
@@ -107,7 +107,7 @@ local function make_buffer_info(bufnr)
 end
 
 --- Return a list of open files (listed buffers with buftype "")
----@return claude.BufferInfo[]
+---@return agents.BufferInfo[]
 M.list_open_buffers = function()
   local results = {}
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
@@ -120,7 +120,7 @@ end
 
 --- Return buffer info for specific buffer numbers
 ---@param buffers integer[]
----@return claude.BufferInfo[]
+---@return agents.BufferInfo[]
 M.get_buffer_info = function(buffers)
   local results = {}
   for _, bufnr in ipairs(buffers) do

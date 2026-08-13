@@ -1,23 +1,23 @@
 local M = {}
 
----@param opts? claude.SetupOpts
+---@param opts? agents.SetupOpts
 M.setup = function(opts)
-  require("claude.config").setup(opts)
+  require("agents.config").setup(opts)
 end
 
----@return ClaudeProcess
+---@return AgentsProcess
 M.get_proc = function()
-  return require("claude.process").get_proc()
+  return require("agents.process").get_proc()
 end
 
 -- TODO copy my action running logic from overseer or oil
 local actions = {
   send_location = {
-    desc = "Send cursor location to claude",
+    desc = "Send cursor location to agent",
     mode = { "n", "v" },
     callback = function()
-      local util = require("claude.util")
-      local window = require("claude.window")
+      local util = require("agents.util")
+      local window = require("agents.window")
       local location = util.get_location()
       local c = M.get_proc()
       c:send_text(location .. " ")
@@ -27,9 +27,9 @@ local actions = {
     end,
   },
   toggle_float = {
-    desc = "Open claude buffer in a floating window",
+    desc = "Open agent buffer in a floating window",
     callback = function()
-      local window = require("claude.window")
+      local window = require("agents.window")
       local winid = window.get_float_win()
       if winid then
         vim.api.nvim_win_close(winid, true)
@@ -44,7 +44,7 @@ local actions = {
     desc = "Auto implement some code",
     mode = { "n", "v" },
     callback = function()
-      local util = require("claude.util")
+      local util = require("agents.util")
       local location = util.get_location({ context = "line" })
       util.leave_visual_mode()
       local c = M.get_proc()
@@ -84,9 +84,9 @@ M.run_action = function(action_name)
   end
 end
 
----@param annotations claude.AnnotationLocation[]
+---@param annotations agents.AnnotationLocation[]
 M.set_annotations = function(annotations)
-  require("claude.annotations").set(annotations)
+  require("agents.annotations").set(annotations)
 end
 
 ---@param opts? {text?:string}
@@ -98,13 +98,13 @@ function M.comment_add(opts)
     vim.notify("Comments require a named file buffer", vim.log.levels.WARN)
     return nil, "Comments require a named file buffer"
   end
-  local start_lnum, end_lnum = unpack(require("claude.util").range_from_selection())
+  local start_lnum, end_lnum = unpack(require("agents.util").range_from_selection())
   if not vim.startswith(vim.api.nvim_get_mode().mode:lower(), "v") then
     start_lnum = vim.api.nvim_win_get_cursor(0)[1]
     end_lnum = start_lnum
   end
-  require("claude.util").leave_visual_mode()
-  local comments = require("claude.comments")
+  require("agents.util").leave_visual_mode()
+  local comments = require("agents.comments")
   local clear_preview = comments.preview_range(bufnr, start_lnum, end_lnum)
   local function save(text)
     local comment, err = comments.add({
@@ -131,13 +131,13 @@ function M.comment_add(opts)
     end
     return comment, err
   end
-  require("claude.comment_editor").open("", save, { on_close = clear_preview })
+  require("agents.comment_editor").open("", save, { on_close = clear_preview })
 end
 
----@param callback fun(comment:claude.ReviewComment)|nil
+---@param callback fun(comment:agents.ReviewComment)|nil
 local function select_comment(callback)
   local filename = vim.api.nvim_buf_get_name(0)
-  local candidates = require("claude.comments").at(filename, vim.api.nvim_win_get_cursor(0)[1])
+  local candidates = require("agents.comments").at(filename, vim.api.nvim_win_get_cursor(0)[1])
   if #candidates == 0 then
     vim.notify("No review comment at the cursor", vim.log.levels.WARN)
     return nil, "No review comment at the cursor"
@@ -157,13 +157,13 @@ end
 function M.comment_edit(opts)
   opts = opts or {}
   return select_comment(function(comment)
-    local clear_preview = require("claude.comments").preview_range(
+    local clear_preview = require("agents.comments").preview_range(
       vim.api.nvim_get_current_buf(),
       comment.start_lnum,
       comment.end_lnum
     )
     local function save(text)
-      local value, err = require("claude.comments").edit(comment.id, text)
+      local value, err = require("agents.comments").edit(comment.id, text)
       if not value then
         return false, err
       end
@@ -171,19 +171,19 @@ function M.comment_edit(opts)
     end
     if opts.text ~= nil then
       clear_preview()
-      local value, err = require("claude.comments").edit(comment.id, opts.text)
+      local value, err = require("agents.comments").edit(comment.id, opts.text)
       if not value then
         vim.notify(err, vim.log.levels.WARN)
       end
       return value, err
     end
-    require("claude.comment_editor").open(comment.text, save, { on_close = clear_preview })
+    require("agents.comment_editor").open(comment.text, save, { on_close = clear_preview })
   end)
 end
 
 function M.comment_delete()
   return select_comment(function(comment)
-    local value, err = require("claude.comments").delete(comment.id)
+    local value, err = require("agents.comments").delete(comment.id)
     if not value then
       vim.notify(err, vim.log.levels.WARN)
     end
@@ -192,20 +192,20 @@ function M.comment_delete()
 end
 
 function M.comments_get()
-  return require("claude.comments").get()
+  return require("agents.comments").get()
 end
 function M.comments_clear()
-  return require("claude.comments").clear()
+  return require("agents.comments").clear()
 end
 function M.comments_format()
-  return require("claude.comments").format()
+  return require("agents.comments").format()
 end
 
 --- Edit the review-level note included above all individual comments.
 ---@param opts? {text?:string}
 function M.review_edit(opts)
   opts = opts or {}
-  local comments = require("claude.comments")
+  local comments = require("agents.comments")
   if opts.text ~= nil then
     local ok, err = comments.set_review_text(opts.text)
     if not ok then
@@ -214,7 +214,7 @@ function M.review_edit(opts)
     end
     return opts.text
   end
-  require("claude.comment_editor").open(comments.get_review_text(), function(text)
+  require("agents.comment_editor").open(comments.get_review_text(), function(text)
     local ok, err = comments.set_review_text(text)
     return ok, err
   end)
@@ -231,7 +231,7 @@ function M.comments_yank(opts)
   end
   local register = opts.register or vim.v.register
   if register == '"' then
-    register = require("claude.config").review.default_register
+    register = require("agents.config").review.default_register
   end
   if type(register) ~= "string" or #register ~= 1 or vim.fn.setreg(register, text) ~= 0 then
     vim.notify("Invalid register", vim.log.levels.WARN)
@@ -247,7 +247,7 @@ function M.comments_send()
     vim.notify("There are no review comments", vim.log.levels.WARN)
     return nil, "No review comments"
   end
-  local prompt = string.format(require("claude.config").review.submit_prompt, text)
+  local prompt = string.format(require("agents.config").review.submit_prompt, text)
   M.get_proc():send_text(prompt, true)
   return prompt
 end
@@ -260,7 +260,7 @@ local function navigate(direction)
     return
   end
   local comment =
-    require("claude.comments").navigate(filename, vim.api.nvim_win_get_cursor(0)[1], direction)
+    require("agents.comments").navigate(filename, vim.api.nvim_win_get_cursor(0)[1], direction)
   if not comment then
     vim.notify("There are no review comments", vim.log.levels.WARN)
     return

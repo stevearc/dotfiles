@@ -1,20 +1,20 @@
 local M = {}
 
----@class claude.AnnotationLocation
+---@class agents.AnnotationLocation
 ---@field filename string
 ---@field start_lnum integer
 ---@field end_lnum integer
 ---@field comment string
 
----@type claude.AnnotationLocation[]
+---@type agents.AnnotationLocation[]
 local _annotations = {}
 
 ---@type integer[]
 local _annotated_buffers = {}
 
-local ns = vim.api.nvim_create_namespace("claude_annotations")
+local ns = vim.api.nvim_create_namespace("agents_annotations")
 
-vim.api.nvim_set_hl(0, "ClaudeAnnotation", { default = true, link = "DiagnosticVirtualTextInfo" })
+vim.api.nvim_set_hl(0, "AgentsAnnotation", { default = true, link = "DiagnosticVirtualTextInfo" })
 
 ---@param bufnr integer
 ---@param lnum integer
@@ -67,7 +67,7 @@ local function wrap_text(text, width)
   return lines
 end
 
----@param annotations claude.AnnotationLocation[]
+---@param annotations agents.AnnotationLocation[]
 function M.set(annotations)
   -- Clear previous extmarks
   for _, bufnr in ipairs(_annotated_buffers) do
@@ -106,7 +106,7 @@ function M.set(annotations)
     local virt_lines = {}
     for _, line in ipairs(vim.split(ann.comment, "\n")) do
       for _, wrapped in ipairs(wrap_text(line, tw)) do
-        table.insert(virt_lines, { { wrapped, "ClaudeAnnotation" } })
+        table.insert(virt_lines, { { wrapped, "AgentsAnnotation" } })
       end
     end
 
@@ -130,7 +130,7 @@ function M.clear()
   M.set({})
 end
 
----@return claude.AnnotationLocation[]
+---@return agents.AnnotationLocation[]
 function M.get()
   return _annotations
 end

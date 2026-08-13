@@ -1,8 +1,8 @@
-local config = require("claude.config")
+local config = require("agents.config")
 
 local M = {}
 
----@class claude.ReviewComment
+---@class agents.ReviewComment
 ---@field id integer
 ---@field filename string
 ---@field start_lnum integer
@@ -13,19 +13,19 @@ local M = {}
 ---@field range_extmark_id? integer
 ---@field display_extmark_id? integer
 
----@type claude.ReviewComment[]
+---@type agents.ReviewComment[]
 local comments = {}
 local review_text = ""
 local next_id = 1
-local ns = vim.api.nvim_create_namespace("claude_review_comments")
+local ns = vim.api.nvim_create_namespace("agents_review_comments")
 local tracked_buffers = {}
 
 vim.api.nvim_set_hl(
   0,
-  "ClaudeReviewComment",
+  "AgentsReviewComment",
   { default = true, link = "DiagnosticVirtualTextInfo" }
 )
-vim.api.nvim_set_hl(0, "ClaudeReviewRange", { default = true, link = "Visual" })
+vim.api.nvim_set_hl(0, "AgentsReviewRange", { default = true, link = "Visual" })
 
 ---@param filename string
 ---@return string
@@ -33,7 +33,7 @@ local function normalize_filename(filename)
   return vim.fs.normalize(vim.fn.fnamemodify(filename, ":p"))
 end
 
----@param comment claude.ReviewComment
+---@param comment agents.ReviewComment
 ---@return integer?
 local function get_bufnr(comment)
   if comment.bufnr and vim.api.nvim_buf_is_valid(comment.bufnr) then
@@ -123,7 +123,7 @@ local function display_width(bufnr)
   return math.max(width > 0 and width or 80, 20)
 end
 
----@param comment claude.ReviewComment
+---@param comment agents.ReviewComment
 local function sync(comment)
   local bufnr = get_bufnr(comment)
   if not bufnr or not comment.range_extmark_id then
@@ -145,7 +145,7 @@ local function sync(comment)
   comment.end_lnum = math.max(comment.start_lnum, details.end_row or (pos[1] + 1))
 end
 
----@param comment claude.ReviewComment
+---@param comment agents.ReviewComment
 local function render(comment)
   local bufnr = get_bufnr(comment)
   if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
@@ -155,7 +155,7 @@ local function render(comment)
   local width = config.review.wrap and display_width(bufnr) or math.max(vim.bo[bufnr].textwidth, 80)
   local virt_lines = {}
   for _, line in ipairs(wrap_text(comment.text, width)) do
-    table.insert(virt_lines, { { line, "ClaudeReviewComment" } })
+    table.insert(virt_lines, { { line, "AgentsReviewComment" } })
   end
   comment.display_extmark_id = vim.api.nvim_buf_set_extmark(bufnr, ns, comment.end_lnum - 1, 0, {
     id = comment.display_extmark_id,
@@ -163,11 +163,11 @@ local function render(comment)
     virt_lines = virt_lines,
     virt_lines_above = false,
     sign_text = comment.stale and "!" or "●",
-    sign_hl_group = "ClaudeReviewComment",
+    sign_hl_group = "AgentsReviewComment",
   })
 end
 
----@param comment claude.ReviewComment
+---@param comment agents.ReviewComment
 local function attach(comment)
   local bufnr = get_bufnr(comment)
   if
@@ -186,7 +186,7 @@ local function attach(comment)
     id = comment.range_extmark_id,
     end_row = comment.end_lnum,
     end_col = 0,
-    hl_group = "ClaudeReviewRange",
+    hl_group = "AgentsReviewRange",
     hl_eol = true,
     right_gravity = false,
     end_right_gravity = true,
@@ -194,13 +194,13 @@ local function attach(comment)
   render(comment)
 end
 
----@param comment claude.ReviewComment
+---@param comment agents.ReviewComment
 local function snapshot(comment)
   sync(comment)
   return vim.deepcopy(comment)
 end
 
----@return claude.ReviewComment[]
+---@return agents.ReviewComment[]
 local function sorted()
   local result = {}
   for _, comment in ipairs(comments) do
@@ -222,7 +222,7 @@ local function sorted()
 end
 
 ---@param opts {filename:string, start_lnum:integer, end_lnum:integer, text:string, id?:integer, stale?:boolean}
----@return claude.ReviewComment|nil, string?
+---@return agents.ReviewComment|nil, string?
 function M.add(opts)
   if type(opts.text) ~= "string" then
     return nil, "Comment text cannot be empty"
@@ -253,7 +253,7 @@ end
 
 ---@param id integer
 ---@param text string
----@return claude.ReviewComment|nil, string?
+---@return agents.ReviewComment|nil, string?
 function M.edit(id, text)
   if type(text) ~= "string" then
     return nil, "Comment text cannot be empty"
@@ -273,7 +273,7 @@ function M.edit(id, text)
 end
 
 ---@param id integer
----@return claude.ReviewComment|nil, string?
+---@return agents.ReviewComment|nil, string?
 function M.delete(id)
   for i, comment in ipairs(comments) do
     if comment.id == id then
@@ -316,7 +316,7 @@ function M.set_review_text(text)
   return true
 end
 
----@return claude.ReviewComment[]
+---@return agents.ReviewComment[]
 function M.get()
   return sorted()
 end
@@ -352,7 +352,7 @@ end
 
 ---@param filename string
 ---@param lnum integer
----@return claude.ReviewComment[]
+---@return agents.ReviewComment[]
 function M.at(filename, lnum)
   filename = normalize_filename(filename)
   return vim.tbl_filter(function(comment)
@@ -382,7 +382,7 @@ end
 ---@param current_filename string
 ---@param current_lnum integer
 ---@param direction integer
----@return claude.ReviewComment?
+---@return agents.ReviewComment?
 function M.navigate(current_filename, current_lnum, direction)
   local items = sorted()
   if #items == 0 then

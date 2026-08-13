@@ -1,15 +1,15 @@
-local config = require("claude.config")
-local window = require("claude.window")
+local config = require("agents.config")
+local window = require("agents.window")
 
 local M = {}
 
----@class (exact) ClaudeProcess
+---@class (exact) AgentsProcess
 ---@field bufnr integer
 ---@field jid integer
 ---@field tab integer
-local ClaudeProcess = {}
+local AgentsProcess = {}
 
----@type table<integer, ClaudeProcess>
+---@type table<integer, AgentsProcess>
 local _procs_by_tab = {}
 
 local _initialized = false
@@ -21,8 +21,8 @@ local function _setup_global_handlers()
   _initialized = true
 
   vim.api.nvim_create_autocmd("TabClosed", {
-    group = vim.api.nvim_create_augroup("ClaudeTabClose", {}),
-    desc = "Clean up claude processes when tab is closed",
+    group = vim.api.nvim_create_augroup("AgentsTabClose", {}),
+    desc = "Clean up agents processes when tab is closed",
     callback = vim.schedule_wrap(function()
       for tid, p in pairs(_procs_by_tab) do
         if not vim.api.nvim_tabpage_is_valid(tid) then
@@ -34,13 +34,13 @@ local function _setup_global_handlers()
   })
 end
 
-function ClaudeProcess:terminate()
+function AgentsProcess:terminate()
   if self:is_alive() then
     vim.fn.jobstop(self.jid)
   end
 end
 
----@return ClaudeProcess
+---@return AgentsProcess
 M.get_proc = function()
   local proc = _procs_by_tab[vim.api.nvim_get_current_tabpage()]
   if proc and proc:is_alive() then
@@ -64,12 +64,12 @@ M.get_proc = function()
   -- Set the scrollback to max
   vim.bo[bufnr].scrollback = 100000
 
-  ---@type ClaudeProcess
+  ---@type AgentsProcess
   self = setmetatable({
     bufnr = bufnr,
     jid = jid,
     tab = vim.api.nvim_get_current_tabpage(),
-  }, { __index = ClaudeProcess })
+  }, { __index = AgentsProcess })
 
   _procs_by_tab[vim.api.nvim_get_current_tabpage()] = self
   config.on_create(self)
@@ -79,13 +79,13 @@ M.get_proc = function()
 end
 
 ---@return boolean
-function ClaudeProcess:is_alive()
+function AgentsProcess:is_alive()
   return vim.fn.jobwait({ self.jid }, 0)[1] == -1
 end
 
 ---@param text string
 ---@param submit? boolean
-function ClaudeProcess:send_text(text, submit)
+function AgentsProcess:send_text(text, submit)
   pcall(vim.api.nvim_chan_send, self.jid, text)
 
   if submit then

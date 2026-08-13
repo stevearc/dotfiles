@@ -11,7 +11,7 @@ end
 
 ---@return integer?
 M.get_float_win = function()
-  local c = require("claude").get_proc()
+  local c = require("agents").get_proc()
   for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
     if vim.api.nvim_win_get_buf(win) == c.bufnr then
       local config = vim.api.nvim_win_get_config(win)
@@ -38,7 +38,7 @@ M.open_float = function(bufnr)
   })
 
   vim.api.nvim_create_autocmd("VimResized", {
-    group = vim.api.nvim_create_augroup("ClaudeFloatResize", {}),
+    group = vim.api.nvim_create_augroup("AgentsFloatResize", {}),
     callback = function()
       if not vim.api.nvim_win_is_valid(winid) then
         return true
