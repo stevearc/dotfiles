@@ -89,4 +89,203 @@ M.set_annotations = function(annotations)
   require("claude.annotations").set(annotations)
 end
 
+---@param opts? {text?:string}
+function M.comment_add(opts)
+  opts = opts or {}
+  local bufnr = vim.api.nvim_get_current_buf()
+  local filename = vim.api.nvim_buf_get_name(bufnr)
+  if filename == "" or vim.bo[bufnr].buftype ~= "" then
+    vim.notify("Comments require a named file buffer", vim.log.levels.WARN)
+    return nil, "Comments require a named file buffer"
+  end
+  local start_lnum, end_lnum = unpack(require("claude.util").range_from_selection())
+  if not vim.startswith(vim.api.nvim_get_mode().mode:lower(), "v") then
+    start_lnum = vim.api.nvim_win_get_cursor(0)[1]
+    end_lnum = start_lnum
+  end
+  require("claude.util").leave_visual_mode()
+  local comments = require("claude.comments")
+  local clear_preview = comments.preview_range(bufnr, start_lnum, end_lnum)
+  local function save(text)
+    local comment, err = comments.add({
+      filename = filename,
+      start_lnum = start_lnum,
+      end_lnum = end_lnum,
+      text = text,
+    })
+    if not comment then
+      return false, err
+    end
+    return true
+  end
+  if opts.text ~= nil then
+    clear_preview()
+    local comment, err = comments.add({
+      filename = filename,
+      start_lnum = start_lnum,
+      end_lnum = end_lnum,
+      text = opts.text,
+    })
+    if not comment then
+      vim.notify(err, vim.log.levels.WARN)
+    end
+    return comment, err
+  end
+  require("claude.comment_editor").open("", save, { on_close = clear_preview })
+end
+
+---@param callback fun(comment:claude.ReviewComment)|nil
+local function select_comment(callback)
+  local filename = vim.api.nvim_buf_get_name(0)
+  local candidates = require("claude.comments").at(filename, vim.api.nvim_win_get_cursor(0)[1])
+  if #candidates == 0 then
+    vim.notify("No review comment at the cursor", vim.log.levels.WARN)
+    return nil, "No review comment at the cursor"
+  elseif #candidates == 1 then
+    return callback(candidates[1])
+  else
+    vim.ui.select(candidates, {
+      prompt = "Select review comment",
+      format_item = function(item)
+        return item.text:gsub("\n.*", "")
+      end,
+    }, callback)
+  end
+end
+
+---@param opts? {text?:string}
+function M.comment_edit(opts)
+  opts = opts or {}
+  return select_comment(function(comment)
+    local clear_preview = require("claude.comments").preview_range(
+      vim.api.nvim_get_current_buf(),
+      comment.start_lnum,
+      comment.end_lnum
+    )
+    local function save(text)
+      local value, err = require("claude.comments").edit(comment.id, text)
+      if not value then
+        return false, err
+      end
+      return true
+    end
+    if opts.text ~= nil then
+      clear_preview()
+      local value, err = require("claude.comments").edit(comment.id, opts.text)
+      if not value then
+        vim.notify(err, vim.log.levels.WARN)
+      end
+      return value, err
+    end
+    require("claude.comment_editor").open(comment.text, save, { on_close = clear_preview })
+  end)
+end
+
+function M.comment_delete()
+  return select_comment(function(comment)
+    local value, err = require("claude.comments").delete(comment.id)
+    if not value then
+      vim.notify(err, vim.log.levels.WARN)
+    end
+    return value, err
+  end)
+end
+
+function M.comments_get()
+  return require("claude.comments").get()
+end
+function M.comments_clear()
+  return require("claude.comments").clear()
+end
+function M.comments_format()
+  return require("claude.comments").format()
+end
+
+--- Edit the review-level note included above all individual comments.
+---@param opts? {text?:string}
+function M.review_edit(opts)
+  opts = opts or {}
+  local comments = require("claude.comments")
+  if opts.text ~= nil then
+    local ok, err = comments.set_review_text(opts.text)
+    if not ok then
+      vim.notify(err, vim.log.levels.WARN)
+      return nil, err
+    end
+    return opts.text
+  end
+  require("claude.comment_editor").open(comments.get_review_text(), function(text)
+    local ok, err = comments.set_review_text(text)
+    return ok, err
+  end)
+end
+
+---@param opts? {register?:string}
+function M.comments_yank(opts)
+  opts = opts or {}
+  local text = M.comments_format()
+  local count = #M.comments_get()
+  if count == 0 then
+    vim.notify("There are no review comments", vim.log.levels.WARN)
+    return nil, "No review comments"
+  end
+  local register = opts.register or vim.v.register
+  if register == '"' then
+    register = require("claude.config").review.default_register
+  end
+  if type(register) ~= "string" or #register ~= 1 or vim.fn.setreg(register, text) ~= 0 then
+    vim.notify("Invalid register", vim.log.levels.WARN)
+    return nil, "Invalid register"
+  end
+  vim.notify(string.format("Copied %d review comment%s", count, count == 1 and "" or "s"))
+  return text
+end
+
+function M.comments_send()
+  local text = M.comments_format()
+  if #M.comments_get() == 0 then
+    vim.notify("There are no review comments", vim.log.levels.WARN)
+    return nil, "No review comments"
+  end
+  local prompt = string.format(require("claude.config").review.submit_prompt, text)
+  M.get_proc():send_text(prompt, true)
+  return prompt
+end
+
+---@param direction integer
+local function navigate(direction)
+  local filename = vim.api.nvim_buf_get_name(0)
+  if filename == "" then
+    vim.notify("Navigation requires a file buffer", vim.log.levels.WARN)
+    return
+  end
+  local comment =
+    require("claude.comments").navigate(filename, vim.api.nvim_win_get_cursor(0)[1], direction)
+  if not comment then
+    vim.notify("There are no review comments", vim.log.levels.WARN)
+    return
+  end
+  if vim.fn.bufnr(comment.filename) == -1 and vim.fn.filereadable(comment.filename) ~= 1 then
+    vim.notify("Comment file no longer exists: " .. comment.filename, vim.log.levels.WARN)
+    return nil, "Comment file no longer exists"
+  end
+  if vim.fs.normalize(vim.api.nvim_buf_get_name(0)) ~= comment.filename then
+    local ok, err = pcall(vim.cmd.edit, vim.fn.fnameescape(comment.filename))
+    if not ok then
+      vim.notify(err, vim.log.levels.WARN)
+      return nil, err
+    end
+  end
+  local lnum = math.min(comment.start_lnum, vim.api.nvim_buf_line_count(0))
+  vim.api.nvim_win_set_cursor(0, { lnum, 0 })
+  vim.cmd("normal! zvzz")
+  return comment
+end
+function M.comment_next()
+  return navigate(1)
+end
+function M.comment_prev()
+  return navigate(-1)
+end
+
 return M

@@ -1,5 +1,11 @@
 local default_options = {
   on_create = function() end,
+  review = {
+    wrap = true,
+    wrap_navigation = true,
+    default_register = '"',
+    submit_prompt = "Address the following code review comments:\n\n%s",
+  },
 }
 
 ---@class claude.Config
@@ -8,6 +14,7 @@ local M = {}
 
 ---@class (exact) claude.SetupOpts
 ---@field on_create? fun(proc: ClaudeProcess)
+---@field review? {wrap?:boolean, wrap_navigation?:boolean, default_register?:string, submit_prompt?:string}
 
 local has_setup = false
 M.setup = function(opts)
