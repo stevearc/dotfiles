@@ -96,6 +96,7 @@ configure-git() {
   git config --global alias.next '!git checkout $(git rev-list --children --all | grep ^$(git rev-parse HEAD) | cut -f 2 -d " ")'
   git config --global alias.hookdir 'rev-parse --git-path hooks'
   git config --global alias.installhooks '!bash ~/.githelpers install-hooks'
+  git config --global alias.prco '!bash ~/.githelpers pr-checkout'
   git config --global alias.stack '!python ~/.local/share/gitstack.py'
   git config --global alias.sk '!python ~/.local/share/gitstack.py'
   git config --global alias.ls '!python ~/.local/share/gitstack.py list'

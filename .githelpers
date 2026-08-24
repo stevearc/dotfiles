@@ -355,6 +355,21 @@ new_branch() {
   git checkout --no-track -b "$name" "$(git mt)" "$@"
 }
 
+pr-checkout() {
+  if [ "$#" -ne 1 ]; then
+    echo "Usage: git pr-checkout <PR number or URL>" >&2
+    return 1
+  fi
+
+  local pull_request="$1"
+  local branch
+  branch=$(gh pr view "$pull_request" --json headRefName --jq .headRefName) || return
+
+  git config --add remote.origin.fetch "+refs/heads/$branch:refs/remotes/origin/$branch"
+  git fetch origin "+refs/heads/$branch:refs/remotes/origin/$branch" || return
+  gh pr checkout "$pull_request"
+}
+
 cmd=$1
 shift
 "$cmd" "$@"
