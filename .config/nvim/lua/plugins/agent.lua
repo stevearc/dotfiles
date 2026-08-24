@@ -34,6 +34,7 @@ return {
       { "<leader>ip", function() require("agents").comment_prev() end, desc = "Previous review comment" },
       { "<leader>iy", function() require("agents").comments_yank() end, desc = "Yank review comments" },
       { "<leader>ir", function() require("agents").comments_send() end, desc = "Send review comments" },
+      { "<leader>iC", function() require("agents").comments_clear() end, desc = "Clear review" },
       { "<leader>yf", function() vim.fn.setreg("+", vim.fn.expand("%:~")) end, desc = "[Y]ank [F]ilename" },
     },
     opts = {
