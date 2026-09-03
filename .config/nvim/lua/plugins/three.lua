@@ -46,8 +46,6 @@ return {
       three.setup(opts)
       vim.keymap.set("n", "L", three.next, { desc = "Next buffer" })
       vim.keymap.set("n", "H", three.prev, { desc = "Previous buffer" })
-      vim.keymap.set("n", "<C-l>", three.move_right, { desc = "Move buffer right" })
-      vim.keymap.set("n", "<C-h>", three.move_left, { desc = "Move buffer left" })
       vim.keymap.set({ "n", "t" }, "<C-j>", three.wrap(three.next_tab, { wrap = true }, { desc = "[G]oto next [T]ab" }))
       vim.keymap.set({ "n", "t" }, "<C-k>", three.wrap(three.prev_tab, { wrap = true }, { desc = "[G]oto prev [T]ab" }))
       for i = 1, 9 do
