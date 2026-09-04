@@ -298,6 +298,14 @@ function M.clear()
   for i = #comments, 1, -1 do
     M.delete(comments[i].id)
   end
+  -- Clear the whole namespace as well as the extmarks associated with saved
+  -- comments. This also removes transient range previews, which are not part
+  -- of the comments list and otherwise live until their editor is closed.
+  for bufnr in pairs(tracked_buffers) do
+    if vim.api.nvim_buf_is_valid(bufnr) then
+      vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+    end
+  end
   review_text = ""
 end
 
@@ -366,6 +374,7 @@ end
 ---@param end_lnum integer
 ---@return fun()
 function M.preview_range(bufnr, start_lnum, end_lnum)
+  track_buffer(bufnr)
   local id = vim.api.nvim_buf_set_extmark(bufnr, ns, start_lnum - 1, 0, {
     end_row = end_lnum,
     end_col = 0,
