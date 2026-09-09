@@ -363,7 +363,8 @@ pr-checkout() {
 
   local pull_request="$1"
   local branch
-  branch=$(gh pr view "$pull_request" --json headRefName --jq .headRefName) || return
+  branch=$(gh pr view "$pull_request" --json headRefName --jq .headRefName | tail -n 1) || return
+  git check-ref-format --branch "$branch" >/dev/null || return
 
   git config --add remote.origin.fetch "+refs/heads/$branch:refs/remotes/origin/$branch"
   git fetch origin "+refs/heads/$branch:refs/remotes/origin/$branch" || return
