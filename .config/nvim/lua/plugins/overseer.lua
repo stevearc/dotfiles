@@ -151,6 +151,19 @@ return {
         },
       },
       post_setup = {},
+      actions = {
+        ["restart (delay)"] = {
+          desc = "Restart task after a delay",
+          condition = function(task) return task.status == "RUNNING" end,
+          run = function(task)
+            task:stop()
+            vim.defer_fn(function() task:restart(true) end, 2000)
+          end,
+        },
+
+        -- Disable built-in actions by setting them to 'false'
+        watch = false,
+      },
     },
     init = function() vim.cmd.cnoreabbrev("OS OverseerShell") end,
     config = function(_, opts)
