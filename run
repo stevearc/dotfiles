@@ -109,7 +109,7 @@ Opts:
     for dotfile in $CLI_DOTFILES; do
       link "$HERE/$dotfile" "$HOME/$dotfile"
     done
-    grep "source .*dotfiles/.bashrc" ~/.bashrc >/dev/null 2>&1 || echo "source \"$HERE/.bashrc\"" >>~/.bashrc
+    grep "source .*dotfiles/.bashrc" ~/.bashrc >/dev/null 2>&1 || echo "source \"${HERE/#"$HOME"/\$HOME}/.bashrc\"" >>~/.bashrc
   else
     rsync -lrp $CLI_DOTFILES "$HOME"
     cp "$HERE/.bashrc" "$HOME"
