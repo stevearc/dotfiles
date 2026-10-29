@@ -244,6 +244,7 @@ dotcmd-pibox() {
     fuse2 \
     kitty \
     openssh \
+    spice-vdagent \
     transmission-cli
 
   sudo systemctl enable sshd.service

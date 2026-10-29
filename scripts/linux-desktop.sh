@@ -169,12 +169,22 @@ EOF
   sed -e "s/^USER/$USER/" "$HERE/static/pm-no-sudo" | sudo tee /etc/sudoers.d/pm-no-sudo >/dev/null
   sed -e "s/^USER/$USER/" "$HERE/static/loadkeys-no-sudo" | sudo tee /etc/sudoers.d/loadkeys-no-sudo >/dev/null
   if ! hascmd yt-dlp; then
-    curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o ~/.local/bin/yt-dlp
-    chmod +x ~/.local/bin/yt-dlp
+    dc-install-yt-dlp
   fi
   flatpak install --user --noninteractive flathub com.spotify.Client com.discordapp.Discord com.google.Chrome org.signal.Signal
   flatpak install --system flathub com.github.tchx84.Flatseal
   dc-install-rclone
+}
+
+dc-install-yt-dlp() {
+  local ytdlp_bin
+  case "$(uname -m)" in
+  x86_64) ytdlp_bin=yt-dlp_linux ;;
+  aarch64 | arm64) ytdlp_bin=yt-dlp_linux_aarch64 ;;
+  *) ytdlp_bin=yt-dlp ;;
+  esac
+  curl -L "https://github.com/yt-dlp/yt-dlp/releases/latest/download/$ytdlp_bin" -o ~/.local/bin/yt-dlp
+  chmod +x ~/.local/bin/yt-dlp
 }
 
 # shellcheck disable=SC2034

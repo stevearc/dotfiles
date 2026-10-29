@@ -16,6 +16,7 @@ fi
 
 alias pm-rm-orphans='sudo pacman -Qtdq | sudo pacman -Rns -'
 alias pm-rm-cache='sudo pacman -Scc'
+alias pm-rebuild-mirrors='sudo reflector --country US --protocol https --age 12 --sort rate --latest 20 --save /etc/pacman.d/mirrorlist'
 pm-why-installed() {
   local package="${1?Usage: pm-why-installed <package>}"
   if ! command -v pactree >/dev/null; then
